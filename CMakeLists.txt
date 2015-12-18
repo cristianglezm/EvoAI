@@ -50,6 +50,13 @@ if(WIN32)
 	LIST(REMOVE_ITEM SFML_RELEASE_DLLS ${SFML_DEBUG_DLLS})
 endif(WIN32)
 
+#jsonbox
+find_package(JSONBOX REQUIRED)
+if(JSONBOX_FOUND)
+	include_directories(${JSONBOX_INCLUDE_DIR})
+	target_link_libraries(EvoAI ${JSONBOX_LIBRARIES})
+endif(JSONBOX_FOUND)
+
 ################################################################################
 ### Enable C++14 and warnings
 ################################################################################

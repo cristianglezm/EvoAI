@@ -2,7 +2,10 @@
 #define NEURON_LAYER_HPP
 
 #include <EvoAI/Neuron.hpp>
+#include <EvoAI/Connection.hpp>
 #include <vector>
+#include <algorithm>
+#include <memory>
 
 namespace EvoAI{
     /**
@@ -13,7 +16,7 @@ namespace EvoAI{
             NeuronLayer();
             NeuronLayer(const std::size_t& numNeurons,const Neuron::Type& t,const double& bias);
             std::vector<Neuron>& getNeurons();
-            void setNeurons(std::vector<Neuron>&& ns);
+            NeuronLayer& setNeurons(std::vector<Neuron>&& ns);
             std::size_t size();
             NeuronLayer& setType(Neuron::Type& t);
             inline const Neuron::Type& getType() const { return type; }
@@ -29,6 +32,7 @@ namespace EvoAI{
         private:
             std::vector<Neuron> neurons;
             std::vector<double> biasWeights;
+            std::vector<Connection> connections;
             Neuron::Type type;
             double bias;
     };

@@ -32,4 +32,10 @@ namespace EvoAI{
        }
        return *this;
     }
+    bool Neuron::operator==(const Neuron& rhs) const{
+        return (value == rhs.value
+                && oldValue == rhs.oldValue
+                && error == rhs.error
+                && type == rhs.type);
+    }
 }

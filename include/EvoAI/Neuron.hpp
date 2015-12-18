@@ -67,6 +67,7 @@ namespace EvoAI{
              * @return Neuron&
              */
             Neuron& reset();
+            bool operator==(const Neuron& rhs) const;
             ~Neuron() = default;
         private:
             double value;
