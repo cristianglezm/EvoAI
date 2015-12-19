@@ -32,6 +32,12 @@ namespace EvoAI{
        }
        return *this;
     }
+    Neuron& Neuron::resetContext(){
+        value = 0.0;
+        oldValue = 0.0;
+        error = 0.0;
+        return *this;
+    }
     bool Neuron::operator==(const Neuron& rhs) const{
         return (value == rhs.value
                 && oldValue == rhs.oldValue

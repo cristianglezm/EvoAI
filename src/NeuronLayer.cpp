@@ -57,6 +57,11 @@ namespace EvoAI{
             n.reset();
         }
     }
+    void NeuronLayer::resetContext(){
+        for(auto& n:neurons){
+            n.resetContext();
+        }
+    }
     Neuron& NeuronLayer::operator[](const std::size_t& index){
         return neurons[index];
     }

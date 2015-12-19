@@ -27,13 +27,6 @@ FILE(GLOB_RECURSE EvoAI_INCLUDES "include/*.hpp")
 add_library(EvoAI SHARED ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
 
 ################################################################################
-### Testing
-################################################################################
-
-enable_testing()
-add_subdirectory(test)
-
-################################################################################
 ### Dependencies.
 ################################################################################
 
@@ -76,8 +69,15 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fexpensive-optimizations")
 endif()
 
+################################################################################
+### Testing
+################################################################################
+
+enable_testing()
+add_subdirectory(test)
+
 #################################################################################
-### Installing Game
+### Installing Library
 #################################################################################
 install(TARGETS EvoAI RUNTIME DESTINATION .
 			ARCHIVE DESTINATION .)

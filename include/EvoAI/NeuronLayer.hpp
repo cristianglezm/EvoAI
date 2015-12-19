@@ -27,6 +27,7 @@ namespace EvoAI{
             NeuronLayer& addConnection(const Connection& c);
             bool removeConnection(Connection* c);
             void reset();
+            void resetContext();
             Neuron& operator[](const std::size_t& index);
             ~NeuronLayer() = default;
         private:

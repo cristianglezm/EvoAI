@@ -67,6 +67,11 @@ namespace EvoAI{
              * @return Neuron&
              */
             Neuron& reset();
+            /**
+             * @brief resets the neuron Context
+             * @return Neuron&
+             */
+            Neuron& resetContext();
             bool operator==(const Neuron& rhs) const;
             ~Neuron() = default;
         private:
