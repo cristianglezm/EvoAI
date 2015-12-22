@@ -4,7 +4,11 @@ cmake_minimum_required(VERSION 3.1)
 ### User options.
 ################################################################################
 
-option(BUILD_STATIC "TRUE to statically link to the standard libraries and dependencies, FALSE to use them as DLLs" OFF)
+option(BUILD_TESTS "build tests" OFF)
+option(BUILD_TOOLS "build tools" OFF)
+option(BUILD_EXAMPLES "build examples" OFF)
+option(BUILD_STATIC "Build static" OFF)
+
 if(BUILD_STATIC)
 	SET(SFML_STATIC_LIBRARIES TRUE)
 	SET(BUILD_SHARED_LIBS FALSE)
@@ -50,14 +54,19 @@ if(JSONBOX_FOUND)
 	target_link_libraries(EvoAI ${JSONBOX_LIBRARIES})
 endif(JSONBOX_FOUND)
 
+if(BUILD_TESTS)
+	find_package(GTest REQUIRED)
+	include_directories(${GTEST_INCLUDE_DIRS})
+	find_package(GMock REQUIRED)
+	include_directories(${GMOCK_INCLUDE_DIRS})
+endif(BUILD_TESTS)
+
 ################################################################################
 ### Enable C++14 and warnings
 ################################################################################
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall")
-if(WIN32)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
-endif(WIN32)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
 
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
@@ -73,14 +82,34 @@ endif()
 ### Testing
 ################################################################################
 
-enable_testing()
-add_subdirectory(test)
+if(BUILD_TESTS)
+	enable_testing()
+	add_subdirectory(test)
+endif(BUILD_TESTS)
+
+################################################################################
+### examples
+################################################################################
+
+if(BUILD_EXAMPLES)
+	add_subdirectory(examples)
+endif(BUILD_EXAMPLES)
+
+################################################################################
+### Tools
+################################################################################
+
+if(BUILD_TOOLS)
+	add_subdirectory(tools)
+endif(BUILD_TOOLS)
 
 #################################################################################
 ### Installing Library
 #################################################################################
-install(TARGETS EvoAI RUNTIME DESTINATION .
-			ARCHIVE DESTINATION .)
+
+install(TARGETS EvoAI RUNTIME DESTINATION . ARCHIVE DESTINATION .)
+install(DIRECTORY include DESTINATION .)
+
 if(NOT BUILD_STATIC AND WIN32)
 	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 		install(FILES ${SFML_DEBUG_DLLS} DESTINATION .)
@@ -88,5 +117,3 @@ if(NOT BUILD_STATIC AND WIN32)
 		install(FILES ${SFML_RELEASE_DLLS} DESTINATION .)
 	endif()
 endif(NOT BUILD_STATIC AND WIN32)
-
-install(DIRECTORY include DESTINATION .)

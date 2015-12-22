@@ -4,8 +4,14 @@
 #include <vector>
 
 namespace EvoAI{
+    class Genome final{
+        public:
+            Genome();
 
-
+            ~Genome() = default;
+        private:
+            std::vector<double> data;
+    };
 }
 #endif // GENOME_HPP
 

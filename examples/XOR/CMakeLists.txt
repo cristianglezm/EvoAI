@@ -1,5 +1,5 @@
 
-set(SRCROOT ${PROJECT_SOURCE_DIR}/test/XOR)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/XOR)
 
 # all source files
 set(XOR_SRC ${SRCROOT}/XOR.cpp)
@@ -9,4 +9,4 @@ add_executable(XOR ${XOR_SRC})
 
 target_link_libraries(XOR EvoAI)
 
-add_test(TEST_XOR XOR)
+install(TARGETS XOR RUNTIME DESTINATION . ARCHIVE DESTINATION .)

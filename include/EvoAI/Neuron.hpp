@@ -1,6 +1,9 @@
 #ifndef NEURON_HPP
 #define NEURON_HPP
 
+#include <string>
+#include <sstream>
+
 namespace EvoAI{
     /**
      * @brief EvoAI::Neuron class
@@ -72,6 +75,12 @@ namespace EvoAI{
              * @return Neuron&
              */
             Neuron& resetContext();
+            std::string toJson(){
+std::ostringstream os;
+os << "{ " << "value:" << value << "," << "oldValue:" << oldValue << ","
+                            << "error:" << error << "," << "type:" << type << " }";
+return os.str();
+            }
             bool operator==(const Neuron& rhs) const;
             ~Neuron() = default;
         private:

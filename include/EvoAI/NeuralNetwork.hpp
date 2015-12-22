@@ -12,6 +12,7 @@ namespace EvoAI{
                           const std::size_t& numNeuronsPerHiddenLayer,const std::size_t& numOutputs);
             NeuralNetwork& addLayer(const NeuronLayer& l);
             NeuralNetwork& removeLayer(const NeuronLayer& l);
+            std::vector<double> run(auto ActivationFunction);
             NeuralNetwork& setLayers(std::vector<NeuronLayer>&& lys);
             std::vector<NeuronLayer>& getLayers();
             ~NeuralNetwork();
