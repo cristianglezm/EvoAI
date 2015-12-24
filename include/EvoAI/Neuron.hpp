@@ -76,10 +76,10 @@ namespace EvoAI{
              */
             Neuron& resetContext();
             std::string toJson(){
-std::ostringstream os;
-os << "{ " << "value:" << value << "," << "oldValue:" << oldValue << ","
+                std::ostringstream os;
+                os << "{ " << "value:" << value << "," << "oldValue:" << oldValue << ","
                             << "error:" << error << "," << "type:" << type << " }";
-return os.str();
+                return os.str();
             }
             bool operator==(const Neuron& rhs) const;
             ~Neuron() = default;

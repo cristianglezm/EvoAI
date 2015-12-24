@@ -3,7 +3,6 @@
 
 int main(){
     sf::RenderWindow App(sf::VideoMode(800, 600), "Neural Network Visualizer");
-
     while (App.isOpen()){
         sf::Event Event;
         while(App.pollEvent(Event)){

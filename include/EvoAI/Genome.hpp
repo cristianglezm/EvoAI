@@ -10,7 +10,14 @@ namespace EvoAI{
 
             ~Genome() = default;
         private:
-            std::vector<double> data;
+		//initial values
+		// funciones de la nn modifica values hidden layers, hidden neurons
+		// species size chromosomas
+		// limite cost function
+		// serializar nn, genome
+            std::vector<double> chromosomas;
+            std::unique_ptr<NeuralNetwork> nn;
+	    
     };
 }
 #endif // GENOME_HPP
