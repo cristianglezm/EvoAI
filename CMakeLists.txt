@@ -13,6 +13,7 @@ if(BUILD_STATIC)
 	SET(SFML_STATIC_LIBRARIES TRUE)
 	SET(BUILD_SHARED_LIBS FALSE)
 	SET(SFML_USE_STATIC_STD_LIBS TRUE)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
 endif(BUILD_STATIC)
 
 ################################################################################
@@ -66,8 +67,6 @@ endif(BUILD_TESTS)
 ################################################################################
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
-
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
 endif()

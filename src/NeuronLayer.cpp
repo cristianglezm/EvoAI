@@ -41,16 +41,11 @@ namespace EvoAI{
         return (removed == std::end(neurons));
     }
     NeuronLayer& NeuronLayer::addConnection(const Connection& c){
-        connections.push_back(c);
+        neurons[c.getSrc().neuron].addConnection(c);
         return *this;
     }
-    bool NeuronLayer::removeConnection(Connection* c){
-        auto removed = std::remove_if(std::begin(connections),std::end(connections),
-                                      [&c](Connection& rc){
-                                            return ((*c) == rc);
-                                      });
-        connections.erase(removed,std::end(connections));
-        return (removed == std::end(connections));
+    bool NeuronLayer::removeConnection(Connection& c){
+        return neurons[c.getSrc().neuron].removeConnection(c);
     }
     void NeuronLayer::reset(){
         for(auto& n: neurons){
@@ -64,5 +59,11 @@ namespace EvoAI{
     }
     Neuron& NeuronLayer::operator[](const std::size_t& index){
         return neurons[index];
+    }
+    bool NeuronLayer::operator==(const NeuronLayer& rhs) const{
+        return (neurons == rhs.neurons &&
+                biasWeights == rhs.biasWeights &&
+                type == rhs.type &&
+                bias == rhs.bias);
     }
 }

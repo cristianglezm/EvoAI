@@ -64,7 +64,7 @@ namespace EvoAI{
             /**
              *
              */
-            bool removeConnection(Connection* c);
+            bool removeConnection(Connection& c);
             /**
              *
              */
@@ -74,11 +74,11 @@ namespace EvoAI{
              */
             void resetContext();
             Neuron& operator[](const std::size_t& index);
+            bool operator==(const NeuronLayer& rhs) const;
             ~NeuronLayer() = default;
         private:
             std::vector<Neuron> neurons;
             std::vector<double> biasWeights;
-            std::vector<Connection> connections;
             Neuron::Type type;
             double bias;
     };

@@ -1,11 +1,11 @@
 #ifndef ACTIVATIONS_HPP
 
 namespace EvoAI{
-    struct Activations{
-
+    namespace Activations{
+        double sigmoid(const double& v){ return 1.0;}
     };
-    struct Derivatives{
-
+    namespace Derivatives{
+        double sigmoid(const double& v){ return 1.0;}
     };
 }
 #endif // ACTIVATIONS_HPP

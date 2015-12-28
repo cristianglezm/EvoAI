@@ -2,36 +2,41 @@
 #define GENOME_HPP
 
 #include <vector>
+#include <memory>
+#include <utility>
+#include <random>
+#include <EvoAI/NeuralNetwork.hpp>
+#include <JsonBox.h>
 
+/// TODO
+/// initial values
+/// funciones de la nn modifica values hidden layers, hidden neurons, connections, chromoSize?
+/// species size chromosomes
+/// limite cost function
+/// serializar nn, genome
 namespace EvoAI{
     class Genome final{
         public:
             Genome();
-
+            Genome(const std::size_t& chromoSize);
+            bool update();
+            JsonBox::Value toJson();
             ~Genome() = default;
         private:
-		//initial values
-		// funciones de la nn modifica values hidden layers, hidden neurons
-		// species size chromosomas
-		// limite cost function
-		// serializar nn, genome
-            std::vector<double> chromosomas;
+            Genome& addConnection();
+            Genome& removeConnection();
+            Genome& addNeuron();
+            Genome& removeNeuron();
+            Genome& addNeuronLayer();
+            Genome& removeNeuronLayer();
+            Genome& addChromosome(const double& chromo);
+            Genome& removeChromosome(const double& chromo);
+            bool initChromosomes();
+        private:
+            std::vector<double> chromosomes;
             std::unique_ptr<NeuralNetwork> nn;
-	    
+            double fitness;
+            int speciesId;
     };
 }
 #endif // GENOME_HPP
-
-/*
-	Genome is like a graph that describes dimensions aka number of input, outputs and layers
-	geolocation, weights from gaussean function?
-	something like data[input*outputs]
-	+---------------------+ layers?
-	|3|4|5|6|3|3|-7|-1|4|3| +-------+
-	+---------------------+ |3|4|5|6|
-	|1|3|5|5|6|2|-3|-2|5|6| +-------+
-	+---------------------+
-	|4|5|7|2|3|4|-2|-7|1|4| x|l,y|l connection geo y,l|x connection weight
-	+---------------------+
-
-*/

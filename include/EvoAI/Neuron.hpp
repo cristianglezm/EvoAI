@@ -3,6 +3,10 @@
 
 #include <string>
 #include <sstream>
+#include <vector>
+#include <algorithm>
+#include <JsonBox.h>
+#include <EvoAI/Connection.hpp>
 
 namespace EvoAI{
     /**
@@ -14,7 +18,7 @@ namespace EvoAI{
             /**
              * @brief Neuron::Type defines the type of a neuron.
              */
-            enum Type{
+            enum class Type{
                 CONTEXT,
                 HIDDEN,
                 INPUT,
@@ -29,16 +33,16 @@ namespace EvoAI{
              * @brief Constructor that takes a type parameter.
              * @param const Type& t
              */
-            Neuron(const Type& t);
+            Neuron(Type t);
             /**
              * @brief type setter
              */
-            Neuron& setType(const Type& t);
+            Neuron& setType(Type t);
             /**
              * @brief type getter
              * @return Type&
              */
-            inline const Type& getType() const{ return type; }
+            inline Type getType() const{ return type; }
             /**
              * @brief get value
              * @return double&
@@ -75,19 +79,47 @@ namespace EvoAI{
              * @return Neuron&
              */
             Neuron& resetContext();
-            std::string toJson(){
-                std::ostringstream os;
-                os << "{ " << "value:" << value << "," << "oldValue:" << oldValue << ","
-                            << "error:" << error << "," << "type:" << type << " }";
-                return os.str();
-            }
+            /**
+             * @brief 
+             * @return JsonBox::Value json 
+             */
+            JsonBox::Value toJson();
+            /**
+             * @brief 
+             * @param c
+             * @return 
+             */
+            Neuron& addConnection(const Connection& c);
+            /**
+             * @brief 
+             * @param c
+             * @return 
+             */
+            bool removeConnection(const Connection& c);
+            /**
+             * @brief 
+             * @param rhs
+             */
             bool operator==(const Neuron& rhs) const;
+            /**
+             * @brief 
+             * @return 
+             */
+            inline const double& getBiasWeight() const{ return biasWeight; }
+            /**
+             * @brief 
+             * @param bw
+             * @return 
+             */
+            Neuron& setBiasWeight(const double& bw);
             ~Neuron() = default;
         private:
             double value;
             double oldValue;
             double error;
+            double biasWeight;
             Type type;
+            std::vector<Connection> connections;
     };
 }
 

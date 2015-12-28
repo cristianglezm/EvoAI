@@ -18,7 +18,7 @@ namespace EvoAI{
              *
              */
             NeuralNetwork(const std::size_t& numInputs,const std::size_t& numHiddenLayers,
-                          const std::size_t& numNeuronsPerHiddenLayer,const std::size_t& numOutputs,const double bias);
+                          const std::size_t& numNeuronsPerHiddenLayer,const std::size_t& numOutputs,const double& bias);
             /**
              *
              */
@@ -32,28 +32,38 @@ namespace EvoAI{
              */
             std::vector<double> run(auto ActivationFunction);
             /**
-             *
+             * @brief 
+             * @return 
              */
             NeuralNetwork& setLayers(std::vector<NeuronLayer>&& lys);
             /**
-             *
+             * @brief 
+             * @return 
              */
             inline std::vector<NeuronLayer>& getLayers(){ return layers; }
             /**
-             *
+             * @brief 
+             * @return 
              */
-            NeuralNetwork& setInputs(std::vector<double>&& ins);
+            bool setInputs(std::vector<double>&& ins);
             /**
-             *
+             * @brief 
+             * @param c
+             * @return 
              */
             NeuralNetwork& addConnection(const Connection& c);
-            bool removeConnection(const Connection& c);
+            /**
+             * @brief Removes a connection from the neural network.
+             * @param c Connection&
+             * @return true if removed successfully.
+             */
+            bool removeConnection(Connection& c);
             ~NeuralNetwork() = default;
         private:
             std::vector<NeuronLayer> layers;
-            double bias;
     };
     std::vector<double> NeuralNetwork::run(auto ActivationFunction){
+        return std::vector<double>();
     }
 }
 #endif // NEURAL_NETWORK_HPP

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
-int main(){
+int main(int argc, char **argv){
     sf::RenderWindow App(sf::VideoMode(800, 600), "Neural Network Visualizer");
     while (App.isOpen()){
         sf::Event Event;
