@@ -98,12 +98,17 @@ namespace EvoAI{
             bool removeConnection(const Connection& c);
             /**
              * @brief 
+             * @return 
+             */
+            inline std::vector<Connection>& getConnections(){ return connections; }
+            /**
+             * @brief 
              * @param rhs
              */
             bool operator==(const Neuron& rhs) const;
             /**
-             * @brief 
-             * @return 
+             * @brief Getter
+             * @return const double& biasWeight
              */
             inline const double& getBiasWeight() const{ return biasWeight; }
             /**

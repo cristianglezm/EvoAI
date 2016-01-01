@@ -5,7 +5,8 @@ namespace EvoAI{
     : layers(){}
     NeuralNetwork::NeuralNetwork(const std::size_t& numInputs,const std::size_t& numHiddenLayers,
                                 const std::size_t& numNeuronsPerHiddenLayer,
-                                const std::size_t& numOutputs,const double& bias){
+                                const std::size_t& numOutputs,const double& bias)
+    :layers(){
         layers.push_back(NeuronLayer(numInputs,Neuron::Type::INPUT,bias));
         for(auto i=0u;i<numHiddenLayers;++i){
             layers.push_back(NeuronLayer(numNeuronsPerHiddenLayer,Neuron::Type::HIDDEN,bias));
@@ -46,5 +47,8 @@ namespace EvoAI{
     }
     bool NeuralNetwork::removeConnection(Connection& c){
         return layers[c.getSrc().layer].removeConnection(c);
+    }
+    NeuronLayer& NeuralNetwork::operator[](const std::size_t& index){
+        return layers[index];
     }
 }

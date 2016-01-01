@@ -9,7 +9,7 @@
 
 namespace EvoAI{
     /**
-     * @brief EvoAI::NeuronLayer class
+     * @brief 
      */
     class NeuronLayer final{
         public:
@@ -78,7 +78,6 @@ namespace EvoAI{
             ~NeuronLayer() = default;
         private:
             std::vector<Neuron> neurons;
-            std::vector<double> biasWeights;
             Neuron::Type type;
             double bias;
     };

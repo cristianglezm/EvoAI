@@ -22,7 +22,7 @@ namespace EvoAI{
             inline const Link& getSrc() const{ return src; }
             Connection& setDest(const Link& l);
             inline const Link& getDest() const{ return dest; }
-            inline const bool& isVisited(){ return visited; }
+            inline bool isVisited(){ return visited; }
             Connection& setVisited(bool b);
             inline const double& getWeight(){ return weight; }
             Connection& setWeight(const double& w);

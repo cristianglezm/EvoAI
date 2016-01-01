@@ -2,6 +2,7 @@
 #define NEURAL_NETWORK_HPP
 
 #include <vector>
+#include <algorithm>
 #include <EvoAI/NeuronLayer.hpp>
 
 namespace EvoAI{
@@ -58,6 +59,13 @@ namespace EvoAI{
              * @return true if removed successfully.
              */
             bool removeConnection(Connection& c);
+            /**
+             * @brief 
+             * @return 
+             */
+            inline std::size_t size() const{ return layers.size(); }
+            NeuronLayer& operator[](const std::size_t& index);
+            friend class NNRenderer;
             ~NeuralNetwork() = default;
         private:
             std::vector<NeuronLayer> layers;

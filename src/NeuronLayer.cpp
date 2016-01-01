@@ -3,18 +3,19 @@
 namespace EvoAI{
     NeuronLayer::NeuronLayer()
     : neurons()
-    , biasWeights()
     , bias(0.0){}
     NeuronLayer::NeuronLayer(const std::size_t& numNeurons,const Neuron::Type& t,const double& bias)
     : neurons()
-    , biasWeights()
-    , bias(bias){}
+    , bias(bias){
+        for(auto i=0u; i<numNeurons;++i){
+            neurons.push_back(Neuron(t));
+        }
+    }
     std::vector<Neuron>& NeuronLayer::getNeurons(){
         return neurons;
     }
     NeuronLayer& NeuronLayer::setNeurons(std::vector<Neuron>&& ns){
         neurons = std::move(ns);
-        biasWeights = std::vector<double>(neurons.size());
         return *this;
     }
     std::size_t NeuronLayer::size(){
@@ -62,7 +63,6 @@ namespace EvoAI{
     }
     bool NeuronLayer::operator==(const NeuronLayer& rhs) const{
         return (neurons == rhs.neurons &&
-                biasWeights == rhs.biasWeights &&
                 type == rhs.type &&
                 bias == rhs.bias);
     }
