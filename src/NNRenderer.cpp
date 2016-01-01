@@ -87,10 +87,14 @@ namespace EvoAI{
     void NNRenderer::setUpConnectionInfo(Connection& c, sf::Vector2f& p){
         const int textSize = 15;
         ConnectionInfo ci;
-        ci.connectionLine[0] = sf::Vertex(sf::Vector2f(p.x+5,p.y-5));
+        sf::Color color = sf::Color::White;
+        if(c.isRecurrent()){
+            color = sf::Color::Red;
+        }
+        ci.connectionLine[0] = sf::Vertex(sf::Vector2f(p.x+5,p.y-5),color);
         auto dlyr = c.getDest().layer * 270.0 + 8.0;
         auto dnrn = c.getDest().neuron * 150.0 + 8.0;
-        ci.connectionLine[1] = sf::Vertex(sf::Vector2f(dlyr,dnrn));
+        ci.connectionLine[1] = sf::Vertex(sf::Vector2f(dlyr,dnrn),color);
         ci.weight = sf::Text("Weight: " + std::to_string(c.getWeight()),font, textSize);
         ci.weight.setPosition(sf::Vector2f(p.x+150,p.y+15));
         ci.cycles = sf::Text("Cycles: " + std::to_string(c.getCycles()),font, textSize);

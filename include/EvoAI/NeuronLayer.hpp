@@ -13,6 +13,13 @@ namespace EvoAI{
      */
     class NeuronLayer final{
         public:
+            enum ActivationType{
+                SIGMOID,
+                TANH,
+                SINUSOID,
+                SOFTMAX
+            };
+        public:
             /**
              *
              */
@@ -73,12 +80,24 @@ namespace EvoAI{
              *
              */
             void resetContext();
+            /**
+             * @brief 
+             * @return 
+             */
+            ActivationType getActivationType() const{ return activationType; }
+            /**
+             * @brief 
+             * @param atype
+             * @return 
+             */
+            NeuronLayer& setActivationType(ActivationType atype);
             Neuron& operator[](const std::size_t& index);
             bool operator==(const NeuronLayer& rhs) const;
             ~NeuronLayer() = default;
         private:
             std::vector<Neuron> neurons;
             Neuron::Type type;
+            ActivationType activationType;
             double bias;
     };
 }

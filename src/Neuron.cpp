@@ -5,12 +5,16 @@ namespace EvoAI{
     : value(0.0)
     , oldValue(0.0)
     , error(0.0)
-    , type(Type::HIDDEN){}
+    , biasWeight(1.0)
+    , type(Type::HIDDEN)
+    , connections(){}
     Neuron::Neuron(Type t)
     : value(0.0)
     , oldValue(0.0)
     , error(0.0)
-    , type(t){}
+    , biasWeight(1.0)
+    , type(t)
+    , connections(){}
     Neuron& Neuron::setType(Type t){
         type = t;
         return *this;
@@ -18,6 +22,11 @@ namespace EvoAI{
     Neuron& Neuron::setValue(const double& val){
         oldValue = value;
         value = val;
+        return *this;
+    }
+    Neuron& Neuron::addValue(const double& val){
+        oldValue = value;
+        value += val;
         return *this;
     }
     Neuron& Neuron::setError(const double& err){
@@ -58,7 +67,20 @@ namespace EvoAI{
         }
         o["connections"] = Value(a);
         return Value(o);
-}
+    }
+    std::string Neuron::toString(){
+        std::ostringstream os;
+        os << "value: " << value << ", oldValue: " << oldValue << 
+              ", error: " << error << ", biasWeight: " << biasWeight << ", type: ";
+        switch(type){
+            case Type::CONTEXT: os << "context";   break;
+            case Type::HIDDEN:  os << "hidden";    break;
+            case Type::INPUT:   os << "input";     break;
+            case Type::OUTPUT:  os << "output";    break;
+            default:            os << "undefined"; break;
+        }
+        return os.str();
+    }
     Neuron& Neuron::addConnection(const Connection& c){
         connections.push_back(c);
         return *this;

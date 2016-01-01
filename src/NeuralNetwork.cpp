@@ -2,11 +2,15 @@
 
 namespace EvoAI{
     NeuralNetwork::NeuralNetwork()
-    : layers(){}
+    : layers()
+    , connections()
+    , connectionsCached(false){}
     NeuralNetwork::NeuralNetwork(const std::size_t& numInputs,const std::size_t& numHiddenLayers,
                                 const std::size_t& numNeuronsPerHiddenLayer,
                                 const std::size_t& numOutputs,const double& bias)
-    :layers(){
+    : layers()
+    , connections()
+    , connectionsCached(false){
         layers.push_back(NeuronLayer(numInputs,Neuron::Type::INPUT,bias));
         for(auto i=0u;i<numHiddenLayers;++i){
             layers.push_back(NeuronLayer(numNeuronsPerHiddenLayer,Neuron::Type::HIDDEN,bias));
@@ -25,6 +29,58 @@ namespace EvoAI{
         layers.erase(removed,std::end(layers));
         return (removed == std::end(layers));
     }
+    std::vector<double> NeuralNetwork::run(){
+        std::vector<double> res;
+        auto& self = *this;
+        for(auto& c:getConnections()){
+            auto w = c->getWeight();
+            auto& src = c->getSrc();
+            auto& dest = c->getDest();
+            auto& nrnSrc = self[src.layer][src.neuron];
+            auto& nrnDest = self[dest.layer][dest.neuron];
+            auto input = 0.0;
+            switch(nrnSrc.getType()){
+                case Neuron::Type::INPUT:
+                        nrnDest.addValue(nrnSrc.getValue() * w);
+                    break;
+                case Neuron::Type::CONTEXT:
+                case Neuron::Type::HIDDEN:
+                        nrnSrc.addValue(self[src.layer].getBias() * nrnSrc.getBiasWeight());
+                        switch(self[src.layer].getActivationType()){
+                            case NeuronLayer::TANH:
+                                    input = Activations::tanh(nrnSrc.getValue());
+                                break;
+                            case NeuronLayer::SINUSOID:
+                                    input = Activations::sinusoid(nrnSrc.getValue());
+                                break;
+                            case NeuronLayer::SIGMOID:
+                            default:
+                                    input = Activations::sigmoid(nrnSrc.getValue());
+                                break;
+                        }
+                        nrnDest.addValue(input * w);
+                    break;
+                default:
+                    break;
+            }
+        }
+        auto numLayers = size();
+        auto& outputLayer = self[numLayers-1];
+        auto output = 0.0;
+        for(auto& n:outputLayer.getNeurons()){
+            n.addValue(outputLayer.getBias() * n.getBiasWeight());
+            switch(outputLayer.getActivationType()){
+                case NeuronLayer::TANH:
+                    break;
+                case NeuronLayer::SIGMOID:
+                default:
+                    output = Activations::sigmoid(n.getValue());
+                    break;
+            }
+            res.push_back(output);
+        }
+        return std::move(res);
+    }
     NeuralNetwork& NeuralNetwork::setLayers(std::vector<NeuronLayer>&& lys){
         layers = std::move(lys);
         return *this;
@@ -34,19 +90,33 @@ namespace EvoAI{
         if(ins.size() != numInputs){
             return false;
         }
-        std::vector<Neuron> neurons(numInputs);
         for(auto i=0u;i<numInputs;++i){
-            neurons[i].setValue(ins[i]);
+            layers[0][i].setValue(ins[i]);
         }
-        layers[0].setNeurons(std::move(neurons));
         return true;
     }
     NeuralNetwork& NeuralNetwork::addConnection(const Connection& c){
         layers[c.getSrc().layer].addConnection(c);
+        connectionsCached = false;
         return *this;
     }
     bool NeuralNetwork::removeConnection(Connection& c){
+        connectionsCached = false;
         return layers[c.getSrc().layer].removeConnection(c);
+    }
+    std::vector<Connection*>& NeuralNetwork::getConnections(){
+        if(connectionsCached){
+            return connections;
+        }
+        for(auto& l:layers){
+            for(auto& n:l.getNeurons()){
+                for(auto& c:n.getConnections()){
+                    connections.push_back(&c);
+                }
+            }
+        }
+        connectionsCached = true;
+        return connections;
     }
     NeuronLayer& NeuralNetwork::operator[](const std::size_t& index){
         return layers[index];

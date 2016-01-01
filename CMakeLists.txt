@@ -108,7 +108,7 @@ endif(BUILD_TOOLS)
 
 find_package(Doxygen)
 IF(DOXYGEN_FOUND)
-	SET(DOXYGEN_INPUT "${CMAKE_SOURCE_DIR}/include" "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/doxyfile")
+	SET(DOXYGEN_INPUT "${CMAKE_SOURCE_DIR}/doxyfile")
 	SET(DOXYGEN_OUTPUT "${CMAKE_SOURCE_DIR}/docs")
 
 	ADD_CUSTOM_COMMAND(
@@ -116,7 +116,6 @@ IF(DOXYGEN_FOUND)
 	  COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
 	  COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT}
 	  COMMAND ${CMAKE_COMMAND} -E echo "Done."
-	  WORKING_DIRECTORY ${DOXYGEN_OUTPUT}
 	  DEPENDS ${DOXYGEN_INPUT})
 
 	ADD_CUSTOM_TARGET(docs ALL DEPENDS ${DOXYGEN_OUTPUT})
@@ -124,8 +123,7 @@ IF(DOXYGEN_FOUND)
 	ADD_CUSTOM_TARGET(docs_forced
 	  COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
 	  COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT}
-	  COMMAND ${CMAKE_COMMAND} -E echo "Done."
-	  WORKING_DIRECTORY ${DOXYGEN_OUTPUT})
+	  COMMAND ${CMAKE_COMMAND} -E echo "Done.")
 ENDIF(DOXYGEN_FOUND)
 
 #################################################################################

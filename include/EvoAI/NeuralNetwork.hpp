@@ -4,10 +4,15 @@
 #include <vector>
 #include <algorithm>
 #include <EvoAI/NeuronLayer.hpp>
+#include <EvoAI/Activations.hpp>
 
 namespace EvoAI{
     /**
-     *
+     * @class NeuralNetwork
+     * @author Cristian Glez <cristian.glez.m@gmail.com>
+     * @date 01/01/2016
+     * @file NeuralNetwork.hpp
+     * @brief 
      */
     class NeuralNetwork final{
         public:
@@ -31,7 +36,7 @@ namespace EvoAI{
             /**
              *
              */
-            std::vector<double> run(auto ActivationFunction);
+            std::vector<double> run();
             /**
              * @brief 
              * @return 
@@ -64,14 +69,21 @@ namespace EvoAI{
              * @return 
              */
             inline std::size_t size() const{ return layers.size(); }
+            /**
+             * @brief ///TODO Very Important
+             * @return 
+             */
+            std::vector<Connection*>& getConnections();
+            /**
+             * @brief 
+             */
             NeuronLayer& operator[](const std::size_t& index);
             friend class NNRenderer;
             ~NeuralNetwork() = default;
         private:
             std::vector<NeuronLayer> layers;
+            std::vector<Connection*> connections;
+            bool connectionsCached;
     };
-    std::vector<double> NeuralNetwork::run(auto ActivationFunction){
-        return std::vector<double>();
-    }
 }
 #endif // NEURAL_NETWORK_HPP

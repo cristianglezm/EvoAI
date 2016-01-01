@@ -3,9 +3,11 @@
 namespace EvoAI{
     NeuronLayer::NeuronLayer()
     : neurons()
+    , activationType(ActivationType::SIGMOID)
     , bias(0.0){}
     NeuronLayer::NeuronLayer(const std::size_t& numNeurons,const Neuron::Type& t,const double& bias)
     : neurons()
+    , activationType(ActivationType::SIGMOID)
     , bias(bias){
         for(auto i=0u; i<numNeurons;++i){
             neurons.push_back(Neuron(t));
@@ -57,6 +59,10 @@ namespace EvoAI{
         for(auto& n:neurons){
             n.resetContext();
         }
+    }
+    NeuronLayer& NeuronLayer::setActivationType(ActivationType atype){
+        activationType = atype;
+        return *this;
     }
     Neuron& NeuronLayer::operator[](const std::size_t& index){
         return neurons[index];

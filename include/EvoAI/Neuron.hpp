@@ -54,6 +54,12 @@ namespace EvoAI{
              */
             Neuron& setValue(const double& val);
             /**
+             * @brief 
+             * @param val
+             * @return 
+             */
+            Neuron& addValue(const double& val);
+            /**
              * @brief oldValue getter
              * @return double&
              */
@@ -84,6 +90,11 @@ namespace EvoAI{
              * @return JsonBox::Value json 
              */
             JsonBox::Value toJson();
+            /**
+             * @brief 
+             * @return 
+             */
+            std::string toString();
             /**
              * @brief 
              * @param c

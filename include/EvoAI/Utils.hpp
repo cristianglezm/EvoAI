@@ -12,7 +12,7 @@ namespace EvoAI{
      * @param bias
      * @return 
      */
-    std::unique_ptr<NeuralNetwork> CreateFeedForwardNN(const size_t& numInputs, const size_t& numHidden,
+    std::unique_ptr<NeuralNetwork> createFeedForwardNN(const size_t& numInputs, const size_t& numHidden,
                                                          const size_t& numNeuronsPerHidden, const std::size_t& numOutputs,
                                                          const double& bias){
         std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>(numInputs,numHidden, numNeuronsPerHidden, numOutputs, bias);
@@ -39,19 +39,48 @@ namespace EvoAI{
         }
         return std::move(nn);
     }
-    /**
-     * @brief 
-     * @return 
-     */
-    std::unique_ptr<NeuralNetwork> createXORNeuralNetwork(){
-        std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>(2,1,3,1,1.0);
-        nn->addConnection(Connection(Link(0,0),Link(1,0),1.0));
-        nn->addConnection(Connection(Link(0,0),Link(1,1),1.0));
-        nn->addConnection(Connection(Link(0,1),Link(1,1),1.0));
-        nn->addConnection(Connection(Link(0,1),Link(1,2),1.0));
-        nn->addConnection(Connection(Link(1,0),Link(2,0),1.0));
-        nn->addConnection(Connection(Link(1,1),Link(2,0),-2.0));
-        nn->addConnection(Connection(Link(1,2),Link(2,0),1.0));
+    std::unique_ptr<NeuralNetwork> createElmanNeuralNetwork(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numNeuronsPerHiddenLayer,
+                                                                const std::size_t& numOutputs, const double& bias){
+        std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>();
+        nn->addLayer(NeuronLayer(numInputs,Neuron::Type::INPUT,bias));
+        for(auto i=0u;i<numHidden;++i){
+            nn->addLayer(NeuronLayer(numNeuronsPerHiddenLayer,Neuron::Type::CONTEXT,bias));
+            nn->addLayer(NeuronLayer(numNeuronsPerHiddenLayer,Neuron::Type::HIDDEN,bias));
+        }
+        nn->addLayer(NeuronLayer(numOutputs,Neuron::Type::OUTPUT,bias));
+        std::cout << "building input connections" << std::endl;
+        for(auto i=0u;i<numInputs;++i){
+            for(auto j=0u;j<numNeuronsPerHiddenLayer;++j){
+                nn->addConnection(Connection(Link(0,i),Link(2,j),1.0));
+            }
+        }
+        std::cout << "building forwards and context connections" << std::endl;
+        auto numContext = numHidden * 2;
+        for(auto i=2u;i<(numContext-2);i+=2){
+            for(auto j=0u;j<numNeuronsPerHiddenLayer;++j){
+                // save values to Context
+                nn->addConnection(Connection(Link(i,j),Link(i-1,j),1.0));
+                for(auto k=0u;k<numNeuronsPerHiddenLayer;++k){
+                    // connect forward
+                    nn->addConnection(Connection(Link(i,j),Link(i+1,k),0.5));
+                    // pass Values from Context backwards
+                    nn->addConnection(Connection(Link(i-1,j),Link(i,k),1.0));
+                }
+            }
+        }
+        std::cout << "Building Outputs" << std::endl;
+        for(auto j=0u;j<numNeuronsPerHiddenLayer;++j){
+            // save values to Context
+            nn->addConnection(Connection(Link(numContext,j), Link(numContext-1,j),1.0));
+            for(auto k=0u;k<numOutputs;++k){
+                nn->addConnection(Connection(Link(numContext,j), Link(numContext+1,k),1.0));
+            }
+            for(auto i=0u;i<numNeuronsPerHiddenLayer;++i){
+                // pass Values from Context
+                nn->addConnection(Connection(Link(numContext-1,j),Link(numContext,i),1.0));
+            }
+        }
+        std::cout << "Finished Building Elman " << std::endl;
         return std::move(nn);
     }
 }
