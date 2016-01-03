@@ -17,23 +17,30 @@ namespace EvoAI{
                 SIGMOID,
                 TANH,
                 SINUSOID,
-                SOFTMAX
+                RELU,
+                NOISY_RELU,
+                LEAKY_RELU,
+                EXPONENTIAL
             };
         public:
             /**
-             *
+             * @brief 
+             * @return 
              */
             NeuronLayer();
             /**
-             *
+             * @brief 
+             * @return 
              */
             NeuronLayer(const std::size_t& numNeurons,const Neuron::Type& t,const double& bias);
             /**
-             *
+             * @brief 
+             * @return 
              */
             std::vector<Neuron>& getNeurons();
             /**
-             *
+             * @brief 
+             * @return 
              */
             NeuronLayer& setNeurons(std::vector<Neuron>&& ns);
             /**
@@ -91,6 +98,18 @@ namespace EvoAI{
              * @return 
              */
             NeuronLayer& setActivationType(ActivationType atype);
+            /**
+             * @brief Sets how many cycles the layer context neurons will remember.
+             * @param cycles&&
+             * @return NeuronLayer&
+             * TODO
+             */
+            NeuronLayer& setCyclesLimit(int&& cycles);
+            /**
+             * @brief 
+             * @return 
+             */
+            inline const int& getCyclesLimit() const{ return cyclesLimit; }
             Neuron& operator[](const std::size_t& index);
             bool operator==(const NeuronLayer& rhs) const;
             ~NeuronLayer() = default;
@@ -99,6 +118,7 @@ namespace EvoAI{
             Neuron::Type type;
             ActivationType activationType;
             double bias;
+            int cyclesLimit;
     };
 }
 

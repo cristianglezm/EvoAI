@@ -2,6 +2,7 @@
 #define ACTIVATIONS_HPP
 
 #include <cmath>
+#include <random>
 #include <iostream>
 
 namespace EvoAI{
@@ -15,6 +16,21 @@ namespace EvoAI{
         static double sinusoid(const double& v){
             return std::sin(v);
         }
+        static double relu(const double& v){
+            return std::max(0.0,v);
+        }
+        static double noisyRelu(const double& v){
+            static std::default_random_engine generator;
+            std::normal_distribution<double> distribution(0,sigmoid(v));
+            return std::max(0.0,v+distribution(generator));
+        }
+        static double leakyRelu(const double& x){
+            //return (x > 0 ? x:(0.01*x));
+            return (x > 0.0 ? 1.0:(0.01));
+        }
+        static double exponential(const double& v){
+            return std::exp(v);
+        }
     };
     struct Derivatives{
         static double sigmoid(const double& v){
@@ -25,6 +41,9 @@ namespace EvoAI{
         }
         static double sinusoid(const double& v){
             return std::cos(v);
+        }
+        static double relu(const double& v){
+            return (v > 0.0 ? 1.0:0.0);
         }
     };
 }

@@ -5,20 +5,20 @@ namespace EvoAI{
     : layers()
     , connections()
     , connectionsCached(false){}
-    NeuralNetwork::NeuralNetwork(const std::size_t& numInputs,const std::size_t& numHiddenLayers,
+    NeuralNetwork::NeuralNetwork(const std::size_t& numInputs, const std::size_t& numHiddenLayers,
                                 const std::size_t& numNeuronsPerHiddenLayer,
-                                const std::size_t& numOutputs,const double& bias)
+                                const std::size_t& numOutputs, const double& bias)
     : layers()
     , connections()
     , connectionsCached(false){
-        layers.push_back(NeuronLayer(numInputs,Neuron::Type::INPUT,bias));
+        layers.emplace_back(NeuronLayer(numInputs,Neuron::Type::INPUT,bias));
         for(auto i=0u;i<numHiddenLayers;++i){
-            layers.push_back(NeuronLayer(numNeuronsPerHiddenLayer,Neuron::Type::HIDDEN,bias));
+            layers.emplace_back(NeuronLayer(numNeuronsPerHiddenLayer,Neuron::Type::HIDDEN,bias));
         }
-        layers.push_back(NeuronLayer(numOutputs,Neuron::Type::OUTPUT,bias));
+        layers.emplace_back(NeuronLayer(numOutputs,Neuron::Type::OUTPUT,bias));
     }
     NeuralNetwork& NeuralNetwork::addLayer(const NeuronLayer& l){
-        layers.push_back(l);
+        layers.emplace_back(l);
         return *this;
     }
     bool NeuralNetwork::removeLayer(const NeuronLayer& l){
@@ -45,20 +45,18 @@ namespace EvoAI{
                     break;
                 case Neuron::Type::CONTEXT:
                 case Neuron::Type::HIDDEN:
-                        nrnSrc.addValue(self[src.layer].getBias() * nrnSrc.getBiasWeight());
-                        switch(self[src.layer].getActivationType()){
-                            case NeuronLayer::TANH:
-                                    input = Activations::tanh(nrnSrc.getValue());
-                                break;
-                            case NeuronLayer::SINUSOID:
-                                    input = Activations::sinusoid(nrnSrc.getValue());
-                                break;
-                            case NeuronLayer::SIGMOID:
-                            default:
-                                    input = Activations::sigmoid(nrnSrc.getValue());
-                                break;
+                        if(nrnDest.getType() != Neuron::Type::CONTEXT){
+                            nrnSrc.addValue(self[src.layer].getBias() * nrnSrc.getBiasWeight());
                         }
-                        nrnDest.addValue(input * w);
+                        input = activate(self[src.layer].getActivationType(),nrnSrc);
+                        if(nrnDest.getType() != Neuron::Type::CONTEXT){
+                            nrnDest.addValue(input * w);
+                        }else{
+                            if(c->getCycles() > self[dest.layer].getCyclesLimit()){
+                                nrnDest.resetContext();
+                            }
+                            nrnDest.addValue(input * w);
+                        }
                     break;
                 default:
                     break;
@@ -69,15 +67,8 @@ namespace EvoAI{
         auto output = 0.0;
         for(auto& n:outputLayer.getNeurons()){
             n.addValue(outputLayer.getBias() * n.getBiasWeight());
-            switch(outputLayer.getActivationType()){
-                case NeuronLayer::TANH:
-                    break;
-                case NeuronLayer::SIGMOID:
-                default:
-                    output = Activations::sigmoid(n.getValue());
-                    break;
-            }
-            res.push_back(output);
+            output = activate(outputLayer.getActivationType(),n);
+            res.emplace_back(output);
         }
         return std::move(res);
     }
@@ -111,14 +102,52 @@ namespace EvoAI{
         for(auto& l:layers){
             for(auto& n:l.getNeurons()){
                 for(auto& c:n.getConnections()){
-                    connections.push_back(&c);
+                    connections.emplace_back(&c);
                 }
             }
         }
         connectionsCached = true;
         return connections;
     }
+    Connection* NeuralNetwork::findConnection(Link&& src,Link&& dest){
+        auto& self = *this;
+        auto& conns = self[src.layer][src.neuron].getConnections();
+        auto c = std::find_if(std::begin(conns),std::end(conns),
+                            [&src,&dest](const Connection& cn){
+                                return (src == cn.getSrc() &&
+                                        dest == cn.getDest());
+                            });
+        if(c != std::end(conns)){
+            return &(*c);
+        }
+        return nullptr;
+    }
+    bool NeuralNetwork::hasConnection(Link&& src, Link&& dest){
+        auto& self = *this;
+        auto& conns = self[src.layer][src.neuron].getConnections();
+        auto c = std::find_if(std::begin(conns),std::end(conns),
+                            [&src,&dest](const Connection& cn){
+                                return (src == cn.getSrc() &&
+                                        dest == cn.getDest());
+                            });
+        return (c != std::end(conns));
+    }
     NeuronLayer& NeuralNetwork::operator[](const std::size_t& index){
         return layers[index];
+    }
+//private member functions
+    const double NeuralNetwork::activate(NeuronLayer::ActivationType at, const Neuron& n) const{
+        switch(at){
+            case NeuronLayer::TANH:
+                    return Activations::tanh(n.getValue());
+                break;
+            case NeuronLayer::SINUSOID:
+                    return Activations::sinusoid(n.getValue());
+                break;
+            case NeuronLayer::SIGMOID:
+            default:
+                    return Activations::sigmoid(n.getValue());
+                break;
+        }
     }
 }

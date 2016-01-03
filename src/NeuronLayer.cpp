@@ -4,13 +4,15 @@ namespace EvoAI{
     NeuronLayer::NeuronLayer()
     : neurons()
     , activationType(ActivationType::SIGMOID)
-    , bias(0.0){}
+    , bias(0.0)
+    , cyclesLimit(3){}
     NeuronLayer::NeuronLayer(const std::size_t& numNeurons,const Neuron::Type& t,const double& bias)
     : neurons()
     , activationType(ActivationType::SIGMOID)
-    , bias(bias){
+    , bias(bias)
+    , cyclesLimit(3){
         for(auto i=0u; i<numNeurons;++i){
-            neurons.push_back(Neuron(t));
+            neurons.emplace_back(Neuron(t));
         }
     }
     std::vector<Neuron>& NeuronLayer::getNeurons(){
@@ -24,7 +26,7 @@ namespace EvoAI{
         return neurons.size();
     }
     NeuronLayer& NeuronLayer::addNeuron(const Neuron& n){
-        neurons.push_back(n);
+        neurons.emplace_back(n);
         return *this;
     }
     NeuronLayer& NeuronLayer::setType(Neuron::Type& t){
@@ -62,6 +64,10 @@ namespace EvoAI{
     }
     NeuronLayer& NeuronLayer::setActivationType(ActivationType atype){
         activationType = atype;
+        return *this;
+    }
+    NeuronLayer& NeuronLayer::setCyclesLimit(int&& cycles){
+        cyclesLimit = cycles;
         return *this;
     }
     Neuron& NeuronLayer::operator[](const std::size_t& index){

@@ -82,7 +82,7 @@ namespace EvoAI{
         return os.str();
     }
     Neuron& Neuron::addConnection(const Connection& c){
-        connections.push_back(c);
+        connections.emplace_back(c);
         return *this;
     }
     bool Neuron::removeConnection(const Connection& c){

@@ -65,21 +65,41 @@ namespace EvoAI{
              */
             bool removeConnection(Connection& c);
             /**
-             * @brief 
-             * @return 
-             */
-            inline std::size_t size() const{ return layers.size(); }
-            /**
              * @brief ///TODO Very Important
              * @return 
              */
             std::vector<Connection*>& getConnections();
             /**
              * @brief 
+             * @param src
+             * @param dest
+             * @return 
+             */
+            Connection* findConnection(Link&& src,Link&& dest);
+            /**
+             * @brief 
+             * @return 
+             */
+            bool hasConnection(Link&& src, Link&& dest);
+            /**
+             * @brief 
+             * @return 
+             */
+            inline std::size_t size() const{ return layers.size(); }
+            /**
+             * @brief 
              */
             NeuronLayer& operator[](const std::size_t& index);
             friend class NNRenderer;
             ~NeuralNetwork() = default;
+        private:
+            /**
+             * @brief applies the neuron activation
+             * @param at ActivationType
+             * @param n const Neuron&
+             * @return const double
+             */
+            const double activate(NeuronLayer::ActivationType at, const Neuron& n) const;
         private:
             std::vector<NeuronLayer> layers;
             std::vector<Connection*> connections;
