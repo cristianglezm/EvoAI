@@ -10,6 +10,9 @@ namespace EvoAI{
         static double sigmoid(const double& v){
             return (1.0/(1.0+std::exp(-v)));
         }
+        static double sigmoid(const double& v, const double& step){
+            return (1.0/(1.0+std::exp(-(v-step))));
+        }
         static double tanh(const double& v){
             return std::tanh(v);
         }

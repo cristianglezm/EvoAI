@@ -15,6 +15,7 @@ namespace EvoAI{
         public:
             enum ActivationType{
                 SIGMOID,
+                STEPPED_SIGMOID,
                 TANH,
                 SINUSOID,
                 RELU,
