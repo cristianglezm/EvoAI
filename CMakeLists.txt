@@ -72,7 +72,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pg")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fexpensive-optimizations")
 endif()
