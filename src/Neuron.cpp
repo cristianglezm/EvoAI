@@ -5,14 +5,14 @@ namespace EvoAI{
     : value(0.0)
     , oldValue(0.0)
     , error(0.0)
-    , biasWeight(0.5)
+    , biasWeight(1.0)
     , type(Type::HIDDEN)
     , connections(){}
     Neuron::Neuron(Type t)
     : value(0.0)
     , oldValue(0.0)
     , error(0.0)
-    , biasWeight(0.5)
+    , biasWeight(1.0)
     , type(t)
     , connections(){}
     Neuron& Neuron::setType(Type t){

@@ -11,10 +11,10 @@ int main(int argc, char **argv){
     using EvoAI::Connection;
     using EvoAI::NNRenderer;
     bool running = true;
-    std::unique_ptr<NeuralNetwork> nn = EvoAI::createElmanNeuralNetwork(1,3,2,1,1.0);
+    std::unique_ptr<NeuralNetwork> nn = EvoAI::createElmanNeuralNetwork(15,9,15,15,1.0);
     std::vector<double> inputs;
     inputs.emplace_back(0.0);
-    nn->setInputs(std::move(inputs));
+    //nn->setInputs(std::move(inputs));
     auto res = nn->run();
     std::unique_ptr<NNRenderer> nr = std::make_unique<NNRenderer>(nn.get());
     std::cout << "output: " << res[0] << std::endl;
