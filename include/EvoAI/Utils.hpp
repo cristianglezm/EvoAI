@@ -56,13 +56,13 @@ namespace EvoAI{
         }
         std::cout << "building forwards and context connections" << std::endl;
         auto numContext = numHidden * 2;
-        for(auto i=2u;i<(numContext-2);i+=2){
+        for(auto i=2u;i<numContext;i+=2){
             for(auto j=0u;j<numNeuronsPerHiddenLayer;++j){
                 // save values to Context
                 nn->addConnection(Connection(Link(i,j),Link(i-1,j),1.0));
                 for(auto k=0u;k<numNeuronsPerHiddenLayer;++k){
                     // connect forward
-                    nn->addConnection(Connection(Link(i,j),Link(i+1,k),0.5));
+                    nn->addConnection(Connection(Link(i,j),Link(i+2,k),0.5));
                     // pass Values from Context backwards
                     nn->addConnection(Connection(Link(i-1,j),Link(i,k),1.0));
                 }
@@ -81,6 +81,21 @@ namespace EvoAI{
             }
         }
         std::cout << "Finished Building Elman " << std::endl;
+        return std::move(nn);
+    }
+    std::unique_ptr<EvoAI::NeuralNetwork> createXORNeuralNetwork(){
+        std::unique_ptr<EvoAI::NeuralNetwork> nn = std::make_unique<EvoAI::NeuralNetwork>(2,1,2,1,1.0);
+        nn->addConnection(EvoAI::Connection(EvoAI::Link(0,0),EvoAI::Link(1,0),1.0));
+        nn->addConnection(EvoAI::Connection(EvoAI::Link(0,0),EvoAI::Link(1,1),1.0));
+        
+        nn->addConnection(EvoAI::Connection(EvoAI::Link(0,1),EvoAI::Link(1,0),1.0));
+        nn->addConnection(EvoAI::Connection(EvoAI::Link(0,1),EvoAI::Link(1,1),1.0));
+        
+        nn->addConnection(EvoAI::Connection(EvoAI::Link(1,0),EvoAI::Link(2,0),1.0));
+        nn->addConnection(EvoAI::Connection(EvoAI::Link(1,1),EvoAI::Link(2,0),-1.0));
+        (*nn)[1][0].setBiasWeight(-0.5);
+        (*nn)[1][1].setBiasWeight(-1.5);
+        (*nn)[2][0].setBiasWeight(-0.2);
         return std::move(nn);
     }
 }
