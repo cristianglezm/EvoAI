@@ -11,16 +11,13 @@ int main(int argc, char **argv){
     using EvoAI::Connection;
     using EvoAI::NNRenderer;
     bool running = true;
-    std::unique_ptr<NeuralNetwork> nn = EvoAI::createElmanNeuralNetwork(1,2,2,1,1.0);
-    //(*nn)[2].setActivationType(EvoAI::NeuronLayer::TANH);
-    //(*nn)[3].setActivationType(EvoAI::NeuronLayer::SINUSOID);
+    std::unique_ptr<NeuralNetwork> nn = EvoAI::createElmanNeuralNetwork(1,3,2,1,1.0);
     std::vector<double> inputs;
     inputs.emplace_back(0.0);
-    /// TODO mirar formula revisar
-    nn->addConnection(Connection({2,1},{2,0},-0.5));
     nn->setInputs(std::move(inputs));
     auto res = nn->run();
     std::unique_ptr<NNRenderer> nr = std::make_unique<NNRenderer>(nn.get());
+    std::cout << "output: " << res[0] << std::endl;
     sf::RenderWindow App(sf::VideoMode(1270, 720), "Neural Network Visualizer");
     while (running){
         sf::Event event;

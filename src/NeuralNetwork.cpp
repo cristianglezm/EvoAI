@@ -45,7 +45,7 @@ namespace EvoAI{
                     break;
                 case Neuron::Type::CONTEXT:
                 case Neuron::Type::HIDDEN:
-                        if(nrnDest.getType() != Neuron::Type::CONTEXT){
+                        if(nrnSrc.getType() != Neuron::Type::CONTEXT){
                             nrnSrc.addValue(self[src.layer].getBias() * nrnSrc.getBiasWeight());
                         }
                         input = activate(self[src.layer].getActivationType(),nrnSrc);
@@ -54,8 +54,24 @@ namespace EvoAI{
                         }else{
                             if(c->getCycles() > self[dest.layer].getCyclesLimit()){
                                 nrnDest.resetContext();
+                                c->setCycles(0);
                             }
                             nrnDest.addValue(input * w);
+                            c->setCycles(c->getCycles()+1);
+                        }
+                    break;
+                case Neuron::Type::OUTPUT:
+                        nrnSrc.addValue(self[src.layer].getBias() * nrnSrc.getBiasWeight());
+                        input = activate(self[src.layer].getActivationType(),nrnSrc);
+                        if(nrnDest.getType() != Neuron::Type::CONTEXT){
+                            nrnDest.addValue(input * w);
+                        }else{
+                            if(c->getCycles() > self[dest.layer].getCyclesLimit()){
+                                nrnDest.resetContext();
+                                c->setCycles(0);
+                            }
+                            nrnDest.addValue(input * w);
+                            c->setCycles(c->getCycles()+1);
                         }
                     break;
                 default:
@@ -132,6 +148,16 @@ namespace EvoAI{
                             });
         return (c != std::end(conns));
     }
+    void NeuralNetwork::reset(){
+        for(auto& l:layers){
+            l.reset();
+        }
+    }
+    void NeuralNetwork::resetContext(){
+        for(auto& l:layers){
+            l.resetContext();
+        }
+    }
     NeuronLayer& NeuralNetwork::operator[](const std::size_t& index){
         return layers[index];
     }
@@ -145,8 +171,23 @@ namespace EvoAI{
                     return Activations::sinusoid(n.getValue());
                 break;
             case NeuronLayer::SIGMOID:
-            default:
                     return Activations::sigmoid(n.getValue());
+                break;
+            case NeuronLayer::RELU:
+                    return Activations::relu(n.getValue());
+                break;
+            case NeuronLayer::NOISY_RELU:
+                    return Activations::noisyRelu(n.getValue());
+                break;
+            case NeuronLayer::LEAKY_RELU:
+                    return Activations::leakyRelu(n.getValue());
+                break;
+            case NeuronLayer::EXPONENTIAL:
+                    return Activations::exponential(n.getValue());
+                break;
+            case NeuronLayer::STEPPED_SIGMOID:
+            default:
+                return Activations::sigmoid(n.getValue(),n.getBiasWeight());
                 break;
         }
     }

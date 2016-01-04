@@ -89,6 +89,14 @@ namespace EvoAI{
             /**
              * @brief 
              */
+            void reset();
+            /**
+             * @brief 
+             */
+            void resetContext();
+            /**
+             * @brief 
+             */
             NeuronLayer& operator[](const std::size_t& index);
             friend class NNRenderer;
             ~NeuralNetwork() = default;
