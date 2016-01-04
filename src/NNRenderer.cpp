@@ -6,7 +6,9 @@ namespace EvoAI{
     , connections()
     , nn(nn){
         font = sf::Font();
-        font.loadFromFile("data/Outwrite.ttf");
+        if(!font.loadFromFile("data/fonts/Times_New_Roman_Normal.ttf")){
+            throw std::runtime_error("Cannot Load Font -> data/fonts/Times_New_Roman_Normal.ttf");
+        }
         setUp();
     }
     void NNRenderer::Render(sf::RenderWindow& win, bool renderTexts){
