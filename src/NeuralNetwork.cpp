@@ -4,13 +4,15 @@ namespace EvoAI{
     NeuralNetwork::NeuralNetwork()
     : layers()
     , connections()
-    , connectionsCached(false){}
+    , connectionsCached(false)
+    , mse(0.0){}
     NeuralNetwork::NeuralNetwork(const std::size_t& numInputs, const std::size_t& numHiddenLayers,
                                 const std::size_t& numNeuronsPerHiddenLayer,
                                 const std::size_t& numOutputs, const double& bias)
     : layers()
     , connections()
-    , connectionsCached(false){
+    , connectionsCached(false)
+    , mse(0.0){
         layers.emplace_back(NeuronLayer(numInputs,Neuron::Type::INPUT,bias));
         for(auto i=0u;i<numHiddenLayers;++i){
             layers.emplace_back(NeuronLayer(numNeuronsPerHiddenLayer,Neuron::Type::HIDDEN,bias));
@@ -38,41 +40,40 @@ namespace EvoAI{
             auto& dest = c->getDest();
             auto& nrnSrc = self[src.layer][src.neuron];
             auto& nrnDest = self[dest.layer][dest.neuron];
-            auto input = 0.0;
+            auto output = 0.0;
             switch(nrnSrc.getType()){
                 case Neuron::Type::INPUT:
-                        nrnDest.addValue(nrnSrc.getValue() * w);
+                        nrnDest.addSum(nrnSrc.getSum() * w);
                     break;
                 case Neuron::Type::CONTEXT:
                 case Neuron::Type::HIDDEN:
                         if(nrnSrc.getType() != Neuron::Type::CONTEXT){
-                            nrnSrc.addValue(self[src.layer].getBias() * nrnSrc.getBiasWeight());
+                            nrnSrc.addSum(self[src.layer].getBias() * nrnSrc.getBiasWeight());
                         }
-                        input = activate(self[src.layer].getActivationType(),nrnSrc);
-                        if(nrnDest.getType() != Neuron::Type::CONTEXT){
-                            nrnDest.addValue(input * w);
-                        }else{
+                        output = activate(self[src.layer].getActivationType(),nrnSrc);
+                        nrnSrc.setOutput(output);
+                        nrnDest.addSum(output * w);
+                        if(nrnDest.getType() == Neuron::Type::CONTEXT){
                             if(c->getCycles() > self[dest.layer].getCyclesLimit()){
-                                nrnDest.resetContext();
+                                nrnDest.resetContext(); /// is this necesary? review
                                 c->setCycles(0);
                             }
-                            nrnDest.addValue(input * w);
+                            nrnDest.setSum(nrnSrc.getSum());
                             c->setCycles(c->getCycles()+1);
                         }
                     break;
-                case Neuron::Type::OUTPUT:
-                        nrnSrc.addValue(self[src.layer].getBias() * nrnSrc.getBiasWeight());
-                        input = activate(self[src.layer].getActivationType(),nrnSrc);
-                        if(nrnDest.getType() != Neuron::Type::CONTEXT){
-                            nrnDest.addValue(input * w);
-                        }else{
-                            if(c->getCycles() > self[dest.layer].getCyclesLimit()){
-                                nrnDest.resetContext();
-                                c->setCycles(0);
-                            }
-                            nrnDest.addValue(input * w);
-                            c->setCycles(c->getCycles()+1);
+                case Neuron::Type::OUTPUT:{
+                        // if output is connected somewhere is to a context if not is wrong.
+                        double oldSum = nrnSrc.getSum();
+                        nrnSrc.addSum(self[src.layer].getBias() * nrnSrc.getBiasWeight());
+                        if(c->getCycles() > self[dest.layer].getCyclesLimit()){
+                            nrnDest.resetContext(); /// is this necesary? review
+                            c->setCycles(0);
                         }
+                        nrnDest.setSum(nrnSrc.getSum());
+                        nrnSrc.setSum(oldSum);
+                        c->setCycles(c->getCycles()+1);
+                }
                     break;
                 default:
                     break;
@@ -82,8 +83,9 @@ namespace EvoAI{
         auto& outputLayer = self[numLayers-1];
         auto output = 0.0;
         for(auto& n:outputLayer.getNeurons()){
-            n.addValue(outputLayer.getBias() * n.getBiasWeight());
+            n.addSum(outputLayer.getBias() * n.getBiasWeight());
             output = activate(outputLayer.getActivationType(),n);
+            n.setOutput(output);
             res.emplace_back(output);
         }
         return std::move(res);
@@ -98,7 +100,7 @@ namespace EvoAI{
             return false;
         }
         for(auto i=0u;i<numInputs;++i){
-            layers[0][i].setValue(ins[i]);
+            layers[0][i].setSum(ins[i]);
         }
         return true;
     }
@@ -165,29 +167,29 @@ namespace EvoAI{
     const double NeuralNetwork::activate(NeuronLayer::ActivationType at, const Neuron& n) const{
         switch(at){
             case NeuronLayer::TANH:
-                    return Activations::tanh(n.getValue());
+                    return Activations::tanh(n.getSum());
                 break;
             case NeuronLayer::SINUSOID:
-                    return Activations::sinusoid(n.getValue());
+                    return Activations::sinusoid(n.getSum());
                 break;
             case NeuronLayer::SIGMOID:
-                    return Activations::sigmoid(n.getValue());
+                    return Activations::sigmoid(n.getSum());
                 break;
             case NeuronLayer::RELU:
-                    return Activations::relu(n.getValue());
+                    return Activations::relu(n.getSum());
                 break;
             case NeuronLayer::NOISY_RELU:
-                    return Activations::noisyRelu(n.getValue());
+                    return Activations::noisyRelu(n.getSum());
                 break;
             case NeuronLayer::LEAKY_RELU:
-                    return Activations::leakyRelu(n.getValue());
+                    return Activations::leakyRelu(n.getSum());
                 break;
             case NeuronLayer::EXPONENTIAL:
-                    return Activations::exponential(n.getValue());
+                    return Activations::exponential(n.getSum());
                 break;
             case NeuronLayer::STEPPED_SIGMOID:
             default:
-                return Activations::sigmoid(n.getValue(),n.getBiasWeight());
+                return Activations::sigmoid(n.getSum(),n.getBiasWeight());
                 break;
         }
     }

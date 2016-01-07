@@ -29,7 +29,11 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 FILE(GLOB_RECURSE EvoAI_SOURCES "src/*.cpp")
 FILE(GLOB_RECURSE EvoAI_INCLUDES "include/*.hpp")
 
-add_library(EvoAI SHARED ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
+if(NOT BUILD_STATIC)
+	add_library(EvoAI SHARED ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
+else()
+	add_library(EvoAI STATIC ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
+endif(NOT BUILD_STATIC)
 
 ################################################################################
 ### Dependencies.
@@ -130,13 +134,13 @@ ENDIF(DOXYGEN_FOUND)
 ### Installing Library
 #################################################################################
 
-install(TARGETS EvoAI RUNTIME DESTINATION . ARCHIVE DESTINATION .)
+install(TARGETS EvoAI LIBRARY DESTINATION lib ARCHIVE DESTINATION .)
 install(DIRECTORY include DESTINATION .)
 
 if(NOT BUILD_STATIC AND WIN32)
 	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-		install(FILES ${SFML_DEBUG_DLLS} DESTINATION .)
+		install(FILES ${SFML_DEBUG_DLLS} DESTINATION lib)
 	elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-		install(FILES ${SFML_RELEASE_DLLS} DESTINATION .)
+		install(FILES ${SFML_RELEASE_DLLS} DESTINATION lib)
 	endif()
 endif(NOT BUILD_STATIC AND WIN32)

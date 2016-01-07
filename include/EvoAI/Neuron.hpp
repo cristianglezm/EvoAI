@@ -47,34 +47,41 @@ namespace EvoAI{
              * @brief get value
              * @return double&
              */
-            inline const double& getValue() const{ return value; }
-            /**
-             * @brief Value setter sets oldvalue to value and value to new value.
-             * @return Neuron&
-             */
-            Neuron& setValue(const double& val);
+            inline const double& getOutput() const{ return output; }
             /**
              * @brief 
-             * @param val
+             * @param out
              * @return 
              */
-            Neuron& addValue(const double& val);
+            Neuron& setOutput(const double& out);
+            /**
+             * @brief 
+             * @param sum
+             * @return 
+             */
+            Neuron& addSum(const double& sum);
             /**
              * @brief oldValue getter
              * @return double&
              */
-            inline const double& getOldValue() const{ return oldValue; }
+            inline const double& getSum() const{ return sum; }
+            /**
+             * @brief 
+             * @param sum
+             * @return 
+             */
+            Neuron& setSum(const double& sum);
             /**
              * @brief error getter
              * @return double&
              */
-            inline const double& getError() const{ return error; }
+            inline const double& getDelta() const{ return delta; }
             /**
-             * @brief error setter
-             * @param double& err
-             * @return Neuron&
+             * @brief 
+             * @param delta
+             * @return 
              */
-            Neuron& setError(const double& err);
+            Neuron& setDelta(const double& delta);
             /**
              * @brief resets the neuron if is not Type:CONTEXT
              * @return Neuron&
@@ -130,9 +137,9 @@ namespace EvoAI{
             Neuron& setBiasWeight(const double& bw);
             ~Neuron() = default;
         private:
-            double value;
-            double oldValue;
-            double error;
+            double output;
+            double sum;
+            double delta;
             double biasWeight;
             Type type;
             std::vector<Connection> connections;

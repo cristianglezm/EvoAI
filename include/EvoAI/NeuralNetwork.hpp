@@ -112,6 +112,7 @@ namespace EvoAI{
             std::vector<NeuronLayer> layers;
             std::vector<Connection*> connections;
             bool connectionsCached;
+            double mse;
     };
 }
 #endif // NEURAL_NETWORK_HPP

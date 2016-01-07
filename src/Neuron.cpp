@@ -2,16 +2,16 @@
 
 namespace EvoAI{
     Neuron::Neuron()
-    : value(0.0)
-    , oldValue(0.0)
-    , error(0.0)
+    : output(0.0)
+    , sum(0.0)
+    , delta(0.0)
     , biasWeight(1.0)
     , type(Type::HIDDEN)
     , connections(){}
     Neuron::Neuron(Type t)
-    : value(0.0)
-    , oldValue(0.0)
-    , error(0.0)
+    : output(0.0)
+    , sum(0.0)
+    , delta(0.0)
     , biasWeight(1.0)
     , type(t)
     , connections(){}
@@ -19,40 +19,42 @@ namespace EvoAI{
         type = t;
         return *this;
     }
-    Neuron& Neuron::setValue(const double& val){
-        oldValue = value;
-        value = val;
+    Neuron& Neuron::setOutput(const double& out){
+        output = out;
         return *this;
     }
-    Neuron& Neuron::addValue(const double& val){
-        oldValue = value;
-        value += val;
+    Neuron& Neuron::addSum(const double& sum){
+        this->sum += sum;
         return *this;
     }
-    Neuron& Neuron::setError(const double& err){
-        error = err;
+    Neuron& Neuron::setSum(const double& sum){
+        this->sum = sum;
+        return *this;
+    }
+    Neuron& Neuron::setDelta(const double& delta){
+        this->delta = delta;
         return *this;
     }
     Neuron& Neuron::reset(){
        if(type != Type::CONTEXT){
-            value = 0.0;
-            oldValue = 0.0;
-            error = 0.0;
+            output = 0.0;
+            sum = 0.0;
+            delta = 0.0;
        }
        return *this;
     }
     Neuron& Neuron::resetContext(){
-        value = 0.0;
-        oldValue = 0.0;
-        error = 0.0;
+        output = 0.0;
+        sum = 0.0;
+        delta = 0.0;
         return *this;
     }
     JsonBox::Value Neuron::toJson(){
         using namespace JsonBox;
         Object o;
-        o["value"] = Value(value);
-        o["oldValue"] = Value(oldValue);
-        o["error"] = Value(error);
+        o["output"] = Value(output);
+        o["sum"] = Value(sum);
+        o["delta"] = Value(delta);
         o["biasWeight"] = Value(biasWeight);
         switch(type){
             case Type::CONTEXT: o["type"] = Value("context");   break;
@@ -70,8 +72,8 @@ namespace EvoAI{
     }
     std::string Neuron::toString(){
         std::ostringstream os;
-        os << "value: " << value << ", oldValue: " << oldValue << 
-              ", error: " << error << ", biasWeight: " << biasWeight << ", type: ";
+        os << "output: " << output << ", sum: " << sum << 
+              ", delta: " << delta << ", biasWeight: " << biasWeight << ", type: ";
         switch(type){
             case Type::CONTEXT: os << "context";   break;
             case Type::HIDDEN:  os << "hidden";    break;
@@ -94,9 +96,9 @@ namespace EvoAI{
         return (removed == std::end(connections));
     }
     bool Neuron::operator==(const Neuron& rhs) const{
-        return (value == rhs.value
-                && oldValue == rhs.oldValue
-                && error == rhs.error
+        return (output == rhs.output
+                && sum == rhs.sum
+                && delta == rhs.delta
                 && type == rhs.type);
     }
     Neuron& Neuron::setBiasWeight(const double& bw){

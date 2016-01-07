@@ -32,11 +32,15 @@ namespace EvoAI{
             JsonBox::Value toJson();
             bool operator==(const Connection& rhs) const;
         private:
+            Connection& setGradient(const double& grad);
+            inline const double& getGradient() const{ return gradient; }
+        private:
             Link src;
             Link dest;
             double weight;
             int cycles;
             bool visited;
+            double gradient;
     };
 }
 #endif // CONNECTION_HPP

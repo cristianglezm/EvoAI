@@ -19,10 +19,10 @@ namespace EvoAI{
             ~NNRenderer() = default;
         private:
             struct NeuronInfo{
-                sf::Text value;
-                sf::Text oldValue;
+                sf::Text output;
+                sf::Text sum;
                 sf::Text biasWeight;
-                sf::Text error;
+                sf::Text delta;
                 sf::Text type;
                 sf::CircleShape neuronShape;
             };

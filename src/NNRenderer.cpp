@@ -22,10 +22,10 @@ namespace EvoAI{
         }
         for(auto& ni:neurons){
             if(renderTexts){
-                win.draw(ni.value);
-                win.draw(ni.oldValue);
+                win.draw(ni.output);
+                win.draw(ni.sum);
                 win.draw(ni.biasWeight);
-                win.draw(ni.error);
+                win.draw(ni.delta);
                 win.draw(ni.type);
             }
             win.draw(ni.neuronShape);
@@ -47,14 +47,14 @@ namespace EvoAI{
     void NNRenderer::setUpNeuronInfo(Neuron& n, sf::Vector2f& p){
         NeuronInfo ni;
         const int textSize = 15;
-        ni.value = sf::Text("Val: " + std::to_string(n.getValue()), font, textSize);
-        ni.value.setPosition(sf::Vector2f(p.x+5.0,p.y+10));
-        ni.oldValue = sf::Text("OldVal: " + std::to_string(n.getOldValue()),font, textSize);
-        ni.oldValue.setPosition(sf::Vector2f(p.x+5.0,p.y+30));
+        ni.output = sf::Text("out: " + std::to_string(n.getOutput()), font, textSize);
+        ni.output.setPosition(sf::Vector2f(p.x+5.0,p.y+10));
+        ni.sum = sf::Text("Sum: " + std::to_string(n.getSum()),font, textSize);
+        ni.sum.setPosition(sf::Vector2f(p.x+5.0,p.y+30));
         ni.biasWeight = sf::Text("bWeight: " + std::to_string(n.getBiasWeight()),font,textSize);
         ni.biasWeight.setPosition(sf::Vector2f(p.x+5.0,p.y+50));
-        ni.error = sf::Text("Err: " + std::to_string(n.getError()),font,textSize);
-        ni.error.setPosition(sf::Vector2f(p.x+5.0,p.y+70));
+        ni.delta = sf::Text("Delta: " + std::to_string(n.getDelta()),font,textSize);
+        ni.delta.setPosition(sf::Vector2f(p.x+5.0,p.y+70));
         switch(n.getType()){
             case Neuron::Type::CONTEXT:
                     ni.type = sf::Text("type: Context",font,textSize);
@@ -80,11 +80,14 @@ namespace EvoAI{
         ni.neuronShape = sf::CircleShape(6);
         ni.neuronShape.setPosition(p);
         ni.neuronShape.setFillColor(sf::Color::Red);
-        neurons.push_back(ni);
+        neurons.emplace_back(ni);
+        int space = 0;
         for(auto& c:n.getConnections()){
-            auto textPos = sf::Vector2f(p.x,p.y+10);
+            auto textPos = sf::Vector2f(p.x,p.y+space);
             setUpConnectionInfo(c,textPos);
+            space +=20;
         }
+        space = 0;
     }
     void NNRenderer::setUpConnectionInfo(Connection& c, sf::Vector2f& p){
         const int textSize = 15;
