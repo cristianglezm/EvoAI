@@ -45,28 +45,25 @@ namespace EvoAI{
         cycles = c;
         return *this;
     }
-    std::string Connection::toString(){
+    std::string Connection::toString() const{
         std::ostringstream ss;
         ss << "Recurrent: " << (isRecurrent() ? "True ":"False ")
         << "[" << src.layer << "," << src.neuron << "] --> ["
         << dest.layer << "," << dest.neuron << "]" << " - " << weight;
         return ss.str();
     }
-    JsonBox::Value Connection::toJson(){
-        using namespace JsonBox;
-        Object o;
-        Object JsonSrc;
-        JsonSrc["layer"] = Value((int) src.layer);
-        JsonSrc["neuron"] = Value((int) src.neuron);
-        o["src"] = Value(JsonSrc);
-        Object JsonDest;
-        JsonDest["layer"] = Value((int) dest.layer);
-        JsonDest["neuron"] = Value((int) dest.neuron);
-        o["dest"] = Value(JsonDest);
+    JsonBox::Value Connection::toJson() const{
+        JsonBox::Object o;
+        JsonBox::Object JsonSrc;
+        JsonSrc["layer"] = JsonBox::Value((int) src.layer);
+        JsonSrc["neuron"] = JsonBox::Value((int) src.neuron);
+        o["src"] = JsonBox::Value(JsonSrc);
+        JsonBox::Object JsonDest;
+        JsonDest["layer"] = JsonBox::Value((int) dest.layer);
+        JsonDest["neuron"] = JsonBox::Value((int) dest.neuron);
+        o["dest"] = JsonBox::Value(JsonDest);
         o["weight"] = weight;
-        o["cycles"] = cycles;
-        o["visited"] = visited;
-        return Value(o);
+        return JsonBox::Value(o);
     }
     bool Connection::operator==(const Connection& rhs) const{
         return (src == rhs.src

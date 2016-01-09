@@ -49,28 +49,24 @@ namespace EvoAI{
         delta = 0.0;
         return *this;
     }
-    JsonBox::Value Neuron::toJson(){
-        using namespace JsonBox;
-        Object o;
-        o["output"] = Value(output);
-        o["sum"] = Value(sum);
-        o["delta"] = Value(delta);
-        o["biasWeight"] = Value(biasWeight);
+    JsonBox::Value Neuron::toJson() const{
+        JsonBox::Object o;
+        o["biasWeight"] = JsonBox::Value(biasWeight);
         switch(type){
-            case Type::CONTEXT: o["type"] = Value("context");   break;
-            case Type::HIDDEN:  o["type"] = Value("hidden");    break;
-            case Type::INPUT:   o["type"] = Value("input");     break;
-            case Type::OUTPUT:  o["type"] = Value("output");    break;
-            default:            o["type"] = Value("undefined"); break;
+            case Type::CONTEXT: o["type"] = JsonBox::Value("context");   break;
+            case Type::HIDDEN:  o["type"] = JsonBox::Value("hidden");    break;
+            case Type::INPUT:   o["type"] = JsonBox::Value("input");     break;
+            case Type::OUTPUT:  o["type"] = JsonBox::Value("output");    break;
+            default:            o["type"] = JsonBox::Value("undefined"); break;
         }
-        Array a;
+        JsonBox::Array a;
         for(auto& c:connections){
             a.push_back(c.toJson());
         }
-        o["connections"] = Value(a);
-        return Value(o);
+        o["connections"] = JsonBox::Value(a);
+        return JsonBox::Value(o);
     }
-    std::string Neuron::toString(){
+    std::string Neuron::toString() const{
         std::ostringstream os;
         os << "output: " << output << ", sum: " << sum << 
               ", delta: " << delta << ", biasWeight: " << biasWeight << ", type: ";

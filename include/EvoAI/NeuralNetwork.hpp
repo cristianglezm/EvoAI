@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <EvoAI/NeuronLayer.hpp>
 #include <EvoAI/Activations.hpp>
+#include <JsonBox.h>
 
 namespace EvoAI{
     /**
@@ -17,14 +18,23 @@ namespace EvoAI{
     class NeuralNetwork final{
         public:
             /**
-             *
+             * @brief 
+             * @return 
              */
             NeuralNetwork();
             /**
-             *
+             * @brief 
+             * @param 
+             * @return 
              */
             NeuralNetwork(const std::size_t& numInputs,const std::size_t& numHiddenLayers,
                           const std::size_t& numNeuronsPerHiddenLayer,const std::size_t& numOutputs,const double& bias);
+            /**
+             * @brief 
+             * @param filename
+             * @return 
+             */
+            NeuralNetwork(const std::string& filename);
             /**
              *
              */
@@ -96,13 +106,27 @@ namespace EvoAI{
             void resetContext();
             /**
              * @brief 
+             * @return JsonBox::Value
+             */
+            JsonBox::Value toJson() const;
+            /**
+             * @brief 
+             * @param filename
+             */
+            void writeToFile(const std::string& filename) const;
+            /**
+             * @brief 
+             */
+            void clear();
+            /**
+             * @brief 
              */
             NeuronLayer& operator[](const std::size_t& index);
             friend class NNRenderer;
             ~NeuralNetwork() = default;
         private:
             /**
-             * @brief applies the neuron activation
+             * @brief Applies the neuron activation
              * @param at ActivationType
              * @param n const Neuron&
              * @return const double

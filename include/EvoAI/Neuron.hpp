@@ -96,12 +96,12 @@ namespace EvoAI{
              * @brief 
              * @return JsonBox::Value json 
              */
-            JsonBox::Value toJson();
+            JsonBox::Value toJson() const;
             /**
              * @brief 
              * @return 
              */
-            std::string toString();
+            std::string toString() const;
             /**
              * @brief 
              * @param c

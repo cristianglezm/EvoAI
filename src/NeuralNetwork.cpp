@@ -19,6 +19,35 @@ namespace EvoAI{
         }
         layers.emplace_back(NeuronLayer(numOutputs,Neuron::Type::OUTPUT,bias));
     }
+    NeuralNetwork::NeuralNetwork(const std::string& filename)
+    : layers()
+    , connections()
+    , connectionsCached(false)
+    , mse(0.0){
+        //// TODO
+        JsonBox::Value v;
+        v.loadFromFile(filename);
+        auto layersArray = v["NeuralNetwork"]["layers"].getArray();
+        //build layer
+        for(auto& la:layersArray){
+            NeuronLayer l;
+            l.setCyclesLimit(la["cyclesLimit"].getInteger());
+            l.setBias(la["bias"].getDouble());
+            auto type = la["neuronType"].getString();
+            Neuron::Type lyrType = Neuron::Type::HIDDEN;
+            if(type == "input"){
+                lyrType == Neuron::Type::INPUT;
+            }else if(type == "context"){
+                lyrType == Neuron::Type::CONTEXT;
+            }else if(type == "hidden"){
+                lyrType == Neuron::Type::HIDDEN;
+            }else if(type == "output"){
+                lyrType == Neuron::Type::OUTPUT;
+            }
+            l.setType(lyrType);
+            /// ACTIVATIONTYPE
+        }
+    }
     NeuralNetwork& NeuralNetwork::addLayer(const NeuronLayer& l){
         layers.emplace_back(l);
         return *this;
@@ -160,6 +189,25 @@ namespace EvoAI{
             l.resetContext();
         }
     }
+    JsonBox::Value NeuralNetwork::toJson() const{
+        JsonBox::Array a;
+        for(auto& l:layers){
+            a.push_back(l.toJson());
+        }
+        JsonBox::Object o;
+        o["NeuralNetwork"]["layers"] = JsonBox::Value(a);
+        return JsonBox::Value(o);
+    }
+    void NeuralNetwork::writeToFile(const std::string& filename) const{
+        auto v = toJson();
+        v.writeToFile(filename);
+    }
+    void NeuralNetwork::clear(){
+        layers.clear();
+        connections.clear();
+        connectionsCached = false;
+        mse = 0.0;
+    }
     NeuronLayer& NeuralNetwork::operator[](const std::size_t& index){
         return layers[index];
     }
@@ -189,7 +237,7 @@ namespace EvoAI{
                 break;
             case NeuronLayer::STEPPED_SIGMOID:
             default:
-                return Activations::sigmoid(n.getSum(),n.getBiasWeight());
+                return Activations::sigmoid(n.getSum()-n.getBiasWeight());
                 break;
         }
     }

@@ -6,14 +6,18 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <JsonBox.h>
 
 namespace EvoAI{
     /**
+     * @class NeuronLayer
+     * @author Cristian
      * @brief 
      */
     class NeuronLayer final{
         public:
             enum ActivationType{
+                IDENTITY,
                 SIGMOID,
                 STEPPED_SIGMOID,
                 TANH,
@@ -111,6 +115,11 @@ namespace EvoAI{
              * @return 
              */
             inline const int& getCyclesLimit() const{ return cyclesLimit; }
+            /**
+             * @brief 
+             * @return JsonBox::Value
+             */
+            JsonBox::Value toJson() const;
             Neuron& operator[](const std::size_t& index);
             bool operator==(const NeuronLayer& rhs) const;
             ~NeuronLayer() = default;

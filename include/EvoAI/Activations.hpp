@@ -10,9 +10,6 @@ namespace EvoAI{
         static double sigmoid(const double& v){
             return (1.0/(1.0+std::exp(-v)));
         }
-        static double sigmoid(const double& v, const double& step){
-            return (1.0/(1.0+std::exp(-(v-step))));
-        }
         static double tanh(const double& v){
             return std::tanh(v);
         }
@@ -23,7 +20,8 @@ namespace EvoAI{
             return std::max(0.0,v);
         }
         static double noisyRelu(const double& v){
-            static std::default_random_engine generator;
+            static std::random_device rd;
+            static std::default_random_engine generator(rd());
             std::normal_distribution<double> distribution(0,sigmoid(v));
             return std::max(0.0,v+distribution(generator));
         }
@@ -37,7 +35,8 @@ namespace EvoAI{
     };
     struct Derivatives{
         static double sigmoid(const double& v){
-            return (Activations::sigmoid(v)*(1-Activations::sigmoid(v)));
+            auto y = Activations::sigmoid(v);
+            return (y*(1-y));
         }
         static double tanh(const double& v){
             return 1-std::pow(std::tanh(v),2);
