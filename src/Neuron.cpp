@@ -91,6 +91,9 @@ namespace EvoAI{
         connections.erase(removed,std::end(connections));
         return (removed == std::end(connections));
     }
+    void Neuron::clearConnections(){
+        connections.clear();
+    }
     bool Neuron::operator==(const Neuron& rhs) const{
         return (output == rhs.output
                 && sum == rhs.sum

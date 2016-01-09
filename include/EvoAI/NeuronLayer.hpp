@@ -9,6 +9,7 @@
 #include <JsonBox.h>
 
 namespace EvoAI{
+    class NeuralNetwork;
     /**
      * @class NeuronLayer
      * @author Cristian

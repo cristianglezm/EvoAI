@@ -14,21 +14,28 @@ void usage(){
 int main(int argc, char **argv){
     bool optGenome = false;
     bool optNeural = false;
-    if(argc != 0){
+    if(argc < 0){
+        std::cout << std::string(argv[0]) << " [options] <filename>\n";
         usage();
-        //return -1;
+        return -1;
     }
-    std::string val(argv[0]);
+    std::string val(argv[1]);
     if(val == "-g" || val == "--genome"){
         optGenome = true;
     }
     if(val == "-n" || val == "--neuralnetwork"){
         optNeural = true;
     }
-    std::unique_ptr<EvoAI::NeuralNetwork> nn = EvoAI::createFeedForwardNN(3,4,5,3,1.0);
-    (*nn)[1].setActivationType(EvoAI::NeuronLayer::NOISY_RELU);
-    (*nn)[2].setActivationType(EvoAI::NeuronLayer::SINUSOID);
-    (*nn)[3].setActivationType(EvoAI::NeuronLayer::NOISY_RELU);
+    std::unique_ptr<EvoAI::NeuralNetwork> nn = nullptr;
+    if(optNeural){
+        std::cout << "Loading File " << argv[2] << std::endl;
+        nn = std::make_unique<EvoAI::NeuralNetwork>(std::string(argv[2]));
+    }else if(optGenome){
+        
+    }
+    if(!nn){
+        nn = EvoAI::createFeedForwardNN(3,4,5,3,1.0);
+    }
     sf::Image output;
     output.create(150,150);
     std::cout << "Saving Neural network to a json file" << std::endl;

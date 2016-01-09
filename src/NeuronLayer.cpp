@@ -1,5 +1,4 @@
 #include <EvoAI/NeuronLayer.hpp>
-
 namespace EvoAI{
     NeuronLayer::NeuronLayer()
     : neurons()
@@ -33,6 +32,9 @@ namespace EvoAI{
     }
     NeuronLayer& NeuronLayer::setType(Neuron::Type& t){
         type = t;
+        for(auto& n:neurons){
+            n.setType(t);
+        }
         return *this;
     }
     NeuronLayer& NeuronLayer::setBias(const double& bias){

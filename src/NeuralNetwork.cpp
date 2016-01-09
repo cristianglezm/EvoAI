@@ -36,16 +36,53 @@ namespace EvoAI{
             auto type = la["neuronType"].getString();
             Neuron::Type lyrType = Neuron::Type::HIDDEN;
             if(type == "input"){
-                lyrType == Neuron::Type::INPUT;
+                lyrType = Neuron::Type::INPUT;
             }else if(type == "context"){
-                lyrType == Neuron::Type::CONTEXT;
+                lyrType = Neuron::Type::CONTEXT;
             }else if(type == "hidden"){
-                lyrType == Neuron::Type::HIDDEN;
+                lyrType = Neuron::Type::HIDDEN;
             }else if(type == "output"){
-                lyrType == Neuron::Type::OUTPUT;
+                lyrType = Neuron::Type::OUTPUT;
             }
             l.setType(lyrType);
-            /// ACTIVATIONTYPE
+            auto actType = la["activationType"].getString();
+            NeuronLayer::ActivationType actype = NeuronLayer::ActivationType::STEPPED_SIGMOID;
+            if(actType == "identity"){
+                actype = NeuronLayer::ActivationType::IDENTITY;
+            }else if(actType == "exponential"){
+                actype = NeuronLayer::ActivationType::EXPONENTIAL;
+            }else if(actType == "leakyRelu"){
+                actype = NeuronLayer::ActivationType::LEAKY_RELU;
+            }else if(actType == "noisyRelu"){
+                actype = NeuronLayer::ActivationType::NOISY_RELU;
+            }else if(actType == "relu"){
+                actype = NeuronLayer::ActivationType::RELU;
+            }else if(actType == "sigmoid"){
+                actype = NeuronLayer::ActivationType::SIGMOID;
+            }else if(actType == "sinusoid"){
+                actype = NeuronLayer::ActivationType::SINUSOID;
+            }else if(actType == "steppedSigmoid"){
+                actype = NeuronLayer::ActivationType::STEPPED_SIGMOID;
+            }else if(actType == "tanh"){
+                actype = NeuronLayer::ActivationType::TANH;
+            }
+            l.setActivationType(actype);
+            auto neuronsArray = la["neurons"].getArray();
+            for(auto& na:neuronsArray){
+                Neuron n;
+                n.setBiasWeight(na["biasWeight"].getDouble());
+                n.setType(lyrType);
+                auto conArray = na["connections"].getArray();
+                for(auto& ca:conArray){
+                    Link src(ca["src"]["layer"].getInteger(),ca["src"]["neuron"].getInteger());
+                    Link dest(ca["dest"]["layer"].getInteger(),ca["dest"]["neuron"].getInteger());
+                    auto weight = ca["weight"].getDouble();
+                    Connection c(src,dest, weight);
+                    n.addConnection(c);
+                }
+                l.addNeuron(n);
+            }
+            addLayer(l);
         }
     }
     NeuralNetwork& NeuralNetwork::addLayer(const NeuronLayer& l){
@@ -62,13 +99,12 @@ namespace EvoAI{
     }
     std::vector<double> NeuralNetwork::run(){
         std::vector<double> res;
-        auto& self = *this;
         for(auto& c:getConnections()){
             auto w = c->getWeight();
             auto& src = c->getSrc();
             auto& dest = c->getDest();
-            auto& nrnSrc = self[src.layer][src.neuron];
-            auto& nrnDest = self[dest.layer][dest.neuron];
+            auto& nrnSrc = layers[src.layer][src.neuron];
+            auto& nrnDest = layers[dest.layer][dest.neuron];
             auto output = 0.0;
             switch(nrnSrc.getType()){
                 case Neuron::Type::INPUT:
@@ -77,13 +113,13 @@ namespace EvoAI{
                 case Neuron::Type::CONTEXT:
                 case Neuron::Type::HIDDEN:
                         if(nrnSrc.getType() != Neuron::Type::CONTEXT){
-                            nrnSrc.addSum(self[src.layer].getBias() * nrnSrc.getBiasWeight());
+                            nrnSrc.addSum(layers[src.layer].getBias() * nrnSrc.getBiasWeight());
                         }
-                        output = activate(self[src.layer].getActivationType(),nrnSrc);
+                        output = activate(layers[src.layer].getActivationType(),nrnSrc);
                         nrnSrc.setOutput(output);
                         nrnDest.addSum(output * w);
                         if(nrnDest.getType() == Neuron::Type::CONTEXT){
-                            if(c->getCycles() > self[dest.layer].getCyclesLimit()){
+                            if(c->getCycles() > layers[dest.layer].getCyclesLimit()){
                                 nrnDest.resetContext(); /// is this necesary? review
                                 c->setCycles(0);
                             }
@@ -94,8 +130,8 @@ namespace EvoAI{
                 case Neuron::Type::OUTPUT:{
                         // if output is connected somewhere is to a context if not is wrong.
                         double oldSum = nrnSrc.getSum();
-                        nrnSrc.addSum(self[src.layer].getBias() * nrnSrc.getBiasWeight());
-                        if(c->getCycles() > self[dest.layer].getCyclesLimit()){
+                        nrnSrc.addSum(layers[src.layer].getBias() * nrnSrc.getBiasWeight());
+                        if(c->getCycles() > layers[dest.layer].getCyclesLimit()){
                             nrnDest.resetContext(); /// is this necesary? review
                             c->setCycles(0);
                         }
@@ -109,7 +145,7 @@ namespace EvoAI{
             }
         }
         auto numLayers = size();
-        auto& outputLayer = self[numLayers-1];
+        auto& outputLayer = layers[numLayers-1];
         auto output = 0.0;
         for(auto& n:outputLayer.getNeurons()){
             n.addSum(outputLayer.getBias() * n.getBiasWeight());
@@ -142,6 +178,23 @@ namespace EvoAI{
         connectionsCached = false;
         return layers[c.getSrc().layer].removeConnection(c);
     }
+    void NeuralNetwork::removeConnectionsWithDest(Link&& dest){
+        connectionsCached = false;
+        for(auto& l:layers){
+            for(auto& n:l.getNeurons()){
+                auto& conns = n.getConnections();
+                auto removed = std::remove_if(std::begin(conns),std::end(conns),
+                                        [&dest](const Connection& c){
+                                            return (c.getDest() == dest);
+                                        });
+                conns.erase(removed,std::end(conns));
+            }
+        }
+    }
+    void NeuralNetwork::removeConnectionsWithSrc(Link&& src){
+        connectionsCached = false;
+        layers[src.layer][src.neuron].clearConnections();
+    }
     std::vector<Connection*>& NeuralNetwork::getConnections(){
         if(connectionsCached){
             return connections;
@@ -157,8 +210,7 @@ namespace EvoAI{
         return connections;
     }
     Connection* NeuralNetwork::findConnection(Link&& src,Link&& dest){
-        auto& self = *this;
-        auto& conns = self[src.layer][src.neuron].getConnections();
+        auto& conns = layers[src.layer][src.neuron].getConnections();
         auto c = std::find_if(std::begin(conns),std::end(conns),
                             [&src,&dest](const Connection& cn){
                                 return (src == cn.getSrc() &&
@@ -170,8 +222,7 @@ namespace EvoAI{
         return nullptr;
     }
     bool NeuralNetwork::hasConnection(Link&& src, Link&& dest){
-        auto& self = *this;
-        auto& conns = self[src.layer][src.neuron].getConnections();
+        auto& conns = layers[src.layer][src.neuron].getConnections();
         auto c = std::find_if(std::begin(conns),std::end(conns),
                             [&src,&dest](const Connection& cn){
                                 return (src == cn.getSrc() &&

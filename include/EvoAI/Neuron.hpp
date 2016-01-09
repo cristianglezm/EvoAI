@@ -135,6 +135,10 @@ namespace EvoAI{
              * @return 
              */
             Neuron& setBiasWeight(const double& bw);
+            /**
+             * @brief 
+             */
+            void clearConnections();
             ~Neuron() = default;
         private:
             double output;

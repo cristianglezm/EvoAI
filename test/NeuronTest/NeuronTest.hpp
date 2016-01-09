@@ -42,8 +42,8 @@ namespace EvoAI{
             std::cout << n.toJson() << std::endl;
             EXPECT_TRUE(n.removeConnection(c));
             EXPECT_EQ(Neuron::Type::INPUT, n.getType());
-            EXPECT_EQ(0.0, n.getValue());
-            EXPECT_EQ(0.0, n.getOldValue());
+            EXPECT_EQ(0.0, n.getOutput());
+            EXPECT_EQ(0.0, n.getSum());
         }
     }
 }

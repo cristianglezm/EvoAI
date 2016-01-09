@@ -75,6 +75,14 @@ namespace EvoAI{
              */
             bool removeConnection(Connection& c);
             /**
+             * @brief 
+             */
+            void removeConnectionsWithDest(Link&& dest);
+            /**
+             * @brief 
+             */
+            void removeConnectionsWithSrc(Link&& src);
+            /**
              * @brief ///TODO Very Important
              * @return 
              */
