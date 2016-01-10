@@ -5,8 +5,8 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "EvoAI"
-PROJECT_NUMBER         = 0.1
-PROJECT_BRIEF          = "AI Library"
+PROJECT_NUMBER         = 1.0
+PROJECT_BRIEF          = "EvoAI Library"
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = ../docs
 CREATE_SUBDIRS         = NO

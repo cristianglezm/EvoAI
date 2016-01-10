@@ -18,33 +18,42 @@ namespace EvoAI{
     class NeuralNetwork final{
         public:
             /**
-             * @brief 
+             * @brief default constructor
              * @return 
              */
             NeuralNetwork();
             /**
-             * @brief 
-             * @param 
-             * @return 
+             * @brief This will build the basic structure without connections
+             * @param numInputs const std::size_t& Inputs that the nn will take.
+             * @param numHiddenLayers const std::size_t& Hidden layers that will be created.
+             * @param numNeuronsPerHiddenLayer const std::size_t& neuron per hidden layer
+             * @param numOutputs const std::size_t& number of outputs
+             * @param bias const double& bias fot he neural network, it will put the same for every layer.
+             * @return NeuronNetwork
              */
             NeuralNetwork(const std::size_t& numInputs,const std::size_t& numHiddenLayers,
                           const std::size_t& numNeuronsPerHiddenLayer,const std::size_t& numOutputs,const double& bias);
             /**
-             * @brief 
+             * @brief Load the NN from a json file
              * @param filename
-             * @return 
+             * @return NeuralNetwork
              */
             NeuralNetwork(const std::string& filename);
             /**
-             *
+             * @brief adds a layer to the neural network
+             * @param l
+             * @return NeuralNetwork&
              */
             NeuralNetwork& addLayer(const NeuronLayer& l);
             /**
-             *
+             * @brief 
+             * @param l
+             * @return 
              */
             bool removeLayer(const NeuronLayer& l);
             /**
-             *
+             * @brief 
+             * @return 
              */
             std::vector<double> run();
             /**
@@ -57,6 +66,18 @@ namespace EvoAI{
              * @return 
              */
             inline std::vector<NeuronLayer>& getLayers(){ return layers; }
+            /**
+             * @brief adds a neuron to a specific layer
+             * @param n
+             * @return 
+             */
+            NeuralNetwork& addNeuron(const Neuron& n, const std::size_t& layerIndex);
+            /**
+             * @brief Removes a neuron and the connections it has.
+             * @param n Neuron to remove
+             * @return bool
+             */
+            bool removeNeuron(Neuron* n);
             /**
              * @brief 
              * @return 

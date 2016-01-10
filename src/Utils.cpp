@@ -75,21 +75,7 @@ namespace EvoAI{
         }
         return std::move(nn);
     }
-    std::unique_ptr<EvoAI::NeuralNetwork> createXORNeuralNetwork(){
-        std::unique_ptr<EvoAI::NeuralNetwork> nn = std::make_unique<EvoAI::NeuralNetwork>(2,1,2,1,1.0);
-        nn->addConnection(EvoAI::Connection(EvoAI::Link(0,0),EvoAI::Link(1,0),0.07));
-        nn->addConnection(EvoAI::Connection(EvoAI::Link(0,0),EvoAI::Link(1,1),0.94));
-        
-        nn->addConnection(EvoAI::Connection(EvoAI::Link(0,1),EvoAI::Link(1,0),0.22));
-        nn->addConnection(EvoAI::Connection(EvoAI::Link(0,1),EvoAI::Link(1,1),0.46));
-        
-        nn->addConnection(EvoAI::Connection(EvoAI::Link(1,0),EvoAI::Link(2,0),-0.22));
-        nn->addConnection(EvoAI::Connection(EvoAI::Link(1,1),EvoAI::Link(2,0),0.58));
-        (*nn)[1][0].setBiasWeight(-0.46);
-        (*nn)[1][1].setBiasWeight(0.10);
-        (*nn)[2][0].setBiasWeight(0.78);
-        return std::move(nn);
-    }
+
     void generateImageFromCoordinates(const std::string& imageInput, NeuralNetwork* nn, const std::string& imageOutput){
         sf::Image imgInput;
         if(!imgInput.loadFromFile(imageInput)){

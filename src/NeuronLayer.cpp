@@ -1,4 +1,6 @@
 #include <EvoAI/NeuronLayer.hpp>
+#include <EvoAI/Utils.hpp>
+
 namespace EvoAI{
     NeuronLayer::NeuronLayer()
     : neurons()
@@ -14,6 +16,7 @@ namespace EvoAI{
     , cyclesLimit(3){
         for(auto i=0u; i<numNeurons;++i){
             neurons.emplace_back(Neuron(t));
+            neurons[i].setBiasWeight(random(-1.0,1.0));
         }
     }
     std::vector<Neuron>& NeuronLayer::getNeurons(){
@@ -49,6 +52,13 @@ namespace EvoAI{
         neurons.erase(removed,std::end(neurons));
         return (removed == std::end(neurons));
     }
+    bool NeuronLayer::hasNeuron(Neuron* n){
+        auto found = std::find_if(std::begin(neurons),std::end(neurons),
+                                        [&n](Neuron& fnrn){
+                                            return ((*n) == fnrn);
+                                        });
+        return (found != std::end(neurons));
+    }
     NeuronLayer& NeuronLayer::addConnection(const Connection& c){
         neurons[c.getSrc().neuron].addConnection(c);
         return *this;
@@ -70,7 +80,7 @@ namespace EvoAI{
         activationType = atype;
         return *this;
     }
-    NeuronLayer& NeuronLayer::setCyclesLimit(int&& cycles){
+    NeuronLayer& NeuronLayer::setCyclesLimit(const int& cycles){
         cyclesLimit = cycles;
         return *this;
     }
@@ -83,7 +93,7 @@ namespace EvoAI{
             case Neuron::Type::HIDDEN:  o["neuronType"] = JsonBox::Value("hidden");    break;
             case Neuron::Type::INPUT:   o["neuronType"] = JsonBox::Value("input");     break;
             case Neuron::Type::OUTPUT:  o["neuronType"] = JsonBox::Value("output");    break;
-            default:            o["neuronType"] = JsonBox::Value("undefined"); break;
+            default:                    o["neuronType"] = JsonBox::Value("undefined"); break;
         }
         switch(activationType){
             case ActivationType::IDENTITY:          o["activationType"] = JsonBox::Value("identity");       break;

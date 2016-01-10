@@ -14,7 +14,7 @@ void usage(){
 int main(int argc, char **argv){
     bool optGenome = false;
     bool optNeural = false;
-    if(argc < 0){
+    if(argc < 1){
         std::cout << std::string(argv[0]) << " [options] <filename>\n";
         usage();
         return -1;
@@ -34,12 +34,12 @@ int main(int argc, char **argv){
         
     }
     if(!nn){
-        nn = EvoAI::createFeedForwardNN(3,4,5,3,1.0);
+        nn = EvoAI::createElmanNeuralNetwork(3,4,5,3,1.0);
     }
     sf::Image output;
     output.create(150,150);
     std::cout << "Saving Neural network to a json file" << std::endl;
-    nn->writeToFile("FeedForward.json");
+    nn->writeToFile("ElmanNeuralNetwork.json");
     std::cout << "creating image with coordinates" << std::endl;
     EvoAI::generateImageFromCoordinates(output,nn.get(),"coords.png");
     std::cout << "creating image with color" << std::endl;

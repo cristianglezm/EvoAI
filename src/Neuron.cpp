@@ -23,8 +23,8 @@ namespace EvoAI{
         output = out;
         return *this;
     }
-    Neuron& Neuron::addSum(const double& sum){
-        this->sum += sum;
+    Neuron& Neuron::addSum(const double& val){
+        sum += val;
         return *this;
     }
     Neuron& Neuron::setSum(const double& sum){
@@ -98,7 +98,8 @@ namespace EvoAI{
         return (output == rhs.output
                 && sum == rhs.sum
                 && delta == rhs.delta
-                && type == rhs.type);
+                && type == rhs.type
+                && biasWeight == rhs.biasWeight);
     }
     Neuron& Neuron::setBiasWeight(const double& bw){
         biasWeight = bw;

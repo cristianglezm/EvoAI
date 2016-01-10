@@ -10,13 +10,18 @@
 
 namespace EvoAI{
     /**
-     * @brief EvoAI::Neuron class
+     * @class Neuron
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
+     * @brief Defines a neuron
      */
     class Neuron final{
         public:
             /**
              * @brief Neuron::Type defines the type of a neuron.
+             * CONTEXT: makes the neuron remember outputs from other neurons
+             * HIDDEN: is a hidden neuron.
+             * INPUT: this neuron will take the values provided and just pass them along.
+             * OUTPUT: this neuron will hold the results.
              */
             enum class Type{
                 CONTEXT,
@@ -30,45 +35,47 @@ namespace EvoAI{
              */
             Neuron();
             /**
-             * @brief Constructor that takes a type parameter.
-             * @param const Type& t
+             * @brief Constructor that takes a Neuron::Type parameter.
+             * @param t const Type&
              */
             Neuron(Type t);
             /**
-             * @brief type setter
+             * @brief Setter for Neuron::Type
+             * @param t Neuron::Type
+             * @return Neuron&
              */
             Neuron& setType(Type t);
             /**
-             * @brief type getter
+             * @brief getter for Neuron::Type
              * @return Type&
              */
             inline Type getType() const{ return type; }
             /**
-             * @brief get value
+             * @brief getter for output
              * @return double&
              */
             inline const double& getOutput() const{ return output; }
             /**
-             * @brief 
-             * @param out
-             * @return 
+             * @brief setter for Output
+             * @param out const double&
+             * @return Neuron&
              */
             Neuron& setOutput(const double& out);
             /**
-             * @brief 
-             * @param sum
-             * @return 
+             * @brief add value to Sum
+             * @param sum const double&
+             * @return Neuron&
              */
-            Neuron& addSum(const double& sum);
+            Neuron& addSum(const double& val);
             /**
-             * @brief oldValue getter
-             * @return double&
+             * @brief getter for sum
+             * @return const double&
              */
             inline const double& getSum() const{ return sum; }
             /**
-             * @brief 
-             * @param sum
-             * @return 
+             * @brief setter for the sum
+             * @param sum const double&
+             * @return Neuron&
              */
             Neuron& setSum(const double& sum);
             /**
@@ -77,9 +84,9 @@ namespace EvoAI{
              */
             inline const double& getDelta() const{ return delta; }
             /**
-             * @brief 
-             * @param delta
-             * @return 
+             * @brief Delta value for backprop
+             * @param delta const double&
+             * @return Neuron&
              */
             Neuron& setDelta(const double& delta);
             /**
@@ -88,57 +95,63 @@ namespace EvoAI{
              */
             Neuron& reset();
             /**
-             * @brief resets the neuron Context
+             * @brief resets the neuron if is Type:CONTEXT
              * @return Neuron&
              */
             Neuron& resetContext();
             /**
-             * @brief 
+             * @brief Returns a json value from the object
              * @return JsonBox::Value json 
              */
             JsonBox::Value toJson() const;
             /**
-             * @brief 
-             * @return 
+             * @brief Serialize the neuron info to string.
+             * @return std::string
              */
             std::string toString() const;
             /**
-             * @brief 
-             * @param c
-             * @return 
+             * @brief Adds a Connection.
+             * @param c const Connection&
+             * @return Neuron&
              */
             Neuron& addConnection(const Connection& c);
             /**
-             * @brief 
-             * @param c
-             * @return 
+             * @brief Removes a Connection
+             * @param const Connection& c
+             * @return bool
              */
             bool removeConnection(const Connection& c);
             /**
-             * @brief 
-             * @return 
+             * @brief Getter for Connections
+             * @return std::vector<Connection>&
              */
             inline std::vector<Connection>& getConnections(){ return connections; }
             /**
-             * @brief 
+             * @brief Equality Operator
              * @param rhs
+             * @return bool
              */
             bool operator==(const Neuron& rhs) const;
             /**
-             * @brief Getter
+             * @brief Getter for the Bias Weight
              * @return const double& biasWeight
              */
             inline const double& getBiasWeight() const{ return biasWeight; }
             /**
-             * @brief 
-             * @param bw
-             * @return 
+             * @brief Setter for the bias Weight.
+             * @param bw biasWeight
+             * @return Neuron&
              */
             Neuron& setBiasWeight(const double& bw);
             /**
-             * @brief 
+             * @brief Clears the neuron's connections.
              */
             void clearConnections();
+            /**
+             * @brief returns true if has some connection.
+             * @return bool
+             */
+            bool hasConnections() const{ return (connections.size() > 0); }
             ~Neuron() = default;
         private:
             double output;

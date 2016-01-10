@@ -24,7 +24,6 @@ namespace EvoAI{
     , connections()
     , connectionsCached(false)
     , mse(0.0){
-        //// TODO
         JsonBox::Value v;
         v.loadFromFile(filename);
         auto layersArray = v["NeuralNetwork"]["layers"].getArray();
@@ -67,11 +66,13 @@ namespace EvoAI{
                 actype = NeuronLayer::ActivationType::TANH;
             }
             l.setActivationType(actype);
+            // build neurons
             auto neuronsArray = la["neurons"].getArray();
             for(auto& na:neuronsArray){
                 Neuron n;
                 n.setBiasWeight(na["biasWeight"].getDouble());
                 n.setType(lyrType);
+                //build connections
                 auto conArray = na["connections"].getArray();
                 for(auto& ca:conArray){
                     Link src(ca["src"]["layer"].getInteger(),ca["src"]["neuron"].getInteger());
@@ -90,12 +91,28 @@ namespace EvoAI{
         return *this;
     }
     bool NeuralNetwork::removeLayer(const NeuronLayer& l){
-        auto removed = std::remove_if(std::begin(layers),std::end(layers),
+        auto lyrIndex = 0u;
+        for(auto i=0u;i<(layers.size()-1);++i){
+            if(l == layers[i]){
+                lyrIndex = i;
+            }
+        }
+        for(auto& l:layers){
+            for(auto& n:l.getNeurons()){
+                auto& conns = n.getConnections();
+                auto removed = std::remove_if(std::begin(conns),std::end(conns),
+                                        [&lyrIndex](const Connection& c){
+                                            return (c.getDest().layer == lyrIndex);
+                                        });
+                conns.erase(removed,std::end(conns));
+            }
+        }
+        auto lyrRemoved = std::remove_if(std::begin(layers),std::end(layers),
                                       [&l](const NeuronLayer& rl){
                                         return (l == rl);
                                       });
-        layers.erase(removed,std::end(layers));
-        return (removed == std::end(layers));
+        layers.erase(lyrRemoved,std::end(layers));
+        return (lyrRemoved == std::end(layers));
     }
     std::vector<double> NeuralNetwork::run(){
         std::vector<double> res;
@@ -158,6 +175,41 @@ namespace EvoAI{
     NeuralNetwork& NeuralNetwork::setLayers(std::vector<NeuronLayer>&& lys){
         layers = std::move(lys);
         return *this;
+    }
+    NeuralNetwork& NeuralNetwork::addNeuron(const Neuron& n, const std::size_t& layerIndex){
+        layers[layerIndex].addNeuron(n);
+        return *this;
+    }
+    bool NeuralNetwork::removeNeuron(Neuron* n){
+        auto size = layers.size() - 1;
+        auto lyrIndex = 0u, nrnIndex = 0u;
+        if(n->hasConnections()){
+            auto src = n->getConnections()[0].getSrc();
+            lyrIndex = src.layer;
+            nrnIndex = src.neuron;
+        }else{
+            for(auto i=0u;i<size;++i){
+                for(auto j=0u;j<(layers[i].size()-1);++j){
+                    if(layers[i][j] == (*n)){
+                        lyrIndex = i;
+                        nrnIndex = j;
+                    }
+                }
+            }
+        }
+        for(auto& c:getConnections()){
+            if(c->getDest().layer == lyrIndex){
+                if(nrnIndex != size){
+                    if(c->getDest().neuron > nrnIndex){
+                        auto& con = c->getDest();
+                        c->setDest(Link(con.layer,con.neuron-1));
+                    }
+                }
+            }
+        }
+        removeConnectionsWithDest(Link(lyrIndex,nrnIndex));
+        auto removedNeuron = layers[lyrIndex].removeNeuron(n);
+        return removedNeuron;
     }
     bool NeuralNetwork::setInputs(std::vector<double>&& ins){
         auto numInputs = layers[0].size();
@@ -246,6 +298,7 @@ namespace EvoAI{
             a.push_back(l.toJson());
         }
         JsonBox::Object o;
+        o["version"] = JsonBox::Value("1.0");
         o["NeuralNetwork"]["layers"] = JsonBox::Value(a);
         return JsonBox::Value(o);
     }
@@ -265,6 +318,9 @@ namespace EvoAI{
 //private member functions
     const double NeuralNetwork::activate(NeuronLayer::ActivationType at, const Neuron& n) const{
         switch(at){
+            case NeuronLayer::IDENTITY:
+                    return n.getSum();
+                break;
             case NeuronLayer::TANH:
                     return Activations::tanh(n.getSum());
                 break;

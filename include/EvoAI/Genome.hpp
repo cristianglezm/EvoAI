@@ -5,6 +5,8 @@
 #include <memory>
 #include <utility>
 #include <random>
+#include <string>
+
 #include <EvoAI/NeuralNetwork.hpp>
 #include <JsonBox.h>
 
@@ -19,6 +21,7 @@ namespace EvoAI{
         public:
             Genome();
             Genome(const std::size_t& chromoSize);
+            Genome(const std::string& filename);
             bool update();
             JsonBox::Value toJson();
             ~Genome() = default;

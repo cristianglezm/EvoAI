@@ -4,9 +4,10 @@
 #include <memory>
 #include <utility>
 #include <random>
-#include <EvoAI/NeuralNetwork.hpp>
-#include <SFML/Graphics/Image.hpp>
 #include <string>
+
+#include <SFML/Graphics/Image.hpp>
+#include <EvoAI/NeuralNetwork.hpp>
 
 namespace EvoAI{
     /**
@@ -39,7 +40,6 @@ namespace EvoAI{
      * @return std::unique_ptr<NeuralNetwork>
      */
     std::unique_ptr<NeuralNetwork> createElmanNeuralNetwork(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
-    std::unique_ptr<EvoAI::NeuralNetwork> createXORNeuralNetwork();
     /**
      * @brief Generates an Image from coordinates and distance to center
      * 
