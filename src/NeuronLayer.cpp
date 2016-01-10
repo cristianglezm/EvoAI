@@ -105,6 +105,7 @@ namespace EvoAI{
             case ActivationType::NOISY_RELU:        o["activationType"] = JsonBox::Value("noisyRelu");      break;
             case ActivationType::LEAKY_RELU:        o["activationType"] = JsonBox::Value("leakyRelu");      break;
             case ActivationType::EXPONENTIAL:       o["activationType"] = JsonBox::Value("exponential");    break;
+            case ActivationType::SOFTMAX:           o["activationType"] = JsonBox::Value("softmax");        break;
             default:                                o["activationType"] = JsonBox::Value("undefined");      break;
         }
         JsonBox::Array a;

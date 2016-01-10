@@ -29,7 +29,8 @@ namespace EvoAI{
                 RELU,
                 NOISY_RELU,
                 LEAKY_RELU,
-                EXPONENTIAL
+                EXPONENTIAL,
+                SOFTMAX
             };
         public:
             /**

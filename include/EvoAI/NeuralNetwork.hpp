@@ -96,16 +96,18 @@ namespace EvoAI{
              */
             bool removeConnection(Connection& c);
             /**
-             * @brief 
+             * @brief Removes Connections with dest
+             * @param dest Link&&
              */
             void removeConnectionsWithDest(Link&& dest);
             /**
-             * @brief 
+             * @brief Removes Connections with src
+             * @param src Link&&
              */
             void removeConnectionsWithSrc(Link&& src);
             /**
-             * @brief ///TODO Very Important
-             * @return 
+             * @brief 
+             * @return std::vector<Connection*>&
              */
             std::vector<Connection*>& getConnections();
             /**
@@ -121,25 +123,25 @@ namespace EvoAI{
              */
             bool hasConnection(Link&& src, Link&& dest);
             /**
-             * @brief 
-             * @return 
+             * @brief Returns how many layers it has.
+             * @return std::size_t
              */
             inline std::size_t size() const{ return layers.size(); }
             /**
-             * @brief 
+             * @brief resets the neurons that are not Neuron::Type::CONTEXT
              */
             void reset();
             /**
-             * @brief 
+             * @brief resets the contexts neurons.
              */
             void resetContext();
             /**
-             * @brief 
+             * @brief Use this to get a JsonBox::Value
              * @return JsonBox::Value
              */
             JsonBox::Value toJson() const;
             /**
-             * @brief 
+             * @brief Writes the neural network json to a file.
              * @param filename
              */
             void writeToFile(const std::string& filename) const;
@@ -160,7 +162,7 @@ namespace EvoAI{
              * @param n const Neuron&
              * @return const double
              */
-            const double activate(NeuronLayer::ActivationType at, const Neuron& n) const;
+            const double activate(NeuronLayer::ActivationType at, const Neuron& n);
         private:
             std::vector<NeuronLayer> layers;
             std::vector<Connection*> connections;

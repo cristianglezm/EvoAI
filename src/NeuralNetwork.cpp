@@ -62,6 +62,8 @@ namespace EvoAI{
                 actype = NeuronLayer::ActivationType::SINUSOID;
             }else if(actType == "steppedSigmoid"){
                 actype = NeuronLayer::ActivationType::STEPPED_SIGMOID;
+            }else if(actType == "softmax"){
+                actype = NeuronLayer::ActivationType::SOFTMAX;
             }else if(actType == "tanh"){
                 actype = NeuronLayer::ActivationType::TANH;
             }
@@ -316,7 +318,7 @@ namespace EvoAI{
         return layers[index];
     }
 //private member functions
-    const double NeuralNetwork::activate(NeuronLayer::ActivationType at, const Neuron& n) const{
+    const double NeuralNetwork::activate(NeuronLayer::ActivationType at, const Neuron& n){
         switch(at){
             case NeuronLayer::IDENTITY:
                     return n.getSum();
@@ -341,6 +343,9 @@ namespace EvoAI{
                 break;
             case NeuronLayer::EXPONENTIAL:
                     return Activations::exponential(n.getSum());
+                break;
+            case NeuronLayer::SOFTMAX:
+                    return Activations::softmax(n.getSum(),*this);
                 break;
             case NeuronLayer::STEPPED_SIGMOID:
             default:
