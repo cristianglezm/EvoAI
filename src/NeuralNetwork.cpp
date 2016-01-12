@@ -317,6 +317,9 @@ namespace EvoAI{
     NeuronLayer& NeuralNetwork::operator[](const std::size_t& index){
         return layers[index];
     }
+    bool NeuralNetwork::operator==(const NeuralNetwork& rhs) const{
+        return std::equal(std::begin(layers),std::end(layers),std::begin(rhs.layers));
+    }
 //private member functions
     const double NeuralNetwork::activate(NeuronLayer::ActivationType at, const Neuron& n){
         switch(at){
@@ -349,7 +352,7 @@ namespace EvoAI{
                 break;
             case NeuronLayer::STEPPED_SIGMOID:
             default:
-                return Activations::sigmoid(n.getSum()-n.getBiasWeight());
+                    return Activations::sigmoid(n.getSum()-n.getBiasWeight());
                 break;
         }
     }

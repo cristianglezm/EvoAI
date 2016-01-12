@@ -119,8 +119,9 @@ namespace EvoAI{
         return neurons[index];
     }
     bool NeuronLayer::operator==(const NeuronLayer& rhs) const{
-        return (neurons == rhs.neurons &&
+        return (std::equal(std::begin(neurons),std::end(neurons),std::begin(rhs.neurons)) &&
                 type == rhs.type &&
-                bias == rhs.bias);
+                bias == rhs.bias && 
+                activationType == rhs.activationType);
     }
 }

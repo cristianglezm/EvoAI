@@ -7,6 +7,7 @@
 #include <string>
 
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Audio.hpp>
 #include <EvoAI/NeuralNetwork.hpp>
 
 namespace EvoAI{
@@ -100,5 +101,27 @@ namespace EvoAI{
      * @param imageOutput
      */
     void generateImageFromColorAndCoordinates(sf::Image& imageInput, NeuralNetwork* nn, const std::string& imageOutput);
+    /**
+     * @brief generates a sound from 2d coordinates
+     * @param width
+     * @param height 
+     * @param nn Neural Network
+     * @param soundOutput filename of the sound file to save
+     */
+    void generateSoundFromCoordinates(const int& width, const int& height, NeuralNetwork* nn, const std::string& soundOutput);
+    /**
+     * @brief 
+     * @param Imagefilename
+     * @param nn
+     * @param soundOutput
+     */
+    void generateSoundFromColor(const std::string& Imagefilename, NeuralNetwork* nn, const std::string& soundOutput);
+    /**
+     * @brief 
+     * @param imageInput
+     * @param nn
+     * @param soundOutput
+     */
+    void generateSoundFromColor(sf::Image& imageInput, NeuralNetwork* nn, const std::string& soundOutput);
 }
 #endif // UTILS_HPP

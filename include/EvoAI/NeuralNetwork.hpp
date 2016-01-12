@@ -150,9 +150,18 @@ namespace EvoAI{
              */
             void clear();
             /**
-             * @brief 
+             * @brief direct access to layers and neurons
+             * Examples: neuralnetwork[1][1].setBiasWeight(-0.3); // sets the biasWeight of neuron 1 from layer 1
+             *          neuralnetwork[3][0].getOutput(); // gets output of neuron 0 from layer 3
+             * Does not check if index is out of range
+             * @param index const std::size_t& index layer
              */
             NeuronLayer& operator[](const std::size_t& index);
+            /**
+             * @brief compares two neural networks
+             * @param rhs
+             */
+            bool operator==(const NeuralNetwork& rhs) const;
             friend class NNRenderer;
             ~NeuralNetwork() = default;
         private:

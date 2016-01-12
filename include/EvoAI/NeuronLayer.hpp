@@ -138,10 +138,9 @@ namespace EvoAI{
              */
             NeuronLayer& setActivationType(ActivationType atype);
             /**
-             * @brief Sets how many cycles the layer context neurons will remember.
+             * @brief Sets how many cycles to reset the context neurons.
              * @param cycles
              * @return NeuronLayer&
-             * TODO
              */
             NeuronLayer& setCyclesLimit(const int& cycles);
             /**
@@ -155,13 +154,16 @@ namespace EvoAI{
              */
             JsonBox::Value toJson() const;
             /**
-             * @brief returns neuron
-             * @param index
+             * @brief Direct Access to Neurons
+             * Example:
+             *      NeuronLayer[2].getOutput() // gets outputs of neuron 2
+             * Does not check if index is out of range
+             * @param index const std::size_t&
              * @return Neuron&
              */
             Neuron& operator[](const std::size_t& index);
             /**
-             * @brief compare layer
+             * @brief compare layers
              * @param rhs
              */
             bool operator==(const NeuronLayer& rhs) const;

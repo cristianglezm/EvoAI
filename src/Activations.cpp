@@ -36,4 +36,19 @@ namespace EvoAI{
         }
         return (std::exp(v) / (sum));
     }
+    
+// derivatives
+    double Derivatives::sigmoid(const double& v){
+        auto y = Activations::sigmoid(v);
+        return (y*(1-y));
+    }
+    double Derivatives::tanh(const double& v){
+        return 1-std::pow(std::tanh(v),2);
+    }
+    double Derivatives::sinusoid(const double& v){
+        return std::cos(v);
+    }
+    double Derivatives::relu(const double& v){
+        return (v > 0.0 ? 1.0:0.0);
+    }    
 }

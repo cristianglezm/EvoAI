@@ -81,7 +81,7 @@ namespace EvoAI{
         if(!imgInput.loadFromFile(imageInput)){
             throw std::runtime_error(imageInput + " Couldn't be loaded");
         }
-        generateImageFromCoordinates(imageInput, nn,imageOutput);
+        generateImageFromCoordinates(imgInput, nn,imageOutput);
     }
     void generateImageFromCoordinates(sf::Image& imageInput, NeuralNetwork* nn, const std::string& imageOutput){
         if((*nn)[0].size() != 3){
@@ -116,7 +116,7 @@ namespace EvoAI{
         if(!imgInput.loadFromFile(imageInput)){
             throw std::runtime_error(imageInput + " Couldn't be loaded");
         }
-        generateImageFromColor(imageInput, nn,imageOutput);
+        generateImageFromColor(imgInput, nn,imageOutput);
     }
     void generateImageFromColor(sf::Image& imageInput, NeuralNetwork* nn, const std::string& imageOutput){
         if((*nn)[0].size() != 3){
@@ -149,14 +149,14 @@ namespace EvoAI{
         if(!imgInput.loadFromFile(imageInput)){
             throw std::runtime_error(imageInput + " Couldn't be loaded");
         }
-        generateImageFromColorAndCoordinates(imageInput, nn,imageOutput);
+        generateImageFromColorAndCoordinates(imgInput, nn,imageOutput);
     }
     void generateImageFromColorAndCoordinates(sf::Image& imageInput, NeuralNetwork* nn, const std::string& imageOutput){
-        if((*nn)[0].size() != 3){
-            throw std::runtime_error("The neural Network needs to have 3 inputs");
+        if((*nn)[0].size() != 6){
+            throw std::runtime_error("EvoAI::generateImageFromColorAndCoordinates() : The neural Network needs to have 6 inputs");
         }
         if((*nn)[(*nn).size()-1].size() != 3){
-            throw std::runtime_error("The neural Network needs to have 3 outputs");
+            throw std::runtime_error("EvoAI::generateImageFromColorAndCoordinates() : The neural Network needs to have 3 outputs");
         }
         int width = imageInput.getSize().x;
         int height = imageInput.getSize().y;
@@ -182,5 +182,93 @@ namespace EvoAI{
             }
         }
         imgOutput.saveToFile(imageOutput);
+    }
+    void generateSoundFromCoordinates(const int& width, const int& height, NeuralNetwork* nn, const std::string& soundOutput){
+        if((*nn)[0].size() != 3){
+            throw std::runtime_error("The neural Network needs to have 3 inputs");
+        }
+        if((*nn)[(*nn).size()-1].size() != 3){
+            throw std::runtime_error("The neural Network needs to have 3 outputs");
+        }
+        sf::OutputSoundFile osf;
+        osf.openFromFile(soundOutput,44100,2);
+        sf::Int16 samplesBuffer[height];
+        sf::Uint64 count = height;
+        for(auto x=0;x<width;++x){
+            auto counter = 0;
+            for(auto y=0;y<height;++y){
+                auto norm_x = (2*(x/width))-1;
+                auto norm_y = (2*(y/height))-1;
+                auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
+                std::vector<double> inputs;
+                inputs.emplace_back((double)x);
+                inputs.emplace_back((double)y);
+                inputs.emplace_back((double)d);
+                nn->setInputs(std::move(inputs));
+                auto audio = nn->run();
+                nn->reset();
+                if(counter > 2){
+                    counter = 0;
+                }
+                if(counter == 0){
+                    samplesBuffer[y] = static_cast<sf::Int16>(10000 * (x*y) * std::cosh(audio[counter] * 440 * (audio[counter+1] * 3.1415f) * audio[counter] / 44100));
+                }else if(counter == 1){
+                    samplesBuffer[y] = static_cast<sf::Int16>(10000 * (y*d) * std::sin(audio[counter] * 440 * (audio[counter-1] * 3.1415f) * audio[counter] / 44100));
+                }else if(counter == 2){
+                    samplesBuffer[y] = static_cast<sf::Int16>(10000 * (x*d) * std::cos(audio[counter] * 440 * (audio[counter] * 3.1415f) * audio[counter] / 44100));
+                }
+                ++counter;
+            }
+            osf.write(samplesBuffer,count);
+        }
+    }
+    void generateSoundFromColor(const std::string& Imagefilename, NeuralNetwork* nn, const std::string& soundOutput){
+        sf::Image imgInput;
+        if(!imgInput.loadFromFile(Imagefilename)){
+            throw std::runtime_error(Imagefilename + " Couldn't be loaded");
+        }
+        generateSoundFromColor(imgInput, nn,soundOutput);
+    }
+    void generateSoundFromColor(sf::Image& imageInput, NeuralNetwork* nn, const std::string& soundOutput){
+        if((*nn)[0].size() != 3){
+            throw std::runtime_error("The neural Network needs to have 3 inputs");
+        }
+        if((*nn)[(*nn).size()-1].size() != 3){
+            throw std::runtime_error("The neural Network needs to have 3 outputs");
+        }
+        const int width = imageInput.getSize().x;
+        const int height = imageInput.getSize().y;
+        sf::OutputSoundFile osf;
+        osf.openFromFile(soundOutput,44100,2);
+        sf::Int16 samplesBuffer[height];
+        sf::Uint64 count = height;
+        for(auto x=0;x<width;++x){
+            auto counter = 0;
+            for(auto y=0;y<height;++y){
+                auto norm_x = (2*(x/width))-1;
+                auto norm_y = (2*(y/height))-1;
+                auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
+                std::vector<double> inputs;
+                auto imgColor = imageInput.getPixel(x,y);
+                inputs.emplace_back((double)imgColor.r);
+                inputs.emplace_back((double)imgColor.g);
+                inputs.emplace_back((double)imgColor.b);
+                nn->setInputs(std::move(inputs));
+                auto audio = nn->run();
+                nn->reset();
+                if(counter > 2){
+                    counter = 0;
+                }
+                if(counter == 0){
+                    samplesBuffer[y] = static_cast<sf::Int16>(10000 * (x*y) * std::cosh(audio[counter] * 440 * (audio[counter+1] * 3.1415f) * audio[counter] / 44100));
+                }else if(counter == 1){
+                    samplesBuffer[y] = static_cast<sf::Int16>(10000 * (y*d) * std::sin(audio[counter] * 440 * (audio[counter-1] * 3.1415f) * audio[counter] / 44100));
+                }else if(counter == 2){
+                    samplesBuffer[y] = static_cast<sf::Int16>(10000 * (x*d) * std::cos(audio[counter] * 440 * (audio[counter] * 3.1415f) * audio[counter] / 44100));
+                }
+                ++counter;
+            }
+            osf.write(samplesBuffer,count);
+        }
     }
 }

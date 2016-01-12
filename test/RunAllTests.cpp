@@ -3,6 +3,7 @@
 #include <EvoAI.hpp>
 #include "NeuronTest/NeuronTest.hpp"
 #include "NeuronLayerTest/NeuronLayerTest.hpp"
+#include "NeuralNetworkTest/NeuralNetworkTest.hpp"
 
 int main(int argc, char** argv){
     std::cout << "Initializing Tests...." << std::endl;
