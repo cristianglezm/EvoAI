@@ -33,52 +33,23 @@ namespace EvoAI{
             l.setCyclesLimit(la["cyclesLimit"].getInteger());
             l.setBias(la["bias"].getDouble());
             auto type = la["neuronType"].getString();
-            Neuron::Type lyrType = Neuron::Type::HIDDEN;
-            if(type == "input"){
-                lyrType = Neuron::Type::INPUT;
-            }else if(type == "context"){
-                lyrType = Neuron::Type::CONTEXT;
-            }else if(type == "hidden"){
-                lyrType = Neuron::Type::HIDDEN;
-            }else if(type == "output"){
-                lyrType = Neuron::Type::OUTPUT;
-            }
-            l.setType(lyrType);
+            l.setType(Neuron::typeToEnum(type));
             auto actType = la["activationType"].getString();
-            NeuronLayer::ActivationType actype = NeuronLayer::ActivationType::STEPPED_SIGMOID;
-            if(actType == "identity"){
-                actype = NeuronLayer::ActivationType::IDENTITY;
-            }else if(actType == "exponential"){
-                actype = NeuronLayer::ActivationType::EXPONENTIAL;
-            }else if(actType == "leakyRelu"){
-                actype = NeuronLayer::ActivationType::LEAKY_RELU;
-            }else if(actType == "noisyRelu"){
-                actype = NeuronLayer::ActivationType::NOISY_RELU;
-            }else if(actType == "relu"){
-                actype = NeuronLayer::ActivationType::RELU;
-            }else if(actType == "sigmoid"){
-                actype = NeuronLayer::ActivationType::SIGMOID;
-            }else if(actType == "sinusoid"){
-                actype = NeuronLayer::ActivationType::SINUSOID;
-            }else if(actType == "steppedSigmoid"){
-                actype = NeuronLayer::ActivationType::STEPPED_SIGMOID;
-            }else if(actType == "softmax"){
-                actype = NeuronLayer::ActivationType::SOFTMAX;
-            }else if(actType == "tanh"){
-                actype = NeuronLayer::ActivationType::TANH;
-            }
-            l.setActivationType(actype);
+            l.setActivationType(Neuron::activationTypeToEnum(actType));
             // build neurons
             auto neuronsArray = la["neurons"].getArray();
             for(auto& na:neuronsArray){
                 Neuron n;
                 n.setBiasWeight(na["biasWeight"].getDouble());
-                n.setType(lyrType);
+                auto nType = na["type"].getString();
+                n.setType(Neuron::typeToEnum(nType));
+                auto nActType = na["activationType"].getString();
+                n.setActivationType(Neuron::activationTypeToEnum(nActType));
                 //build connections
                 auto conArray = na["connections"].getArray();
                 for(auto& ca:conArray){
-                    Link src(ca["src"]["layer"].getInteger(),ca["src"]["neuron"].getInteger());
-                    Link dest(ca["dest"]["layer"].getInteger(),ca["dest"]["neuron"].getInteger());
+                    Link src(ca["src"]["layer"].getInteger(), ca["src"]["neuron"].getInteger());
+                    Link dest(ca["dest"]["layer"].getInteger(), ca["dest"]["neuron"].getInteger());
                     auto weight = ca["weight"].getDouble();
                     Connection c(src,dest, weight);
                     n.addConnection(c);
@@ -134,7 +105,7 @@ namespace EvoAI{
                         if(nrnSrc.getType() != Neuron::Type::CONTEXT){
                             nrnSrc.addSum(layers[src.layer].getBias() * nrnSrc.getBiasWeight());
                         }
-                        output = activate(layers[src.layer].getActivationType(),nrnSrc);
+                        output = activate(nrnSrc.getActivationType(),nrnSrc);
                         nrnSrc.setOutput(output);
                         nrnDest.addSum(output * w);
                         if(nrnDest.getType() == Neuron::Type::CONTEXT){
@@ -168,7 +139,7 @@ namespace EvoAI{
         auto output = 0.0;
         for(auto& n:outputLayer.getNeurons()){
             n.addSum(outputLayer.getBias() * n.getBiasWeight());
-            output = activate(outputLayer.getActivationType(),n);
+            output = activate(n.getActivationType(),n);
             n.setOutput(output);
             res.emplace_back(output);
         }
@@ -321,39 +292,31 @@ namespace EvoAI{
         return std::equal(std::begin(layers),std::end(layers),std::begin(rhs.layers));
     }
 //private member functions
-    const double NeuralNetwork::activate(NeuronLayer::ActivationType at, const Neuron& n){
+    const double NeuralNetwork::activate(Neuron::ActivationType at, const Neuron& n){
         switch(at){
-            case NeuronLayer::IDENTITY:
-                    return n.getSum();
-                break;
-            case NeuronLayer::TANH:
-                    return Activations::tanh(n.getSum());
-                break;
-            case NeuronLayer::SINUSOID:
-                    return Activations::sinusoid(n.getSum());
-                break;
-            case NeuronLayer::SIGMOID:
-                    return Activations::sigmoid(n.getSum());
-                break;
-            case NeuronLayer::RELU:
-                    return Activations::relu(n.getSum());
-                break;
-            case NeuronLayer::NOISY_RELU:
-                    return Activations::noisyRelu(n.getSum());
-                break;
-            case NeuronLayer::LEAKY_RELU:
-                    return Activations::leakyRelu(n.getSum());
-                break;
-            case NeuronLayer::EXPONENTIAL:
-                    return Activations::exponential(n.getSum());
-                break;
-            case NeuronLayer::SOFTMAX:
-                    return Activations::softmax(n.getSum(),*this);
-                break;
-            case NeuronLayer::STEPPED_SIGMOID:
-            default:
-                    return Activations::sigmoid(n.getSum()-n.getBiasWeight());
-                break;
+            case Neuron::ActivationType::IDENTITY:
+                return n.getSum();
+            case Neuron::ActivationType::TANH:
+                return Activations::tanh(n.getSum());
+            case Neuron::ActivationType::SINUSOID:
+                return Activations::sinusoid(n.getSum());
+            case Neuron::ActivationType::SIGMOID:
+                return Activations::sigmoid(n.getSum());
+            case Neuron::ActivationType::RELU:
+                return Activations::relu(n.getSum());
+            case Neuron::ActivationType::NOISY_RELU:
+                return Activations::noisyRelu(n.getSum());
+            case Neuron::ActivationType::LEAKY_RELU:
+                return Activations::leakyRelu(n.getSum());
+            case Neuron::ActivationType::EXPONENTIAL:
+                return Activations::exponential(n.getSum());
+            case Neuron::ActivationType::SOFTMAX:
+                return Activations::softmax(n.getSum(),*this);
+            case Neuron::ActivationType::GAUSSIAN:
+                return Activations::gaussian(n.getSum());
+            case Neuron::ActivationType::STEPPED_SIGMOID:
+                 return Activations::sigmoid(n.getSum()-n.getBiasWeight());
         }
+        return Activations::sigmoid(n.getSum()-n.getBiasWeight());
     }
 }

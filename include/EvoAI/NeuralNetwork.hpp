@@ -167,11 +167,11 @@ namespace EvoAI{
         private:
             /**
              * @brief Applies the neuron activation
-             * @param at ActivationType
+             * @param at Neuron::ActivationType
              * @param n const Neuron&
              * @return const double
              */
-            const double activate(NeuronLayer::ActivationType at, const Neuron& n);
+            const double activate(Neuron::ActivationType at, const Neuron& n);
         private:
             std::vector<NeuronLayer> layers;
             std::vector<Connection*> connections;

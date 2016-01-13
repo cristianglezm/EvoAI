@@ -17,10 +17,10 @@ int main(int argc, char **argv){
     bool optNeural = false;
     bool optImage = false;
     std::string val = "";
-    if(argc > 3){
+    if(argc >= 3){
         val = argv[1];
     }else if(argc == 2){
-        //val = argv[1];
+        val = argv[1];
     }
     if(val == "-g" || val == "--genome"){
         optGenome = true;
@@ -39,6 +39,8 @@ int main(int argc, char **argv){
         nn = std::make_unique<EvoAI::NeuralNetwork>(std::string(argv[2]));
     }else if(optGenome){
         
+    }else if(optImage){
+        
     }
     if(!nn){
         nn = EvoAI::createFeedForwardNN(3,2,3,3,1.0);
@@ -50,12 +52,15 @@ int main(int argc, char **argv){
     std::cout << "creating image with color..." << std::endl;
     EvoAI::generateImageFromColor(output,nn.get(),"color.png");
     std::cout << "creating sound with coords image..." << std::endl;
-    EvoAI::generateSoundFromColor("soundwaves.jpg",nn.get(),"sound.ogg");
+    EvoAI::generateSoundFromColor("shocks.png",nn.get(),"sound.ogg");
     std::cout << "creating image with coordinates..." << std::endl;
     EvoAI::generateImageFromCoordinates(output,nn.get(),"coords.png");
     std::cout << "creating image with color And Coordinates..." << std::endl;
-    nn = EvoAI::createFeedForwardNN(6,4,5,3,1.0);
-    EvoAI::generateImageFromColorAndCoordinates("shocks.png",nn.get(),"colorAndCoordinates.png");
+    nn = std::make_unique<EvoAI::NeuralNetwork>("ElmanNeuralNetwork.json");
+    //nn = EvoAI::createFeedForwardNN(6,4,5,3,1.0);
+    for(int i=0;i<2;++i){
+        EvoAI::generateImageFromColorAndCoordinates("shocks.png",nn.get(),"colorAndCoordinates" + std::to_string(i) + ".png");
+    }
     nn->writeToFile("ElmanNeuralNetwork.json");
     return 0;
 }

@@ -36,6 +36,9 @@ namespace EvoAI{
         }
         return (std::exp(v) / (sum));
     }
+    double Activations::gaussian(const double& v){
+        return (std::exp(std::pow(-v,2)) / std::sqrt(2*3.14159265359));
+    }
     
 // derivatives
     double Derivatives::sigmoid(const double& v){
@@ -50,5 +53,8 @@ namespace EvoAI{
     }
     double Derivatives::relu(const double& v){
         return (v > 0.0 ? 1.0:0.0);
-    }    
+    }
+    double Derivatives::gaussian(const double& v){
+        return (std::sqrt(2/3.14159265359)*(-std::exp(std::pow(-v,2))));
+    }
 }

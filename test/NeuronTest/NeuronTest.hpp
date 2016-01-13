@@ -31,13 +31,13 @@ namespace EvoAI{
         };
         NeuronTest::NeuronTest() : n(EvoAI::Neuron::Type::INPUT), c(EvoAI::Link(0,1),EvoAI::Link(1,0),-0.4){}
         TEST_F(NeuronTest, DefaultContructor){
-            std::cout << n.toJson() << std::endl;
             EXPECT_TRUE(n.removeConnection(c));
             EXPECT_EQ(EvoAI::Neuron::Type::INPUT, n.getType());
             EXPECT_EQ(0.0, n.getOutput());
             EXPECT_EQ(0.0, n.getSum());
             EXPECT_EQ(1.0, n.addSum(1.0).getSum());
             EXPECT_EQ(1.0, n.setOutput(1.0).getOutput());
+            n.setBiasWeight(1.0);
             EXPECT_EQ(1.0, n.getBiasWeight());
         }
         TEST_F(NeuronTest,ClearConnections){

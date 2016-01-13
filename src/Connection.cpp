@@ -78,4 +78,8 @@ namespace EvoAI{
         gradient = grad;
         return *this;
     }
+    Connection& Connection::addGradient(const double& val){
+        gradient += val;
+        return *this;
+    }
 }

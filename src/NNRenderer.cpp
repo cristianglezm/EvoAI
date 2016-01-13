@@ -55,28 +55,8 @@ namespace EvoAI{
         ni.biasWeight.setPosition(sf::Vector2f(p.x+5.0,p.y+50));
         ni.delta = sf::Text("Delta: " + std::to_string(n.getDelta()),font,textSize);
         ni.delta.setPosition(sf::Vector2f(p.x+5.0,p.y+70));
-        switch(n.getType()){
-            case Neuron::Type::CONTEXT:
-                    ni.type = sf::Text("type: Context",font,textSize);
-                    ni.type.setPosition(sf::Vector2f(p.x+5.0,p.y+90));
-                break;
-            case Neuron::Type::HIDDEN:
-                    ni.type = sf::Text("type: Hidden",font,textSize);
-                    ni.type.setPosition(sf::Vector2f(p.x+5.0,p.y+90));
-                break;
-            case Neuron::Type::INPUT:
-                    ni.type = sf::Text("type: Input",font,textSize);
-                    ni.type.setPosition(sf::Vector2f(p.x+5.0,p.y+90));
-                break;
-            case Neuron::Type::OUTPUT:
-                    ni.type = sf::Text("type: Output",font,textSize);
-                    ni.type.setPosition(sf::Vector2f(p.x+5.0,p.y+90));
-                break;
-            default:
-                    ni.type = sf::Text("type: Undefined",font,textSize);
-                    ni.type.setPosition(sf::Vector2f(p.x+5.0,p.y+90));
-                break;
-        }
+        ni.type = sf::Text("type: " + Neuron::typeToString(n.getType()),font,textSize);
+        ni.type.setPosition(sf::Vector2f(p.x+5.0,p.y+90));
         ni.neuronShape = sf::CircleShape(6);
         ni.neuronShape.setPosition(p);
         ni.neuronShape.setFillColor(sf::Color::Red);

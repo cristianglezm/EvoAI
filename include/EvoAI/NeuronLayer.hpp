@@ -18,22 +18,6 @@ namespace EvoAI{
     class NeuronLayer final{
         public:
             /**
-             * @brief Type of activation that will be used for the layer.
-             */
-            enum ActivationType{
-                IDENTITY,
-                SIGMOID,
-                STEPPED_SIGMOID,
-                TANH,
-                SINUSOID,
-                RELU,
-                NOISY_RELU,
-                LEAKY_RELU,
-                EXPONENTIAL,
-                SOFTMAX
-            };
-        public:
-            /**
              * @brief default contructor
              * @return NeuronLayer
              */
@@ -63,10 +47,11 @@ namespace EvoAI{
             std::size_t size();
             /**
              * @brief setter for Neuron::Type
-             * @param t
+             * will traverse each neuron and set the type to t
+             * @param t Neuron::Type
              * @return NeuronLayer&
              */
-            NeuronLayer& setType(Neuron::Type& t);
+            NeuronLayer& setType(Neuron::Type t);
             /**
              * @brief getter for Neuron::Type
              * @return Neuron::Type&
@@ -128,15 +113,16 @@ namespace EvoAI{
             void resetContext();
             /**
              * @brief getter for the ActivationType
-             * @return NeuronLayer::ActivationType
+             * @return Neuron::ActivationType
              */
-            ActivationType getActivationType() const{ return activationType; }
+            Neuron::ActivationType getActivationType() const{ return activationType; }
             /**
              * @brief setter for activation type
-             * @param atype NeuronLayer::ActivationType
+             * It will traverse each neuron and set the ActivationType to atype.
+             * @param atype Neuron::ActivationType
              * @return NeuronLayer&
              */
-            NeuronLayer& setActivationType(ActivationType atype);
+            NeuronLayer& setActivationType(Neuron::ActivationType atype);
             /**
              * @brief Sets how many cycles to reset the context neurons.
              * @param cycles
@@ -171,7 +157,7 @@ namespace EvoAI{
         private:
             std::vector<Neuron> neurons;
             Neuron::Type type;
-            ActivationType activationType;
+            Neuron::ActivationType activationType;
             double bias;
             int cyclesLimit;
     };

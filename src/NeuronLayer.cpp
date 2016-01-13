@@ -5,13 +5,13 @@ namespace EvoAI{
     NeuronLayer::NeuronLayer()
     : neurons()
     , type(Neuron::Type::HIDDEN)
-    , activationType(ActivationType::STEPPED_SIGMOID)
+    , activationType(Neuron::ActivationType::STEPPED_SIGMOID)
     , bias(0.0)
     , cyclesLimit(3){}
     NeuronLayer::NeuronLayer(const std::size_t& numNeurons,const Neuron::Type& t,const double& bias)
     : neurons()
     , type(t)
-    , activationType(ActivationType::STEPPED_SIGMOID)
+    , activationType(Neuron::ActivationType::STEPPED_SIGMOID)
     , bias(bias)
     , cyclesLimit(3){
         for(auto i=0u; i<numNeurons;++i){
@@ -33,7 +33,7 @@ namespace EvoAI{
         neurons.emplace_back(n);
         return *this;
     }
-    NeuronLayer& NeuronLayer::setType(Neuron::Type& t){
+    NeuronLayer& NeuronLayer::setType(Neuron::Type t){
         type = t;
         for(auto& n:neurons){
             n.setType(t);
@@ -76,8 +76,11 @@ namespace EvoAI{
             n.resetContext();
         }
     }
-    NeuronLayer& NeuronLayer::setActivationType(ActivationType atype){
+    NeuronLayer& NeuronLayer::setActivationType(Neuron::ActivationType atype){
         activationType = atype;
+        for(auto& n: neurons){
+            n.setActivationType(atype);
+        }
         return *this;
     }
     NeuronLayer& NeuronLayer::setCyclesLimit(const int& cycles){
@@ -88,26 +91,8 @@ namespace EvoAI{
         JsonBox::Object o;
         o["bias"] = JsonBox::Value(bias);
         o["cyclesLimit"] = JsonBox::Value(cyclesLimit);
-        switch(type){
-            case Neuron::Type::CONTEXT: o["neuronType"] = JsonBox::Value("context");   break;
-            case Neuron::Type::HIDDEN:  o["neuronType"] = JsonBox::Value("hidden");    break;
-            case Neuron::Type::INPUT:   o["neuronType"] = JsonBox::Value("input");     break;
-            case Neuron::Type::OUTPUT:  o["neuronType"] = JsonBox::Value("output");    break;
-            default:                    o["neuronType"] = JsonBox::Value("undefined"); break;
-        }
-        switch(activationType){
-            case ActivationType::IDENTITY:          o["activationType"] = JsonBox::Value("identity");       break;
-            case ActivationType::SIGMOID:           o["activationType"] = JsonBox::Value("sigmoid");        break;
-            case ActivationType::STEPPED_SIGMOID:   o["activationType"] = JsonBox::Value("steppedSigmoid"); break;
-            case ActivationType::TANH:              o["activationType"] = JsonBox::Value("tanh");           break;
-            case ActivationType::SINUSOID:          o["activationType"] = JsonBox::Value("sinusoid");       break;
-            case ActivationType::RELU:              o["activationType"] = JsonBox::Value("relu");           break;
-            case ActivationType::NOISY_RELU:        o["activationType"] = JsonBox::Value("noisyRelu");      break;
-            case ActivationType::LEAKY_RELU:        o["activationType"] = JsonBox::Value("leakyRelu");      break;
-            case ActivationType::EXPONENTIAL:       o["activationType"] = JsonBox::Value("exponential");    break;
-            case ActivationType::SOFTMAX:           o["activationType"] = JsonBox::Value("softmax");        break;
-            default:                                o["activationType"] = JsonBox::Value("undefined");      break;
-        }
+        o["neuronType"] = JsonBox::Value(Neuron::typeToString(type));
+        o["activationType"] = JsonBox::Value(Neuron::activationTypeToString(activationType));
         JsonBox::Array a;
         for(auto& n:neurons){
             a.push_back(n.toJson());

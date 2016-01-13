@@ -57,6 +57,12 @@ namespace EvoAI{
          * @return 
          */
         double softmax(const double& v, NeuralNetwork& nn);
+        /**
+         * @brief 
+         * @param v
+         * @return 
+         */
+        double gaussian(const double& v);
     };
     namespace Derivatives{
         /**
@@ -83,6 +89,12 @@ namespace EvoAI{
          * @return 
          */
         double relu(const double& v);
+        /**
+         * @brief 
+         * @param v
+         * @return 
+         */
+        double gaussian(const double& v);
     };
 }
 

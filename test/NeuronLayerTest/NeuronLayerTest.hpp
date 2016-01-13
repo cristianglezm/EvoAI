@@ -14,7 +14,7 @@ namespace EvoAI{
                 // before each test).
                 NeuronLayerTest();
                 virtual void SetUp(){
-                    nl.setActivationType(NeuronLayer::ActivationType::LEAKY_RELU);
+                    nl.setActivationType(Neuron::ActivationType::LEAKY_RELU);
                 }
                 // Code here will be called immediately after each test (right
                 // before the destructor).
@@ -29,7 +29,7 @@ namespace EvoAI{
         };
         NeuronLayerTest::NeuronLayerTest():nl(3,Neuron::Type::HIDDEN,1.0),nld(){}
         TEST_F(NeuronLayerTest,DefaultConstructor){
-            EXPECT_EQ(NeuronLayer::ActivationType::STEPPED_SIGMOID, nld.getActivationType());
+            EXPECT_EQ(Neuron::ActivationType::STEPPED_SIGMOID, nld.getActivationType());
             EXPECT_EQ(0.0,nld.getBias());
             EXPECT_EQ(3,nld.getCyclesLimit());
             EXPECT_EQ(Neuron::Type::HIDDEN, nld.getType());
@@ -40,7 +40,7 @@ namespace EvoAI{
             EXPECT_TRUE(nld.hasNeuron(&n));
         }
         TEST_F(NeuronLayerTest,SecondConstructor){
-            EXPECT_EQ(NeuronLayer::ActivationType::LEAKY_RELU, nl.getActivationType());
+            EXPECT_EQ(Neuron::ActivationType::LEAKY_RELU, nl.getActivationType());
             EXPECT_EQ(1.0,nl.getBias());
             EXPECT_EQ(3,nl.getCyclesLimit());
             EXPECT_EQ(Neuron::Type::HIDDEN, nl.getType());
