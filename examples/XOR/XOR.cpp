@@ -11,8 +11,11 @@ int main(){
     double truth[4] = {0.0,1.0,1.0,0.0};
     double points = 0.0;
     double minPoints = 500.0;
-    for(auto g=0u;g<10250;++g){
+    for(auto g=0u;g<250;++g){
         std::unique_ptr<NeuralNetwork> nn = createFeedForwardNN(2,1,2,1,1.0);
+        (*nn)[1][0].setActivationType(Neuron::ActivationType::GAUSSIAN);
+        (*nn)[1][1].setActivationType(Neuron::ActivationType::RELU);
+        (*nn)[2][0].setActivationType(Neuron::ActivationType::RELU);
         std::cout << "-----------------------------------------" << std::endl;
         for(auto i=0u;i<4;++i){
             std::vector<double> inputs;
@@ -26,16 +29,18 @@ int main(){
             nn->reset();
         }
         points = points / 4;
-        if(points < minPoints){
+        if(points <= minPoints){
             std::cout << "saving... : " << points << " ||| " << minPoints << std::endl;
             minPoints = points;
             nn->writeToFile("XORNN.json");
         }
         std::cout << "MSE: " << points << std::endl;
+        std::cout << "minPoints: " << minPoints << std::endl;
         points = 0.0;
     }
     std::cout << "Test Best NN" << std::endl;
     std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>("XORNN.json");
+    points = 0.0;
     for(auto i=0u;i<4;++i){
         std::vector<double> inputs;
         inputs.emplace_back(x[i]);

@@ -2,6 +2,9 @@
 #include <EvoAI/NeuralNetwork.hpp>
 
 namespace EvoAI{
+    double Activations::identity(const double& v){
+        return v;
+    }
     double Activations::sigmoid(const double& v){
         return (1.0/(1.0+std::exp(-v)));
     }
@@ -37,9 +40,14 @@ namespace EvoAI{
         return (std::exp(v) / (sum));
     }
     double Activations::gaussian(const double& v){
-        return (std::exp(std::pow(-v,2)) / std::sqrt(2*3.14159265359));
+        static std::random_device rd;
+        static std::default_random_engine eng(rd());
+        static std::normal_distribution<double> d(0.0,v);
+        return d(eng);
     }
-    
+    double Activations::modulus(const double& v){
+        return std::fmod(v,1.0);
+    }
 // derivatives
     double Derivatives::sigmoid(const double& v){
         auto y = Activations::sigmoid(v);

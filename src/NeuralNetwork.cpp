@@ -295,7 +295,9 @@ namespace EvoAI{
     const double NeuralNetwork::activate(Neuron::ActivationType at, const Neuron& n){
         switch(at){
             case Neuron::ActivationType::IDENTITY:
-                return n.getSum();
+                return Activations::identity(n.getSum());
+            case Neuron::ActivationType::MODULUS:
+                return Activations::modulus(n.getSum());
             case Neuron::ActivationType::TANH:
                 return Activations::tanh(n.getSum());
             case Neuron::ActivationType::SINUSOID:

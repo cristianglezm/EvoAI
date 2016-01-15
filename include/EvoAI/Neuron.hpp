@@ -46,6 +46,7 @@ namespace EvoAI{
              */
             enum ActivationType{
                 IDENTITY,
+                MODULUS,
                 SIGMOID,
                 STEPPED_SIGMOID,
                 TANH,
@@ -71,7 +72,9 @@ namespace EvoAI{
             static ActivationType activationTypeToEnum(const std::string& at) noexcept;
         public:
             /**
-             * @brief Default Constructor type defaults to Type::HIDDEN
+             * @brief Default Constructor
+             * type defaults to Type::HIDDEN
+             * activationType defaults to ActivationType:
              */
             Neuron();
             /**

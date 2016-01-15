@@ -129,6 +129,7 @@ namespace EvoAI{
         // don't set a default so the compiler will tell if we forgot some new case
         switch(at){
             case Neuron::ActivationType::IDENTITY:          return "identity";
+            case Neuron::ActivationType::MODULUS:           return "modulus";
             case Neuron::ActivationType::SIGMOID:           return "sigmoid";
             case Neuron::ActivationType::STEPPED_SIGMOID:   return "steppedSigmoid";
             case Neuron::ActivationType::TANH:              return "tanh";
@@ -145,6 +146,8 @@ namespace EvoAI{
     Neuron::ActivationType Neuron::activationTypeToEnum(const std::string& at) noexcept{
         if(at == "identity"){
             return Neuron::ActivationType::IDENTITY;
+        }else if(at == "modulus"){
+            return Neuron::ActivationType::MODULUS;
         }else if(at == "exponential"){
             return Neuron::ActivationType::EXPONENTIAL;
         }else if(at == "leakyRelu"){

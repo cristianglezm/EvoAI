@@ -8,6 +8,7 @@
 namespace EvoAI{
     class NeuralNetwork;
     namespace Activations{
+        double identity(const double& v);
         /**
          * @brief a sigmoid function
          * @param v
@@ -63,6 +64,12 @@ namespace EvoAI{
          * @return 
          */
         double gaussian(const double& v);
+        /**
+         * @brief 
+         * @param v
+         * @return 
+         */
+        double modulus(const double& v);
     };
     namespace Derivatives{
         /**
