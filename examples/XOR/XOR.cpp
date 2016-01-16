@@ -6,53 +6,34 @@
 
 int main(){
     using namespace EvoAI;
-    double x[4] = {0.0,0.0,1.0,1.0};
-    double y[4] = {0.0,1.0,0.0,1.0};
-    double truth[4] = {0.0,1.0,1.0,0.0};
+    std::vector<double> x = {0.0,0.0,1.0,1.0};
+    std::vector<double> y = {0.0,1.0,0.0,1.0};
+    std::vector<double> truth = {0.0,1.0,1.0,0.0};
     double points = 0.0;
     double minPoints = 500.0;
-    for(auto g=0u;g<250;++g){
-        std::unique_ptr<NeuralNetwork> nn = createFeedForwardNN(2,1,2,1,1.0);
-        (*nn)[1][0].setActivationType(Neuron::ActivationType::GAUSSIAN);
-        (*nn)[1][1].setActivationType(Neuron::ActivationType::RELU);
-        (*nn)[2][0].setActivationType(Neuron::ActivationType::RELU);
-        std::cout << "-----------------------------------------" << std::endl;
-        for(auto i=0u;i<4;++i){
-            std::vector<double> inputs;
-            inputs.emplace_back(x[i]);
-            inputs.emplace_back(y[i]);
-            nn->setInputs(std::move(inputs));
-            auto res = nn->run();
-            auto answer = std::pow((res[0] - truth[i]),2);
-            points += answer;
-            std::cout << "x: " << x[i] << ", y: " << y[i] << " : answer: " << res[0] << " Correct Answer: " << truth[i] <<  " Diff: " << answer << std::endl;
-            nn->reset();
-        }
-        points = points / 4;
-        if(points <= minPoints){
-            std::cout << "saving... : " << points << " ||| " << minPoints << std::endl;
-            minPoints = points;
-            nn->writeToFile("XORNN.json");
-        }
-        std::cout << "MSE: " << points << std::endl;
-        std::cout << "minPoints: " << minPoints << std::endl;
-        points = 0.0;
-    }
-    std::cout << "Test Best NN" << std::endl;
-    std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>("XORNN.json");
-    points = 0.0;
+    std::unique_ptr<NeuralNetwork> nn = createFeedForwardNN(2,1,2,1,1.0);
+    std::vector<std::vector<double>> inputs;
+    std::vector<std::vector<double>> outputs;
     for(auto i=0u;i<4;++i){
-        std::vector<double> inputs;
-        inputs.emplace_back(x[i]);
-        inputs.emplace_back(y[i]);
-        nn->setInputs(std::move(inputs));
+        std::vector<double> in;
+        std::vector<double> out;
+        in.emplace_back(x[i]);
+        in.emplace_back(y[i]);
+        out.emplace_back(truth[i]);
+        inputs.emplace_back(in);
+        outputs.emplace_back(out);
+    }
+    nn->train(std::move(inputs),std::move(outputs),0.7,0.3,5);
+    for(auto i=0u;i<4;++i){
+        std::vector<double> input;
+        input.emplace_back(x[i]);
+        input.emplace_back(y[i]);
+        nn->setInputs(std::move(input));
         auto res = nn->run();
         auto answer = std::pow((res[0] - truth[i]),2);
         points += answer;
-        std::cout << "x: " << x[i] << ", y: " << y[i] << " : answer: " << res[0] << " :bin: " << (res[0] >= 0.5 ? 1:0) << " Correct Answer: " << truth[i] << std::endl;
         nn->reset();
+        std::cout << "x: " << x[i] << ", y: " << y[i] << " : answer: " << res[0] << " Correct Answer: " << truth[i] <<  " Diff: " << answer << std::endl;
     }
-    points = points / 4;
-    std::cout << "MSE: " << points << std::endl;
     return 0;
 }

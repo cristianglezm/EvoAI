@@ -46,16 +46,24 @@ namespace EvoAI{
              */
             NeuralNetwork& addLayer(const NeuronLayer& l);
             /**
-             * @brief 
-             * @param l
-             * @return 
+             * @brief Removes a layer
+             * @param l const NeuronLayer&
+             * @return bool
              */
             bool removeLayer(const NeuronLayer& l);
             /**
-             * @brief 
+             * @brief Process the NeuralNetwork
              * @return 
              */
             std::vector<double> run();
+            /**
+             * @brief method to train the neural network.
+             * @param inputs std::vector<std::vector<double>>
+             * @param expectedOutput std::vector<std::vector<double>>
+             * @param learningRate
+             * @param epoch
+             */
+            void train(std::vector<std::vector<double>>&& inputs,std::vector<std::vector<double>>&& expectedOutput, const double& learningRate, const double& momentum, const int& epoch);
             /**
              * @brief 
              * @return 
@@ -172,6 +180,13 @@ namespace EvoAI{
              * @return const double
              */
             const double activate(Neuron::ActivationType at, const Neuron& n);
+            /**
+             * @brief Applies the neuron derivative
+             * @param at Neuron::ActivationType
+             * @param n const Neuron&
+             * @return const double
+             */
+            const double derivate(Neuron::ActivationType at,const Neuron& n);
         private:
             std::vector<NeuronLayer> layers;
             std::vector<Connection*> connections;

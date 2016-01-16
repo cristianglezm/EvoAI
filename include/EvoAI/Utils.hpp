@@ -81,6 +81,66 @@ namespace EvoAI{
      * @param imageOutput
      */
     void generateImageFromColor(sf::Image& imageInput, NeuralNetwork* nn, const std::string& imageOutput);
+     /**
+     * @brief Generates a black And White image from the color of the imageInput.
+     * 
+     * Requires a Neural network with 3 inputs and 1 output.
+     * 
+     * @param imageInput std::string
+     * @param nn NeuralNetwork
+     * @param imageOutput std::string
+     */
+    void generateBWImageFromColor(const std::string& imageInput, NeuralNetwork* nn, const std::string& imageOutput);
+    /**
+     * @brief Generates a black And White image from the color of the imageInput.
+     * 
+     * Requires a Neural network with 3 inputs and 1 output.
+     * 
+     * @param imageInput
+     * @param nn
+     * @param imageOutput
+     */
+    void generateBWImageFromColor(sf::Image& imageInput, NeuralNetwork* nn, const std::string& imageOutput);
+    /**
+     * @brief Generates a Black and White Image from the coords of the imageInput.
+     * 
+     * Requires a Neural network with 3 inputs and 1 output.
+     * 
+     * @param imageInput
+     * @param nn
+     * @param imageOutput
+     */
+    void generateBWImageFromCoords(const std::string& imageInput, NeuralNetwork* nn, const std::string& imageOutput);
+    /**
+     * @brief Generates a Black and White Image from the coords of the imageInput.
+     * 
+     * Requires a Neural network with 3 inputs and 1 output.
+     * 
+     * @param imageInput
+     * @param nn
+     * @param imageOutput
+     */
+    void generateBWImageFromCoords(sf::Image& imageInput, NeuralNetwork* nn, const std::string& imageOutput);
+    /**
+     * @brief Generates a Black And White Image from The Coords of the ImageInput.
+     * 
+     * Requires a Neural network with 6 inputs and 1 output.
+     * 
+     * @param imageInput
+     * @param nn
+     * @param imageOutput
+     */
+    void generateBWImageFromColorAndCoordinates(const std::string& imageInput, NeuralNetwork* nn, const std::string& imageOutput);
+    /**
+     * @brief Generates a Black And White Image from The Coords of the ImageInput.
+     * 
+     * Requires a Neural network with 6 inputs and 1 output.
+     * 
+     * @param imageInput
+     * @param nn
+     * @param imageOutput
+     */
+    void generateBWImageFromColorAndCoordinates(sf::Image& imageInput, NeuralNetwork* nn, const std::string& imageOutput);
     /**
      * @brief Generates an Image from the color of the imageInput
      * 

@@ -45,18 +45,12 @@ namespace EvoAI{
         return *this;
     }
     bool NeuronLayer::removeNeuron(Neuron* n){
-        auto removed = std::remove_if(std::begin(neurons),std::end(neurons),
-                                      [&n](Neuron& rn){
-                                            return ((*n) == rn);
-                                      });
+        auto removed = std::remove(std::begin(neurons),std::end(neurons),*n);
         neurons.erase(removed,std::end(neurons));
-        return (removed == std::end(neurons));
+        return (removed != std::end(neurons));
     }
     bool NeuronLayer::hasNeuron(Neuron* n){
-        auto found = std::find_if(std::begin(neurons),std::end(neurons),
-                                        [&n](Neuron& fnrn){
-                                            return ((*n) == fnrn);
-                                        });
+        auto found = std::find(std::begin(neurons),std::end(neurons),*n);
         return (found != std::end(neurons));
     }
     NeuronLayer& NeuronLayer::addConnection(const Connection& c){

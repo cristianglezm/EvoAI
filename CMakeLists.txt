@@ -4,10 +4,11 @@ cmake_minimum_required(VERSION 3.1)
 ### User options.
 ################################################################################
 
-option(BUILD_TESTS "build tests" OFF)
-option(BUILD_TOOLS "build tools" OFF)
-option(BUILD_EXAMPLES "build examples" OFF)
+option(BUILD_TESTS "Build Tests" OFF)
+option(BUILD_TOOLS "Build Tools" OFF)
+option(BUILD_EXAMPLES "Build Examples" OFF)
 option(BUILD_STATIC "Build static" OFF)
+option(BUILD_DOCS "Build documentation" OFF)
 
 if(BUILD_STATIC)
 	SET(SFML_STATIC_LIBRARIES TRUE)
@@ -110,25 +111,27 @@ endif(BUILD_TOOLS)
 ### Docs
 #################################################################################
 
-find_package(Doxygen)
-IF(DOXYGEN_FOUND)
-	SET(DOXYGEN_INPUT "${CMAKE_SOURCE_DIR}/doxyfile")
-	SET(DOXYGEN_OUTPUT "${CMAKE_SOURCE_DIR}/docs")
+if(BUILD_DOCS)
+    find_package(Doxygen)
+    IF(DOXYGEN_FOUND)
+        SET(DOXYGEN_INPUT "${CMAKE_SOURCE_DIR}/doxyfile")
+        SET(DOXYGEN_OUTPUT "${CMAKE_SOURCE_DIR}/docs")
 
-	ADD_CUSTOM_COMMAND(
-	  OUTPUT ${DOXYGEN_OUTPUT}
-	  COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
-	  COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT}
-	  COMMAND ${CMAKE_COMMAND} -E echo "Done."
-	  DEPENDS ${DOXYGEN_INPUT})
+        ADD_CUSTOM_COMMAND(
+          OUTPUT ${DOXYGEN_OUTPUT}
+          COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
+          COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT}
+          COMMAND ${CMAKE_COMMAND} -E echo "Done."
+          DEPENDS ${DOXYGEN_INPUT})
 
-	ADD_CUSTOM_TARGET(docs ALL DEPENDS ${DOXYGEN_OUTPUT})
+        ADD_CUSTOM_TARGET(docs ALL DEPENDS ${DOXYGEN_OUTPUT})
 
-	ADD_CUSTOM_TARGET(docs_forced
-	  COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
-	  COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT}
-	  COMMAND ${CMAKE_COMMAND} -E echo "Done.")
-ENDIF(DOXYGEN_FOUND)
+        ADD_CUSTOM_TARGET(docs_forced
+          COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
+          COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT}
+          COMMAND ${CMAKE_COMMAND} -E echo "Done.")
+    ENDIF(DOXYGEN_FOUND)
+endif(BUILD_DOCS)
 
 #################################################################################
 ### Installing Library

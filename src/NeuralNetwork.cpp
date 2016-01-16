@@ -145,6 +145,20 @@ namespace EvoAI{
         }
         return std::move(res);
     }
+    void NeuralNetwork::train(std::vector<std::vector<double>>&& inputs,std::vector<std::vector<double>>&& expectedOutput,
+                                                                        const double& learningRate, const double& momentum, const int& epoch){
+        if(inputs.size() != expectedOutput.size()){
+            throw std::runtime_error("train() : inputs and expectedOutput should have the same size.");
+        }
+        auto batchSize = inputs.size();
+        auto outputSize = expectedOutput[0].size();
+        /// TODO
+        /// calc delta
+        /// calc gradients
+        /// calc mse?
+        /// calc backprop?
+        /// update weights?
+    }
     NeuralNetwork& NeuralNetwork::setLayers(std::vector<NeuronLayer>&& lys){
         layers = std::move(lys);
         return *this;
@@ -154,7 +168,7 @@ namespace EvoAI{
         return *this;
     }
     bool NeuralNetwork::removeNeuron(Neuron* n){
-        auto size = layers.size() - 1;
+        auto size = layers.size();
         auto lyrIndex = 0u, nrnIndex = 0u;
         if(n->hasConnections()){
             auto src = n->getConnections()[0].getSrc();
@@ -162,7 +176,7 @@ namespace EvoAI{
             nrnIndex = src.neuron;
         }else{
             for(auto i=0u;i<size;++i){
-                for(auto j=0u;j<(layers[i].size()-1);++j){
+                for(auto j=0u;j<layers[i].size();++j){
                     if(layers[i][j] == (*n)){
                         lyrIndex = i;
                         nrnIndex = j;
@@ -292,6 +306,23 @@ namespace EvoAI{
         return std::equal(std::begin(layers),std::end(layers),std::begin(rhs.layers));
     }
 //private member functions
+    const double NeuralNetwork::derivate(Neuron::ActivationType at,const Neuron& n){
+        switch(at){
+            case Neuron::ActivationType::SIGMOID:
+                return Derivatives::sigmoid(n.getSum());
+            case Neuron::ActivationType::SINUSOID:
+                return Derivatives::sinusoid(n.getSum());
+            case Neuron::ActivationType::RELU:
+                return Derivatives::relu(n.getSum());
+            case Neuron::ActivationType::TANH:
+                return Derivatives::tanh(n.getSum());
+            case Neuron::ActivationType::GAUSSIAN:
+                return Derivatives::gaussian(n.getSum());
+            case Neuron::ActivationType::STEPPED_SIGMOID:
+                return Derivatives::sigmoid(n.getSum() - n.getBiasWeight());
+        }
+        return Derivatives::sigmoid((n.getSum() - n.getBiasWeight()));
+    }
     const double NeuralNetwork::activate(Neuron::ActivationType at, const Neuron& n){
         switch(at){
             case Neuron::ActivationType::IDENTITY:
