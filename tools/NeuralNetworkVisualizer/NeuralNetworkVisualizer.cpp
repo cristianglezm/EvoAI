@@ -12,21 +12,15 @@ int main(int argc, char **argv){
     using EvoAI::Connection;
     using EvoAI::NNRenderer;
     bool running = true;
-    std::unique_ptr<NeuralNetwork> nn = EvoAI::createElmanNeuralNetwork(1,2,2,1,1.0);
-    std::vector<double> inputs;
-    inputs.emplace_back(0.0);
-    //nn->setInputs(std::move(inputs));
-    auto start = std::chrono::high_resolution_clock::now();
-    auto res = nn->run();
-    auto end = std::chrono::high_resolution_clock::now();
-    std::cout << "Running NN took " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us.\n";
-    
-    start = std::chrono::high_resolution_clock::now();
+    if(argc < 2){
+        std::cout << "usage:\n";
+        std::cout << argv[0] << " <filename>" << std::endl;
+        return EXIT_FAILURE;
+    }
+    // build network
+    std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>(std::string(argv[1]));
+    // build renderer for the nn.
     std::unique_ptr<NNRenderer> nr = std::make_unique<NNRenderer>(nn.get());
-    end = std::chrono::high_resolution_clock::now();
-    std::cout << "NNRenderer constructor took " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us.\n";
-    
-    std::cout << "output: " << res[0] << std::endl;
     sf::RenderWindow App(sf::VideoMode(1270, 720), "Neural Network Visualizer");
     while (running){
         sf::Event event;

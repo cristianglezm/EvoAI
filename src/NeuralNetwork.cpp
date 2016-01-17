@@ -159,14 +159,14 @@ namespace EvoAI{
                 auto& outLayer = layers[layers.size()-1];
                 mse = 0.0;
                 for(auto j=0u;j<outLayer.size();++j){
-                    auto error = expectedOutputs[i][j] - outputs[j];
+                    auto error = outputs[j] - expectedOutputs[i][j];
+                    mse += std::pow(error,2);
                     auto delta = (-error) * derivate(outLayer[j].getActivationType(),outLayer[j]);
                     outLayer[j].setDelta(delta);
                     outLayer[j].setBiasWeight(outLayer[j].getBiasWeight() + learningRate * outLayer[j].getDelta());
-                    mse += std::pow(error,2);
                 }
-                mse *= (1/outputs.size());
-                std::cout << "MSE: " << mse << std::endl; /// TODO remove
+                mse /= outputs.size();
+                //std::cout << "MSE: " << mse << std::endl; /// TODO remove
                 std::for_each(std::rbegin(getConnections()),std::rend(getConnections()),
                     [this,&learningRate](Connection* c){
                         auto& src = c->getDest();

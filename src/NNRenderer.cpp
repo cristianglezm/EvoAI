@@ -63,27 +63,26 @@ namespace EvoAI{
         neurons.emplace_back(ni);
         int space = 0;
         for(auto& c:n.getConnections()){
-            auto textPos = sf::Vector2f(p.x,p.y+space);
-            setUpConnectionInfo(c,textPos);
-            space +=20;
+            setUpConnectionInfo(c,p,space);
+            space +=80;
         }
         space = 0;
     }
-    void NNRenderer::setUpConnectionInfo(Connection& c, sf::Vector2f& p){
+    void NNRenderer::setUpConnectionInfo(Connection& c, sf::Vector2f& p, const int& space){
         const int textSize = 15;
         ConnectionInfo ci;
         sf::Color color = sf::Color::White;
         if(c.isRecurrent()){
             color = sf::Color::Red;
         }
-        ci.connectionLine[0] = sf::Vertex(sf::Vector2f(p.x+5,p.y-5),color);
-        auto dlyr = c.getDest().layer * 270.0 + 8.0;
-        auto dnrn = c.getDest().neuron * 150.0 + 8.0;
+        ci.connectionLine[0] = sf::Vertex(sf::Vector2f(p.x+10,p.y+10),color);
+        auto dlyr = c.getDest().layer * 270.0 + 10;
+        auto dnrn = c.getDest().neuron * 150.0 + 10;
         ci.connectionLine[1] = sf::Vertex(sf::Vector2f(dlyr,dnrn),color);
         ci.weight = sf::Text("Weight: " + std::to_string(c.getWeight()),font, textSize);
-        ci.weight.setPosition(sf::Vector2f(p.x+150,p.y+15));
+        ci.weight.setPosition(sf::Vector2f(p.x+150,p.y+space+15));
         ci.cycles = sf::Text("Cycles: " + std::to_string(c.getCycles()),font, textSize);
-        ci.cycles.setPosition(sf::Vector2f(p.x+150,p.y+35));
+        ci.cycles.setPosition(sf::Vector2f(p.x+150,p.y+space+35));
         std::string isVisited = "";
         if(c.isVisited()){
             isVisited = "True";
@@ -91,7 +90,7 @@ namespace EvoAI{
             isVisited = "False";
         }
         ci.visited = sf::Text("Visited: " + isVisited,font, textSize);
-        ci.visited.setPosition(sf::Vector2f(p.x+150,p.y+55));
+        ci.visited.setPosition(sf::Vector2f(p.x+150,p.y+space+55));
         connections.push_back(ci);
     }
 }

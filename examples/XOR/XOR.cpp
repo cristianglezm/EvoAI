@@ -9,7 +9,7 @@ int main(){
     std::vector<double> x = {0.0,0.0,1.0,1.0};
     std::vector<double> y = {0.0,1.0,0.0,1.0};
     std::vector<double> truth = {0.0,1.0,1.0,0.0};
-    std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>("XORNN-PostTraining.json");
+    std::unique_ptr<NeuralNetwork> nn = createFeedForwardNN(2,1,2,1,1.0);
     std::vector<std::vector<double>> inputs;
     std::vector<std::vector<double>> outputs;
     for(auto i=0u;i<4;++i){

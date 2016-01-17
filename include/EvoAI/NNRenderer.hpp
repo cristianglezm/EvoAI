@@ -35,7 +35,7 @@ namespace EvoAI{
         private:
             void setUp();
             void setUpNeuronInfo(Neuron& n, sf::Vector2f& p);
-            void setUpConnectionInfo(Connection& c, sf::Vector2f& p);
+            void setUpConnectionInfo(Connection& c, sf::Vector2f& p, const int& space);
         private:
             std::vector<NeuronInfo> neurons;
             std::vector<ConnectionInfo> connections;
