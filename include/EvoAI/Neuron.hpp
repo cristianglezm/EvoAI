@@ -170,6 +170,17 @@ namespace EvoAI{
              */
             inline std::vector<Connection>& getConnections() noexcept{ return connections; }
             /**
+             * @brief returns how many connections it has.
+             * @return std::size_t
+             */
+            std::size_t size();
+            /**
+             * @brief direct access to connections.
+             * @param index const std::size_t index
+             * @return Connection&
+             */
+            Connection& operator[](const std::size_t& index);
+            /**
              * @brief Equality Operator
              * @param rhs
              * @return bool

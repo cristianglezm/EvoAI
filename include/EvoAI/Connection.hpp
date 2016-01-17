@@ -119,10 +119,41 @@ namespace EvoAI{
              * @param rhs
              */
             bool operator==(const Connection& rhs) const;
-        private:
+            /**
+             * @brief setter for gradient
+             * @param grad
+             * @return Connection
+             */
             Connection& setGradient(const double& grad);
+            /**
+             * @brief adds the val to gradients
+             * @param val
+             * @return Connection
+             */
             Connection& addGradient(const double& val);
-            inline const double& getGradient() const{ return gradient; }
+            /**
+             * @brief getter for gradients
+             * @return 
+             */
+            inline const double& getGradient() const noexcept{ return gradient; }
+            /**
+             * @brief 
+             * @param val
+             * @return 
+             */
+            Connection& setDelta(const double& val){
+                delta = val;
+                return *this;
+            }
+            /**
+             * @brief 
+             * @return 
+             */
+            inline const double& getDelta() const noexcept{ return delta; }
+            /**
+             * @brief resets the connection, visited, and gradient.
+             */
+            void reset();
         private:
             Link src;
             Link dest;
@@ -130,6 +161,7 @@ namespace EvoAI{
             int cycles;
             bool visited;
             double gradient;
+            double delta;
     };
 }
 #endif // CONNECTION_HPP

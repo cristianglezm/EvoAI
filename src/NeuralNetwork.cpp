@@ -65,7 +65,7 @@ namespace EvoAI{
     }
     bool NeuralNetwork::removeLayer(const NeuronLayer& l){
         auto lyrIndex = 0u;
-        for(auto i=0u;i<(layers.size()-1);++i){
+        for(auto i=0u;i<layers.size();++i){
             if(l == layers[i]){
                 lyrIndex = i;
             }
@@ -85,7 +85,7 @@ namespace EvoAI{
                                         return (l == rl);
                                       });
         layers.erase(lyrRemoved,std::end(layers));
-        return (lyrRemoved == std::end(layers));
+        return (lyrRemoved != std::end(layers));
     }
     std::vector<double> NeuralNetwork::run(){
         std::vector<double> res;
@@ -145,13 +145,88 @@ namespace EvoAI{
         }
         return std::move(res);
     }
-    void NeuralNetwork::train(std::vector<std::vector<double>>&& inputs,std::vector<std::vector<double>>&& expectedOutput,
+    void NeuralNetwork::train(std::vector<std::vector<double>>&& inputs,std::vector<std::vector<double>>&& expectedOutputs,
                                                                         const double& learningRate, const double& momentum, const int& epoch){
-        if(inputs.size() != expectedOutput.size()){
-            throw std::runtime_error("train() : inputs and expectedOutput should have the same size.");
+        if(inputs.size() != expectedOutputs.size()){
+            throw std::runtime_error("train() : inputs and expectedOutputs should have the same size.");
         }
         auto batchSize = inputs.size();
-        auto outputSize = expectedOutput[0].size();
+        for(auto e=0;e<epoch;++e){
+            for(auto i=0u;i<batchSize;++i){
+                auto input = std::move(inputs[i]);
+                setInputs(std::move(input));
+                auto outputs = run();
+                auto& outLayer = layers[layers.size()-1];
+                mse = 0.0;
+                for(auto j=0u;j<outLayer.size();++j){
+                    auto error = expectedOutputs[i][j] - outputs[j];
+                    auto delta = (-error) * derivate(outLayer[j].getActivationType(),outLayer[j]);
+                    outLayer[j].setDelta(delta);
+                    outLayer[j].setBiasWeight(outLayer[j].getBiasWeight() + learningRate * outLayer[j].getDelta());
+                    mse += std::pow(error,2);
+                }
+                mse *= (1/outputs.size());
+                std::cout << "MSE: " << mse << std::endl; /// TODO remove
+                std::for_each(std::rbegin(getConnections()),std::rend(getConnections()),
+                    [this,&learningRate](Connection* c){
+                        auto& src = c->getDest();
+                        auto& dest = c->getSrc();
+                        auto& nrnSrc = layers[src.layer][src.neuron];
+                        auto& nrnDest = layers[dest.layer][dest.neuron];
+                        switch(nrnSrc.getType()){
+                            case Neuron::Type::OUTPUT:{
+                                    auto sum = 0.0;
+                                    for(auto& dCon:nrnDest.getConnections()){
+                                        sum += dCon.getWeight() * layers[dCon.getDest().layer][dCon.getDest().neuron].getDelta();
+                                    }
+                                    auto delta = sum * derivate(nrnDest.getActivationType(),nrnDest);
+                                    nrnDest.setDelta(delta);
+                                    auto grad = nrnDest.getOutput() * nrnSrc.getDelta();
+                                    c->addGradient(grad);
+                                    nrnDest.setBiasWeight( nrnDest.getBiasWeight() + learningRate * nrnDest.getDelta());
+                            }   break;
+                            case Neuron::Type::CONTEXT:
+                            case Neuron::Type::HIDDEN:{
+                                    if(nrnDest.getType() != Neuron::Type::INPUT){
+                                        auto sum = 0.0;
+                                        for(auto& dCon:nrnDest.getConnections()){
+                                            sum += dCon.getWeight() * layers[dCon.getDest().layer][dCon.getDest().neuron].getDelta();
+                                        }
+                                        auto delta = sum * derivate(nrnDest.getActivationType(),nrnDest);
+                                        nrnDest.setDelta(delta);
+                                        auto grad = nrnDest.getOutput() * nrnSrc.getDelta();
+                                        c->addGradient(grad);
+                                        nrnDest.setBiasWeight( nrnDest.getBiasWeight() + learningRate * nrnDest.getDelta());
+                                    }else{
+                                        auto sum = 0.0;
+                                        for(auto& dCon:nrnDest.getConnections()){
+                                            sum += dCon.getWeight() * layers[dCon.getDest().layer][dCon.getDest().neuron].getDelta();
+                                        }
+                                        auto delta = sum * derivate(nrnDest.getActivationType(),nrnDest);
+                                        nrnDest.setDelta(delta);
+                                        auto grad = nrnDest.getSum() * nrnSrc.getDelta();
+                                        c->addGradient(grad);
+                                        nrnDest.setBiasWeight( nrnDest.getBiasWeight() + learningRate * nrnDest.getDelta());
+                                    }
+                            }   break;
+                            case Neuron::Type::INPUT:
+                                break;
+                        }
+                    });
+                    reset();
+            }
+            auto conSize = getConnections().size();
+            for(auto index=0u;index<conSize;++index){
+                auto c = connections[index];
+                auto oldWDelta = 0.0;
+                if(index > 0){
+                    oldWDelta = (*connections[index-1]).getDelta();
+                }
+                c->setDelta(learningRate * c->getGradient() + momentum * oldWDelta);
+                c->setWeight(c->getWeight() + c->getDelta());
+            }
+            resetConnections();
+        }
         /// TODO
         /// calc delta
         /// calc gradients
@@ -308,6 +383,8 @@ namespace EvoAI{
 //private member functions
     const double NeuralNetwork::derivate(Neuron::ActivationType at,const Neuron& n){
         switch(at){
+            case Neuron::ActivationType::IDENTITY:
+                return Derivatives::identity(n.getSum());
             case Neuron::ActivationType::SIGMOID:
                 return Derivatives::sigmoid(n.getSum());
             case Neuron::ActivationType::SINUSOID:
@@ -319,9 +396,9 @@ namespace EvoAI{
             case Neuron::ActivationType::GAUSSIAN:
                 return Derivatives::gaussian(n.getSum());
             case Neuron::ActivationType::STEPPED_SIGMOID:
-                return Derivatives::sigmoid(n.getSum() - n.getBiasWeight());
+                return Derivatives::sigmoid(n.getSum()-0.5);
         }
-        return Derivatives::sigmoid((n.getSum() - n.getBiasWeight()));
+        return Derivatives::sigmoid(n.getSum()-0.5);
     }
     const double NeuralNetwork::activate(Neuron::ActivationType at, const Neuron& n){
         switch(at){
@@ -348,8 +425,13 @@ namespace EvoAI{
             case Neuron::ActivationType::GAUSSIAN:
                 return Activations::gaussian(n.getSum());
             case Neuron::ActivationType::STEPPED_SIGMOID:
-                 return Activations::sigmoid(n.getSum()-n.getBiasWeight());
+                 return Activations::sigmoid(n.getSum()-0.5);
         }
-        return Activations::sigmoid(n.getSum()-n.getBiasWeight());
+        return Activations::sigmoid(n.getSum()-0.5);
+    }
+    void NeuralNetwork::resetConnections(){
+        for(auto& c:getConnections()){
+            c->reset();
+        }
     }
 }

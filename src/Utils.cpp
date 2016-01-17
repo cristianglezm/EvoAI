@@ -2,9 +2,10 @@
 
 namespace EvoAI{
     double random(const double& min, const double& max){
-        using Distribution = std::normal_distribution<double>;
-        static std::random_device rd;
-        static std::mt19937 rEngine(rd());
+        using Distribution = std::uniform_real_distribution<double>;
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        //std::random_device{}();
+        static std::default_random_engine rEngine(seed);
         static Distribution dice(min, max);
         return dice(rEngine);
     }

@@ -9,9 +9,7 @@ int main(){
     std::vector<double> x = {0.0,0.0,1.0,1.0};
     std::vector<double> y = {0.0,1.0,0.0,1.0};
     std::vector<double> truth = {0.0,1.0,1.0,0.0};
-    double points = 0.0;
-    double minPoints = 500.0;
-    std::unique_ptr<NeuralNetwork> nn = createFeedForwardNN(2,1,2,1,1.0);
+    std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>("XORNN-PostTraining.json");
     std::vector<std::vector<double>> inputs;
     std::vector<std::vector<double>> outputs;
     for(auto i=0u;i<4;++i){
@@ -23,17 +21,28 @@ int main(){
         inputs.emplace_back(in);
         outputs.emplace_back(out);
     }
-    nn->train(std::move(inputs),std::move(outputs),0.7,0.3,5);
+    std::cout << "Pre Training" << std::endl;
+    nn->writeToFile("XORNN-PreTraining.json");
     for(auto i=0u;i<4;++i){
         std::vector<double> input;
         input.emplace_back(x[i]);
         input.emplace_back(y[i]);
         nn->setInputs(std::move(input));
         auto res = nn->run();
-        auto answer = std::pow((res[0] - truth[i]),2);
-        points += answer;
         nn->reset();
-        std::cout << "x: " << x[i] << ", y: " << y[i] << " : answer: " << res[0] << " Correct Answer: " << truth[i] <<  " Diff: " << answer << std::endl;
+        std::cout << "x: " << x[i] << ", y: " << y[i] << " : answer: " << res[0] << " bi: " << (res[0] > 0.5 ? 1:0) << " Correct Answer: " << truth[i] << std::endl;
+    }
+    nn->train(std::move(inputs),std::move(outputs),0.5,0.3,8);
+    std::cout << "Post Training" << std::endl;
+    nn->writeToFile("XORNN-PostTraining.json");
+    for(auto i=0u;i<4;++i){
+        std::vector<double> input;
+        input.emplace_back(x[i]);
+        input.emplace_back(y[i]);
+        nn->setInputs(std::move(input));
+        auto res = nn->run();
+        nn->reset();
+        std::cout << "x: " << x[i] << ", y: " << y[i] << " : answer: " << res[0] << " bi: " << (res[0] > 0.5 ? 1:0) << " Correct Answer: " << truth[i] << std::endl;
     }
     return 0;
 }

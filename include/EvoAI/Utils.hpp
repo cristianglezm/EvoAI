@@ -4,6 +4,7 @@
 #include <memory>
 #include <utility>
 #include <random>
+#include <chrono>
 #include <string>
 
 #include <SFML/Graphics/Image.hpp>

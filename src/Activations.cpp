@@ -49,6 +49,9 @@ namespace EvoAI{
         return std::fmod(v,1.0);
     }
 // derivatives
+    double Derivatives::identity(const double& v){
+        return 1;
+    }
     double Derivatives::sigmoid(const double& v){
         auto y = Activations::sigmoid(v);
         return (y*(1-y));

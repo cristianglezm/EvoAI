@@ -87,6 +87,12 @@ namespace EvoAI{
     void Neuron::clearConnections() noexcept{
         connections.clear();
     }
+    std::size_t Neuron::size(){
+        return connections.size();
+    }
+    Connection& Neuron::operator[](const std::size_t& index){
+        return connections[index];
+    }
     bool Neuron::operator==(const Neuron& rhs) const{
         return (output == rhs.output
                 && sum == rhs.sum

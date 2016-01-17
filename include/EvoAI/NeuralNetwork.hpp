@@ -63,7 +63,7 @@ namespace EvoAI{
              * @param learningRate
              * @param epoch
              */
-            void train(std::vector<std::vector<double>>&& inputs,std::vector<std::vector<double>>&& expectedOutput, const double& learningRate, const double& momentum, const int& epoch);
+            void train(std::vector<std::vector<double>>&& inputs,std::vector<std::vector<double>>&& expectedOutputs, const double& learningRate, const double& momentum, const int& epoch);
             /**
              * @brief 
              * @return 
@@ -187,6 +187,10 @@ namespace EvoAI{
              * @return const double
              */
             const double derivate(Neuron::ActivationType at,const Neuron& n);
+            /**
+             * @brief resets the gradients of the connections
+             */
+            void resetConnections();
         private:
             std::vector<NeuronLayer> layers;
             std::vector<Connection*> connections;

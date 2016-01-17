@@ -77,6 +77,12 @@ namespace EvoAI{
          * @param v
          * @return 
          */
+        double identity(const double& v);
+        /**
+         * @brief 
+         * @param v
+         * @return 
+         */
         double sigmoid(const double& v);
         /**
          * @brief 

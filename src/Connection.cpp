@@ -49,7 +49,7 @@ namespace EvoAI{
         std::ostringstream ss;
         ss << "Recurrent: " << (isRecurrent() ? "True ":"False ")
         << "[" << src.layer << "," << src.neuron << "] --> ["
-        << dest.layer << "," << dest.neuron << "]" << " - " << weight;
+        << dest.layer << "," << dest.neuron << "]" << " - " << weight << ", grad: " << gradient << ", delta: " << delta;
         return ss.str();
     }
     JsonBox::Value Connection::toJson() const{
@@ -73,7 +73,6 @@ namespace EvoAI{
                 && visited == rhs.visited
                 && gradient == rhs.gradient);
     }
-// private members functions
     Connection& Connection::setGradient(const double& grad){
         gradient = grad;
         return *this;
@@ -81,5 +80,10 @@ namespace EvoAI{
     Connection& Connection::addGradient(const double& val){
         gradient += val;
         return *this;
+    }
+    void Connection::reset(){
+        visited = false;
+        gradient = 0.0;
+        delta = 0.0;
     }
 }
