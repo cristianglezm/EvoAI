@@ -5,13 +5,13 @@ namespace EvoAI{
     NeuronLayer::NeuronLayer()
     : neurons()
     , type(Neuron::Type::HIDDEN)
-    , activationType(Neuron::ActivationType::STEPPED_SIGMOID)
+    , activationType(Neuron::ActivationType::SIGMOID)
     , bias(0.0)
     , cyclesLimit(3){}
     NeuronLayer::NeuronLayer(const std::size_t& numNeurons,const Neuron::Type& t,const double& bias)
     : neurons()
     , type(t)
-    , activationType(Neuron::ActivationType::STEPPED_SIGMOID)
+    , activationType(Neuron::ActivationType::SIGMOID)
     , bias(bias)
     , cyclesLimit(3){
         for(auto i=0u; i<numNeurons;++i){

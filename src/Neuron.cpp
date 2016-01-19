@@ -8,7 +8,7 @@ namespace EvoAI{
     , delta(0.0)
     , biasWeight(random(-1.0,1.0))
     , type(Type::HIDDEN)
-    , activationType(Neuron::ActivationType::STEPPED_SIGMOID)
+    , activationType(Neuron::ActivationType::SIGMOID)
     , connections(){}
     Neuron::Neuron(Type t)
     : output(0.0)
@@ -16,7 +16,7 @@ namespace EvoAI{
     , delta(0.0)
     , biasWeight(random(-1.0,1.0))
     , type(t)
-    , activationType(Neuron::ActivationType::STEPPED_SIGMOID)
+    , activationType(Neuron::ActivationType::SIGMOID)
     , connections(){}
     Neuron& Neuron::setType(Type t) noexcept{
         type = t;

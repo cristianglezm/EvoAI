@@ -142,6 +142,7 @@ namespace EvoAI{
              * @return 
              */
             Connection& setDelta(const double& val){
+                oldDelta = delta;
                 delta = val;
                 return *this;
             }
@@ -150,6 +151,7 @@ namespace EvoAI{
              * @return 
              */
             inline const double& getDelta() const noexcept{ return delta; }
+            inline const double& getOldDelta() const noexcept{ return oldDelta; }
             /**
              * @brief resets the connection, visited, and gradient.
              */
@@ -162,6 +164,7 @@ namespace EvoAI{
             bool visited;
             double gradient;
             double delta;
+            double oldDelta;
     };
 }
 #endif // CONNECTION_HPP

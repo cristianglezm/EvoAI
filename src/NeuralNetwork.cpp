@@ -151,22 +151,21 @@ namespace EvoAI{
             throw std::runtime_error("train() : inputs and expectedOutputs should have the same size.");
         }
         auto batchSize = inputs.size();
+        auto totalError = 0.0;
         for(auto e=0;e<epoch;++e){
             for(auto i=0u;i<batchSize;++i){
-                auto input = std::move(inputs[i]);
+                auto input(inputs[i]);
                 setInputs(std::move(input));
                 auto outputs = run();
                 auto& outLayer = layers[layers.size()-1];
-                mse = 0.0;
                 for(auto j=0u;j<outLayer.size();++j){
-                    auto error = outputs[j] - expectedOutputs[i][j];
-                    mse += std::pow(error,2);
-                    auto delta = (-error) * derivate(outLayer[j].getActivationType(),outLayer[j]);
+                    auto error = expectedOutputs[i][j] - outputs[j];
+                    totalError += std::pow(error,2);
+                    auto delta = error * derivate(outLayer[j].getActivationType(),outLayer[j]);
                     outLayer[j].setDelta(delta);
                     outLayer[j].setBiasWeight(outLayer[j].getBiasWeight() + learningRate * outLayer[j].getDelta());
                 }
-                mse /= outputs.size();
-                //std::cout << "MSE: " << mse << std::endl; /// TODO remove
+                totalError /= outputs.size();
                 std::for_each(std::rbegin(getConnections()),std::rend(getConnections()),
                     [this,&learningRate](Connection* c){
                         auto& src = c->getDest();
@@ -179,7 +178,7 @@ namespace EvoAI{
                                     for(auto& dCon:nrnDest.getConnections()){
                                         sum += dCon.getWeight() * layers[dCon.getDest().layer][dCon.getDest().neuron].getDelta();
                                     }
-                                    auto delta = sum * derivate(nrnDest.getActivationType(),nrnDest);
+                                    auto delta = derivate(nrnDest.getActivationType(),nrnDest) * sum;
                                     nrnDest.setDelta(delta);
                                     auto grad = nrnDest.getOutput() * nrnSrc.getDelta();
                                     c->addGradient(grad);
@@ -215,6 +214,9 @@ namespace EvoAI{
                     });
                     reset();
             }
+            totalError /= batchSize;
+            mse = totalError;
+            totalError = 0.0;
             auto conSize = getConnections().size();
             for(auto index=0u;index<conSize;++index){
                 auto c = connections[index];

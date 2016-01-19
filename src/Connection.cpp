@@ -17,14 +17,18 @@ namespace EvoAI{
     , weight(0.0)
     , cycles(0)
     , visited(false)
-    , gradient(0.0){}
+    , gradient(0.0)
+    , delta(0.0)
+    , oldDelta(0.0){}
     Connection::Connection(const Link& src,const Link& dest,const double& w)
     : src(src)
     , dest(dest)
     , weight(w)
     , cycles(0)
     , visited(false)
-    , gradient(0.0){}
+    , gradient(0.0)
+    , delta(0.0)
+    , oldDelta(0.0){}
     Connection& Connection::setSrc(const Link& l){
         src = l;
         return *this;

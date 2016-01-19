@@ -17,6 +17,8 @@ namespace EvoAI{
      */
     class NeuralNetwork final{
         public:
+            using trainingFormat = std::vector<std::vector<double>>;
+        public:
             /**
              * @brief default constructor
              * @return 
@@ -165,6 +167,10 @@ namespace EvoAI{
              * @param index const std::size_t& index layer
              */
             NeuronLayer& operator[](const std::size_t& index);
+            /**
+             * @brief 
+             */
+            const double& getMSE() const noexcept{ return mse; }
             /**
              * @brief compares two neural networks
              * @param rhs
