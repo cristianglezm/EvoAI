@@ -173,11 +173,7 @@ namespace EvoAI{
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
-                if(color[0] > 0.5){
-                    imgOutput.setPixel(x,y,sf::Color::White);
-                }else{
-                    imgOutput.setPixel(x,y,sf::Color::Black);
-                }
+                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[0] * 255,color[0] * 255));
             }
         }
         imgOutput.saveToFile(imageOutput);
@@ -212,11 +208,7 @@ namespace EvoAI{
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
-                if(color[0] > 0.5){
-                    imgOutput.setPixel(x,y,sf::Color::White);
-                }else{
-                    imgOutput.setPixel(x,y,sf::Color::Black);
-                }
+                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[0] * 255,color[0] * 255));
             }
         }
         imgOutput.saveToFile(imageOutput);
@@ -255,11 +247,7 @@ namespace EvoAI{
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
-                if(color[0] > 0.5){
-                    imgOutput.setPixel(x,y,sf::Color::White);
-                }else{
-                    imgOutput.setPixel(x,y,sf::Color::Black);
-                }
+                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[0] * 255,color[0] * 255));
             }
         }
         imgOutput.saveToFile(imageOutput);

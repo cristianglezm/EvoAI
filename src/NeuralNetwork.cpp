@@ -165,7 +165,6 @@ namespace EvoAI{
                     outLayer[j].setDelta(delta);
                     outLayer[j].setBiasWeight(outLayer[j].getBiasWeight() + learningRate * outLayer[j].getDelta());
                 }
-                totalError /= outputs.size();
                 std::for_each(std::rbegin(getConnections()),std::rend(getConnections()),
                     [this,&learningRate](Connection* c){
                         auto& src = c->getDest();
@@ -214,7 +213,7 @@ namespace EvoAI{
                     });
                     reset();
             }
-            totalError /= batchSize;
+            totalError /= (batchSize * expectedOutputs[0].size());
             mse = totalError;
             totalError = 0.0;
             auto conSize = getConnections().size();
@@ -229,12 +228,6 @@ namespace EvoAI{
             }
             resetConnections();
         }
-        /// TODO
-        /// calc delta
-        /// calc gradients
-        /// calc mse?
-        /// calc backprop?
-        /// update weights?
     }
     NeuralNetwork& NeuralNetwork::setLayers(std::vector<NeuronLayer>&& lys){
         layers = std::move(lys);

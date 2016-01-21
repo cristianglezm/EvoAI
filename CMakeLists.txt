@@ -77,6 +77,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(CMAKE_DEBUG_POSTFIX "_d")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fexpensive-optimizations")
@@ -138,6 +139,11 @@ endif(BUILD_DOCS)
 #################################################################################
 
 install(TARGETS EvoAI LIBRARY DESTINATION lib ARCHIVE DESTINATION .)
+install(FILES LICENSE.txt DESTINATION .)
+install(FILES README.md DESTINATION .)
+if(BUILD_DOCS)
+    install(DIRECTORY docs DESTINATION .)
+endif(BUILD_DOCS)
 install(DIRECTORY include DESTINATION .)
 
 if(NOT BUILD_STATIC AND WIN32)
