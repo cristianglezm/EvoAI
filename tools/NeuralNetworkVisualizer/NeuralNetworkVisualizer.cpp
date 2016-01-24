@@ -12,6 +12,7 @@ int main(int argc, char **argv){
     using EvoAI::Connection;
     using EvoAI::NNRenderer;
     bool running = true;
+    bool showText = false;
     if(argc < 2){
         std::cout << "usage:\n";
         std::cout << argv[0] << " <filename>" << std::endl;
@@ -62,13 +63,16 @@ int main(int argc, char **argv){
                         v.move(-100,0);
                         App.setView(v);
                     }
+                    if(event.key.code == sf::Keyboard::T){
+                        showText = !showText;
+                    }
                     break;
                 default:
                     break;
             }
         }
         App.clear(sf::Color::Black);
-        nr->Render(App,true);
+        nr->Render(App,showText);
         App.display();
     }
     App.close();

@@ -26,7 +26,7 @@ int main(int argc,char **argv){
         std::string filename(argv[2]);
         if(filename.empty()){
             std::cout << "creating neural network..." << std::endl;
-            nn = EvoAI::createFeedForwardNN(4,5,25,3,1.0);
+            nn = EvoAI::createFeedForwardNN(4,1,50,3,1.0);
         }else{
             std::cout << "loading neural network..." << std::endl;
             nn = std::make_unique<EvoAI::NeuralNetwork>(filename);

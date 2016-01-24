@@ -163,7 +163,6 @@ namespace EvoAI{
                     totalError += std::pow(error,2);
                     auto delta = error * derivate(outLayer[j].getActivationType(),outLayer[j]);
                     outLayer[j].setDelta(delta);
-                    outLayer[j].setBiasWeight(outLayer[j].getBiasWeight() + learningRate * outLayer[j].getDelta());
                 }
                 std::for_each(std::rbegin(getConnections()),std::rend(getConnections()),
                     [this,&learningRate](Connection* c){
@@ -181,7 +180,6 @@ namespace EvoAI{
                                     nrnDest.setDelta(delta);
                                     auto grad = nrnDest.getOutput() * nrnSrc.getDelta();
                                     c->addGradient(grad);
-                                    nrnDest.setBiasWeight( nrnDest.getBiasWeight() + learningRate * nrnDest.getDelta());
                             }   break;
                             case Neuron::Type::CONTEXT:
                             case Neuron::Type::HIDDEN:{
@@ -194,7 +192,6 @@ namespace EvoAI{
                                         nrnDest.setDelta(delta);
                                         auto grad = nrnDest.getOutput() * nrnSrc.getDelta();
                                         c->addGradient(grad);
-                                        nrnDest.setBiasWeight( nrnDest.getBiasWeight() + learningRate * nrnDest.getDelta());
                                     }else{
                                         auto sum = 0.0;
                                         for(auto& dCon:nrnDest.getConnections()){
@@ -204,7 +201,6 @@ namespace EvoAI{
                                         nrnDest.setDelta(delta);
                                         auto grad = nrnDest.getSum() * nrnSrc.getDelta();
                                         c->addGradient(grad);
-                                        nrnDest.setBiasWeight( nrnDest.getBiasWeight() + learningRate * nrnDest.getDelta());
                                     }
                             }   break;
                             case Neuron::Type::INPUT:
@@ -219,12 +215,14 @@ namespace EvoAI{
             auto conSize = getConnections().size();
             for(auto index=0u;index<conSize;++index){
                 auto c = connections[index];
-                auto oldWDelta = 0.0;
-                if(index > 0){
-                    oldWDelta = (*connections[index-1]).getDelta();
+                if(!c->isRecurrent()){
+                    auto oldWDelta = 0.0;
+                    if(index > 0){
+                        oldWDelta = (*connections[index-1]).getDelta();
+                    }
+                    c->setDelta(learningRate * c->getGradient() + momentum * oldWDelta);
+                    c->setWeight(c->getWeight() + c->getDelta());
                 }
-                c->setDelta(learningRate * c->getGradient() + momentum * oldWDelta);
-                c->setWeight(c->getWeight() + c->getDelta());
             }
             resetConnections();
         }
@@ -238,6 +236,7 @@ namespace EvoAI{
         return *this;
     }
     bool NeuralNetwork::removeNeuron(Neuron* n){
+        connectionsCached = false;
         auto size = layers.size();
         auto lyrIndex = 0u, nrnIndex = 0u;
         if(n->hasConnections()){
@@ -279,6 +278,9 @@ namespace EvoAI{
         return true;
     }
     NeuralNetwork& NeuralNetwork::addConnection(const Connection& c){
+        if(c.isRecurrent()){
+            layers[c.getDest().layer][c.getDest().neuron].setType(Neuron::Type::CONTEXT);
+        }
         layers[c.getSrc().layer].addConnection(c);
         connectionsCached = false;
         return *this;
@@ -307,6 +309,8 @@ namespace EvoAI{
     std::vector<Connection*>& NeuralNetwork::getConnections(){
         if(connectionsCached){
             return connections;
+        }else{
+            connections.clear();
         }
         for(auto& l:layers){
             for(auto& n:l.getNeurons()){

@@ -56,7 +56,8 @@ namespace EvoAI{
                 LEAKY_RELU,
                 EXPONENTIAL,
                 SOFTMAX,
-                GAUSSIAN
+                GAUSSIAN,
+                LAST_ACTIVATION_TYPE
             };
             /**
              * @brief returns Neuron::ActivationType to String

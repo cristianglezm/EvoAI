@@ -76,7 +76,58 @@ namespace EvoAI{
         }
         return std::move(nn);
     }
-
+    std::unique_ptr<NeuralNetwork> createFullyConnectedCPPN(const std::size_t& numInputs, const std::size_t& numHidden,
+                                                            const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias){
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        static std::default_random_engine g(seed);
+        static std::uniform_int_distribution<int> dice(0,Neuron::ActivationType::LAST_ACTIVATION_TYPE-1);
+        std::unique_ptr<NeuralNetwork> nn = createFeedForwardNN(numInputs,numHidden,numNeuronsPerHiddenLayer,numOutputs,bias);
+        for(auto i=0u;i<nn->size();++i){
+            for(auto j=0u;j<(*nn)[i].size();++j){
+                (*nn)[i][j].setActivationType(static_cast<Neuron::ActivationType>(dice(g)));
+            }
+        }
+        return std::move(nn);
+    }
+    std::unique_ptr<NeuralNetwork> createCPPN(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias){
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        static std::default_random_engine g(seed);
+        static std::uniform_int_distribution<int> dice(0,Neuron::ActivationType::LAST_ACTIVATION_TYPE-1);
+        std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>(numInputs,numHidden,numNeuronsPerHiddenLayer,numOutputs,bias);
+        static std::uniform_int_distribution<int> hiddenLayerDice(1,numHidden);
+        static std::uniform_int_distribution<int> outputLayerDice(numHidden,numHidden+1);
+        static std::uniform_int_distribution<int> inputNeuronDice(0,numInputs-1);
+        static std::uniform_int_distribution<int> hiddenNeuronDice(0,numNeuronsPerHiddenLayer-1);
+        static std::uniform_int_distribution<int> outputNeuronDice(0,numOutputs-1);
+        static std::bernoulli_distribution bernoulli(0.5);
+        for(auto i=0u;i<nn->size();++i){
+            nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
+            nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
+            nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
+            nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
+            
+            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
+            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
+            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
+            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
+            
+            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(numHidden+1,outputNeuronDice(g)),random(-1.0,1.0)));
+            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(numHidden+1,outputNeuronDice(g)),random(-1.0,1.0)));
+            if(bernoulli(g)){
+                nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(outputLayerDice(g),outputNeuronDice(g)),random(-1.0,1.0)));
+                nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(outputLayerDice(g),outputNeuronDice(g)),random(-1.0,1.0)));
+                
+                nn->addConnection(Connection(Link(outputLayerDice(g),outputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
+                nn->addConnection(Connection(Link(outputLayerDice(g),outputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));                
+            }
+        }
+        for(auto i=0u;i<nn->size();++i){
+            for(auto j=0u;j<(*nn)[i].size();++j){
+                (*nn)[i][j].setActivationType(static_cast<Neuron::ActivationType>(dice(g)));
+            }
+        }
+        return std::move(nn);
+    }
     void generateImageFromCoordinates(const std::string& imageInput, NeuralNetwork* nn, const std::string& imageOutput){
         sf::Image imgInput;
         if(!imgInput.loadFromFile(imageInput)){

@@ -43,27 +43,29 @@ int main(int argc, char **argv){
         
     }
     if(!nn){
-        nn = EvoAI::createFeedForwardNN(3,3,5,3,1.0);
+        nn = EvoAI::createCPPN(3,3,5,3,1.0);
+        std::cout << "Saving Neural network to a json file" << std::endl;
+        nn->writeToFile("CPPN.json");
     }
     sf::Image output;
-    output.create(150,150);
-    std::cout << "Saving Neural network to a json file" << std::endl;
-    nn->writeToFile("FeedForwardNeuralNetwork.json");
+    output.create(700,700);
     std::cout << "creating image with color..." << std::endl;
-    EvoAI::generateImageFromColor("test.jpg",nn.get(),"color.png");
-    std::cout << "creating sound with coords image..." << std::endl;
-    EvoAI::generateSoundFromColor("test.jpg",nn.get(),"sound.ogg");
+    EvoAI::generateImageFromColor(output,nn.get(),"color.png");
     std::cout << "creating image with coordinates..." << std::endl;
-    EvoAI::generateImageFromCoordinates("test.jpg",nn.get(),"coords.png");
+    EvoAI::generateImageFromCoordinates(output,nn.get(),"coords.png");
     std::cout << "creating image with color And Coordinates..." << std::endl;
     auto nnSize = nn->size()-1;
-    nn->removeNeuron(&(*nn)[nnSize][1]);
     nn->removeNeuron(&(*nn)[nnSize][2]);
+    nn->removeNeuron(&(*nn)[nnSize][1]);
+    nn->writeToFile("CPPNWith1Output.json");
     std::cout << "creating Black And White image with Color..." << std::endl;
-    EvoAI::generateBWImageFromColor("test.jpg",nn.get(),"BWTestImage.png");
-    EvoAI::generateBWImageFromCoords("test.jpg",nn.get(),"BWTestCoords.png");
-    nn = std::make_unique<EvoAI::NeuralNetwork>("ElmanNeuralNetwork.json");
-    EvoAI::generateImageFromColorAndCoordinates("test.jpg",nn.get(),"colorAndCoordinates.png");
-    nn->writeToFile("ElmanNeuralNetwork.json");
+    EvoAI::generateBWImageFromColor(output,nn.get(),"BWTestImage.png");
+    std::cout << "creating Black And White image with Coords..." << std::endl;
+    EvoAI::generateBWImageFromCoords(output,nn.get(),"BWTestCoords.png");
+    nn = EvoAI::createCPPN(6,3,5,3,1.0); //std::make_unique<EvoAI::NeuralNetwork>("ElmanNeuralNetwork.json");
+    std::cout << "Creating Color And Coordinates..." << std::endl;
+    nn->writeToFile("CPPNWith6Inputs.json");
+    EvoAI::generateImageFromColorAndCoordinates(output,nn.get(),"colorAndCoordinates1.png");
+    EvoAI::generateImageFromColorAndCoordinates(output,nn.get(),"colorAndCoordinates2.png");
     return 0;
 }

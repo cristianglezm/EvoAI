@@ -43,6 +43,27 @@ namespace EvoAI{
      */
     std::unique_ptr<NeuralNetwork> createElmanNeuralNetwork(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
     /**
+     * @brief Creates a fully connected CPPN with random activations functions.
+     * @param numInputs number of inputs
+     * @param numHidden number of hidden layers
+     * @param numNeuronsPerHidden number of neurons per hidden layer
+     * @param numOutputs number of outputs
+     * @param bias bias
+     * @return std::unique_ptr<NeuralNetwork>
+     */
+    std::unique_ptr<NeuralNetwork> createFullyConnectedCPPN(const std::size_t& numInputs, const std::size_t& numHidden,
+                                                            const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
+    /**
+     * @brief Creates a CPPN with random activations functions and some random connections.
+     * @param numInputs number of inputs
+     * @param numHidden number of hidden layers
+     * @param numNeuronsPerHidden number of neurons per hidden layer
+     * @param numOutputs number of outputs
+     * @param bias bias
+     * @return std::unique_ptr<NeuralNetwork>
+     */
+    std::unique_ptr<NeuralNetwork> createCPPN(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
+    /**
      * @brief Generates an Image from coordinates and distance to center
      * 
      * Requires a neural network with 3 inputs and 3 outputs.
