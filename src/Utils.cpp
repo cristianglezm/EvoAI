@@ -152,8 +152,8 @@ namespace EvoAI{
                 auto norm_y = (2*(y/height))-1;
                 auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
                 std::vector<double> inputs;
-                inputs.emplace_back((double)x);
-                inputs.emplace_back((double)y);
+                inputs.emplace_back((double)x-(width/2));
+                inputs.emplace_back((double)y-(height/2));
                 inputs.emplace_back((double)d);
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
@@ -253,8 +253,8 @@ namespace EvoAI{
                 auto norm_y = (2*(y/height))-1;
                 auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
                 std::vector<double> inputs;
-                inputs.emplace_back((double)x);
-                inputs.emplace_back((double)y);
+                inputs.emplace_back((double)x-(width/2));
+                inputs.emplace_back((double)y-(height/2));
                 inputs.emplace_back((double)d);
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
@@ -292,8 +292,8 @@ namespace EvoAI{
                 inputs.emplace_back((double)imgColor.r);
                 inputs.emplace_back((double)imgColor.g);
                 inputs.emplace_back((double)imgColor.b);
-                inputs.emplace_back((double)x);
-                inputs.emplace_back((double)y);
+                inputs.emplace_back((double)x-(width/2));
+                inputs.emplace_back((double)y-(height/2));
                 inputs.emplace_back((double)d);
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
@@ -331,8 +331,8 @@ namespace EvoAI{
                 inputs.emplace_back((double)imgColor.r);
                 inputs.emplace_back((double)imgColor.g);
                 inputs.emplace_back((double)imgColor.b);
-                inputs.emplace_back((double)x);
-                inputs.emplace_back((double)y);
+                inputs.emplace_back((double)x-(width/2));
+                inputs.emplace_back((double)y-(height/2));
                 inputs.emplace_back((double)d);
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
@@ -360,8 +360,8 @@ namespace EvoAI{
                 auto norm_y = (2*(y/height))-1;
                 auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
                 std::vector<double> inputs;
-                inputs.emplace_back((double)x);
-                inputs.emplace_back((double)y);
+                inputs.emplace_back((double)x-(width/2));
+                inputs.emplace_back((double)y-(height/2));
                 inputs.emplace_back((double)d);
                 nn->setInputs(std::move(inputs));
                 auto audio = nn->run();

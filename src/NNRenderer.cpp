@@ -14,19 +14,13 @@ namespace EvoAI{
     void NNRenderer::Render(sf::RenderWindow& win, bool renderTexts){
         for(auto& ci:connections){
             if(renderTexts){
-                win.draw(ci.weight);
-                win.draw(ci.cycles);
-                win.draw(ci.visited);
+                win.draw(ci.info);
             }
             win.draw(ci.connectionLine, 2, sf::Lines);
         }
         for(auto& ni:neurons){
             if(renderTexts){
-                win.draw(ni.output);
-                win.draw(ni.sum);
-                win.draw(ni.biasWeight);
-                win.draw(ni.delta);
-                win.draw(ni.type);
+                win.draw(ni.info);
             }
             win.draw(ni.neuronShape);
         }
@@ -47,16 +41,8 @@ namespace EvoAI{
     void NNRenderer::setUpNeuronInfo(Neuron& n, sf::Vector2f& p){
         NeuronInfo ni;
         const int textSize = 15;
-        ni.output = sf::Text("out: " + std::to_string(n.getOutput()), font, textSize);
-        ni.output.setPosition(sf::Vector2f(p.x+5.0,p.y+10));
-        ni.sum = sf::Text("Sum: " + std::to_string(n.getSum()),font, textSize);
-        ni.sum.setPosition(sf::Vector2f(p.x+5.0,p.y+30));
-        ni.biasWeight = sf::Text("bWeight: " + std::to_string(n.getBiasWeight()),font,textSize);
-        ni.biasWeight.setPosition(sf::Vector2f(p.x+5.0,p.y+50));
-        ni.delta = sf::Text("Delta: " + std::to_string(n.getDelta()),font,textSize);
-        ni.delta.setPosition(sf::Vector2f(p.x+5.0,p.y+70));
-        ni.type = sf::Text("type: " + Neuron::typeToString(n.getType()),font,textSize);
-        ni.type.setPosition(sf::Vector2f(p.x+5.0,p.y+90));
+        ni.info = sf::Text(n.toString("\n"), font, textSize);
+        ni.info.setPosition(sf::Vector2f(p.x+5.0,p.y+10));
         ni.neuronShape = sf::CircleShape(6);
         ni.neuronShape.setPosition(p);
         ni.neuronShape.setFillColor(sf::Color::Red);
@@ -79,18 +65,8 @@ namespace EvoAI{
         auto dlyr = c.getDest().layer * 270.0 + 10;
         auto dnrn = c.getDest().neuron * 150.0 + 10;
         ci.connectionLine[1] = sf::Vertex(sf::Vector2f(dlyr,dnrn),color);
-        ci.weight = sf::Text("Weight: " + std::to_string(c.getWeight()),font, textSize);
-        ci.weight.setPosition(sf::Vector2f(p.x+150,p.y+space+15));
-        ci.cycles = sf::Text("Cycles: " + std::to_string(c.getCycles()),font, textSize);
-        ci.cycles.setPosition(sf::Vector2f(p.x+150,p.y+space+35));
-        std::string isVisited = "";
-        if(c.isVisited()){
-            isVisited = "True";
-        }else{
-            isVisited = "False";
-        }
-        ci.visited = sf::Text("Visited: " + isVisited,font, textSize);
-        ci.visited.setPosition(sf::Vector2f(p.x+150,p.y+space+55));
+        ci.info = sf::Text("W: " + std::to_string(c.getWeight()),font, textSize);
+        ci.info.setPosition(sf::Vector2f((p.x+dlyr)/2,(p.y+dnrn)/2));
         connections.push_back(ci);
     }
 }

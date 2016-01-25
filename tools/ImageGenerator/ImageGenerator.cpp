@@ -48,7 +48,7 @@ int main(int argc, char **argv){
         nn->writeToFile("CPPN.json");
     }
     sf::Image output;
-    output.create(700,700);
+    output.create(150,150);
     std::cout << "creating image with color..." << std::endl;
     EvoAI::generateImageFromColor(output,nn.get(),"color.png");
     std::cout << "creating image with coordinates..." << std::endl;

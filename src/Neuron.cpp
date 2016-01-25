@@ -64,12 +64,11 @@ namespace EvoAI{
         o["connections"] = JsonBox::Value(a);
         return JsonBox::Value(o);
     }
-    std::string Neuron::toString() const noexcept{
+    std::string Neuron::toString(const std::string& delimiter) const noexcept{
         std::ostringstream os;
-        os << "output: " << output << ", sum: " << sum << 
-              ", delta: " << delta << ", biasWeight: " << biasWeight << ", type: "
-              << typeToString(type) << ", activationType: "
-              << activationTypeToString(activationType);
+        os << "output: " << output << delimiter << " sum: " << sum << 
+              delimiter << " delta: " << delta << delimiter << " biasWeight: " << biasWeight << delimiter << " type: " <<
+              typeToString(type) << delimiter << " activationType: " << activationTypeToString(activationType);
         return os.str();
     }
     Neuron& Neuron::addConnection(const Connection& c) noexcept{

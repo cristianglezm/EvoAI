@@ -150,9 +150,11 @@ namespace EvoAI{
             JsonBox::Value toJson() const noexcept;
             /**
              * @brief Serialize the neuron info to string.
+             * @param delimiter the thing thats between the values.
+             * example: "\n", "\t" etc.
              * @return std::string
              */
-            std::string toString() const noexcept;
+            std::string toString(const std::string& delimiter = ",") const noexcept;
             /**
              * @brief Adds a Connection.
              * @param c const Connection&

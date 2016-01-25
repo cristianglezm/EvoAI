@@ -9,8 +9,8 @@
 namespace EvoAI{
     /**
      * @class NNRenderer
-     * @author Cristian
-     * @brief 
+     * @author Cristian Glez <cristian.glez.m@gmail.com>
+     * @brief Class for drawing Neural Networks
      */
     class NNRenderer{
         public:
@@ -19,18 +19,12 @@ namespace EvoAI{
             ~NNRenderer() = default;
         private:
             struct NeuronInfo{
-                sf::Text output;
-                sf::Text sum;
-                sf::Text biasWeight;
-                sf::Text delta;
-                sf::Text type;
+                sf::Text info;
                 sf::CircleShape neuronShape;
             };
             struct ConnectionInfo{
                 sf::Vertex connectionLine[2];
-                sf::Text weight;
-                sf::Text cycles;
-                sf::Text visited;
+                sf::Text info;
             };
         private:
             void setUp();
