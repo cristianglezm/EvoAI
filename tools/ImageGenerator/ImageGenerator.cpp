@@ -7,15 +7,37 @@
 #include <EvoAI/Utils.hpp>
 
 void usage(){
-    std::cout << "-g, --genome <filename> load a genome json file.\n";
-    std::cout << "-n, --neuralnetwork <filename> load a neural network json file.\n";
-    std::cout << "--image <filename> load a image and generate another.\n";
-    std::cout << "-h, --help help menu (This)\n";
+    std::cout << "-g, --genome <filename>\t\t\tload a genome json file.\n";
+    std::cout << "-n, --neuralnetwork <filename>\t\tload a neural network json file.\n";
+    std::cout << "-N, --neuralnetwork-type <type>\t\twill generate a random neural network of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
+                                                            "0. CPPN\n\t\t\t\t\t\t\t1. FeedForward\n\t\t\t\t\t\t\t2. Elman Network\n";
+    std::cout << "-c, --color\t\t\t\twill use color as input for the neural network (can be used with -C)\n";
+    std::cout << "-C, --coords\t\t\t\twill use coordinates as input for the neural network (can be used with -c)\n";
+    std::cout << "-bw\t\t\t\t\tthe output image is black and white.\n";
+    std::cout << "-s, --save <filename>\t\t\twill save the neural network generated.\n";
+    std::cout << "-f, --file-output <filename>\t\timage that will output.\n";
+    std::cout << "-res, --resolution <width height>\twill create a image of that resolution.\n";
+    std::cout << "--image <filename>\t\t\tload a image and generate another.\n";
+    std::cout << "-h, --help\t\t\t\thelp menu (This)\n";
 }
 int main(int argc, char **argv){
     bool optGenome = false;
-    bool optNeural = false;
+    std::string genomeFile = "";
+    bool optNeuralType = false;
+    std::string NeuralType = "0";
+    bool optNeuralFile = false;
+    std::string neuralFile = "";
+    bool optColor = false;
+    bool optCoords = false;
+    bool optBW = false;
+    bool optSave = false;
+    std::string saveFile = "";
+    bool optFileOutput = false;
+    std::string fileoutput = "";
+    bool optRes = false;
+    std::string resWidth = "0", resHeight = "0";
     bool optImage = false;
+    std::string imageInput = "";
     std::string val = "";
     if(argc >= 3){
         val = argv[1];
@@ -25,7 +47,7 @@ int main(int argc, char **argv){
     if(val == "-g" || val == "--genome"){
         optGenome = true;
     }else if(val == "-n" || val == "--neuralnetwork"){
-        optNeural = true;
+        optNeuralFile = true;
     }else if(val =="--image"){
         optImage = true;
     }else if(val == "--help" || val == "-h"){
@@ -34,7 +56,7 @@ int main(int argc, char **argv){
         return -1;
     }
     std::unique_ptr<EvoAI::NeuralNetwork> nn = nullptr;
-    if(optNeural){
+    if(optNeuralFile){
         std::cout << "Loading File " << argv[2] << std::endl;
         nn = std::make_unique<EvoAI::NeuralNetwork>(std::string(argv[2]));
     }else if(optGenome){

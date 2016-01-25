@@ -2,10 +2,12 @@
 
 TODO:
 
-* Check training from NeuralNetwork
+* Parse command line args:
+    * ImageGenerator
+    * SoundGenerator
 * Implement NEAT-CPPN
 * Implement ES-HyperNEAT?
 * Fix Activations and derivatives
-* Parse command line args examples, tools.
+* Check training from NeuralNetwork
 * make tests
 * use CPack for packaging

@@ -47,12 +47,16 @@ namespace EvoAI{
         ni.neuronShape.setPosition(p);
         ni.neuronShape.setFillColor(sf::Color::Red);
         neurons.emplace_back(ni);
-        int space = 0;
+        int space = 10;
+        bool change = false;
         for(auto& c:n.getConnections()){
-            setUpConnectionInfo(c,p,space);
-            space +=80;
+            if(change){
+                setUpConnectionInfo(c,p, space);
+            }else{
+                setUpConnectionInfo(c,p, -space);
+            }
+            change = !change;
         }
-        space = 0;
     }
     void NNRenderer::setUpConnectionInfo(Connection& c, sf::Vector2f& p, const int& space){
         const int textSize = 15;
@@ -61,12 +65,12 @@ namespace EvoAI{
         if(c.isRecurrent()){
             color = sf::Color::Red;
         }
-        ci.connectionLine[0] = sf::Vertex(sf::Vector2f(p.x+10,p.y+10),color);
+        ci.connectionLine[0] = sf::Vertex(sf::Vector2f(p.x+5,p.y+5),color);
         auto dlyr = c.getDest().layer * 270.0 + 10;
         auto dnrn = c.getDest().neuron * 150.0 + 10;
         ci.connectionLine[1] = sf::Vertex(sf::Vector2f(dlyr,dnrn),color);
         ci.info = sf::Text("W: " + std::to_string(c.getWeight()),font, textSize);
-        ci.info.setPosition(sf::Vector2f((p.x+dlyr)/2,(p.y+dnrn)/2));
+        ci.info.setPosition(sf::Vector2f(((p.x + dlyr) / 2),(p.y + dnrn) / 2 - space));
         connections.push_back(ci);
     }
 }
