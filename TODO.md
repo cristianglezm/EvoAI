@@ -3,7 +3,6 @@
 TODO:
 
 * Parse command line args:
-    * ImageGenerator
     * SoundGenerator
 * Implement NEAT-CPPN
 * Implement ES-HyperNEAT?

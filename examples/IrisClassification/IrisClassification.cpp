@@ -26,7 +26,7 @@ int main(int argc,char **argv){
         std::string filename(argv[2]);
         if(filename.empty()){
             std::cout << "creating neural network..." << std::endl;
-            nn = EvoAI::createFeedForwardNN(4,1,50,3,1.0);
+            nn = EvoAI::createFeedForwardNN(4,3,6,3,1.0);
         }else{
             std::cout << "loading neural network..." << std::endl;
             nn = std::make_unique<EvoAI::NeuralNetwork>(filename);
@@ -35,13 +35,13 @@ int main(int argc,char **argv){
             std::cout << "Training Neural Network..." << std::endl;
             do{
                 auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
-                nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.01,0.5,500);
+                nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.001,0.2,500);
                 std::cout << "MSE: " << nn->getMSE() << std::endl;
                 nn->writeToFile("IrisClassification.json");
             }while(nn->getMSE() > 0.000001);
         }else if(opt == "-c" || opt == "--classify"){
             std::cout << "Processing Test Classification..." << std::endl;
-            auto accuracy = 0.0;
+            auto error = 0.0;
             for(auto i=0u;i<testSets.first.size();++i){
                 nn->setInputs(std::move(testSets.first[i]));
                 auto outputs = nn->run();
@@ -60,14 +60,18 @@ int main(int argc,char **argv){
                 }else if(testSets.second[i][2] >= 0.5){
                     expectedOut = "Iris-virginica";
                 }
-                if(nnOut == expectedOut){
-                    accuracy += 1;
+                if(nnOut != expectedOut){
+                    error += 1;
                 }
-                std::cout << nnOut << " : " << expectedOut << std::endl;
+                std::cout << nnOut << " : "<< expectedOut << std::endl;
+                std::cout << "\tIris-setosa" << ":" << " - " << (outputs[0] * 100) << "%" << std::endl;
+                std::cout << "\tIris-versicolor" << ":" << " - " << (outputs[1] * 100) << "%" << std::endl;
+                std::cout << "\tIris-virginica" << ":" << " - " << (outputs[2] * 100) << "%" << std::endl;
             }
-            accuracy /= testSets.second.size();
-            accuracy *= 100;
-            std::cout << "Accuracy: " << accuracy << "%" << std::endl;
+            error /= testSets.second.size();
+            error *= 100;
+            auto accuracy = 100 - error;
+            std::cout << "Error: " << error << "%" << " Accuracy: " << accuracy << "%" << std::endl;
         }else if(opt == "-h" || opt == "--help"){
             usage();
         }

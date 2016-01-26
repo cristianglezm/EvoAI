@@ -66,6 +66,9 @@ namespace EvoAI{
     double Derivatives::relu(const double& v){
         return (v > 0.0 ? 1.0:0.0);
     }
+    double softmax(const double& v, NeuralNetwork& nn){
+        return 1; // TODO implement
+    }
     double Derivatives::gaussian(const double& v){
         return (std::sqrt(2/3.14159265359)*(-std::exp(std::pow(-v,2))));
     }

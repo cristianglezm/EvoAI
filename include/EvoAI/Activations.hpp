@@ -105,6 +105,13 @@ namespace EvoAI{
         /**
          * @brief 
          * @param v
+         * @param nn
+         * @return 
+         */
+        double softmax(const double& v, NeuralNetwork& nn);
+        /**
+         * @brief 
+         * @param v
          * @return 
          */
         double gaussian(const double& v);
