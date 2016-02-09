@@ -61,10 +61,14 @@ namespace EvoAI{
     }
     NeuralNetwork& NeuralNetwork::addLayer(const NeuronLayer& l){
         layers.emplace_back(l);
+        connectionsCached = false;
+        neuronsCached = false;
         return *this;
     }
     bool NeuralNetwork::removeLayer(const NeuronLayer& l){
         auto lyrIndex = 0u;
+        connectionsCached = false;
+        neuronsCached = false;
         for(auto i=0u;i<layers.size();++i){
             if(l == layers[i]){
                 lyrIndex = i;
@@ -228,15 +232,20 @@ namespace EvoAI{
         }
     }
     NeuralNetwork& NeuralNetwork::setLayers(std::vector<NeuronLayer>&& lys){
+        connectionsCached = false;
+        neuronsCached = false;
         layers = std::move(lys);
         return *this;
     }
     NeuralNetwork& NeuralNetwork::addNeuron(const Neuron& n, const std::size_t& layerIndex){
+        neuronsCached = false;
+        connectionsCached = false;
         layers[layerIndex].addNeuron(n);
         return *this;
     }
     bool NeuralNetwork::removeNeuron(Neuron* n){
         connectionsCached = false;
+        neuronsCached = false;
         auto size = layers.size();
         auto lyrIndex = 0u, nrnIndex = 0u;
         if(n->hasConnections()){
@@ -279,7 +288,10 @@ namespace EvoAI{
     }
     NeuralNetwork& NeuralNetwork::addConnection(const Connection& c){
         if(c.isRecurrent()){
-            layers[c.getDest().layer][c.getDest().neuron].setType(Neuron::Type::CONTEXT);
+            auto nType = layers[c.getDest().layer][c.getDest().neuron].getType();
+            if( nType != Neuron::Type::INPUT || nType != Neuron::Type::OUTPUT){
+                layers[c.getDest().layer][c.getDest().neuron].setType(Neuron::Type::CONTEXT);
+            }
         }
         layers[c.getSrc().layer].addConnection(c);
         connectionsCached = false;
@@ -321,6 +333,20 @@ namespace EvoAI{
         }
         connectionsCached = true;
         return connections;
+    }
+    std::vector<Neuron*>& NeuralNetwork::getNeurons(){
+        if(neuronsCached){
+            return neurons;
+        }else{
+            neurons.clear();
+        }
+        for(auto& l:layers){
+            for(auto& n:l.getNeurons()){
+                neurons.emplace_back(&n);
+            }
+        }
+        neuronsCached = true;
+        return neurons;
     }
     Connection* NeuralNetwork::findConnection(Link&& src,Link&& dest){
         auto& conns = layers[src.layer][src.neuron].getConnections();

@@ -10,36 +10,51 @@
 #include <EvoAI/NeuralNetwork.hpp>
 #include <JsonBox.h>
 
-/// TODO
-/// initial values
-/// funciones de la nn modifica values hidden layers, hidden neurons, connections, chromoSize?
-/// species size chromosomes
-/// limite cost function
-/// serializar nn, genome
 namespace EvoAI{
+    /* TODO
     class Genome final{
         public:
+            struct NodeGene{
+                public:
+                    NodeGene();
+                    ~NodeGene() = default;
+                private:
+                    int layerID;
+                    int neuronID;
+                    Neuron::ActivationType actType;
+            };
+            class ConnectionGene{
+                public:
+                    ConnectionGene();
+                    ~ConnectionGene() = default;
+                private:
+                    int innovationID;
+                    Connection c;
+                    bool enabled;
+            };
+        public:
             Genome();
-            Genome(const std::size_t& chromoSize);
             Genome(const std::string& filename);
-            bool update();
-            JsonBox::Value toJson();
+            JsonBox::Value toJson() const;
+            Genome& setMutationRate(const float& rate);
+            bool writeToFile(const std::string& filename) const;
             ~Genome() = default;
         private:
-            Genome& addConnection();
-            Genome& removeConnection();
-            Genome& addNeuron();
-            Genome& removeNeuron();
-            Genome& addNeuronLayer();
-            Genome& removeNeuronLayer();
-            Genome& addChromosome(const double& chromo);
-            Genome& removeChromosome(const double& chromo);
+            Genome& addConnection(const Connection& c);
+            Genome& removeConnection(const Connection& c);
+            Genome& addNeuron(const Neuron& n);
+            Genome& removeNeuron(const Neuron& n);
             bool initChromosomes();
         private:
-            std::vector<double> chromosomes;
-            std::unique_ptr<NeuralNetwork> nn;
+            int genomeID;
+            int speciesID;
             double fitness;
-            int speciesId;
+            std::vector<NodeGene> nodeChromosomes;
+            std::vector<ConnectionGene> connectionChromosomes;
+            std::unique_ptr<NeuralNetwork> phenotype;
     };
+    /// d = ((c1*E)/N) + ((c2*D)/N) + c3 * avg of W differences between genomes.
+    double distance(Genome& g1,Genome& g2);
+    */
 }
 #endif // GENOME_HPP

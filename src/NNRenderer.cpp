@@ -29,7 +29,7 @@ namespace EvoAI{
     void NNRenderer::setUp(){
         sf::Vector2f position(5.0,5.0);
         sf::Vector2f space(0.0,150.0);
-        for(auto& l: nn->layers){
+        for(auto& l: nn->getLayers()){
             for(auto& neuron:l.getNeurons()){
                 setUpNeuronInfo(neuron,position);
                 position += space;

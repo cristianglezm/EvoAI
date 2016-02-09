@@ -16,8 +16,9 @@ void usage(){
     std::cout << "-bw\t\t\t\t\tthe output image is black and white.\n";
     std::cout << "-s, --save <filename>\t\t\twill save the neural network generated.\n";
     std::cout << "-f, --file-output <filename>\t\timage that will output.\n";
-    std::cout << "-res, --resolution <width height>\twill create a image of that resolution.\n";
+    std::cout << "-res, --resolution <width height>\twill create a image of that resolution(ignored if --image is specified).\n";
     std::cout << "--image <filename>\t\t\tload a image and generate another.\n";
+    std::cout << "-r, --repeat <n>\t\t\tIt will generate the image again.(use it for recurrent nn)\n";
     std::cout << "-h, --help\t\t\t\thelp menu (This)\n";
 }
 int main(int argc, char **argv){
@@ -37,6 +38,7 @@ int main(int argc, char **argv){
     int resHeight = 150;
     bool optImage = false;
     std::string imageInput = "image.png";
+    int repeat = 1;
     if(argc < 3){
         std::cout << std::string(argv[0]) << " [options] <filename>\n";
         usage();
@@ -52,7 +54,7 @@ int main(int argc, char **argv){
             optNeuralFile = true;
             neuralFile = std::string(argv[i+1]);
         }
-        if(val == "-N" || val == "_-neuralnetwork-type"){
+        if(val == "-N" || val == "--neuralnetwork-type"){
             optNeuralType = true;
             NeuralType = std::string(argv[i+1]);
         }
@@ -80,6 +82,9 @@ int main(int argc, char **argv){
             optImage = true;
             imageInput = std::string(argv[i+1]);
         }
+        if(val == "-r" || val == "--repeat"){
+            repeat = std::stoi(std::string(argv[i+1]));
+        }
         if(val == "--help" || val == "-h"){
             std::cout << std::string(argv[0]) << " [options] <filename>\n";
             usage();
@@ -93,28 +98,34 @@ int main(int argc, char **argv){
     }else if(optNeuralType){
         if(NeuralType == "0"){
             std::cout << "Creating a CPPN..." << std::endl;
-            if((optColor || optCoords) && !optBW){
-                nn = EvoAI::createCPPN(3,3,5,3,1.0);
+            if(optColor && optCoords && !optBW){
+                nn = EvoAI::createCPPN(6,3,5,3,1.0);
             }else if(optColor && optCoords && optBW){
                 nn = EvoAI::createCPPN(6,3,5,1,1.0);
+            }else if((optColor || optCoords) && !optBW){
+                nn = EvoAI::createCPPN(3,3,5,3,1.0);
             }else if(optBW){
                 nn = EvoAI::createCPPN(3,3,5,1,1.0);
             }
         }else if(NeuralType == "1"){
             std::cout << "Creating a FeedForward Neural Network..." << std::endl;
-            if((optColor || optCoords) && !optBW){
-                nn = EvoAI::createFeedForwardNN(3,3,5,3,1.0);
+            if(optColor && optCoords && !optBW){
+                nn = EvoAI::createFeedForwardNN(6,3,5,3,1.0);
             }else if(optColor && optCoords && optBW){
                 nn = EvoAI::createFeedForwardNN(6,3,5,1,1.0);
+            }else if((optColor || optCoords) && !optBW){
+                nn = EvoAI::createFeedForwardNN(3,3,5,3,1.0);
             }else if(optBW){
                 nn = EvoAI::createFeedForwardNN(3,3,5,1,1.0);
             }
         }else if(NeuralType == "2"){
             std::cout << "Creating a Elman Neural Network..." << std::endl;
-            if((optColor || optCoords) && !optBW){
-                nn = EvoAI::createElmanNeuralNetwork(3,3,5,3,1.0);
+            if(optColor && optCoords && !optBW){
+                nn = EvoAI::createElmanNeuralNetwork(6,3,5,3,1.0);
             }else if(optColor && optCoords && optBW){
                 nn = EvoAI::createElmanNeuralNetwork(6,3,5,1,1.0);
+            }else if((optColor || optCoords) && !optBW){
+                nn = EvoAI::createElmanNeuralNetwork(3,3,5,3,1.0);
             }else if(optBW){
                 nn = EvoAI::createElmanNeuralNetwork(3,3,5,1,1.0);
             }
@@ -124,7 +135,7 @@ int main(int argc, char **argv){
             nn->writeToFile(saveFile);
         }
     }else if(optGenome){
-        std::cout << "not yet Implemented." << std::endl; /// TODO
+        std::cout << "Not yet Implemented." << std::endl; /// TODO
         return EXIT_FAILURE;
     }
     sf::Image imgInput;
@@ -135,50 +146,78 @@ int main(int argc, char **argv){
     if(optColor && !optCoords && !optBW){
         std::cout << "Generating Image from color..." << std::endl;
         if(optImage){
-            EvoAI::generateImageFromColor(imageInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateImageFromColor(imageInput,nn.get(),fileoutput);
+            }
         }else{
-            EvoAI::generateImageFromColor(imgInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateImageFromColor(imgInput,nn.get(),fileoutput);
+            }
         }
     }else if(optColor && !optCoords && optBW){
         std::cout << "Generating Image from color with Black and white output..." << std::endl;
         if(optImage){
-            EvoAI::generateBWImageFromColor(imageInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateBWImageFromColor(imageInput,nn.get(),fileoutput);
+            }
         }else{
-            EvoAI::generateBWImageFromColor(imgInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateBWImageFromColor(imgInput,nn.get(),fileoutput);
+            }
         }
     }else if(!optColor && optCoords && !optBW){
         std::cout << "Generating Image from coordinates..." << std::endl;
         if(optImage){
-            EvoAI::generateImageFromCoordinates(imageInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateImageFromCoordinates(imageInput,nn.get(),fileoutput);
+            }
         }else{
-            EvoAI::generateImageFromCoordinates(imgInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateImageFromCoordinates(imgInput,nn.get(),fileoutput);
+            }
         }
     }else if(!optColor && optCoords && optBW){
         std::cout << "Generating Image from coordinates with black and white output..." << std::endl;
         if(optImage){
-            EvoAI::generateBWImageFromCoords(imageInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateBWImageFromCoords(imageInput,nn.get(),fileoutput);
+            }
         }else{
-            EvoAI::generateBWImageFromCoords(imgInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateBWImageFromCoords(imgInput,nn.get(),fileoutput);
+            }
         }
     }else if(optColor && optCoords && !optBW){
         std::cout << "Generating Image from color and coordinates..." << std::endl;
         if(optImage){
-            EvoAI::generateImageFromColorAndCoordinates(imageInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateImageFromColorAndCoordinates(imageInput,nn.get(),fileoutput);
+            }
         }else{
-            EvoAI::generateImageFromColorAndCoordinates(imgInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateImageFromColorAndCoordinates(imgInput,nn.get(),fileoutput);
+            }
         }
     }else if(optColor && optCoords && optBW){
         std::cout << "Generating Image from color and coordinates with black and white output..." << std::endl;
         if(optImage){
-            EvoAI::generateBWImageFromColorAndCoordinates(imageInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateBWImageFromColorAndCoordinates(imageInput,nn.get(),fileoutput);
+            }
         }else{
-            EvoAI::generateBWImageFromColorAndCoordinates(imgInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateBWImageFromColorAndCoordinates(imgInput,nn.get(),fileoutput);
+            }
         }
     }else{
         if(optImage){
-            EvoAI::generateBWImageFromCoords(imageInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateBWImageFromCoords(imageInput,nn.get(),fileoutput);
+            }
         }else{
-            EvoAI::generateBWImageFromCoords(imgInput,nn.get(),fileoutput);
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateBWImageFromCoords(imgInput,nn.get(),fileoutput);
+            }
         }
     }
     return 0;

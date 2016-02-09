@@ -67,19 +67,19 @@ namespace EvoAI{
              */
             void train(std::vector<std::vector<double>>&& inputs,std::vector<std::vector<double>>&& expectedOutputs, const double& learningRate, const double& momentum, const int& epoch);
             /**
-             * @brief 
-             * @return 
+             * @brief Sets the neural network layers.
+             * @return NeuralNetwork&
              */
             NeuralNetwork& setLayers(std::vector<NeuronLayer>&& lys);
             /**
-             * @brief 
-             * @return 
+             * @brief returns the layers of the neural network.
+             * @return std::vector<NeuronLayer>&
              */
             inline std::vector<NeuronLayer>& getLayers(){ return layers; }
             /**
              * @brief adds a neuron to a specific layer
              * @param n
-             * @return 
+             * @return NeuralNetwork&
              */
             NeuralNetwork& addNeuron(const Neuron& n, const std::size_t& layerIndex);
             /**
@@ -89,14 +89,14 @@ namespace EvoAI{
              */
             bool removeNeuron(Neuron* n);
             /**
-             * @brief 
-             * @return 
+             * @brief sets the inputs returns true if succeded, false if it failed.
+             * @return bool
              */
             bool setInputs(std::vector<double>&& ins);
             /**
-             * @brief 
+             * @brief Adds a Connection
              * @param c
-             * @return 
+             * @return NeuralNetwork&
              */
             NeuralNetwork& addConnection(const Connection& c);
             /**
@@ -116,20 +116,25 @@ namespace EvoAI{
              */
             void removeConnectionsWithSrc(Link&& src);
             /**
-             * @brief 
+             * @brief getter for the connections
              * @return std::vector<Connection*>&
              */
             std::vector<Connection*>& getConnections();
             /**
-             * @brief 
+             * @brief getter for the neurons
+             * @return std::vector<Neuron*>&
+             */
+            std::vector<Neuron*>& getNeurons();
+            /**
+             * @brief finds a connection returns nullptr if not found.
              * @param src
              * @param dest
-             * @return 
+             * @return Connection*
              */
             Connection* findConnection(Link&& src,Link&& dest);
             /**
-             * @brief 
-             * @return 
+             * @brief Checks if a connection exists.
+             * @return bool
              */
             bool hasConnection(Link&& src, Link&& dest);
             /**
@@ -142,7 +147,7 @@ namespace EvoAI{
              */
             void reset();
             /**
-             * @brief resets the contexts neurons.
+             * @brief resets the neurons that are Neuron::Type::CONTEXT
              */
             void resetContext();
             /**
@@ -156,19 +161,20 @@ namespace EvoAI{
              */
             void writeToFile(const std::string& filename) const;
             /**
-             * @brief 
+             * @brief clears the Neural Network.
              */
             void clear();
             /**
              * @brief direct access to layers and neurons
-             * Examples: neuralnetwork[1][1].setBiasWeight(-0.3); // sets the biasWeight of neuron 1 from layer 1
-             *          neuralnetwork[3][0].getOutput(); // gets output of neuron 0 from layer 3
-             * Does not check if index is out of range
+             * Examples: neuralnetwork[1][1].setBiasWeight(-0.3); // sets the biasWeight of layer 1 and neuron 1
+             *          neuralnetwork[3][0].getOutput(); // gets output of layer 3 and neuron 0
+             * Does not check if index is out of range.
              * @param index const std::size_t& index layer
              */
             NeuronLayer& operator[](const std::size_t& index);
             /**
-             * @brief 
+             * @brief gives the last MSE
+             * @return const double& MSE
              */
             const double& getMSE() const noexcept{ return mse; }
             /**
@@ -176,7 +182,6 @@ namespace EvoAI{
              * @param rhs
              */
             bool operator==(const NeuralNetwork& rhs) const;
-            friend class NNRenderer;
             ~NeuralNetwork() = default;
         private:
             /**
@@ -200,7 +205,9 @@ namespace EvoAI{
         private:
             std::vector<NeuronLayer> layers;
             std::vector<Connection*> connections;
+            std::vector<Neuron*> neurons;
             bool connectionsCached;
+            bool neuronsCached;
             double mse;
     };
 }
