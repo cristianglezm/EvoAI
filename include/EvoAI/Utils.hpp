@@ -192,18 +192,32 @@ namespace EvoAI{
      */
     void generateSoundFromCoordinates(const int& width, const int& height, NeuralNetwork* nn, const std::string& soundOutput);
     /**
-     * @brief 
+     * @brief generates a sound from the color of a image
      * @param Imagefilename
      * @param nn
      * @param soundOutput
      */
     void generateSoundFromColor(const std::string& Imagefilename, NeuralNetwork* nn, const std::string& soundOutput);
     /**
-     * @brief 
+     * @brief generates a sound from the color of a image.
      * @param imageInput
      * @param nn
      * @param soundOutput
      */
     void generateSoundFromColor(sf::Image& imageInput, NeuralNetwork* nn, const std::string& soundOutput);
+    /**
+     * @brief generates a sound from the color and coordinates of a image
+     * @param Imagefilename
+     * @param nn
+     * @param soundOutput
+     */
+    void generateSoundFromColorAndCoordinates(const std::string& Imagefilename, NeuralNetwork* nn, const std::string& soundOutput);
+    /**
+     * @brief generates a sound from the color and coordinates of a image.
+     * @param imageInput
+     * @param nn
+     * @param soundOutput
+     */
+    void generateSoundFromColorAndCoordinates(sf::Image& imageInput, NeuralNetwork* nn, const std::string& soundOutput);
 }
 #endif // UTILS_HPP

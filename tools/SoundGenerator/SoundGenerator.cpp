@@ -31,7 +31,7 @@ int main(int argc, char **argv){
     bool optCoords = false;
     bool optSave = false;
     std::string saveFile = "nn.json";
-    std::string fileoutput = "image.png";
+    std::string fileOutput = "image.png";
     int resWidth = 150;
     int resHeight = 150;
     bool optImage = false;
@@ -67,7 +67,7 @@ int main(int argc, char **argv){
             saveFile = std::string(argv[i+1]);
         }
         if(val == "-f" || val == "--file-output"){
-            fileoutput = std::string(argv[i+1]);
+            fileOutput = std::string(argv[i+1]);
         }
         if(val == "-res" || val == "--resolution"){
             resWidth = std::stoi(std::string(argv[i+1]));
@@ -87,7 +87,6 @@ int main(int argc, char **argv){
         }
     }
     std::unique_ptr<EvoAI::NeuralNetwork> nn = nullptr;
-    // mod down
     if(optNeuralFile){
         std::cout << "Loading File " << argv[2] << std::endl;
         nn = std::make_unique<EvoAI::NeuralNetwork>(std::string(argv[2]));
@@ -114,13 +113,13 @@ int main(int argc, char **argv){
                 nn = EvoAI::createElmanNeuralNetwork(3,3,5,3,1.0);
             }
         }
-        if(optSave){
-            std::cout << "Saving Neural Network to " << saveFile << " ..." << std::endl;
-            nn->writeToFile(saveFile);
-        }
     }else if(optGenome){
         std::cout << "Not yet Implemented." << std::endl; /// TODO
         return EXIT_FAILURE;
+    }
+    if(optSave){
+        std::cout << "Saving Neural Network to " << saveFile << " ..." << std::endl;
+        nn->writeToFile(saveFile);
     }
     sf::Image imgInput;
     if(!optImage){
@@ -131,17 +130,28 @@ int main(int argc, char **argv){
         std::cout << "Generating Sound from color..." << std::endl;
         if(optImage){
             for(auto i=0;i<repeat;++i){
-                EvoAI::generateSoundFromColor(imageInput,nn.get(),fileoutput);
+                EvoAI::generateSoundFromColor(imageInput,nn.get(),fileOutput);
             }
         }else{
             for(auto i=0;i<repeat;++i){
-                EvoAI::generateSoundFromColor(imgInput,nn.get(),fileoutput);
+                EvoAI::generateSoundFromColor(imgInput,nn.get(),fileOutput);
             }
         }
     }else if(!optColor && optCoords){
         std::cout << "Generating sound from Coordinates..." << std::endl;
         for(auto i=0;i<repeat;++i){
-            EvoAI::generateSoundFromCoordinates(resWidth,resHeight,nn.get(),fileoutput);
+            EvoAI::generateSoundFromCoordinates(resWidth,resHeight,nn.get(),fileOutput);
+        }
+    }else if(optColor && optCoords){
+        std::cout << "Generating sound from color and coordinates" << std::endl;
+        if(optImage){
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateSoundFromColorAndCoordinates(imageInput,nn.get(),fileOutput);
+            }
+        }else{
+            for(auto i=0;i<repeat;++i){
+                EvoAI::generateSoundFromColorAndCoordinates(imgInput,nn.get(),fileOutput);
+            }
         }
     }
     return 0;

@@ -4,14 +4,18 @@ namespace EvoAI{
     NeuralNetwork::NeuralNetwork()
     : layers()
     , connections()
+    , neurons()
     , connectionsCached(false)
+    , neuronsCached(false)
     , mse(0.0){}
     NeuralNetwork::NeuralNetwork(const std::size_t& numInputs, const std::size_t& numHiddenLayers,
                                 const std::size_t& numNeuronsPerHiddenLayer,
                                 const std::size_t& numOutputs, const double& bias)
     : layers()
     , connections()
+    , neurons()
     , connectionsCached(false)
+    , neuronsCached(false)
     , mse(0.0){
         layers.emplace_back(NeuronLayer(numInputs,Neuron::Type::INPUT,bias));
         for(auto i=0u;i<numHiddenLayers;++i){
@@ -22,7 +26,9 @@ namespace EvoAI{
     NeuralNetwork::NeuralNetwork(const std::string& filename)
     : layers()
     , connections()
+    , neurons()
     , connectionsCached(false)
+    , neuronsCached(false)
     , mse(0.0){
         JsonBox::Value v;
         v.loadFromFile(filename);
