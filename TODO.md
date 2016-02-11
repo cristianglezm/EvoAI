@@ -6,6 +6,7 @@ TODO:
     * SoundGenerator (done needed to check how to generate better soounds)
 * Remove SFML dependency for EvoAI only use it for examples and tools.
 * Namespace nn
+* Test getNeurons()
 * Implement NEAT-CPPN
     * genome, species, pop?
 * Implement ES-HyperNEAT?
