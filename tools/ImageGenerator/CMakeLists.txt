@@ -24,4 +24,4 @@ if(NOT BUILD_STATIC)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
 endif(NOT BUILD_STATIC)
 
-install(TARGETS ImageGenerator RUNTIME DESTINATION . ARCHIVE DESTINATION .)
+install(TARGETS ImageGenerator RUNTIME DESTINATION bin ARCHIVE DESTINATION bin)

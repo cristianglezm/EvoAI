@@ -30,6 +30,9 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 FILE(GLOB_RECURSE EvoAI_SOURCES "src/*.cpp")
 FILE(GLOB_RECURSE EvoAI_INCLUDES "include/*.hpp")
 
+set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
+set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
+
 if(NOT BUILD_STATIC)
 	add_library(EvoAI SHARED ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
 else()
@@ -62,9 +65,7 @@ endif(JSONBOX_FOUND)
 
 if(BUILD_TESTS)
 	find_package(GTest REQUIRED)
-	include_directories(${GTEST_INCLUDE_DIRS})
 	find_package(GMock REQUIRED)
-	include_directories(${GMOCK_INCLUDE_DIRS})
 endif(BUILD_TESTS)
 
 ################################################################################
@@ -138,7 +139,8 @@ endif(BUILD_DOCS)
 ### Installing Library
 #################################################################################
 
-install(TARGETS EvoAI LIBRARY DESTINATION lib ARCHIVE DESTINATION .)
+install(TARGETS EvoAI LIBRARY DESTINATION bin RUNTIME DESTINATION bin
+						ARCHIVE DESTINATION lib)
 install(FILES LICENSE.txt DESTINATION .)
 install(FILES README.md DESTINATION .)
 if(BUILD_DOCS)
@@ -148,8 +150,8 @@ install(DIRECTORY include DESTINATION .)
 
 if(NOT BUILD_STATIC AND WIN32)
 	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-		install(FILES ${SFML_DEBUG_DLLS} DESTINATION lib)
+		install(FILES ${SFML_DEBUG_DLLS} DESTINATION bin)
 	elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-		install(FILES ${SFML_RELEASE_DLLS} DESTINATION lib)
+		install(FILES ${SFML_RELEASE_DLLS} DESTINATION bin)
 	endif()
 endif(NOT BUILD_STATIC AND WIN32)

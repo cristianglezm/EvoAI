@@ -13,10 +13,11 @@ include_directories(${SFML_INCLUDE_DIR})
 target_link_libraries(RunAllTests ${SFML_LIBRARIES})
 
 include_directories(${JSONBOX_INCLUDE_DIR})
+
 target_link_libraries(RunAllTests ${JSONBOX_LIBRARIES})
-
-target_link_libraries(RunAllTests ${GTEST_BOTH_LIBRARIES} ${GMOCK_BOTH_LIBRARIES})
-
+include_directories(${GTEST_INCLUDE_DIR})
+include_directories(${GMOCK_INCLUDE_DIR})
+target_link_libraries(RunAllTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
 target_link_libraries(RunAllTests EvoAI)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
