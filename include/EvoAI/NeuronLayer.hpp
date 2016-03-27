@@ -44,7 +44,7 @@ namespace EvoAI{
             /**
              * @brief gives the how many neurons it has.
              */
-            std::size_t size();
+            std::size_t size() const;
             /**
              * @brief setter for Neuron::Type
              * will traverse each neuron and set the type to t
@@ -148,6 +148,12 @@ namespace EvoAI{
              * @return Neuron&
              */
             Neuron& operator[](const std::size_t& index);
+            /**
+             * @brief Direct Access to Neurons
+             * @param index const std::size_t&
+             * @return Neuron& const
+             */
+            const Neuron& operator[](const std::size_t& index) const;
             /**
              * @brief compare layers
              * @param rhs

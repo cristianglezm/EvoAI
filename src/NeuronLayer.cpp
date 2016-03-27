@@ -26,7 +26,7 @@ namespace EvoAI{
         neurons = std::move(ns);
         return *this;
     }
-    std::size_t NeuronLayer::size(){
+    std::size_t NeuronLayer::size() const{
         return neurons.size();
     }
     NeuronLayer& NeuronLayer::addNeuron(const Neuron& n){
@@ -45,9 +45,10 @@ namespace EvoAI{
         return *this;
     }
     bool NeuronLayer::removeNeuron(Neuron* n){
-        auto removed = std::remove(std::begin(neurons),std::end(neurons),*n);
-        neurons.erase(removed,std::end(neurons));
-        return (removed != std::end(neurons));
+        auto removed = std::remove(std::begin(neurons), std::end(neurons), *n);
+        auto isRemoved = removed != std::end(neurons);
+        neurons.erase(removed, std::end(neurons));
+        return isRemoved;
     }
     bool NeuronLayer::hasNeuron(Neuron* n){
         auto found = std::find(std::begin(neurons),std::end(neurons),*n);
@@ -95,6 +96,9 @@ namespace EvoAI{
         return JsonBox::Value(o);
     }
     Neuron& NeuronLayer::operator[](const std::size_t& index){
+        return neurons[index];
+    }
+    const Neuron& NeuronLayer::operator[](const std::size_t& index) const{
         return neurons[index];
     }
     bool NeuronLayer::operator==(const NeuronLayer& rhs) const{

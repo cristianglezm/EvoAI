@@ -1,4 +1,4 @@
-#include <EvoAI/NNRenderer.hpp>
+#include "NNRenderer.hpp"
 
 namespace EvoAI{
     NNRenderer::NNRenderer(NeuralNetwork* nn)

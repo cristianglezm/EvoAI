@@ -12,7 +12,7 @@ namespace EvoAI{
     /**
      * @class Neuron
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
-     * @brief Defines a neuron
+     * @brief A basic neuron
      */
     class Neuron final{
         public:

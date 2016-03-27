@@ -5,11 +5,12 @@
 #include <memory>
 #include <cmath>
 #include <EvoAI/Utils.hpp>
+#include "soundUtils.hpp"
 
 void usage(){
     std::cout << "-g, --genome <filename>\t\t\tload a genome json file.\n";
     std::cout << "-n, --neuralnetwork <filename>\t\tload a neural network json file.\n";
-    std::cout << "-N, --neuralnetwork-type <type>\t\twill generate a random neural network of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
+    std::cout << "-N, --neuralnetwork-type <type> <numLayers> <numNLayers> will generate a random neural network of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
                                                             "0. CPPN\n\t\t\t\t\t\t\t1. FeedForward\n\t\t\t\t\t\t\t2. Elman Network\n";
     std::cout << "-c, --color\t\t\t\twill use color as input for the neural network (can be used with -C)\n";
     std::cout << "-C, --coords\t\t\t\twill use coordinates as input for the neural network (can be used with -c)\n";
@@ -37,6 +38,8 @@ int main(int argc, char **argv){
     bool optImage = false;
     std::string imageInput = "image.png";
     int repeat = 1;
+    int numLayers = 3;
+    int numNLayers = 5;
     if(argc < 3){
         std::cout << std::string(argv[0]) << " [options] <filename>\n";
         usage();
@@ -55,6 +58,8 @@ int main(int argc, char **argv){
         if(val == "-N" || val == "--neuralnetwork-type"){
             optNeuralType = true;
             NeuralType = std::string(argv[i+1]);
+            numLayers = std::stoi(std::string(argv[i+2]));
+            numNLayers = std::stoi(std::string(argv[i+3]));
         }
         if(val == "-c" || val == "--color"){
             optColor = true;
@@ -92,25 +97,25 @@ int main(int argc, char **argv){
         nn = std::make_unique<EvoAI::NeuralNetwork>(std::string(argv[2]));
     }else if(optNeuralType){
         if(NeuralType == "0"){
-            std::cout << "Creating a CPPN..." << std::endl;
+            std::cout << "Creating a CPPN " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;
             if(optColor && optCoords){
-                nn = EvoAI::createCPPN(6,3,5,3,1.0);
+                nn = EvoAI::createCPPN(6,numLayers,numNLayers,3,1.0);
             }else{
-                nn = EvoAI::createCPPN(3,3,5,3,1.0);
+                nn = EvoAI::createCPPN(3,numLayers,numNLayers,3,1.0);
             }
         }else if(NeuralType == "1"){
-            std::cout << "Creating a FeedForward Neural Network..." << std::endl;
+            std::cout << "Creating a FeedForward Neural Network " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;
             if(optColor && optCoords){
-                nn = EvoAI::createFeedForwardNN(6,3,5,3,1.0);
+                nn = EvoAI::createFeedForwardNN(6,numLayers,numNLayers,3,1.0);
             }else{
-                nn = EvoAI::createFeedForwardNN(3,3,5,3,1.0);
+                nn = EvoAI::createFeedForwardNN(3,numLayers,numNLayers,3,1.0);
             }
         }else if(NeuralType == "2"){
-            std::cout << "Creating a Elman Neural Network..." << std::endl;
+            std::cout << "Creating a Elman Neural Network " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;
             if(optColor && optCoords){
-                nn = EvoAI::createElmanNeuralNetwork(6,3,5,3,1.0);
+                nn = EvoAI::createElmanNeuralNetwork(6,numLayers,numNLayers,3,1.0);
             }else{
-                nn = EvoAI::createElmanNeuralNetwork(3,3,5,3,1.0);
+                nn = EvoAI::createElmanNeuralNetwork(3,numLayers,numNLayers,3,1.0);
             }
         }
     }else if(optGenome){

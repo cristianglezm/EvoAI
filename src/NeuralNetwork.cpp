@@ -250,37 +250,43 @@ namespace EvoAI{
         return *this;
     }
     bool NeuralNetwork::removeNeuron(Neuron* n){
+        auto link = getIndex(n);
+        removeConnectionsWithDest(link);
+        auto isRemoved = layers[link.layer].removeNeuron(n);
+        for(auto& c:getConnections()){
+            if(c->getDest().layer == link.layer){
+                if(link.neuron != layers[link.layer].size()){
+                    if(c->getDest().neuron > link.neuron){
+                        auto& dest = c->getDest();
+                        c->setDest(Link(dest.layer,dest.neuron-1));
+                    }
+                }
+            }
+            if(c->getSrc().layer == link.layer){
+                if(link.neuron != layers[link.layer].size()){
+                    if(c->getSrc().neuron > link.neuron){
+                        auto& src = c->getSrc();
+                        c->setSrc(Link(src.layer,src.neuron-1));
+                    }
+                }
+            }
+        }
         connectionsCached = false;
         neuronsCached = false;
-        auto size = layers.size();
-        auto lyrIndex = 0u, nrnIndex = 0u;
+        return isRemoved;
+    }
+    Link NeuralNetwork::getIndex(Neuron* n) const{
         if(n->hasConnections()){
-            auto src = n->getConnections()[0].getSrc();
-            lyrIndex = src.layer;
-            nrnIndex = src.neuron;
-        }else{
-            for(auto i=0u;i<size;++i){
-                for(auto j=0u;j<layers[i].size();++j){
-                    if(layers[i][j] == (*n)){
-                        lyrIndex = i;
-                        nrnIndex = j;
-                    }
+            return n->getConnections()[0].getSrc();
+        }
+        for(auto i=0u;i<layers.size();++i){
+            for(auto j=0u;j<layers[i].size();++j){
+                if(layers[i][j] == (*n)){
+                    return Link(i,j);
                 }
             }
         }
-        for(auto& c:getConnections()){
-            if(c->getDest().layer == lyrIndex){
-                if(nrnIndex != size){
-                    if(c->getDest().neuron > nrnIndex){
-                        auto& con = c->getDest();
-                        c->setDest(Link(con.layer,con.neuron-1));
-                    }
-                }
-            }
-        }
-        removeConnectionsWithDest(Link(lyrIndex,nrnIndex));
-        auto removedNeuron = layers[lyrIndex].removeNeuron(n);
-        return removedNeuron;
+        return Link(-1,-1);
     }
     bool NeuralNetwork::setInputs(std::vector<double>&& ins){
         auto numInputs = layers[0].size();
@@ -307,7 +313,7 @@ namespace EvoAI{
         connectionsCached = false;
         return layers[c.getSrc().layer].removeConnection(c);
     }
-    void NeuralNetwork::removeConnectionsWithDest(Link&& dest){
+    void NeuralNetwork::removeConnectionsWithDest(Link dest){
         connectionsCached = false;
         for(auto& l:layers){
             for(auto& n:l.getNeurons()){
@@ -320,7 +326,7 @@ namespace EvoAI{
             }
         }
     }
-    void NeuralNetwork::removeConnectionsWithSrc(Link&& src){
+    void NeuralNetwork::removeConnectionsWithSrc(Link src){
         connectionsCached = false;
         layers[src.layer][src.neuron].clearConnections();
     }

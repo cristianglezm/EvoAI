@@ -2,26 +2,15 @@
 set(SRCROOT ${PROJECT_SOURCE_DIR}/tools/SoundGenerator)
 
 # all source files
-set(SoundGenerator_SRC ${SRCROOT}/SoundGenerator.cpp)
+set(SoundGenerator_SRC ${SRCROOT}/SoundGenerator.cpp ${SRCROOT}/soundUtils.cpp)
 
-# define the NeuralNetworkVisualizer target
+# define the SoundGenerator target
 add_executable(SoundGenerator ${SoundGenerator_SRC})
 
-include_directories(${SFML_INCLUDE_DIR})
-target_link_libraries(SoundGenerator ${SFML_LIBRARIES})
-
-include_directories(${JSONBOX_INCLUDE_DIR})
-target_link_libraries(SoundGenerator ${JSONBOX_LIBRARIES})
+if(SFML_FOUND)
+    include_directories(${SFML_INCLUDE_DIR})
+    target_link_libraries(SoundGenerator ${SFML_LIBRARIES})
+endif(SFML_FOUND)
 target_link_libraries(SoundGenerator EvoAI)
-
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pg")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fexpensive-optimizations")
-endif()
-
-if(NOT BUILD_STATIC)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
-endif(NOT BUILD_STATIC)
 
 install(TARGETS SoundGenerator RUNTIME DESTINATION bin ARCHIVE DESTINATION bin)

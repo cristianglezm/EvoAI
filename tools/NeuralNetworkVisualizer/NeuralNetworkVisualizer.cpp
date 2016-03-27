@@ -1,11 +1,11 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include <EvoAI/NeuralNetwork.hpp>
-#include <EvoAI/NNRenderer.hpp>
 #include <utility>
 #include <memory>
-#include <EvoAI/Utils.hpp>
 #include <chrono>
+#include <EvoAI/NeuralNetwork.hpp>
+#include <EvoAI/Utils.hpp>
+#include "NNRenderer.hpp"
 
 int main(int argc, char **argv){
     using EvoAI::NeuralNetwork;
@@ -22,7 +22,7 @@ int main(int argc, char **argv){
     std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>(std::string(argv[1]));
     // build renderer for the nn.
     std::unique_ptr<NNRenderer> nr = std::make_unique<NNRenderer>(nn.get());
-    sf::RenderWindow App(sf::VideoMode(1270, 720), "Neural Network Visualizer");
+    sf::RenderWindow App(sf::VideoMode(1270, 720), "Neural Network Visualizer - " + std::string(argv[1]));
     while (running){
         sf::Event event;
         while(App.pollEvent(event)){

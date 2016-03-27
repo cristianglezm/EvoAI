@@ -11,10 +11,7 @@ option(BUILD_STATIC "Build static" OFF)
 option(BUILD_DOCS "Build documentation" OFF)
 
 if(BUILD_STATIC)
-	SET(SFML_STATIC_LIBRARIES TRUE)
-	SET(BUILD_SHARED_LIBS FALSE)
-	SET(SFML_USE_STATIC_STD_LIBS TRUE)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
+    SET(BUILD_SHARED_LIBS FALSE)
 endif(BUILD_STATIC)
 
 ################################################################################
@@ -30,7 +27,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 FILE(GLOB_RECURSE EvoAI_SOURCES "src/*.cpp")
 FILE(GLOB_RECURSE EvoAI_INCLUDES "include/*.hpp")
 
-set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
+set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 
 if(NOT BUILD_STATIC)
@@ -42,19 +39,6 @@ endif(NOT BUILD_STATIC)
 ################################################################################
 ### Dependencies.
 ################################################################################
-
-#sfml
-find_package(SFML 2.1 COMPONENTS graphics window system network audio REQUIRED)
-if(SFML_FOUND)
-	include_directories(${SFML_INCLUDE_DIR})
-	target_link_libraries(EvoAI ${SFML_LIBRARIES})
-endif(SFML_FOUND)
-
-if(WIN32)
-	FILE(GLOB_RECURSE SFML_DEBUG_DLLS "${SFML_ROOT}/bin/sfml-*-d-2.dll")
-	FILE(GLOB_RECURSE SFML_RELEASE_DLLS "${SFML_ROOT}/bin/*-2.dll")
-	LIST(REMOVE_ITEM SFML_RELEASE_DLLS ${SFML_DEBUG_DLLS})
-endif(WIN32)
 
 #jsonbox
 find_package(JSONBOX REQUIRED)
@@ -74,12 +58,12 @@ endif(BUILD_TESTS)
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall")
 if(NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_DEBUG_POSTFIX "_d")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fexpensive-optimizations")
 endif()
@@ -108,6 +92,25 @@ endif(BUILD_EXAMPLES)
 if(BUILD_TOOLS)
 	add_subdirectory(tools)
 endif(BUILD_TOOLS)
+
+#################################################################################
+### Android
+#################################################################################
+
+if(ANDROID_ABI)
+	message("-- Compiling for Android")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+	set(ANDROID_API_MIN 9)
+	set(ANDROID_NATIVE_API_LEVEL ${ANDROID_API_MIN})
+	set(ANDROID_NDK "$ENV{ANDROID_NDK}")
+	set(CMAKE_INSTALL_PREFIX "${ANDROID_NDK}/sources/EvoAI")
+	set(ANDROID_STL "c++_shared")
+	set(LIB_SUFFIX "/${ANDROID_ABI}")
+	if(ANDROID_STL MATCHES "_shared")
+	        add_definitions("-DSTL_LIBRARY=${ANDROID_STL}")
+	endif()
+	install(FILES src/Android.mk DESTINATION .)
+endif(ANDROID_ABI)
 
 #################################################################################
 ### Docs
@@ -147,11 +150,3 @@ if(BUILD_DOCS)
     install(DIRECTORY docs DESTINATION .)
 endif(BUILD_DOCS)
 install(DIRECTORY include DESTINATION .)
-
-if(NOT BUILD_STATIC AND WIN32)
-	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-		install(FILES ${SFML_DEBUG_DLLS} DESTINATION bin)
-	elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-		install(FILES ${SFML_RELEASE_DLLS} DESTINATION bin)
-	endif()
-endif(NOT BUILD_STATIC AND WIN32)

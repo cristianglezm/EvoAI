@@ -12,18 +12,20 @@ Requires CMake and one of the following compilers:
 
 EvoAI requires the following dependencies:
 
-* [SFML](http://sfml-dev.org) 2.2 or newer
+* [SFML](http://sfml-dev.org) 2.2 or newer (only for Building the tools)
 
 * [JsonBox](https://github.com/anhero/JsonBox) 0.6.2 or newer
 
-* [googletest](https://github.com/google/googletest) 1.7 or newer
+* [googletest](https://github.com/google/googletest) 1.7 or newer (only to build Tests)
 
 Use CMake to build the project.
 
 ```
 mkdir build && cd build
-cmake -G"MinGW Makefiles" -DSFML_ROOT=<baseDir> -DJSONBOX_ROOT=<baseDir> -DBUILD_TESTS=TRUE -DBUILD_EXAMPLES=TRUE -DBUILD_DOCS=TRUE -DBUILD_TOOLS=TRUE ..
-make
+cmake -G"MinGW Makefiles" -DSFML_ROOT=<baseDir> -DJSONBOX_ROOT=<baseDir> \ 
+-DGMOCK_ROOT=<baseDir> -DGTEST_ROOT=<baseDir> \ 
+-DBUILD_TESTS=TRUE -DBUILD_EXAMPLES=TRUE -DBUILD_DOCS=TRUE -DBUILD_TOOLS=TRUE ..
+make -j3
 make install
 
 ```

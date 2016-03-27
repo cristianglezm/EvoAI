@@ -29,7 +29,7 @@ namespace EvoAI{
         };
         NeuronLayerTest::NeuronLayerTest():nl(3,Neuron::Type::HIDDEN,1.0),nld(){}
         TEST_F(NeuronLayerTest,DefaultConstructor){
-            EXPECT_EQ(Neuron::ActivationType::STEPPED_SIGMOID, nld.getActivationType());
+            EXPECT_EQ(Neuron::ActivationType::SIGMOID, nld.getActivationType());
             EXPECT_EQ(0.0,nld.getBias());
             EXPECT_EQ(3,nld.getCyclesLimit());
             EXPECT_EQ(Neuron::Type::HIDDEN, nld.getType());

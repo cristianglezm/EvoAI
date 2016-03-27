@@ -89,6 +89,13 @@ namespace EvoAI{
              */
             bool removeNeuron(Neuron* n);
             /**
+             * @brief gets the index of the layer and neuron from the neuron specified.
+             * Returns a link with -1,-1 for not found
+             * @param n
+             * @return Link
+             */
+            Link getIndex(Neuron* n) const;
+            /**
              * @brief sets the inputs returns true if succeded, false if it failed.
              * @return bool
              */
@@ -107,14 +114,14 @@ namespace EvoAI{
             bool removeConnection(Connection& c);
             /**
              * @brief Removes Connections with dest
-             * @param dest Link&&
+             * @param dest Link
              */
-            void removeConnectionsWithDest(Link&& dest);
+            void removeConnectionsWithDest(Link dest);
             /**
              * @brief Removes Connections with src
              * @param src Link&&
              */
-            void removeConnectionsWithSrc(Link&& src);
+            void removeConnectionsWithSrc(Link src);
             /**
              * @brief getter for the connections
              * @return std::vector<Connection*>&

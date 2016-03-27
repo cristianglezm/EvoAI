@@ -5,28 +5,34 @@
 #include <vector>
 #include <fstream>
 
-std::vector<std::vector<std::string>> readFile(std::istream& str);
+std::vector<std::vector<std::string>> readCSVFile(std::istream& str);
 
 void usage();
 
 std::pair<EvoAI::NeuralNetwork::trainingFormat,EvoAI::NeuralNetwork::trainingFormat> createTrainingSets(std::vector<std::vector<std::string>> dataset, const std::size_t& start, const std::size_t& end);
 
+void normalizeData(EvoAI::NeuralNetwork::trainingFormat& data);
+
 int main(int argc,char **argv){
     if(argc > 2){
-        std::fstream csv("iris.data.csv");
+        std::string dataInput(argv[1]);
+        std::fstream csv(dataInput);
         std::cout << "Processing CSV file..." << std::endl;
-        auto irisData = readFile(csv);
+        auto irisData = readCSVFile(csv);
         std::mt19937 g(std::random_device{}());
         std::cout << "Randomizing Data Order..." << std::endl;
         std::shuffle(std::begin(irisData),std::end(irisData),g);
         std::cout << "Creating Test dataSets..." << std::endl;
         auto testSets = createTrainingSets(irisData,irisData.size()/2,irisData.size());
         std::unique_ptr<EvoAI::NeuralNetwork> nn = nullptr;
-        std::string opt(argv[1]);
-        std::string filename(argv[2]);
+        std::string opt(argv[2]);
+        std::string filename("");
+        if(argc > 3){
+            filename = std::string(argv[3]);
+        }
         if(filename.empty()){
             std::cout << "creating neural network..." << std::endl;
-            nn = EvoAI::createFeedForwardNN(4,3,6,3,1.0);
+            nn = EvoAI::createFeedForwardNN(4,3,15,3,1.0);
         }else{
             std::cout << "loading neural network..." << std::endl;
             nn = std::make_unique<EvoAI::NeuralNetwork>(filename);
@@ -35,6 +41,7 @@ int main(int argc,char **argv){
             std::cout << "Training Neural Network..." << std::endl;
             do{
                 auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
+                //normalizeData(trainingSets.first);
                 nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.001,0.2,500);
                 std::cout << "MSE: " << nn->getMSE() << std::endl;
                 nn->writeToFile("IrisClassification.json");
@@ -81,7 +88,7 @@ int main(int argc,char **argv){
     return 0;
 }
 
-std::vector<std::vector<std::string>> readFile(std::istream& str){
+std::vector<std::vector<std::string>> readCSVFile(std::istream& str){
     std::vector<std::vector<std::string>> csvData;
     std::string line;
     std::string cell;
@@ -93,10 +100,11 @@ std::vector<std::vector<std::string>> readFile(std::istream& str){
         }
         csvData.emplace_back(row);
     }
-    return std::move(csvData);
+    return csvData;
 }
 void usage(){
-    std::cout << "usage: IrisClassification <options> <filename>" << std::endl;
+    std::cout << "usage: IrisClassification <dataInput> <options> <filename>" << std::endl;
+    std::cout << "dataInput is a cvs file with this format <sepal length>,<sepal width>,<petal length>,<petal width>,Iris-setosa || Iris-versicolor || Iris-virginica" << std::endl;
     std::cout << "filename should be a json file of a neural network if empty it will create a random nn." << std::endl;
     std::cout << "-t, --train\t\tWill train the network specified." << std::endl;
     std::cout << "-c, --classify\t\tWill test the network with the test data." << std::endl;
@@ -128,5 +136,37 @@ std::pair<EvoAI::NeuralNetwork::trainingFormat,EvoAI::NeuralNetwork::trainingFor
         irisTrainingDataInput.emplace_back(in);
         irisTrainingDataOutput.emplace_back(out);
     }
-    return std::move(std::pair<EvoAI::NeuralNetwork::trainingFormat,EvoAI::NeuralNetwork::trainingFormat>(irisTrainingDataInput,irisTrainingDataOutput));
+    return std::move(std::make_pair(irisTrainingDataInput,irisTrainingDataOutput));
+}
+void normalizeData(EvoAI::NeuralNetwork::trainingFormat& data){
+    /**
+        1. sepal length in cm
+        2. sepal width in cm
+        3. petal length in cm
+        4. petal width in cm
+    */
+    std::vector<double*> sepalLength;
+    std::vector<double*> sepalWidth;
+    std::vector<double*> petalLength;
+    std::vector<double*> petalWidth;
+    for(auto i=0u;i<data.size();++i){
+        sepalLength.emplace_back(&data[i][0]);
+        sepalWidth.emplace_back(&data[i][1]);
+        petalLength.emplace_back(&data[i][2]);
+        petalWidth.emplace_back(&data[i][3]);
+    }
+    auto sepalLengthMax = *std::max_element(std::begin(sepalLength),std::end(sepalLength));
+    auto sepalLengthMin = *std::min_element(std::begin(sepalLength),std::end(sepalLength));
+    auto sepalWidthMax = *std::max_element(std::begin(sepalWidth),std::end(sepalWidth));
+    auto sepalWidthMin = *std::min_element(std::begin(sepalWidth),std::end(sepalWidth));
+    auto petalLengthMax = *std::max_element(std::begin(petalLength),std::end(petalLength));
+    auto petalLengthMin = *std::min_element(std::begin(petalLength),std::end(petalLength));
+    auto petalWidthMax = *std::max_element(std::begin(petalWidth),std::end(petalWidth));
+    auto petalWidthMin = *std::min_element(std::begin(petalWidth),std::end(petalWidth));
+    for(auto i=0u;i<data.size();++i){
+        *sepalLength[i] = EvoAI::normalize(*sepalLength[i],0.0,1.0,*sepalLengthMin,*sepalLengthMax);
+        *sepalWidth[i] = EvoAI::normalize(*sepalWidth[i],0.0,1.0,*sepalWidthMin,*sepalWidthMax);
+        *petalLength[i] = EvoAI::normalize(*petalLength[i],0.0,1.0,*petalLengthMin,*petalLengthMax);
+        *petalWidth[i] = EvoAI::normalize(*petalWidth[i],0.0,1.0,*petalWidthMin,*petalWidthMax);
+    }
 }
