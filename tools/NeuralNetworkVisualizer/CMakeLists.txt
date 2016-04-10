@@ -7,11 +7,16 @@ set(NNVisualizer_SRC ${SRCROOT}/NeuralNetworkVisualizer.cpp ${SRCROOT}/NNRendere
 # define the NeuralNetworkVisualizer target
 add_executable(NeuralNetworkVisualizer ${NNVisualizer_SRC})
 
-include_directories(${SFML_INCLUDE_DIR})
-target_link_libraries(NeuralNetworkVisualizer ${SFML_LIBRARIES})
+if(SFML_FOUND)
+	include_directories(${SFML_INCLUDE_DIR})
+	target_link_libraries(NeuralNetworkVisualizer ${SFML_LIBRARIES})
+endif()
 
-include_directories(${JSONBOX_INCLUDE_DIR})
-target_link_libraries(NeuralNetworkVisualizer ${JSONBOX_LIBRARIES})
+if(JSONBOX_FOUND)
+	include_directories(${JSONBOX_INCLUDE_DIR})
+	target_link_libraries(NeuralNetworkVisualizer ${JSONBOX_LIBRARIES})
+endif()
+
 target_link_libraries(NeuralNetworkVisualizer EvoAI)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

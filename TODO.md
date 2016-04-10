@@ -2,7 +2,6 @@
 
 TODO:
 
-* Test getNeurons() fix testing
 * Implement NEAT-CPPN
     * genome, species, pop?
 * Implement ES-HyperNEAT?

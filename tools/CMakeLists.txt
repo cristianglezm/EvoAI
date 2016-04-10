@@ -1,7 +1,7 @@
-if(BUILD_STATIC)
+if(EvoAI_BUILD_STATIC)
     SET(SFML_STATIC_LIBRARIES TRUE)
     SET(SFML_USE_STATIC_STD_LIBS TRUE)
-endif(BUILD_STATIC)
+endif(EvoAI_BUILD_STATIC)
 
 #sfml
 find_package(SFML 2.3 COMPONENTS graphics window system network audio REQUIRED)
@@ -20,9 +20,9 @@ if(NOT BUILD_STATIC AND WIN32)
     endif()
 endif(NOT BUILD_STATIC AND WIN32)
 
-if(NOT BUILD_STATIC)
+if(NOT EvoAI_BUILD_STATIC)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -lpthread -static-libgcc -static-libstdc++")
-endif(NOT BUILD_STATIC)
+endif(NOT EvoAI_BUILD_STATIC)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")

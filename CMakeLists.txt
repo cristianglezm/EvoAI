@@ -4,15 +4,15 @@ cmake_minimum_required(VERSION 3.1)
 ### User options.
 ################################################################################
 
-option(BUILD_TESTS "Build Tests" OFF)
-option(BUILD_TOOLS "Build Tools" OFF)
-option(BUILD_EXAMPLES "Build Examples" OFF)
-option(BUILD_STATIC "Build static" OFF)
-option(BUILD_DOCS "Build documentation" OFF)
+option(EvoAI_BUILD_TESTS "Build Tests" OFF)
+option(EvoAI_BUILD_TOOLS "Build Tools" OFF)
+option(EvoAI_BUILD_EXAMPLES "Build Examples" OFF)
+option(EvoAI_BUILD_STATIC "Build static" OFF)
+option(EvoAI_BUILD_DOCS "Build documentation" OFF)
 
-if(BUILD_STATIC)
+if(EvoAI_BUILD_STATIC)
     SET(BUILD_SHARED_LIBS FALSE)
-endif(BUILD_STATIC)
+endif(EvoAI_BUILD_STATIC)
 
 ################################################################################
 ### Project files.
@@ -30,11 +30,19 @@ FILE(GLOB_RECURSE EvoAI_INCLUDES "include/*.hpp")
 set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 
-if(NOT BUILD_STATIC)
+if(NOT EvoAI_BUILD_STATIC)
 	add_library(EvoAI SHARED ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
 else()
 	add_library(EvoAI STATIC ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
-endif(NOT BUILD_STATIC)
+endif(NOT EvoAI_BUILD_STATIC)
+
+set(EvoAI_VERSION_MAJOR 1)
+set(EvoAI_VERSION_MINOR 0)
+set(EvoAI_VERSION_PATCH 0)
+set(EvoAI_VERSION ${EvoAI_VERSION_MAJOR}.${EvoAI_VERSION_MINOR}.${EvoAI_VERSION_PATCH})
+set_target_properties(EvoAI PROPERTIES VERSION ${EvoAI_VERSION} SOVERSION ${EvoAI_VERSION_MAJOR})
+
+set_target_properties(EvoAI PROPERTIES OUTPUT_NAME "EvoAI-${EvoAI_VERSION_MAJOR}")
 
 ################################################################################
 ### Dependencies.
@@ -47,10 +55,10 @@ if(JSONBOX_FOUND)
 	target_link_libraries(EvoAI ${JSONBOX_LIBRARIES})
 endif(JSONBOX_FOUND)
 
-if(BUILD_TESTS)
+if(EvoAI_BUILD_TESTS)
 	find_package(GTest REQUIRED)
 	find_package(GMock REQUIRED)
-endif(BUILD_TESTS)
+endif(EvoAI_BUILD_TESTS)
 
 ################################################################################
 ### Enable C++14 and warnings
@@ -72,26 +80,26 @@ endif()
 ### Testing
 ################################################################################
 
-if(BUILD_TESTS)
+if(EvoAI_BUILD_TESTS)
 	enable_testing()
 	add_subdirectory(test)
-endif(BUILD_TESTS)
+endif(EvoAI_BUILD_TESTS)
 
 ################################################################################
 ### examples
 ################################################################################
 
-if(BUILD_EXAMPLES)
+if(EvoAI_BUILD_EXAMPLES)
 	add_subdirectory(examples)
-endif(BUILD_EXAMPLES)
+endif(EvoAI_BUILD_EXAMPLES)
 
 ################################################################################
 ### Tools
 ################################################################################
 
-if(BUILD_TOOLS)
+if(EvoAI_BUILD_TOOLS)
 	add_subdirectory(tools)
-endif(BUILD_TOOLS)
+endif(EvoAI_BUILD_TOOLS)
 
 #################################################################################
 ### Android
@@ -116,7 +124,7 @@ endif(ANDROID_ABI)
 ### Docs
 #################################################################################
 
-if(BUILD_DOCS)
+if(EvoAI_BUILD_DOCS)
     find_package(Doxygen)
     IF(DOXYGEN_FOUND)
         SET(DOXYGEN_INPUT "${CMAKE_SOURCE_DIR}/doxyfile")
@@ -136,7 +144,7 @@ if(BUILD_DOCS)
           COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT}
           COMMAND ${CMAKE_COMMAND} -E echo "Done.")
     ENDIF(DOXYGEN_FOUND)
-endif(BUILD_DOCS)
+endif(EvoAI_BUILD_DOCS)
 
 #################################################################################
 ### Installing Library
@@ -146,7 +154,7 @@ install(TARGETS EvoAI LIBRARY DESTINATION bin RUNTIME DESTINATION bin
 						ARCHIVE DESTINATION lib)
 install(FILES LICENSE.txt DESTINATION .)
 install(FILES README.md DESTINATION .)
-if(BUILD_DOCS)
+if(EvoAI_BUILD_DOCS)
     install(DIRECTORY docs DESTINATION .)
-endif(BUILD_DOCS)
+endif(EvoAI_BUILD_DOCS)
 install(DIRECTORY include DESTINATION .)
