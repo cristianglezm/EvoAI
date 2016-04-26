@@ -5,7 +5,7 @@
 #include <vector>
 
 int main(){
-    using namespace EvoAI;
+    using namespace EvoAI::NeuralNetwork;
     std::vector<double> x = {0.0,0.0,1.0,1.0};
     std::vector<double> y = {0.0,1.0,0.0,1.0};
     std::vector<double> truth = {0.0,1.0,1.0,0.0};

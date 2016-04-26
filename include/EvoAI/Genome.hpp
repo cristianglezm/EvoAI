@@ -1,5 +1,5 @@
-#ifndef GENOME_HPP
-#define GENOME_HPP
+#ifndef EVOAI_GENOME_HPP
+#define EVOAI_GENOME_HPP
 
 #include <vector>
 #include <memory>
@@ -57,4 +57,4 @@ namespace EvoAI{
     double distance(Genome& g1,Genome& g2);
     */
 }
-#endif // GENOME_HPP
+#endif // EVOAI_GENOME_HPP

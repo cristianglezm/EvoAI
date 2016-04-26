@@ -1,5 +1,5 @@
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#ifndef EVOAI_UTILS_HPP
+#define EVOAI_UTILS_HPP
 
 #include <memory>
 #include <utility>
@@ -12,8 +12,8 @@
 namespace EvoAI{
     /**
      * @brief returns a random number between min and max.
-     * @param min
-     * @param max
+     * @param min const double&
+     * @param max const double&
      * @return double
      */
     double random(const double& min, const double& max);
@@ -31,52 +31,60 @@ namespace EvoAI{
      * @return T
      */
     template<typename T = float>
+    inline T normalize(const T& val,const T& normMin, const T& normMax, const T& min, const T& max) noexcept;
+    namespace NeuralNetwork{
+        /**
+         * @brief Creates a FeedForward Neural Network.
+         * @param numInputs
+         * @param numHidden
+         * @param numNeuronsPerHidden
+         * @param numOutputs
+         * @param bias
+         * @return std::unique_ptr<NeuralNetwork>
+         */
+        std::unique_ptr<NeuralNetwork> createFeedForwardNN(const size_t& numInputs, const size_t& numHidden,const size_t& numNeuronsPerHidden, const std::size_t& numOutputs, const double& bias);
+        /**
+         * @brief Creates an Elman Neural Network.
+         * 
+         * This will create a Neural Network with a context layer per every hidden layer.
+         * 
+         * @param numInputs number of inputs
+         * @param numHidden number of hidden layers
+         * @param numNeuronsPerHidden number of neurons per hidden layer
+         * @param numOutputs number of outputs
+         * @param bias bias
+         * @return std::unique_ptr<NeuralNetwork>
+         */
+        std::unique_ptr<NeuralNetwork> createElmanNeuralNetwork(const std::size_t& numInputs, const std::size_t& numHidden,
+                                                                const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
+        /**
+         * @brief Creates a fully connected CPPN with random activations functions.
+         * @param numInputs number of inputs
+         * @param numHidden number of hidden layers
+         * @param numNeuronsPerHidden number of neurons per hidden layer
+         * @param numOutputs number of outputs
+         * @param bias bias
+         * @return std::unique_ptr<NeuralNetwork>
+         */
+        std::unique_ptr<NeuralNetwork> createFullyConnectedCPPN(const std::size_t& numInputs, const std::size_t& numHidden,
+                                                                const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
+        /**
+         * @brief Creates a CPPN with random activations functions and some random connections.
+         * @param numInputs number of inputs
+         * @param numHidden number of hidden layers
+         * @param numNeuronsPerHidden number of neurons per hidden layer
+         * @param numOutputs number of outputs
+         * @param bias bias
+         * @return std::unique_ptr<NeuralNetwork>
+         */
+        std::unique_ptr<NeuralNetwork> createCPPN(const std::size_t& numInputs, const std::size_t& numHidden,
+                                                    const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
+    }
+}
+namespace EvoAI{
+    template<typename T = float>
     inline T normalize(const T& val,const T& normMin, const T& normMax, const T& min, const T& max) noexcept{
         return (normMin + (val-min)*(normMax-normMin)/(max-min));
     }
-    /**
-     * @brief Creates a FeedForward Neural Network.
-     * @param numInputs
-     * @param numHidden
-     * @param numNeuronsPerHidden
-     * @param numOutputs
-     * @param bias
-     * @return 
-     */
-    std::unique_ptr<NeuralNetwork> createFeedForwardNN(const size_t& numInputs, const size_t& numHidden,const size_t& numNeuronsPerHidden, const std::size_t& numOutputs, const double& bias);
-    /**
-     * @brief Creates an Elman Neural Network.
-     * 
-     * This will create a Neural Network with a context layer per every hidden layer.
-     * 
-     * @param numInputs number of inputs
-     * @param numHidden number of hidden layers
-     * @param numNeuronsPerHidden number of neurons per hidden layer
-     * @param numOutputs number of outputs
-     * @param bias bias
-     * @return std::unique_ptr<NeuralNetwork>
-     */
-    std::unique_ptr<NeuralNetwork> createElmanNeuralNetwork(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
-    /**
-     * @brief Creates a fully connected CPPN with random activations functions.
-     * @param numInputs number of inputs
-     * @param numHidden number of hidden layers
-     * @param numNeuronsPerHidden number of neurons per hidden layer
-     * @param numOutputs number of outputs
-     * @param bias bias
-     * @return std::unique_ptr<NeuralNetwork>
-     */
-    std::unique_ptr<NeuralNetwork> createFullyConnectedCPPN(const std::size_t& numInputs, const std::size_t& numHidden,
-                                                            const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
-    /**
-     * @brief Creates a CPPN with random activations functions and some random connections.
-     * @param numInputs number of inputs
-     * @param numHidden number of hidden layers
-     * @param numNeuronsPerHidden number of neurons per hidden layer
-     * @param numOutputs number of outputs
-     * @param bias bias
-     * @return std::unique_ptr<NeuralNetwork>
-     */
-    std::unique_ptr<NeuralNetwork> createCPPN(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
 }
-#endif // UTILS_HPP
+#endif // EVOAI_UTILS_HPP

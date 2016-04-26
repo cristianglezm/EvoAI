@@ -1,7 +1,7 @@
 #include "NNRenderer.hpp"
 
 namespace EvoAI{
-    NNRenderer::NNRenderer(NeuralNetwork* nn)
+    NNRenderer::NNRenderer(NeuralNetwork::NeuralNetwork* nn)
     : neurons()
     , connections()
     , nn(nn){
@@ -11,7 +11,7 @@ namespace EvoAI{
         }
         setUp();
     }
-    void NNRenderer::Render(sf::RenderWindow& win, bool renderTexts){
+    void NNRenderer::Render(sf::RenderWindow& win, bool renderTexts) noexcept{
         for(auto& ci:connections){
             if(renderTexts){
                 win.draw(ci.info);
@@ -25,8 +25,17 @@ namespace EvoAI{
             win.draw(ni.neuronShape);
         }
     }
+    void NNRenderer::setNeuralNetwork(NeuralNetwork::NeuralNetwork* nn) noexcept{
+        neurons.clear();
+        connections.clear();
+        this->nn = nn;
+        setUp();
+    }
+    void NNRenderer::setFont(sf::Font f) noexcept{
+        font = f;
+    }
 /// private
-    void NNRenderer::setUp(){
+    void NNRenderer::setUp() noexcept{
         sf::Vector2f position(5.0,5.0);
         sf::Vector2f space(0.0,150.0);
         for(auto& l: nn->getLayers()){
@@ -38,7 +47,7 @@ namespace EvoAI{
             position += sf::Vector2f(270.0,0.0);
         }
     }
-    void NNRenderer::setUpNeuronInfo(Neuron& n, sf::Vector2f& p){
+    void NNRenderer::setUpNeuronInfo(NeuralNetwork::Neuron& n, sf::Vector2f& p) noexcept{
         NeuronInfo ni;
         const int textSize = 15;
         ni.info = sf::Text(n.toString("\n"), font, textSize);
@@ -58,7 +67,7 @@ namespace EvoAI{
             change = !change;
         }
     }
-    void NNRenderer::setUpConnectionInfo(Connection& c, sf::Vector2f& p, const int& space){
+    void NNRenderer::setUpConnectionInfo(NeuralNetwork::Connection& c, sf::Vector2f& p, const int& space) noexcept{
         const int textSize = 15;
         ConnectionInfo ci;
         sf::Color color = sf::Color::White;
@@ -71,7 +80,7 @@ namespace EvoAI{
         ci.connectionLine[1] = sf::Vertex(sf::Vector2f(dlyr,dnrn),color);
         ci.info = sf::Text("W: " + std::to_string(c.getWeight()),font, textSize);
         ci.info.setPosition(sf::Vector2f(((p.x + dlyr) / 2),(p.y + dnrn) / 2 - space));
-        connections.push_back(ci);
+        connections.emplace_back(ci);
     }
 }
 

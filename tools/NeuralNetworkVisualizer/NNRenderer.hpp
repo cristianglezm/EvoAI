@@ -1,5 +1,5 @@
-#ifndef NNRENDERER_HPP
-#define NNRENDERER_HPP
+#ifndef EVOAI_NNRENDERER_HPP
+#define EVOAI_NNRENDERER_HPP
 
 #include <EvoAI/NeuralNetwork.hpp>
 #include <SFML/Graphics.hpp>
@@ -18,13 +18,24 @@ namespace EvoAI{
              * @brief default Constructor
              * @param nn NeuralNetwork*
              */
-            NNRenderer(NeuralNetwork* nn);
+            NNRenderer(NeuralNetwork::NeuralNetwork* nn);
             /**
              * @brief it will renderize the neural network
              * @param win window
              * @param renderTexts to render info or not
              */
-            void Render(sf::RenderWindow& win,bool renderTexts = false);
+            void Render(sf::RenderWindow& win,bool renderTexts = false) noexcept;
+            /**
+             * @brief Changes the neural network, is the same as building a new NNRenderer.
+             * @param nn NeuralNetwork*
+             */
+            void setNeuralNetwork(NeuralNetwork::NeuralNetwork* nn) noexcept;
+            /**
+             * @brief sets the Font to use
+             * The font is copied so you can throw it away.
+             * @param f sf::Font
+             */
+            void setFont(sf::Font f) noexcept;
             ~NNRenderer() = default;
         private:
             /**
@@ -47,28 +58,29 @@ namespace EvoAI{
             };
         private:
             /**
-             * @brief 
+             * @brief sets the info of the neural network
              */
-            void setUp();
+            void setUp() noexcept;
             /**
-             * @brief 
-             * @param n
-             * @param p
+             * @brief Parses the info of the neuron
+             * @param n Neuron
+             * @param p Position
              */
-            void setUpNeuronInfo(Neuron& n, sf::Vector2f& p);
+            void setUpNeuronInfo(NeuralNetwork::Neuron& n, sf::Vector2f& p) noexcept;
             /**
-             * @brief 
-             * @param c
-             * @param p
+             * @brief Parses the info of the Connection
+             * @param c Connection
+             * @param p Position
+             * @param space space for the weights
              */
-            void setUpConnectionInfo(Connection& c, sf::Vector2f& p, const int& space);
+            void setUpConnectionInfo(NeuralNetwork::Connection& c, sf::Vector2f& p, const int& space) noexcept;
         private:
             std::vector<NeuronInfo> neurons;
             std::vector<ConnectionInfo> connections;
             sf::Font font;
-            NeuralNetwork* nn;
+            NeuralNetwork::NeuralNetwork* nn;
     };
 
 }
 
-#endif // NNRENDERER_HPP
+#endif // EVOAI_NNRENDERER_HPP

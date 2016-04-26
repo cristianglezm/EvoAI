@@ -8,8 +8,8 @@
 #include "NNRenderer.hpp"
 
 int main(int argc, char **argv){
-    using EvoAI::NeuralNetwork;
-    using EvoAI::Connection;
+    using EvoAI::NeuralNetwork::NeuralNetwork;
+    using EvoAI::NeuralNetwork::Connection;
     using EvoAI::NNRenderer;
     bool running = true;
     bool showText = false;
