@@ -1,7 +1,7 @@
 #include "NNRenderer.hpp"
 
 namespace EvoAI{
-    NNRenderer::NNRenderer(NeuralNetwork::NeuralNetwork* nn)
+    NNRenderer::NNRenderer(NeuralNetwork* nn)
     : neurons()
     , connections()
     , nn(nn){
@@ -25,7 +25,7 @@ namespace EvoAI{
             win.draw(ni.neuronShape);
         }
     }
-    void NNRenderer::setNeuralNetwork(NeuralNetwork::NeuralNetwork* nn) noexcept{
+    void NNRenderer::setNeuralNetwork(NeuralNetwork* nn) noexcept{
         neurons.clear();
         connections.clear();
         this->nn = nn;
@@ -47,7 +47,7 @@ namespace EvoAI{
             position += sf::Vector2f(270.0,0.0);
         }
     }
-    void NNRenderer::setUpNeuronInfo(NeuralNetwork::Neuron& n, sf::Vector2f& p) noexcept{
+    void NNRenderer::setUpNeuronInfo(Neuron& n, sf::Vector2f& p) noexcept{
         NeuronInfo ni;
         const int textSize = 15;
         ni.info = sf::Text(n.toString("\n"), font, textSize);
@@ -67,7 +67,7 @@ namespace EvoAI{
             change = !change;
         }
     }
-    void NNRenderer::setUpConnectionInfo(NeuralNetwork::Connection& c, sf::Vector2f& p, const int& space) noexcept{
+    void NNRenderer::setUpConnectionInfo(Connection& c, sf::Vector2f& p, const int& space) noexcept{
         const int textSize = 15;
         ConnectionInfo ci;
         sf::Color color = sf::Color::White;

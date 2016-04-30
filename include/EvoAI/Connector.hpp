@@ -6,20 +6,18 @@
 #include <EVoAI/NeuralNetwork.hpp>
 
 namespace EvoAI{
-    namespace NeuralNetwork{
-        /**
-         * @brief This class Will connect NeuralNetworks between them.
-         */
-        class Connector final{
-            public:
-                Connector(){
-                    
-                }
+    /**
+     * @brief This class Will connect NeuralNetworks between them.
+     */
+    class Connector final{
+        public:
+            Connector(){
+                
+            }
 
-                ~Connector() = default;
-            private:
-                std::vector<NeuralNetwork*> nns;
-        };
-    }
+            ~Connector() = default;
+        private:
+            std::vector<NeuralNetwork*> nns;
+    };
 }
 #endif // EVOAI_CONNECTOR_HPP

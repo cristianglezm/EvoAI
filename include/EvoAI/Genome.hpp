@@ -1,5 +1,5 @@
-#ifndef EVOAI_GENOME_HPP
-#define EVOAI_GENOME_HPP
+#ifndef EVOAI_NEAT_HPP
+#define EVOAI_NEAT_HPP
 
 #include <vector>
 #include <memory>
@@ -12,7 +12,8 @@
 
 namespace EvoAI{
     /* TODO
-    class Genome final{
+    template<bool cppn = false>
+    class Neat final{
         public:
             struct NodeGene{
                 public:
@@ -33,28 +34,28 @@ namespace EvoAI{
                     bool enabled;
             };
         public:
-            Genome();
-            Genome(const std::string& filename);
+            Neat();
+            Neat(const std::string& filename);
             JsonBox::Value toJson() const;
-            Genome& setMutationRate(const float& rate);
+            Neat& setMutationRate(const float& rate);
             bool writeToFile(const std::string& filename) const;
-            ~Genome() = default;
+            ~Neat() = default;
         private:
-            Genome& addConnection(const Connection& c);
-            Genome& removeConnection(const Connection& c);
-            Genome& addNeuron(const Neuron& n);
-            Genome& removeNeuron(const Neuron& n);
-            bool initChromosomes();
+            Neat& addConnection(const Connection& c);
+            Neat& removeConnection(const Connection& c);
+            Neat& addNeuron(const Neuron& n);
+            Neat& removeNeuron(const Neuron& n);
         private:
             int genomeID;
             int speciesID;
             double fitness;
+            double mutationRate;
             std::vector<NodeGene> nodeChromosomes;
             std::vector<ConnectionGene> connectionChromosomes;
             std::unique_ptr<NeuralNetwork> phenotype;
     };
     /// d = ((c1*E)/N) + ((c2*D)/N) + c3 * avg of W differences between genomes.
-    double distance(Genome& g1,Genome& g2);
+    double distance(Neat& g1,Neat& g2);
     */
 }
-#endif // EVOAI_GENOME_HPP
+#endif // EVOAI_NEAT_HPP

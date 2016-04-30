@@ -18,7 +18,7 @@ namespace EvoAI{
              * @brief default Constructor
              * @param nn NeuralNetwork*
              */
-            NNRenderer(NeuralNetwork::NeuralNetwork* nn);
+            NNRenderer(NeuralNetwork* nn);
             /**
              * @brief it will renderize the neural network
              * @param win window
@@ -29,7 +29,7 @@ namespace EvoAI{
              * @brief Changes the neural network, is the same as building a new NNRenderer.
              * @param nn NeuralNetwork*
              */
-            void setNeuralNetwork(NeuralNetwork::NeuralNetwork* nn) noexcept;
+            void setNeuralNetwork(NeuralNetwork* nn) noexcept;
             /**
              * @brief sets the Font to use
              * The font is copied so you can throw it away.
@@ -66,19 +66,19 @@ namespace EvoAI{
              * @param n Neuron
              * @param p Position
              */
-            void setUpNeuronInfo(NeuralNetwork::Neuron& n, sf::Vector2f& p) noexcept;
+            void setUpNeuronInfo(Neuron& n, sf::Vector2f& p) noexcept;
             /**
              * @brief Parses the info of the Connection
              * @param c Connection
              * @param p Position
              * @param space space for the weights
              */
-            void setUpConnectionInfo(NeuralNetwork::Connection& c, sf::Vector2f& p, const int& space) noexcept;
+            void setUpConnectionInfo(Connection& c, sf::Vector2f& p, const int& space) noexcept;
         private:
             std::vector<NeuronInfo> neurons;
             std::vector<ConnectionInfo> connections;
             sf::Font font;
-            NeuralNetwork::NeuralNetwork* nn;
+            NeuralNetwork* nn;
     };
 
 }

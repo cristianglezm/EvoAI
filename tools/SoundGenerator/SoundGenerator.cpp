@@ -91,31 +91,31 @@ int main(int argc, char **argv){
             return EXIT_FAILURE;
         }
     }
-    std::unique_ptr<EvoAI::NeuralNetwork::NeuralNetwork> nn = nullptr;
+    std::unique_ptr<EvoAI::NeuralNetwork> nn = nullptr;
     if(optNeuralFile){
         std::cout << "Loading File " << argv[2] << std::endl;
-        nn = std::make_unique<EvoAI::NeuralNetwork::NeuralNetwork>(std::string(argv[2]));
+        nn = std::make_unique<EvoAI::NeuralNetwork>(std::string(argv[2]));
     }else if(optNeuralType){
         if(NeuralType == "0"){
             std::cout << "Creating a CPPN " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;
             if(optColor && optCoords){
-                nn = EvoAI::NeuralNetwork::createCPPN(6,numLayers,numNLayers,3,1.0);
+                nn = EvoAI::createCPPN(6,numLayers,numNLayers,3,1.0);
             }else{
-                nn = EvoAI::NeuralNetwork::createCPPN(3,numLayers,numNLayers,3,1.0);
+                nn = EvoAI::createCPPN(3,numLayers,numNLayers,3,1.0);
             }
         }else if(NeuralType == "1"){
             std::cout << "Creating a FeedForward Neural Network " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;
             if(optColor && optCoords){
-                nn = EvoAI::NeuralNetwork::createFeedForwardNN(6,numLayers,numNLayers,3,1.0);
+                nn = EvoAI::createFeedForwardNN(6,numLayers,numNLayers,3,1.0);
             }else{
-                nn = EvoAI::NeuralNetwork::createFeedForwardNN(3,numLayers,numNLayers,3,1.0);
+                nn = EvoAI::createFeedForwardNN(3,numLayers,numNLayers,3,1.0);
             }
         }else if(NeuralType == "2"){
             std::cout << "Creating a Elman Neural Network " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;
             if(optColor && optCoords){
-                nn = EvoAI::NeuralNetwork::createElmanNeuralNetwork(6,numLayers,numNLayers,3,1.0);
+                nn = EvoAI::createElmanNeuralNetwork(6,numLayers,numNLayers,3,1.0);
             }else{
-                nn = EvoAI::NeuralNetwork::createElmanNeuralNetwork(3,numLayers,numNLayers,3,1.0);
+                nn = EvoAI::createElmanNeuralNetwork(3,numLayers,numNLayers,3,1.0);
             }
         }
     }else if(optGenome){
@@ -135,27 +135,27 @@ int main(int argc, char **argv){
         std::cout << "Generating Sound from color..." << std::endl;
         if(optImage){
             for(auto i=0;i<repeat;++i){
-                EvoAI::soundUtils::generateSoundFromColor(imageInput,nn.get(),fileOutput);
+                EvoAI::generateSoundFromColor(imageInput,nn.get(),fileOutput);
             }
         }else{
             for(auto i=0;i<repeat;++i){
-                EvoAI::soundUtils::generateSoundFromColor(imgInput,nn.get(),fileOutput);
+                EvoAI::generateSoundFromColor(imgInput,nn.get(),fileOutput);
             }
         }
     }else if(!optColor && optCoords){
         std::cout << "Generating sound from Coordinates..." << std::endl;
         for(auto i=0;i<repeat;++i){
-            EvoAI::soundUtils::generateSoundFromCoordinates(resWidth,resHeight,nn.get(),fileOutput);
+            EvoAI::generateSoundFromCoordinates(resWidth,resHeight,nn.get(),fileOutput);
         }
     }else if(optColor && optCoords){
         std::cout << "Generating sound from color and coordinates" << std::endl;
         if(optImage){
             for(auto i=0;i<repeat;++i){
-                EvoAI::soundUtils::generateSoundFromColorAndCoordinates(imageInput,nn.get(),fileOutput);
+                EvoAI::generateSoundFromColorAndCoordinates(imageInput,nn.get(),fileOutput);
             }
         }else{
             for(auto i=0;i<repeat;++i){
-                EvoAI::soundUtils::generateSoundFromColorAndCoordinates(imgInput,nn.get(),fileOutput);
+                EvoAI::generateSoundFromColorAndCoordinates(imgInput,nn.get(),fileOutput);
             }
         }
     }

@@ -9,10 +9,10 @@ std::vector<std::vector<std::string>> readCSVFile(std::istream& str);
 
 void usage();
 
-std::pair<EvoAI::NeuralNetwork::NeuralNetwork::trainingFormat,
-            EvoAI::NeuralNetwork::NeuralNetwork::trainingFormat> createTrainingSets(std::vector<std::vector<std::string>> dataset, const std::size_t& start, const std::size_t& end);
+std::pair<EvoAI::NeuralNetwork::trainingFormat,
+            EvoAI::NeuralNetwork::trainingFormat> createTrainingSets(std::vector<std::vector<std::string>> dataset, const std::size_t& start, const std::size_t& end);
 
-void normalizeData(EvoAI::NeuralNetwork::NeuralNetwork::trainingFormat& data);
+void normalizeData(EvoAI::NeuralNetwork::trainingFormat& data);
 
 int main(int argc,char **argv){
     if(argc > 2){
@@ -25,7 +25,7 @@ int main(int argc,char **argv){
         std::shuffle(std::begin(irisData),std::end(irisData),g);
         std::cout << "Creating Test dataSets..." << std::endl;
         auto testSets = createTrainingSets(irisData,irisData.size()/2,irisData.size());
-        std::unique_ptr<EvoAI::NeuralNetwork::NeuralNetwork> nn = nullptr;
+        std::unique_ptr<EvoAI::NeuralNetwork> nn = nullptr;
         std::string opt(argv[2]);
         std::string filename("");
         if(argc > 3){
@@ -33,10 +33,10 @@ int main(int argc,char **argv){
         }
         if(filename.empty()){
             std::cout << "creating neural network..." << std::endl;
-            nn = EvoAI::NeuralNetwork::createFeedForwardNN(4,3,15,3,1.0);
+            nn = EvoAI::createFeedForwardNN(4,3,15,3,1.0);
         }else{
             std::cout << "loading neural network..." << std::endl;
-            nn = std::make_unique<EvoAI::NeuralNetwork::NeuralNetwork>(filename);
+            nn = std::make_unique<EvoAI::NeuralNetwork>(filename);
         }
         if(opt == "-t" || opt == "--train"){
             std::cout << "Training Neural Network..." << std::endl;
@@ -111,10 +111,10 @@ void usage(){
     std::cout << "-c, --classify\t\tWill test the network with the test data." << std::endl;
     std::cout << "-h, --help\t\tthis menu." << std::endl;
 }
-std::pair<EvoAI::NeuralNetwork::NeuralNetwork::trainingFormat,
-            EvoAI::NeuralNetwork::NeuralNetwork::trainingFormat> createTrainingSets(std::vector<std::vector<std::string>> dataset, const std::size_t& start, const std::size_t& end){
-    EvoAI::NeuralNetwork::NeuralNetwork::trainingFormat irisTrainingDataInput;
-    EvoAI::NeuralNetwork::NeuralNetwork::trainingFormat irisTrainingDataOutput;
+std::pair<EvoAI::NeuralNetwork::trainingFormat,
+            EvoAI::NeuralNetwork::trainingFormat> createTrainingSets(std::vector<std::vector<std::string>> dataset, const std::size_t& start, const std::size_t& end){
+    EvoAI::NeuralNetwork::trainingFormat irisTrainingDataInput;
+    EvoAI::NeuralNetwork::trainingFormat irisTrainingDataOutput;
     for(auto i=start;i<end;++i){
         std::vector<double> in;
         std::vector<double> out;
@@ -140,7 +140,7 @@ std::pair<EvoAI::NeuralNetwork::NeuralNetwork::trainingFormat,
     }
     return std::move(std::make_pair(irisTrainingDataInput,irisTrainingDataOutput));
 }
-void normalizeData(EvoAI::NeuralNetwork::NeuralNetwork::trainingFormat& data){
+void normalizeData(EvoAI::NeuralNetwork::trainingFormat& data){
     /**
         1. sepal length in cm
         2. sepal width in cm
