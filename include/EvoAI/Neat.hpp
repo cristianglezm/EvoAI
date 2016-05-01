@@ -11,7 +11,7 @@
 #include <JsonBox.h>
 
 namespace EvoAI{
-    /* TODO
+    /// @todo define and implement
     template<bool cppn = false>
     class Neat final{
         public:
@@ -36,18 +36,18 @@ namespace EvoAI{
         public:
             Neat();
             Neat(const std::string& filename);
-            JsonBox::Value toJson() const;
-            Neat& setMutationRate(const float& rate);
+            JsonBox::Value toJson() const noexcept;
+            Neat& setMutationRate(const float& rate) noexcept;
             bool writeToFile(const std::string& filename) const;
             ~Neat() = default;
         private:
-            Neat& addConnection(const Connection& c);
-            Neat& removeConnection(const Connection& c);
-            Neat& addNeuron(const Neuron& n);
-            Neat& removeNeuron(const Neuron& n);
+            Neat& addConnection(const Connection& c) noexcept;
+            Neat& removeConnection(const Connection& c) noexcept;
+            Neat& addNeuron(const Neuron& n) noexcept;
+            Neat& removeNeuron(const Neuron& n) noexcept;
         private:
-            int genomeID;
-            int speciesID;
+            int64_t genomeID;
+            int64_t speciesID;
             double fitness;
             double mutationRate;
             std::vector<NodeGene> nodeChromosomes;
@@ -55,7 +55,7 @@ namespace EvoAI{
             std::unique_ptr<NeuralNetwork> phenotype;
     };
     /// d = ((c1*E)/N) + ((c2*D)/N) + c3 * avg of W differences between genomes.
-    double distance(Neat& g1,Neat& g2);
-    */
+    template<bool cppn = false>
+    double distance(Neat<cppn>& n1,Neat<cppn>& n2) noexcept;
 }
 #endif // EVOAI_NEAT_HPP
