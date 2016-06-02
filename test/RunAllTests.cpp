@@ -5,6 +5,7 @@
 #include "NeuronLayerTest/NeuronLayerTest.hpp"
 #include "NeuralNetworkTest/NeuralNetworkTest.hpp"
 #include "ConnectionTest/ConnectionTest.hpp"
+#include "GenomeTest/GenomeTest.hpp"
 
 int main(int argc, char** argv){
     std::cout << "Initializing Tests...." << std::endl;

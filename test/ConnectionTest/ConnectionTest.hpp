@@ -1,6 +1,9 @@
 #ifndef EVOAI_CONNECTION_TEST_HPP
 #define EVOAI_CONNECTION_TEST_HPP
 
+#include <gtest/gtest.h>
+#include <EvoAI.hpp>
+
 namespace EvoAI{
     namespace Test{
         class ConnectionTest : public ::testing::Test {
