@@ -3,78 +3,6 @@
 #include <random>
 
 namespace EvoAI{
-//////////
-/// NodeGene
-//////////
-    Genome::NodeGene::NodeGene(std::size_t lyrID, std::size_t nrnID,
-                                    Neuron::Type nt, Neuron::ActivationType nat)
-    : layerID(lyrID)
-    , neuronID(nrnID)
-    , nrnType(nt)
-    , actType(nat)
-    , innovationID(0){}
-    JsonBox::Value Genome::NodeGene::toJson() noexcept{
-        JsonBox::Object o;
-        o["layerID"] = JsonBox::Value(std::to_string(layerID));
-        o["neuronID"] = JsonBox::Value(std::to_string(neuronID));
-        o["nrnType"] = JsonBox::Value(Neuron::typeToString(nrnType));
-        o["actType"] = JsonBox::Value(Neuron::activationTypeToString(actType));
-        o["innovationID"] = JsonBox::Value(std::to_string(innovationID));
-        return JsonBox::Value(o);
-    }
-    std::size_t Genome::NodeGene::getLayerID() const noexcept{
-        return layerID;
-    }
-    std::size_t Genome::NodeGene::getNeuronID() const noexcept{
-        return neuronID;
-    }
-    Neuron::Type Genome::NodeGene::getNeuronType() const noexcept{
-        return nrnType;
-    }
-    Neuron::ActivationType Genome::NodeGene::getActType() const noexcept{
-        return actType;
-    }
-    void Genome::NodeGene::setInnovationID(const std::size_t& id) noexcept{
-        innovationID = id;
-    }
-    const std::size_t& Genome::NodeGene::getInnovationID() const noexcept{
-        return innovationID;
-    }
-/////////
-/// ConnectionGene
-/////////
-    Genome::ConnectionGene::ConnectionGene(const NodeGene& src, const NodeGene& dest, double w)
-    : enabled(true)
-    , c(Link(src.getLayerID(), src.getNeuronID()), Link(dest.getLayerID(), dest.getNeuronID()), w)
-    , innovationID(0){}
-    bool Genome::ConnectionGene::isEnabled() const noexcept{
-        return enabled;
-    }
-    void Genome::ConnectionGene::setEnabled(bool en) noexcept{
-        enabled = en;
-    }
-    JsonBox::Value Genome::ConnectionGene::toJson() noexcept{
-        JsonBox::Object o;
-        o["enabled"] = JsonBox::Value(enabled ? "True":"False");
-        o["Connection"] = c.toJson();
-        o["innovationID"] = JsonBox::Value(std::to_string(innovationID));
-        return JsonBox::Value(o);
-    }
-    void Genome::ConnectionGene::setWeight(double w) noexcept{
-        c.setWeight(w);
-    }
-    const double& Genome::ConnectionGene::getWeight() const noexcept{
-        return c.getWeight();
-    }
-    void Genome::ConnectionGene::setInnovationID(const std::size_t& id) noexcept{
-        innovationID = id;
-    }
-    const std::size_t& Genome::ConnectionGene::getInnovationID() const noexcept{
-        return innovationID;
-    }
-///////////
-/// Genome
-///////////
     Genome::Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive, bool cppn)
     : genomeID(0)
     , speciesID(0)
@@ -83,30 +11,34 @@ namespace EvoAI{
     , nodeChromosomes()
     , connectionChromosomes(){
         for(auto i=0u;i<numInputs;++i){
-            Neuron::ActivationType at = Neuron::ActivationType::SIGMOID;
-            if(cppn){
-                /// @todo select an activation that is a cppn function
-            }
-            nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,at);
+            // activation function is not used by Neuron::Type::INPUT
+            nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,Neuron::ActivationType::SIGMOID);
         }
         for(auto i=0u;i<numOutputs;++i){
             Neuron::ActivationType at = Neuron::ActivationType::SIGMOID;
             if(cppn){
-                /// @todo select an activation that is a cppn function
+                unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+                std::mt19937 g(seed);
+                std::uniform_int_distribution<int> dice(0,Neuron::ActivationType::LAST_CPPN_ACTIVATION_TYPE-1);
+                at = static_cast<Neuron::ActivationType>(dice(g));
             }
             nodeChromosomes.emplace_back(2,i,Neuron::Type::OUTPUT,at);
         }
+        /// @todo make feedforwards connections for the simple structure.
     }
     /// @todo node is added, where an old connection was,
     ///       then the src to new node weight is 1 and the
     ///       new node to dest is equal to the old weight.
     /// *--*
     /// *-w = 1-*(new node)-old w-*
-    void Genome::addNodeGene(const Genome::NodeGene& ng) noexcept{
+    void Genome::addNodeGene(const NodeGene& ng) noexcept{
         nodeChromosomes.push_back(ng);
     }
-    void Genome::addConnectionGene(const Genome::ConnectionGene& cg) noexcept{
+    void Genome::addConnectionGene(const ConnectionGene& cg) noexcept{
         connectionChromosomes.push_back(cg);
+    }
+    JsonBox::Value Genome::toJson() noexcept{
+        /// @todo
     }
     std::size_t Genome::getLastInnovationNode() const noexcept{
         if(nodeChromosomes.empty()){

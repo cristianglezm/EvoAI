@@ -11,7 +11,7 @@ namespace EvoAI{
         return (layer == rhs.layer
                 && neuron == rhs.neuron);
     }
-    Connection::Connection(const Link& src,const Link& dest)
+    Connection::Connection(const Link& src, const Link& dest)
     : src(src)
     , dest(dest)
     , weight(0.0)
@@ -20,7 +20,7 @@ namespace EvoAI{
     , gradient(0.0)
     , delta(0.0)
     , oldDelta(0.0){}
-    Connection::Connection(const Link& src,const Link& dest,const double& w)
+    Connection::Connection(const Link& src, const Link& dest, const double& w)
     : src(src)
     , dest(dest)
     , weight(w)

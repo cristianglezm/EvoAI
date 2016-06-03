@@ -2,12 +2,12 @@
 #define EVOAI_GENOME_HPP
 
 #include <JsonBox.h>
-#include <EvoAI/Connection.hpp>
-#include <EvoAI/Neuron.hpp>
+#include <EvoAI/NodeGene.hpp>
 #include <EvoAi/NeuralNetwork.hpp>
+#include <EvoAI/ConnectionGene.hpp>
 #include <memory>
-#include <functional>
 #include <chrono>
+#include <functional>
 
 namespace EvoAI{
     /**
@@ -18,61 +18,8 @@ namespace EvoAI{
      */
     class Genome final{
         public:
-            class NodeGene final{
-                public:
-                    NodeGene(std::size_t lyrID, std::size_t nrnID,
-                                Neuron::Type nt, Neuron::ActivationType nat);
-                    JsonBox::Value toJson() noexcept;
-                    std::size_t getLayerID() const noexcept;
-                    std::size_t getNeuronID() const noexcept;
-                    Neuron::Type getNeuronType() const noexcept;
-                    Neuron::ActivationType getActType() const noexcept;
-                    void setInnovationID(const std::size_t& id) noexcept;
-                    const std::size_t& getInnovationID() const noexcept;
-                    bool operator==(const NodeGene& rhs) const{
-                        return (layerID == rhs.layerID
-                                && neuronID == rhs.neuronID
-                                && nrnType == rhs.nrnType
-                                && actType == rhs.actType
-                                && innovationID == rhs.innovationID);
-                    }
-                    bool operator!=(const NodeGene& rhs) const{
-                        return !((*this)==rhs);
-                    }
-                    ~NodeGene() = default;
-                private:
-                    std::size_t layerID;
-                    std::size_t neuronID;
-                    Neuron::Type nrnType;
-                    Neuron::ActivationType actType;
-                    std::size_t innovationID;
-            };
-            class ConnectionGene final{
-                public:
-                    ConnectionGene(const NodeGene& src, const NodeGene& dest, double w);
-                    bool isEnabled() const noexcept;
-                    void setEnabled(bool en) noexcept;
-                    JsonBox::Value toJson() noexcept;
-                    void setWeight(double w) noexcept;
-                    const double& getWeight() const noexcept;
-                    void setInnovationID(const std::size_t& id) noexcept;
-                    const std::size_t& getInnovationID() const noexcept;
-                    bool operator==(const ConnectionGene& rhs) const{
-                        return (enabled == rhs.enabled
-                                && c == rhs.c
-                                && innovationID == rhs.innovationID);
-                    }
-                    bool operator!=(const ConnectionGene& rhs){
-                        return !((*this)==rhs);
-                    }
-                    ~ConnectionGene() = default;
-            private:
-                    bool enabled;
-                    Connection c;
-                    std::size_t innovationID;
-            };
-            using matchingChromosomes = std::pair<std::pair<std::vector<Genome::NodeGene>, std::vector<Genome::NodeGene>>, 
-                                        std::pair<std::vector<Genome::ConnectionGene>, std::vector<Genome::ConnectionGene>>>;
+            using matchingChromosomes = std::pair<std::pair<std::vector<NodeGene>, std::vector<NodeGene>>, 
+                                                  std::pair<std::vector<ConnectionGene>, std::vector<ConnectionGene>>>;
         public:
             Genome(){}
             Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive = true, bool cppn = false);
@@ -83,6 +30,7 @@ namespace EvoAI{
             /// *-w = 1-*(new node)-old w-*
             void addNodeGene(const NodeGene& ng) noexcept;
             void addConnectionGene(const ConnectionGene& cg) noexcept;
+            JsonBox::Value toJson() noexcept;
             std::size_t getLastInnovationNode() const noexcept;
             std::size_t getLastInnovationConnection() const noexcept;
             /// will mutate adding a node + 2 connection or a connection between 2 existing nodes.

@@ -9,5 +9,8 @@
 #include "EvoAI/Utils.hpp"
 #include "EvoAI/Neuron.hpp"
 #include "EvoAI/NeuronLayer.hpp"
+#include "EvoAI/NodeGene.hpp"
+#include "EvoAI/ConnectionGene.hpp"
+#include "EvoAI/Genome.hpp"
 
 #endif // EVOAI_HPP
