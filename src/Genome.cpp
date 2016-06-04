@@ -10,32 +10,50 @@ namespace EvoAI{
     , rnnPermited(canBeRecursive)
     , nodeChromosomes()
     , connectionChromosomes(){
+        /// @todo make feedforwards connections for the simple structure.
         for(auto i=0u;i<numInputs;++i){
             // activation function is not used by Neuron::Type::INPUT
             nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,Neuron::ActivationType::SIGMOID);
+            auto innv = getLastInnovationNode() + 1;
+            nodeChromosomes[i].setInnovationID(innv);
         }
         for(auto i=0u;i<numOutputs;++i){
             Neuron::ActivationType at = Neuron::ActivationType::SIGMOID;
             if(cppn){
-                unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-                std::mt19937 g(seed);
-                std::uniform_int_distribution<int> dice(0,Neuron::ActivationType::LAST_CPPN_ACTIVATION_TYPE-1);
-                at = static_cast<Neuron::ActivationType>(dice(g));
+                at = Genome::getRandomActivationType();
             }
             nodeChromosomes.emplace_back(2,i,Neuron::Type::OUTPUT,at);
+            auto innv = getLastInnovationNode() + 1;
+            nodeChromosomes[i].setInnovationID(innv);
         }
-        /// @todo make feedforwards connections for the simple structure.
+        for(auto i=0u;i<numInputs;++i){
+            for(auto j=0u;j<numOutputs;++j){
+                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(2,j), random(-5.0,5.0));
+            }
+        }
     }
     /// @todo node is added, where an old connection was,
     ///       then the src to new node weight is 1 and the
     ///       new node to dest is equal to the old weight.
     /// *--*
     /// *-w = 1-*(new node)-old w-*
-    void Genome::addNodeGene(const NodeGene& ng) noexcept{
+    void Genome::addGene(const NodeGene& ng) noexcept{
         nodeChromosomes.push_back(ng);
     }
-    void Genome::addConnectionGene(const ConnectionGene& cg) noexcept{
+    void Genome::addGene(const ConnectionGene& cg) noexcept{
         connectionChromosomes.push_back(cg);
+    }
+    void Genome::setNodeChromosomes(std::vector<NodeGene>&& ngenes) noexcept{
+        nodeChromosomes = std::move(ngenes);
+    }
+    std::vector<NodeGene>& Genome::getNodeChromosomes() noexcept{
+        return nodeChromosomes;
+    }
+    void Genome::setConnectionChromosomes(std::vector<ConnectionGene>&& cgenes) noexcept{
+        connectionChromosomes = std::move(cgenes);
+    }
+    std::vector<ConnectionGene>& Genome::getConnectionChromosomes() noexcept{
+        return connectionChromosomes;
     }
     JsonBox::Value Genome::toJson() noexcept{
         /// @todo
@@ -54,20 +72,15 @@ namespace EvoAI{
     }
     void Genome::mutate() noexcept{
         /// @todo
-        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-        static std::mt19937 rEngine(seed);
-        float mutationRate = 0.6, nodeRate = 0.3, connectionRate = 0.4; /// @todo remove add args
-        std::bernoulli_distribution isMutating(mutationRate);
-        std::bernoulli_distribution addNode(nodeRate);
-        std::bernoulli_distribution addConnection(connectionRate);
-        if(isMutating(rEngine)){
-            if(addNode(rEngine)){
-                /// @todo select a connection and slice it add a node and 2 connections connecting the
-                ///         old node to the new node and the new node to another node from the old connection
-                
-            }else if(addConnection(rEngine)){
-                /// @ todo add a new connection
-            }
+        float nodeRate = 0.3, connectionRate = 0.4, perturbWeightsRate = 0.7; /// @todo remove and add args
+        if(doAction(nodeRate)){
+            /// @todo select a connection and slice it add a node and 2 connections connecting the
+            ///         old node to the new node and the new node to another node from the old connection
+            
+        }else if(doAction(connectionRate)){
+            /// @todo add a new connection
+        }else if(doAction(perturbWeightsRate)){
+            
         }
     }
     /// look at src genome NEAT
@@ -75,7 +88,12 @@ namespace EvoAI{
         /// @todo
     }
     void Genome::mutateEnable() noexcept{
-        /// @todo
+        for(auto& c:connectionChromosomes){
+            if(!c.isEnabled()){
+                c.setEnabled(true);
+                break;
+            }
+        }
     }
 //////////
 //// Static Functions
@@ -93,6 +111,9 @@ namespace EvoAI{
         }
         weightAvgs /= matchingGenes.second.first.size();
         return ((c1*E)/N) + ((c2*D)/N) + c3 * weightAvgs;
+    }
+    Neuron::ActivationType Genome::getRandomActivationType() noexcept{
+        return static_cast<Neuron::ActivationType>(random(0, Neuron::ActivationType::LAST_CPPN_ACTIVATION_TYPE-1));
     }
     Genome::matchingChromosomes Genome::getMatchingChromosomes(const Genome& g1, const Genome& g2) noexcept{
         std::vector<NodeGene> matchingNodes1;
@@ -125,7 +146,7 @@ namespace EvoAI{
         auto child = std::make_unique<Genome>(); /// @todo
         return child;
     }
-    std::unique_ptr<NeuralNetwork> Genome::makePhenotype() noexcept{
+    std::unique_ptr<NeuralNetwork> Genome::makePhenotype(const Genome& g) noexcept{
         auto nn = std::make_unique<NeuralNetwork>(); /// @todo
         return nn;
     }

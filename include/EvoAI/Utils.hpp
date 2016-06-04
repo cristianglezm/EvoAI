@@ -18,6 +18,19 @@ namespace EvoAI{
      */
     double random(const double& min, const double& max);
     /**
+     * @brief Returns a random number between min and max.
+     * @param min const int&
+     * @param max const int&
+     * @return int
+     */
+    int random(const int& min, const int& max);
+    /**
+     * @brief gives a random true or false given the rate.
+     * @param rate
+     * @return bool
+     */
+    bool doAction(float rate) noexcept;
+    /**
      * @brief normalize values from one range to another
      * @code
      * normalize<float>(50,-1,1,0,100);
@@ -31,7 +44,7 @@ namespace EvoAI{
      * @return T
      */
     template<typename T = float>
-    inline T normalize(const T& val,const T& normMin, const T& normMax, const T& min, const T& max) noexcept;
+    inline T normalize(const T& val, const T& normMin, const T& normMax, const T& min, const T& max) noexcept;
     /**
      * @brief Creates a FeedForward Neural Network.
      * @param numInputs

@@ -1,6 +1,12 @@
 #include <EvoAI/NodeGene.hpp>
 
 namespace EvoAI{
+    NodeGene::NodeGene(std::size_t lyrID, std::size_t nrnID)
+    : layerID(lyrID)
+    , neuronID(nrnID)
+    , nrnType(Neuron::Type::HIDDEN)
+    , actType(Neuron::ActivationType::SIGMOID)
+    , innovationID(0){}
     NodeGene::NodeGene(std::size_t lyrID, std::size_t nrnID, Neuron::Type nt, Neuron::ActivationType nat)
     : layerID(lyrID)
     , neuronID(nrnID)

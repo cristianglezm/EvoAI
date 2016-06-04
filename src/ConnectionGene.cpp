@@ -3,6 +3,7 @@
 namespace EvoAI{
     ConnectionGene::ConnectionGene(const NodeGene& src, const NodeGene& dest, double w)
     : enabled(true)
+    , frozen(false)
     , c(Link(src.getLayerID(), src.getNeuronID()), Link(dest.getLayerID(), dest.getNeuronID()), w)
     , innovationID(0){}
     bool ConnectionGene::isEnabled() const noexcept{
@@ -23,6 +24,12 @@ namespace EvoAI{
     }
     const double& ConnectionGene::getWeight() const noexcept{
         return c.getWeight();
+    }
+    const Link& ConnectionGene::getSrc() const noexcept{
+        return c.getSrc();
+    }
+    const Link& ConnectionGene::getDest() const noexcept{
+        return c.getDest();
     }
     void ConnectionGene::setFrozen(bool frzen) noexcept{
         frozen = frzen;

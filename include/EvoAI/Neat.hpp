@@ -12,7 +12,11 @@
 #include <JsonBox.h>
 
 namespace EvoAI{
-    /// @todo define and implement
+    /**
+     * @class Neat
+     * @author Cristian Glez <cristian.glez.m@gmail.com>
+     * @brief Neat Algorithm
+     */
     class Neat final{
         public:
             Neat(const std::size_t& numInputs, const std::size_t& numOutputs);
