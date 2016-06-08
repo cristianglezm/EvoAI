@@ -5,7 +5,16 @@ namespace EvoAI{
     : enabled(true)
     , frozen(false)
     , c(Link(src.getLayerID(), src.getNeuronID()), Link(dest.getLayerID(), dest.getNeuronID()), w)
-    , innovationID(0){}
+    , innovationID(0){
+        innovationID = std::hash<ConnectionGene>{}(*this);
+    }
+    ConnectionGene::ConnectionGene(const Link& src, const Link& dest, double w)
+    : enabled(true)
+    , frozen(false)
+    , c(src, dest, w)
+    , innovationID(0){
+        innovationID = std::hash<ConnectionGene>{}(*this);
+    }
     bool ConnectionGene::isEnabled() const noexcept{
         return enabled;
     }
@@ -15,6 +24,7 @@ namespace EvoAI{
     JsonBox::Value ConnectionGene::toJson() noexcept{
         JsonBox::Object o;
         o["enabled"] = JsonBox::Value(enabled ? "True":"False");
+        o["frozen"] = JsonBox::Value(frozen ? "True":"False");
         o["Connection"] = c.toJson();
         o["innovationID"] = JsonBox::Value(std::to_string(innovationID));
         return JsonBox::Value(o);
@@ -31,6 +41,9 @@ namespace EvoAI{
     const Link& ConnectionGene::getDest() const noexcept{
         return c.getDest();
     }
+    const Connection& ConnectionGene::getConnection() const noexcept{
+        return c;
+    }
     void ConnectionGene::setFrozen(bool frzen) noexcept{
         frozen = frzen;
     }
@@ -44,8 +57,8 @@ namespace EvoAI{
         return innovationID;
     }
     bool ConnectionGene::operator==(const ConnectionGene& rhs) const{
-        return (enabled == rhs.enabled
-                && c == rhs.c
+        return (c.getSrc() == rhs.c.getSrc()
+                && c.getDest() == rhs.c.getDest()
                 && innovationID == rhs.innovationID);
     }
     bool ConnectionGene::operator!=(const ConnectionGene& rhs) const{

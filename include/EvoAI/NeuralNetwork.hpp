@@ -21,7 +21,7 @@ namespace EvoAI{
         public:
             /**
              * @brief default constructor
-             * @return 
+             * @return NeuronNetwork
              */
             NeuralNetwork();
             /**

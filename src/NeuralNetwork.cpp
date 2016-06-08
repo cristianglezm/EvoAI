@@ -9,8 +9,8 @@ namespace EvoAI{
     , neuronsCached(false)
     , mse(0.0){}
     NeuralNetwork::NeuralNetwork(const std::size_t& numInputs, const std::size_t& numHiddenLayers,
-                                const std::size_t& numNeuronsPerHiddenLayer,
-                                const std::size_t& numOutputs, const double& bias)
+                                 const std::size_t& numNeuronsPerHiddenLayer,
+                                 const std::size_t& numOutputs, const double& bias)
     : layers()
     , connections()
     , neurons()

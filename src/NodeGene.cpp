@@ -1,18 +1,24 @@
 #include <EvoAI/NodeGene.hpp>
 
+#include <algorithm>
+
 namespace EvoAI{
     NodeGene::NodeGene(std::size_t lyrID, std::size_t nrnID)
     : layerID(lyrID)
     , neuronID(nrnID)
     , nrnType(Neuron::Type::HIDDEN)
     , actType(Neuron::ActivationType::SIGMOID)
-    , innovationID(0){}
+    , innovationID(0){
+        innovationID = std::hash<NodeGene>{}(*this);
+    }
     NodeGene::NodeGene(std::size_t lyrID, std::size_t nrnID, Neuron::Type nt, Neuron::ActivationType nat)
     : layerID(lyrID)
     , neuronID(nrnID)
     , nrnType(nt)
     , actType(nat)
-    , innovationID(0){}
+    , innovationID(0){
+        innovationID = std::hash<NodeGene>{}(*this);
+    }
     JsonBox::Value NodeGene::toJson() noexcept{
         JsonBox::Object o;
         o["layerID"] = JsonBox::Value(std::to_string(layerID));
@@ -43,8 +49,8 @@ namespace EvoAI{
     bool NodeGene::operator==(const NodeGene& rhs) const{
         return (layerID == rhs.layerID
                 && neuronID == rhs.neuronID
-                && nrnType == rhs.nrnType
-                && actType == rhs.actType
+                //&& nrnType == rhs.nrnType
+                //&& actType == rhs.actType
                 && innovationID == rhs.innovationID);
     }
     bool NodeGene::operator!=(const NodeGene& rhs) const{

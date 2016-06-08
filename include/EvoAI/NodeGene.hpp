@@ -4,6 +4,7 @@
 #include <JsonBox.h>
 
 #include <EvoAI/Neuron.hpp>
+#include <EvoAI/Utils.hpp>
 
 #include <string>
 
@@ -77,6 +78,18 @@ namespace EvoAI{
             Neuron::Type nrnType;
             Neuron::ActivationType actType;
             std::size_t innovationID;
+    };
+}
+
+namespace std{
+    template<>
+    struct hash<EvoAI::NodeGene>{
+        using argument_type = EvoAI::NodeGene;
+        using result_type = std::size_t;
+        result_type operator()(argument_type const& ng) const{
+            result_type const h1(std::hash<std::size_t>{}(ng.getLayerID()));
+            return EvoAI::hashCombine<std::size_t>(h1,ng.getNeuronID());
+        }
     };
 }
 

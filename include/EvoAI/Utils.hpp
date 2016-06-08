@@ -31,6 +31,13 @@ namespace EvoAI{
      */
     bool doAction(float rate) noexcept;
     /**
+     * @brief Combines two hashes
+     * @param seed std::size_t
+     * @param v T&
+     */
+    template <class T>
+    inline std::size_t hashCombine(std::size_t seed, const T& v) noexcept;
+    /**
      * @brief normalize values from one range to another
      * @code
      * normalize<float>(50,-1,1,0,100);
@@ -94,6 +101,12 @@ namespace EvoAI{
     template<typename T = float>
     inline T normalize(const T& val,const T& normMin, const T& normMax, const T& min, const T& max) noexcept{
         return (normMin + (val-min)*(normMax-normMin)/(max-min));
+    }
+    template <class T>
+    inline std::size_t hashCombine(std::size_t seed, const T& v) noexcept{
+        std::hash<T> hasher;
+        seed ^= hasher(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+        return seed;
     }
 }
 #endif // EVOAI_UTILS_HPP
