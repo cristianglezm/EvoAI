@@ -35,10 +35,15 @@ namespace EvoAI{
              */
             NodeGene(std::size_t lyrID, std::size_t nrnID, Neuron::Type nt, Neuron::ActivationType nat);
             /**
+             * @brief Constructor with a json object
+             * @param o JsonBox::Object&
+             */ 
+            NodeGene(JsonBox::Object o);
+            /**
              * @brief returns a json of the nodeGene
-             * @return 
+             * @return JsonBox::Value
              */
-            JsonBox::Value toJson() noexcept;
+            JsonBox::Value toJson() const noexcept;
             /**
              * @brief getter for the layer id
              * @return std::size_t layer id
@@ -69,12 +74,23 @@ namespace EvoAI{
              * @return std::size_t
              */
             const std::size_t& getInnovationID() const noexcept;
+            /**
+             * @brief setter for the node bias.
+             * @param bw bias weight
+             */
+            void setBias(const double& bw) noexcept;
+            /**
+             * @brief getter for bias
+             * @return const double& bias
+             */
+            const double& getBias() const noexcept;
             bool operator==(const NodeGene& rhs) const;
             bool operator!=(const NodeGene& rhs) const;
             ~NodeGene() = default;
         private:
             std::size_t layerID;
             std::size_t neuronID;
+            double biasWeight;
             Neuron::Type nrnType;
             Neuron::ActivationType actType;
             std::size_t innovationID;

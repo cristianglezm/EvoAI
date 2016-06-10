@@ -10,6 +10,19 @@ namespace EvoAI{
     , type(Type::HIDDEN)
     , activationType(Neuron::ActivationType::SIGMOID)
     , connections(){}
+    Neuron::Neuron(JsonBox::Object o)
+    : output(0.0)
+    , sum(0.0)
+    , delta(0.0)
+    , biasWeight(o["biasWeight"].getDouble())
+    , type(Neuron::typeToEnum(o["type"].getString()))
+    , activationType(Neuron::activationTypeToEnum(o["activationType"].getString()))
+    , connections(){
+        auto& conns = o["connections"].getArray();
+        for(auto& c:conns){
+            connections.emplace_back(c.getObject());
+        }
+    }
     Neuron::Neuron(Type t)
     : output(0.0)
     , sum(0.0)

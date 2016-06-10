@@ -20,7 +20,6 @@ namespace EvoAI{
     , cppn(cppn)
     , nodeChromosomes()
     , connectionChromosomes(){
-        /// @todo fix bug where innv is not incremented
         for(auto i=0u;i<numInputs;++i){
             // activation function is not used by Neuron::Type::INPUT
             nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,Neuron::ActivationType::SIGMOID);
@@ -36,6 +35,31 @@ namespace EvoAI{
             for(auto j=0u;j<numOutputs;++j){
                 connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(2,j), random(-5.0,5.0));
             }
+        }
+    }
+    Genome::Genome(const std::string& jsonfile)
+    : genomeID(0)
+    , speciesID(0)
+    , fitness(0.0)
+    , rnnAllowed(true)
+    , cppn(true)
+    , nodeChromosomes()
+    , connectionChromosomes(){
+        JsonBox::Value json;
+        json.loadFromFile(jsonfile);
+        auto& v = json["Genome"];
+        rnnAllowed = v["rnnAllowed"].getBoolean();
+        cppn = v["cppn"].getBoolean();
+        genomeID = std::stoul(v["GenomeID"].getString());
+        speciesID = std::stoul(v["SpeciesID"].getString());
+        fitness = v["fitness"].getFloat();
+        auto& ngs = v["nodeChromosomes"].getArray();
+        for(auto& ng:ngs){
+            nodeChromosomes.emplace_back(ng.getObject());
+        }
+        auto& cgs = v["ConnectionChromosomes"].getArray();
+        for(auto& cg:cgs){
+            connectionChromosomes.emplace_back(cg.getObject());
         }
     }
     void Genome::addGene(const NodeGene& ng) noexcept{
@@ -70,7 +94,8 @@ namespace EvoAI{
         o["GenomeID"] = JsonBox::Value(std::to_string(genomeID));
         o["SpeciesID"] = JsonBox::Value(std::to_string(speciesID));
         o["fitness"] = JsonBox::Value(fitness);
-        o["rnnAllowed"] = JsonBox::Value(rnnAllowed ? "True":"False");
+        o["cppn"] = JsonBox::Value(cppn);
+        o["rnnAllowed"] = JsonBox::Value(rnnAllowed);
         JsonBox::Array nChromo;
         for(auto& n:nodeChromosomes){
             nChromo.push_back(n.toJson());
@@ -84,7 +109,9 @@ namespace EvoAI{
         return JsonBox::Value(o);
     }
     void Genome::writeToFile(const std::string& filename) noexcept{
-        auto v = toJson();
+        JsonBox::Value v;
+        v["version"] = JsonBox::Value("1.0");
+        v["Genome"] = toJson();
         v.writeToFile(filename);
     }
     void Genome::setFitness(const double& fit) noexcept{
@@ -114,16 +141,8 @@ namespace EvoAI{
         return speciesID;
     }
     void Genome::mutateAddNode() noexcept{
-        /// @todo select a connection and slice it add a node and 2 connections connecting the
-        ///         old node to the new node and the new node to another node from the old connection
-        /// @todo node is added, where an old connection was,
-        ///       then the src to new node weight is 1 and the
-        ///       new node to dest is equal to the old weight.
-        /// *--*
-        /// *-w = 1-*(new node)-old w-*
         auto selectedConnection = random(0,connectionChromosomes.size()-1);
         auto& selConn = connectionChromosomes[selectedConnection];
-        /// @todo make a nodeGene add it, make the two new connection and add the info.
         auto at = Neuron::ActivationType::SIGMOID;
         if(cppn){
             at = getRandomActivationType();
@@ -137,14 +156,13 @@ namespace EvoAI{
         connectionChromosomes.push_back(cg2);
     }
     void Genome::mutateAddConnection() noexcept{
-        /// @todo add a new connection
         auto selectedNode1 = random(0,nodeChromosomes.size()-1);
         auto selectedNode2 = random(0,nodeChromosomes.size()-1);
         ConnectionGene cg(nodeChromosomes[selectedNode1],nodeChromosomes[selectedNode2],random(-5.0,5.0));
         connectionChromosomes.push_back(cg);
     }
     void Genome::mutate() noexcept{
-        /// @todo
+        /// @todo mutate args rates etc
         float nodeRate = 0.3, connectionRate = 0.4, perturbWeightsRate = 0.7; /// @todo remove and add args
         if(doAction(nodeRate)){
             mutateAddNode();
@@ -157,9 +175,9 @@ namespace EvoAI{
             mutateWeights(2);
         }
     }
-    /// look at src genome NEAT
+    /// @todo look at src genome NEAT
     void Genome::mutateWeights(double power) noexcept{
-        /// @todo
+        /// @todo implement also mutate node Weights
     }
     void Genome::mutateEnable() noexcept{
         for(auto& c:connectionChromosomes){
@@ -219,7 +237,7 @@ namespace EvoAI{
         return std::make_pair(getMatchingNodeGenes(g1, g2), getMatchingConnectionGenes(g1, g2));
     }
     Genome::excessGenes Genome::getExcessGenes(const Genome& g1, const Genome& g2) noexcept{
-        /// @todo
+        /// @todo fix only get excess genes
         excessNodeGenes eng;
         excessConnectionGenes ecg;
         for(auto& n1:g1.nodeChromosomes){
@@ -235,7 +253,7 @@ namespace EvoAI{
         return std::make_pair(eng,ecg);
     }
     Genome::disjointGenes Genome::getDisjointGenes(const Genome& g1, const Genome& g2) noexcept{
-        /// @todo
+        /// @todo fix only get disjoint nodes.
         disjointNodeGenes dng;
         disjointConnectionGenes dcg;
         return std::make_pair(dng,dcg);
@@ -307,7 +325,7 @@ namespace EvoAI{
         for(auto& n:g.getNodeChromosomes()){
             Neuron nrn(n.getNeuronType());
             nrn.setActivationType(n.getActType());
-            nrn.setBiasWeight(1.0);
+            nrn.setBiasWeight(n.getBias());
             switch(n.getNeuronType()){
                 case Neuron::Type::INPUT:
                     inputLayer.addNeuron(nrn);

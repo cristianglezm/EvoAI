@@ -19,6 +19,17 @@ namespace EvoAI{
             neurons[i].setBiasWeight(random(-1.0,1.0));
         }
     }
+    NeuronLayer::NeuronLayer(JsonBox::Object o)
+    : neurons()
+    , type(Neuron::typeToEnum(o["neuronType"].getString()))
+    , activationType(Neuron::activationTypeToEnum(o["activationType"].getString()))
+    , bias(o["bias"].getDouble())
+    , cyclesLimit(o["cyclesLimit"].getInteger()){
+        auto& nrns = o["neurons"].getArray();
+        for(auto& n:nrns){
+            neurons.emplace_back(n.getObject());
+        }
+    }
     std::vector<Neuron>& NeuronLayer::getNeurons(){
         return neurons;
     }

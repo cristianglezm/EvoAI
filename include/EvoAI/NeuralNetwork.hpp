@@ -36,6 +36,11 @@ namespace EvoAI{
             NeuralNetwork(const std::size_t& numInputs,const std::size_t& numHiddenLayers,
                           const std::size_t& numNeuronsPerHiddenLayer,const std::size_t& numOutputs,const double& bias);
             /**
+             * @brief Constructor for a json object.
+             * @param o JsonBox::Object
+             */
+            NeuralNetwork(JsonBox::Object o);
+            /**
              * @brief Load the NN from a json file
              * @param filename
              * @return NeuralNetwork

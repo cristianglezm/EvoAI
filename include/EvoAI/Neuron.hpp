@@ -79,6 +79,11 @@ namespace EvoAI{
              */
             Neuron();
             /**
+             * @brief Constructor for json object.
+             * @param o JsonBox::Object
+             */
+            Neuron(JsonBox::Object o);
+            /**
              * @brief Constructor that takes a Neuron::Type parameter.
              * @param t const Type&
              */

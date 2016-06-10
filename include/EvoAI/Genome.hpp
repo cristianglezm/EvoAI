@@ -12,9 +12,8 @@
 
 namespace EvoAI{
      /**
-      * @todo
-      * Shared fitness with species
-      * list of the innovations that occurred in the current generation
+      * @todo Shared fitness with species formula
+      * @todo how to identify excess and disjoint nodes.
       */
     class Genome final{
         public:
@@ -29,6 +28,7 @@ namespace EvoAI{
             using disjointGenes = std::pair<disjointNodeGenes, disjointConnectionGenes>;
         public:
             Genome();
+            Genome(const std::string& jsonfile);
             Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive = true, bool cppn = false);
             void addGene(const NodeGene& ng) noexcept;
             void addGene(const ConnectionGene& cg) noexcept;
@@ -49,13 +49,12 @@ namespace EvoAI{
             const std::size_t& getSpeciesID() const noexcept;
             void mutateAddNode() noexcept;
             void mutateAddConnection() noexcept;
-            /// look at src genome NEAT
+            /// @todo look at src genome NEAT
             void mutateWeights(double power) noexcept;
             /**
              * @brief finds a connectionGene that is not enabled and enables it.
              */
             void mutateEnable() noexcept;
-            /// will mutate adding a node + 2 connection or a connection between 2 existing nodes.
             /// @todo add mutationRates Info?
             void mutate() noexcept;
             ~Genome() = default;

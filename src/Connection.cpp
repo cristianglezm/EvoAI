@@ -4,6 +4,15 @@ namespace EvoAI{
     Link::Link(const std::size_t& layer,const std::size_t& neuron)
     : layer(layer)
     , neuron(neuron){}
+    Link::Link(JsonBox::Object o)
+    : layer(std::stoul(o["layer"].getString()))
+    , neuron(std::stoul(o["neuron"].getString())){}
+    JsonBox::Value Link::toJson() const noexcept{
+        JsonBox::Object o;
+        o["layer"] = JsonBox::Value(std::to_string(layer));
+        o["neuron"] = JsonBox::Value(std::to_string(neuron));
+        return JsonBox::Value(o);
+    }
     bool Link::operator<(const Link& rhs) const{
         return (layer < rhs.layer);
     }
@@ -11,6 +20,15 @@ namespace EvoAI{
         return (layer == rhs.layer
                 && neuron == rhs.neuron);
     }
+    Connection::Connection()
+    : src(Link(0,0))
+    , dest(Link(0,0))
+    , weight(0.0)
+    , cycles(0)
+    , visited(false)
+    , gradient(0.0)
+    , delta(0.0)
+    , oldDelta(0.0){}
     Connection::Connection(const Link& src, const Link& dest)
     : src(src)
     , dest(dest)
@@ -24,6 +42,15 @@ namespace EvoAI{
     : src(src)
     , dest(dest)
     , weight(w)
+    , cycles(0)
+    , visited(false)
+    , gradient(0.0)
+    , delta(0.0)
+    , oldDelta(0.0){}
+    Connection::Connection(JsonBox::Object o)
+    : src(o["src"].getObject())
+    , dest(o["dest"].getObject())
+    , weight(o["weight"].getDouble())
     , cycles(0)
     , visited(false)
     , gradient(0.0)
@@ -58,14 +85,8 @@ namespace EvoAI{
     }
     JsonBox::Value Connection::toJson() const noexcept{
         JsonBox::Object o;
-        JsonBox::Object JsonSrc;
-        JsonSrc["layer"] = JsonBox::Value((int) src.layer);
-        JsonSrc["neuron"] = JsonBox::Value((int) src.neuron);
-        o["src"] = JsonBox::Value(JsonSrc);
-        JsonBox::Object JsonDest;
-        JsonDest["layer"] = JsonBox::Value((int) dest.layer);
-        JsonDest["neuron"] = JsonBox::Value((int) dest.neuron);
-        o["dest"] = JsonBox::Value(JsonDest);
+        o["src"] = src.toJson();
+        o["dest"] = dest.toJson();
         o["weight"] = weight;
         return JsonBox::Value(o);
     }

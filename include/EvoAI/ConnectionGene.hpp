@@ -35,6 +35,11 @@ namespace EvoAI{
              */
             ConnectionGene(const Link& src, const Link& dest, double w);
             /**
+             * @brief Constructor with json object
+             * @param o JsonBox::Object&
+             */
+            ConnectionGene(JsonBox::Object o);
+            /**
              * @brief returns if is enabled
              * @return bool
              */
@@ -48,7 +53,7 @@ namespace EvoAI{
              * @brief returns a json of the connectionGene
              * @return JsonBox::Value
              */
-            JsonBox::Value toJson() noexcept;
+            JsonBox::Value toJson() const noexcept;
             /**
              * @brief setter for weight
              * @param w

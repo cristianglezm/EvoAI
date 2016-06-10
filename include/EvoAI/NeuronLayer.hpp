@@ -31,6 +31,12 @@ namespace EvoAI{
              */
             NeuronLayer(const std::size_t& numNeurons,const Neuron::Type& t,const double& bias);
             /**
+             * @brief Constructor from json file
+             * @param o JsonBox::Object
+             * @return NeuronLayer
+             */
+            NeuronLayer(JsonBox::Object o);
+            /**
              * @brief getter for the neurons
              * @return std::vector<Neuron>&
              */

@@ -15,16 +15,21 @@ namespace EvoAI{
     , innovationID(0){
         innovationID = std::hash<ConnectionGene>{}(*this);
     }
+    ConnectionGene::ConnectionGene(JsonBox::Object o)
+    : enabled(o["enabled"].getBoolean())
+    , frozen(o["frozen"].getBoolean())
+    , c(o["Connection"].getObject())
+    , innovationID(std::stoul(o["innovationID"].getString())){}
     bool ConnectionGene::isEnabled() const noexcept{
         return enabled;
     }
     void ConnectionGene::setEnabled(bool en) noexcept{
         enabled = en;
     }
-    JsonBox::Value ConnectionGene::toJson() noexcept{
+    JsonBox::Value ConnectionGene::toJson() const noexcept{
         JsonBox::Object o;
-        o["enabled"] = JsonBox::Value(enabled ? "True":"False");
-        o["frozen"] = JsonBox::Value(frozen ? "True":"False");
+        o["enabled"] = JsonBox::Value(enabled);
+        o["frozen"] = JsonBox::Value(frozen);
         o["Connection"] = c.toJson();
         o["innovationID"] = JsonBox::Value(std::to_string(innovationID));
         return JsonBox::Value(o);

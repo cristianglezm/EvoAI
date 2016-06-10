@@ -14,9 +14,13 @@ namespace EvoAI{
     struct Link{
         /**
          * @brief default constructor
-         * @param rhs
+         * @param layer const std::size_t&
+         * @param neuron const std::size_t&
+         * @return Link
          */
         Link(const std::size_t& layer, const std::size_t& neuron);
+        Link(JsonBox::Object o);
+        JsonBox::Value toJson() const noexcept;
         bool operator<(const Link& rhs) const;
         bool operator==(const Link& rhs) const;
         std::size_t layer;
@@ -29,6 +33,10 @@ namespace EvoAI{
      */
     class Connection{
         public:
+            /**
+             * @brief default Constructor
+             */
+            Connection();
             /**
              * @brief Constructor with src and dest
              * @param src Link&
@@ -44,6 +52,11 @@ namespace EvoAI{
              * @return Connection
              */
             Connection(const Link& src, const Link& dest, const double& w);
+            /**
+             * @brief Constructor json object
+             * @param o JsonBox::Object&
+             */
+            Connection(JsonBox::Object o);
             /**
              * @brief check if is a recurrent connection
              * @return bool 

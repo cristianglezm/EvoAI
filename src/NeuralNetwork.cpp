@@ -23,6 +23,18 @@ namespace EvoAI{
         }
         layers.emplace_back(NeuronLayer(numOutputs,Neuron::Type::OUTPUT,bias));
     }
+    NeuralNetwork::NeuralNetwork(JsonBox::Object o)
+    : layers()
+    , connections()
+    , neurons()
+    , connectionsCached(false)
+    , neuronsCached(false)
+    , mse(0.0){
+        auto& lyrs = o["layers"].getArray();
+        for(auto& l:lyrs){
+            layers.emplace_back(l.getObject());
+        }
+    }
     NeuralNetwork::NeuralNetwork(const std::string& filename)
     : layers()
     , connections()
@@ -32,37 +44,9 @@ namespace EvoAI{
     , mse(0.0){
         JsonBox::Value v;
         v.loadFromFile(filename);
-        auto layersArray = v["NeuralNetwork"]["layers"].getArray();
-        //build layer
+        auto& layersArray = v["NeuralNetwork"]["layers"].getArray();
         for(auto& la:layersArray){
-            NeuronLayer l;
-            l.setCyclesLimit(la["cyclesLimit"].getInteger());
-            l.setBias(la["bias"].getDouble());
-            auto type = la["neuronType"].getString();
-            l.setType(Neuron::typeToEnum(type));
-            auto actType = la["activationType"].getString();
-            l.setActivationType(Neuron::activationTypeToEnum(actType));
-            // build neurons
-            auto neuronsArray = la["neurons"].getArray();
-            for(auto& na:neuronsArray){
-                Neuron n;
-                n.setBiasWeight(na["biasWeight"].getDouble());
-                auto nType = na["type"].getString();
-                n.setType(Neuron::typeToEnum(nType));
-                auto nActType = na["activationType"].getString();
-                n.setActivationType(Neuron::activationTypeToEnum(nActType));
-                //build connections
-                auto conArray = na["connections"].getArray();
-                for(auto& ca:conArray){
-                    Link src(ca["src"]["layer"].getInteger(), ca["src"]["neuron"].getInteger());
-                    Link dest(ca["dest"]["layer"].getInteger(), ca["dest"]["neuron"].getInteger());
-                    auto weight = ca["weight"].getDouble();
-                    Connection c(src,dest, weight);
-                    n.addConnection(c);
-                }
-                l.addNeuron(n);
-            }
-            addLayer(l);
+            layers.emplace_back(la.getObject());
         }
     }
     NeuralNetwork& NeuralNetwork::addLayer(const NeuronLayer& l){
@@ -397,12 +381,13 @@ namespace EvoAI{
             a.push_back(l.toJson());
         }
         JsonBox::Object o;
-        o["version"] = JsonBox::Value("1.0");
-        o["NeuralNetwork"]["layers"] = JsonBox::Value(a);
+        o["layers"] = JsonBox::Value(a);
         return JsonBox::Value(o);
     }
     void NeuralNetwork::writeToFile(const std::string& filename) const{
-        auto v = toJson();
+        JsonBox::Value v;
+        v["version"] = JsonBox::Value("1.0");
+        v["NeuralNetwork"] = toJson();
         v.writeToFile(filename);
     }
     void NeuralNetwork::clear(){

@@ -6,6 +6,7 @@ namespace EvoAI{
     NodeGene::NodeGene(std::size_t lyrID, std::size_t nrnID)
     : layerID(lyrID)
     , neuronID(nrnID)
+    , biasWeight(1.0)
     , nrnType(Neuron::Type::HIDDEN)
     , actType(Neuron::ActivationType::SIGMOID)
     , innovationID(0){
@@ -14,15 +15,24 @@ namespace EvoAI{
     NodeGene::NodeGene(std::size_t lyrID, std::size_t nrnID, Neuron::Type nt, Neuron::ActivationType nat)
     : layerID(lyrID)
     , neuronID(nrnID)
+    , biasWeight(1.0)
     , nrnType(nt)
     , actType(nat)
     , innovationID(0){
         innovationID = std::hash<NodeGene>{}(*this);
     }
-    JsonBox::Value NodeGene::toJson() noexcept{
+    NodeGene::NodeGene(JsonBox::Object o)
+    : layerID(std::stoul(o["layerID"].getString()))
+    , neuronID(std::stoul(o["neuronID"].getString()))
+    , biasWeight(o["biasWeight"].getDouble())
+    , nrnType(Neuron::typeToEnum(o["nrnType"].getString()))
+    , actType(Neuron::activationTypeToEnum(o["actType"].getString()))
+    , innovationID(std::stoul(o["innovationID"].getString())){}
+    JsonBox::Value NodeGene::toJson() const noexcept{
         JsonBox::Object o;
         o["layerID"] = JsonBox::Value(std::to_string(layerID));
         o["neuronID"] = JsonBox::Value(std::to_string(neuronID));
+        o["biasWeight"] = JsonBox::Value(biasWeight);
         o["nrnType"] = JsonBox::Value(Neuron::typeToString(nrnType));
         o["actType"] = JsonBox::Value(Neuron::activationTypeToString(actType));
         o["innovationID"] = JsonBox::Value(std::to_string(innovationID));
@@ -46,11 +56,15 @@ namespace EvoAI{
     const std::size_t& NodeGene::getInnovationID() const noexcept{
         return innovationID;
     }
+    void NodeGene::setBias(const double& bw) noexcept{
+        biasWeight = bw;
+    }
+    const double& NodeGene::getBias() const noexcept{
+        return biasWeight;
+    }
     bool NodeGene::operator==(const NodeGene& rhs) const{
         return (layerID == rhs.layerID
                 && neuronID == rhs.neuronID
-                //&& nrnType == rhs.nrnType
-                //&& actType == rhs.actType
                 && innovationID == rhs.innovationID);
     }
     bool NodeGene::operator!=(const NodeGene& rhs) const{
