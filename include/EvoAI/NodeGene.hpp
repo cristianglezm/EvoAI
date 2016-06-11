@@ -75,6 +75,11 @@ namespace EvoAI{
              */
             const std::size_t& getInnovationID() const noexcept;
             /**
+             * @brief adds the amount to current bias.
+             * @param amount
+             */
+            void addBias(const double& amount) noexcept;
+            /**
              * @brief setter for the node bias.
              * @param bw bias weight
              */

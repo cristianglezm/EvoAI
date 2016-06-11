@@ -4,14 +4,6 @@
 #include <EvoAi/NeuronLayer.hpp>
 
 namespace EvoAI{
-    Genome::Genome()
-    : genomeID(0)
-    , speciesID(0)
-    , fitness(0.0)
-    , rnnAllowed(true)
-    , cppn(false)
-    , nodeChromosomes()
-    , connectionChromosomes(){}
     Genome::Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive, bool cppn)
     : genomeID(0)
     , speciesID(0)
@@ -37,6 +29,23 @@ namespace EvoAI{
             }
         }
     }
+    Genome::Genome(JsonBox::Object o)
+    : genomeID(std::stoul(o["GenomeID"].getString()))
+    , speciesID(std::stoul(o["SpeciesID"].getString()))
+    , fitness(o["fitness"].getDouble())
+    , rnnAllowed(o["rnnAllowed"].getBoolean())
+    , cppn(o["cppn"].getBoolean())
+    , nodeChromosomes()
+    , connectionChromosomes(){
+        auto& ngs = o["nodeChromosomes"].getArray();
+        for(auto& ng:ngs){
+            nodeChromosomes.emplace_back(ng.getObject());
+        }
+        auto& cgs = o["ConnectionChromosomes"].getArray();
+        for(auto& cg:cgs){
+            connectionChromosomes.emplace_back(cg.getObject());
+        }
+    }
     Genome::Genome(const std::string& jsonfile)
     : genomeID(0)
     , speciesID(0)
@@ -52,7 +61,7 @@ namespace EvoAI{
         cppn = v["cppn"].getBoolean();
         genomeID = std::stoul(v["GenomeID"].getString());
         speciesID = std::stoul(v["SpeciesID"].getString());
-        fitness = v["fitness"].getFloat();
+        fitness = v["fitness"].getDouble();
         auto& ngs = v["nodeChromosomes"].getArray();
         for(auto& ng:ngs){
             nodeChromosomes.emplace_back(ng.getObject());
@@ -161,23 +170,53 @@ namespace EvoAI{
         ConnectionGene cg(nodeChromosomes[selectedNode1],nodeChromosomes[selectedNode2],random(-5.0,5.0));
         connectionChromosomes.push_back(cg);
     }
-    void Genome::mutate() noexcept{
-        /// @todo mutate args rates etc
-        float nodeRate = 0.3, connectionRate = 0.4, perturbWeightsRate = 0.7; /// @todo remove and add args
+    void Genome::mutate(float nodeRate, float connectionRate, float perturbWeightsRate, float enableRate) noexcept{
         if(doAction(nodeRate)){
             mutateAddNode();
-        }
-        if(doAction(connectionRate)){
+        }else if(doAction(connectionRate)){
             mutateAddConnection();
-        }
-        if(doAction(perturbWeightsRate)){
-            /// @todo mutate weights
+        }else if(doAction(perturbWeightsRate)){
             mutateWeights(2);
+        }else if(doAction(enableRate)){
+            mutateEnable();
         }
     }
-    /// @todo look at src genome NEAT
     void Genome::mutateWeights(double power) noexcept{
-        /// @todo implement also mutate node Weights
+        /// @todo review
+        auto nodeOrConn = doAction(0.5);
+        auto shakeThingsUp = doAction(0.5);
+        auto isNegative = doAction(0.5);
+        if(nodeOrConn){
+            auto selectedNode = random(0,nodeChromosomes.size() - 1);
+            auto isOld = (selectedNode < (nodeChromosomes.size() / 2));
+            if(isOld){
+                power += power * -selectedNode * 0.8;
+            }
+            auto weight = power * random(0.0,5.0);
+            if(isNegative){
+                weight = -weight;
+            }
+            if(shakeThingsUp){
+                nodeChromosomes[selectedNode].setBias(weight);
+            }else{
+                nodeChromosomes[selectedNode].addBias(weight);
+            }
+        }else{
+            auto selectedConnection = random(0,connectionChromosomes.size() - 1);
+            auto isOld = (selectedConnection < (connectionChromosomes.size() / 2));
+            if(isOld){
+                power += power * -selectedConnection * 0.8;
+            }
+            auto weight = power * random(0.0,5.0);
+            if(isNegative){
+                weight = -weight;
+            }
+            if(shakeThingsUp){
+                connectionChromosomes[selectedConnection].setWeight(weight);
+            }else{
+                connectionChromosomes[selectedConnection].addWeight(weight);
+            }
+        }
     }
     void Genome::mutateEnable() noexcept{
         for(auto& c:connectionChromosomes){
@@ -279,14 +318,18 @@ namespace EvoAI{
         std::vector<NodeGene> nGenes;
         std::vector<ConnectionGene> cGenes;
         matchingChromosomes mChromo = getMatchingChromosomes(g1,g2);
-        for(auto i=0u;i<mChromo.first.first.size();++i){
+        auto matchingNodeSize = mChromo.first.first.size();
+        for(auto i=0u;i<matchingNodeSize;++i){
             auto selectFromFirstParent = doAction(0.5);
             if(selectFromFirstParent){
                 nGenes.push_back(mChromo.first.first[i]);
             }else{
                 nGenes.push_back(mChromo.first.second[i]);
             }
-            selectFromFirstParent = doAction(0.5);
+        }
+        auto matchingConnectionSize = mChromo.second.first.size();
+        for(auto i=0u;i<matchingConnectionSize;++i){
+            auto selectFromFirstParent = doAction(0.5);
             auto isDisabled = doAction(0.5);
             if(selectFromFirstParent){
                 if(!mChromo.second.first[i].isEnabled()

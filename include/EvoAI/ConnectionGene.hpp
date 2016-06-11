@@ -55,6 +55,11 @@ namespace EvoAI{
              */
             JsonBox::Value toJson() const noexcept;
             /**
+             * @brief adds the amount to the current weight.
+             * @param amount
+             */
+            void addWeight(const double& amount) noexcept;
+            /**
              * @brief setter for weight
              * @param w
              */

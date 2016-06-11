@@ -13,6 +13,7 @@
 namespace EvoAI{
      /**
       * @todo Shared fitness with species formula
+      * @todo document
       */
     class Genome final{
         public:
@@ -26,9 +27,9 @@ namespace EvoAI{
             using disjointConnectionGenes = std::vector<ConnectionGene>;
             using disjointGenes = std::pair<disjointNodeGenes, disjointConnectionGenes>;
         public:
-            Genome();
-            Genome(const std::string& jsonfile);
             Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive = true, bool cppn = false);
+            Genome::Genome(JsonBox::Object o);
+            Genome(const std::string& jsonfile);
             void addGene(const NodeGene& ng) noexcept;
             void addGene(const ConnectionGene& cg) noexcept;
             void setNodeChromosomes(std::vector<NodeGene>&& ngenes) noexcept;
@@ -48,14 +49,24 @@ namespace EvoAI{
             const std::size_t& getSpeciesID() const noexcept;
             void mutateAddNode() noexcept;
             void mutateAddConnection() noexcept;
-            /// @todo look at src genome NEAT
+            /**
+             * @brief mutates the weights of NodeGenes and ConnectionGenes.
+             * @param power
+             */
             void mutateWeights(double power) noexcept;
             /**
              * @brief finds a connectionGene that is not enabled and enables it.
              */
             void mutateEnable() noexcept;
-            /// @todo add mutationRates Info?
-            void mutate() noexcept;
+            /**
+             * @brief mutates the genome
+             * Rates 0.0-1.0
+             * @param nodeRate float
+             * @param connectionRate float
+             * @param perturbWeightsRate float
+             * @param enableRate float
+             */
+            void mutate(float nodeRate = 0.3, float connectionRate = 0.4, float perturbWeightsRate = 0.7, float enableRate = 0.2) noexcept;
             ~Genome() = default;
             /**
              * @brief returns a random ActivationType.
@@ -110,10 +121,18 @@ namespace EvoAI{
              * @return disjointGenes
              */
             static disjointGenes getDisjointGenes(const Genome& g1, const Genome& g2) noexcept;
-            /// genes are randomly chosen from either parent at matching genes,
-            /// whereas all excess or disjoint genes are always included from the more fit parent
-            /// there’s a preset chance that an inherited gene is disabled if it is disabled in either parent
+            /**
+             * @brief Creates a new Genome from two parents.
+             * @param g1 const Genome&
+             * @param g2 const Genome&
+             * @return std::unique_ptr<Genome>
+             */
             static std::unique_ptr<Genome> reproduce(const Genome& g1, const Genome& g2) noexcept;
+            /**
+             * @brief Creates a NeuralNetwork from a Genomme.
+             * @param g Genome
+             * @return std::unique_ptr<NeuralNetwork>
+             */
             static std::unique_ptr<NeuralNetwork> makePhenotype(Genome& g) noexcept;
         private:
             std::size_t genomeID;
@@ -126,4 +145,4 @@ namespace EvoAI{
     };
 }
 
-#endif // #ifndef EVOAI_GENOME_HPP
+#endif // EVOAI_GENOME_HPP

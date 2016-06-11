@@ -56,6 +56,9 @@ namespace EvoAI{
     const std::size_t& NodeGene::getInnovationID() const noexcept{
         return innovationID;
     }
+    void NodeGene::addBias(const double& amount) noexcept{
+        biasWeight += amount;
+    }
     void NodeGene::setBias(const double& bw) noexcept{
         biasWeight = bw;
     }

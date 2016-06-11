@@ -34,6 +34,9 @@ namespace EvoAI{
         o["innovationID"] = JsonBox::Value(std::to_string(innovationID));
         return JsonBox::Value(o);
     }
+    void ConnectionGene::addWeight(const double& amount) noexcept{
+        c.setWeight(c.getWeight() + amount);
+    }
     void ConnectionGene::setWeight(double w) noexcept{
         c.setWeight(w);
     }

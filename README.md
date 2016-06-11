@@ -24,7 +24,7 @@ Use CMake to build the project.
 mkdir build && cd build
 cmake -G"MinGW Makefiles" -DSFML_ROOT=<baseDir> -DJSONBOX_ROOT=<baseDir> \ 
 -DGMOCK_ROOT=<baseDir> -DGTEST_ROOT=<baseDir> \ 
--DBUILD_TESTS=TRUE -DBUILD_EXAMPLES=TRUE -DBUILD_DOCS=TRUE -DBUILD_TOOLS=TRUE ..
+-DEvoAI_BUILD_TESTS=TRUE -DEvoAI_BUILD_EXAMPLES=TRUE -DEvoAI_BUILD_DOCS=TRUE -DEvoAI_BUILD_TOOLS=TRUE ..
 make -j3
 make install
 
@@ -35,4 +35,4 @@ make install
 
 ## Documentation ##
 
-To make the documentation you will need doxygen amd dot.
+To make the documentation you will need doxygen and dot.
