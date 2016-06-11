@@ -13,7 +13,6 @@
 namespace EvoAI{
      /**
       * @todo Shared fitness with species formula
-      * @todo how to identify excess and disjoint nodes.
       */
     class Genome final{
         public:
@@ -97,7 +96,19 @@ namespace EvoAI{
              * @return matchingChromosomes
              */
             static matchingChromosomes getMatchingChromosomes(const Genome& g1, const Genome& g2) noexcept;
+            /**
+             * @brief returns Excess genes of g1
+             * @param g1 const Genome&
+             * @param g2 const Genome&
+             * @return excessGenes
+             */
             static excessGenes getExcessGenes(const Genome& g1, const Genome& g2) noexcept;
+            /**
+             * @brief returns Disjoint genes of g1
+             * @param g1 const Genome&
+             * @param g2 const Genome&
+             * @return disjointGenes
+             */
             static disjointGenes getDisjointGenes(const Genome& g1, const Genome& g2) noexcept;
             /// genes are randomly chosen from either parent at matching genes,
             /// whereas all excess or disjoint genes are always included from the more fit parent

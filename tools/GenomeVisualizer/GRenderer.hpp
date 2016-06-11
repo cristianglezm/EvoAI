@@ -13,7 +13,15 @@ namespace EvoAI{
             void Render(sf::RenderWindow& win,bool renderTexts = false) noexcept;
             ~GRenderer() = default;
         private:
+            struct GenomeInfo{
+                sf::Text info;
+                sf::RectangleShape rect;
+            }
+        private:
+            void setUpInfo();
+        private:
             Genome genome;
+            sf::RectangleShape gRect;
             sf::Font font;
     };
 }
