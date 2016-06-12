@@ -33,7 +33,7 @@ int main(int argc,char **argv){
         }
         if(filename.empty()){
             std::cout << "creating neural network..." << std::endl;
-            nn = EvoAI::createFeedForwardNN(4,3,15,3,1.0);
+            nn = EvoAI::createFeedForwardNN(4,3,20,3,1.0);
         }else{
             std::cout << "loading neural network..." << std::endl;
             nn = std::make_unique<EvoAI::NeuralNetwork>(filename);

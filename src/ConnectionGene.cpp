@@ -19,12 +19,19 @@ namespace EvoAI{
     : enabled(o["enabled"].getBoolean())
     , frozen(o["frozen"].getBoolean())
     , c(o["Connection"].getObject())
-    , innovationID(std::stoul(o["innovationID"].getString())){}
+    , innovationID(std::stoull(o["innovationID"].getString())){}
     bool ConnectionGene::isEnabled() const noexcept{
         return enabled;
     }
     void ConnectionGene::setEnabled(bool en) noexcept{
         enabled = en;
+    }
+    std::string ConnectionGene::toString(const std::string& delimiter) const noexcept{
+        std::string str;
+        str += "ID: " + std::to_string(innovationID) + delimiter + "conn: [" + std::to_string(getSrc().layer) + ", " + std::to_string(getSrc().neuron)
+            + "] -> [" + std::to_string(getDest().layer) + ", " + std::to_string(getDest().neuron) + "]" + delimiter + "w: " + std::to_string(getWeight())
+            + delimiter + "disabled: " + (enabled ? "true":"false");
+        return str;
     }
     JsonBox::Value ConnectionGene::toJson() const noexcept{
         JsonBox::Object o;

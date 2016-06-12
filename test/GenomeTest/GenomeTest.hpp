@@ -13,8 +13,8 @@ namespace EvoAI{
             EXPECT_EQ(5u,cppn.getNodeChromosomes().size());
             EXPECT_EQ(0u,cppn.getGenomeID());
             EXPECT_EQ(0u,cppn.getSpeciesID());
-            Genome g1(3,3,true,true);
-            Genome g2(3,3,true,true);
+            Genome g1(4,3,true,true);
+            Genome g2(4,3,true,true);
             for(auto i=0u;i<50;++i){
                 g1.mutate();
                 g2.mutate();
@@ -37,8 +37,9 @@ namespace EvoAI{
             EXPECT_EQ(6u,g.getConnectionChromosomes().size());
             g.mutateAddNode();
             EXPECT_EQ(6u,g.getNodeChromosomes().size());
+            EXPECT_EQ(8u,g.getConnectionChromosomes().size());
             g.mutateAddConnection();
-            EXPECT_EQ(7u,g.getNodeChromosomes().size());
+            EXPECT_EQ(9u,g.getConnectionChromosomes().size());
             g.mutate();
             EXPECT_TRUE(g.isValid());
         }
@@ -79,7 +80,7 @@ namespace EvoAI{
         TEST(GenomeTest, Distance){
             Genome g1(1,2,true,true);
             Genome g2(1,2,true,true);
-            EXPECT_EQ(0.0,Genome::distance(g1,g2));
+            EXPECT_TRUE(Genome::distance(g1,g2) <= 1.0);
         }
     }
 }

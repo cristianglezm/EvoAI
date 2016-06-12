@@ -22,12 +22,12 @@ namespace EvoAI{
         innovationID = std::hash<NodeGene>{}(*this);
     }
     NodeGene::NodeGene(JsonBox::Object o)
-    : layerID(std::stoul(o["layerID"].getString()))
-    , neuronID(std::stoul(o["neuronID"].getString()))
+    : layerID(std::stoull(o["layerID"].getString()))
+    , neuronID(std::stoull(o["neuronID"].getString()))
     , biasWeight(o["biasWeight"].getDouble())
     , nrnType(Neuron::typeToEnum(o["nrnType"].getString()))
     , actType(Neuron::activationTypeToEnum(o["actType"].getString()))
-    , innovationID(std::stoul(o["innovationID"].getString())){}
+    , innovationID(std::stoull(o["innovationID"].getString())){}
     JsonBox::Value NodeGene::toJson() const noexcept{
         JsonBox::Object o;
         o["layerID"] = JsonBox::Value(std::to_string(layerID));

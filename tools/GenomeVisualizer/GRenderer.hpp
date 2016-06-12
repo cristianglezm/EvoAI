@@ -9,20 +9,21 @@
 namespace EvoAI{
     class GRenderer{
         public:
-            GRenderer(Genome* g);
-            void Render(sf::RenderWindow& win,bool renderTexts = false) noexcept;
+            GRenderer(Genome* g, const sf::Vector2f& position);
+            void Render(sf::RenderWindow& win) noexcept;
             ~GRenderer() = default;
         private:
             struct GenomeInfo{
                 sf::Text info;
                 sf::RectangleShape rect;
-            }
+            };
         private:
             void setUpInfo();
         private:
             Genome* genome;
             sf::RectangleShape gRect;
             sf::Font font;
+            std::vector<GenomeInfo> gInfos;
     };
 }
 

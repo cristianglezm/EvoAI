@@ -50,6 +50,11 @@ namespace EvoAI{
              */
             void setEnabled(bool en) noexcept;
             /**
+             * @brief returns a std::string
+             * @return std::string
+             */
+            std::string toString(const std::string& delimiter = " ") const noexcept;
+            /**
              * @brief returns a json of the connectionGene
              * @return JsonBox::Value
              */

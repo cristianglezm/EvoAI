@@ -5,6 +5,7 @@
 #include <memory>
 #include <cmath>
 #include <EvoAI/Utils.hpp>
+#include <EvoAI/Genome.hpp>
 #include "imageUtils.hpp"
 
 void usage(){
@@ -136,7 +137,8 @@ int main(int argc, char **argv){
             }
         }
     }else if(optGenome){
-        std::cout << "Not yet Implemented." << std::endl; /// TODO
+        std::cout << "Not yet Implemented." << std::endl; /// @todo
+        //nn = Genome::makePhenotype(Genome(genomeFile));
         return EXIT_FAILURE;
     }
     if(optSave){

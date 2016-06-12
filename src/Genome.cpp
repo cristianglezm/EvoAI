@@ -38,8 +38,8 @@ namespace EvoAI{
         }
     }
     Genome::Genome(JsonBox::Object o)
-    : genomeID(std::stoul(o["GenomeID"].getString()))
-    , speciesID(std::stoul(o["SpeciesID"].getString()))
+    : genomeID(std::stoull(o["GenomeID"].getString()))
+    , speciesID(std::stoull(o["SpeciesID"].getString()))
     , fitness(o["fitness"].getDouble())
     , rnnAllowed(o["rnnAllowed"].getBoolean())
     , cppn(o["cppn"].getBoolean())
@@ -67,8 +67,8 @@ namespace EvoAI{
         auto& v = json["Genome"];
         rnnAllowed = v["rnnAllowed"].getBoolean();
         cppn = v["cppn"].getBoolean();
-        genomeID = std::stoul(v["GenomeID"].getString());
-        speciesID = std::stoul(v["SpeciesID"].getString());
+        genomeID = std::stoull(v["GenomeID"].getString());
+        speciesID = std::stoull(v["SpeciesID"].getString());
         fitness = v["fitness"].getDouble();
         auto& ngs = v["nodeChromosomes"].getArray();
         for(auto& ng:ngs){
@@ -175,8 +175,7 @@ namespace EvoAI{
     void Genome::mutateAddConnection() noexcept{
         auto selectedNode1 = random(0,nodeChromosomes.size()-1);
         auto selectedNode2 = random(0,nodeChromosomes.size()-1);
-        ConnectionGene cg(nodeChromosomes[selectedNode1],nodeChromosomes[selectedNode2],random(-5.0,5.0));
-        connectionChromosomes.push_back(cg);
+        connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], random(-5.0,5.0));
     }
     void Genome::mutateWeights(double power) noexcept{
         /// @todo review

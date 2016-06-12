@@ -32,5 +32,6 @@ endif()
 
 # Add Tools
 add_subdirectory(NeuralNetworkVisualizer)
+add_subdirectory(GenomeVisualizer)
 add_subdirectory(ImageGenerator)
 add_subdirectory(SoundGenerator)

@@ -5,8 +5,8 @@ namespace EvoAI{
     : layer(layer)
     , neuron(neuron){}
     Link::Link(JsonBox::Object o)
-    : layer(std::stoul(o["layer"].getString()))
-    , neuron(std::stoul(o["neuron"].getString())){}
+    : layer(std::stoull(o["layer"].getString()))
+    , neuron(std::stoull(o["neuron"].getString())){}
     JsonBox::Value Link::toJson() const noexcept{
         JsonBox::Object o;
         o["layer"] = JsonBox::Value(std::to_string(layer));
