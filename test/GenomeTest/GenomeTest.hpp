@@ -30,10 +30,20 @@ namespace EvoAI{
             childNN->writeToFile("g1g2Childnn.json");
         }
         TEST(GenomeTest, Mutation){
-            /// @todo add tests for some important functions?
+            Genome g(3,2,true,true);
+            EXPECT_EQ(0u,g.getGenomeID());
+            EXPECT_EQ(0u,g.getSpeciesID());
+            EXPECT_EQ(5u,g.getNodeChromosomes().size());
+            EXPECT_EQ(6u,g.getConnectionChromosomes().size());
+            g.mutateAddNode();
+            EXPECT_EQ(6u,g.getNodeChromosomes().size());
+            g.mutateAddConnection();
+            EXPECT_EQ(7u,g.getNodeChromosomes().size());
+            g.mutate();
+            EXPECT_TRUE(g.isValid());
         }
         TEST(GenomeTest, Reproduce){
-            /// @todo add tests for some important functions?
+            /// @todo add EXPECT_* ideas?
             std::vector<std::unique_ptr<Genome>> fathers;
             std::vector<std::unique_ptr<Genome>> mothers;
             std::vector<std::unique_ptr<Genome>> children;
@@ -67,7 +77,9 @@ namespace EvoAI{
             Genome::makePhenotype(*greatGrandSon2)->writeToFile("greatGrandSon2NN.json");
         }
         TEST(GenomeTest, Distance){
-            /// @todo add tests for some important functions?
+            Genome g1(1,2,true,true);
+            Genome g2(1,2,true,true);
+            EXPECT_EQ(0.0,Genome::distance(g1,g2));
         }
     }
 }

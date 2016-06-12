@@ -20,7 +20,7 @@ namespace EvoAI{
         private:
             void setUpInfo();
         private:
-            Genome genome;
+            Genome* genome;
             sf::RectangleShape gRect;
             sf::Font font;
     };

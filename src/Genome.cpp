@@ -4,6 +4,14 @@
 #include <EvoAi/NeuronLayer.hpp>
 
 namespace EvoAI{
+    Genome::Genome()
+    : genomeID(0)
+    , speciesID(0)
+    , fitness(0.0)
+    , rnnAllowed(true)
+    , cppn(false)
+    , nodeChromosomes()
+    , connectionChromosomes(){}
     Genome::Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive, bool cppn)
     : genomeID(0)
     , speciesID(0)
@@ -170,17 +178,6 @@ namespace EvoAI{
         ConnectionGene cg(nodeChromosomes[selectedNode1],nodeChromosomes[selectedNode2],random(-5.0,5.0));
         connectionChromosomes.push_back(cg);
     }
-    void Genome::mutate(float nodeRate, float connectionRate, float perturbWeightsRate, float enableRate) noexcept{
-        if(doAction(nodeRate)){
-            mutateAddNode();
-        }else if(doAction(connectionRate)){
-            mutateAddConnection();
-        }else if(doAction(perturbWeightsRate)){
-            mutateWeights(2);
-        }else if(doAction(enableRate)){
-            mutateEnable();
-        }
-    }
     void Genome::mutateWeights(double power) noexcept{
         /// @todo review
         auto nodeOrConn = doAction(0.5);
@@ -188,7 +185,7 @@ namespace EvoAI{
         auto isNegative = doAction(0.5);
         if(nodeOrConn){
             auto selectedNode = random(0,nodeChromosomes.size() - 1);
-            auto isOld = (selectedNode < (nodeChromosomes.size() / 2));
+            auto isOld = ((static_cast<std::size_t>(selectedNode)) < (nodeChromosomes.size() / 2));
             if(isOld){
                 power += power * -selectedNode * 0.8;
             }
@@ -203,7 +200,7 @@ namespace EvoAI{
             }
         }else{
             auto selectedConnection = random(0,connectionChromosomes.size() - 1);
-            auto isOld = (selectedConnection < (connectionChromosomes.size() / 2));
+            auto isOld = ((static_cast<std::size_t>(selectedConnection)) < (connectionChromosomes.size() / 2));
             if(isOld){
                 power += power * -selectedConnection * 0.8;
             }
@@ -225,6 +222,36 @@ namespace EvoAI{
                 break;
             }
         }
+    }
+    void Genome::mutate(float nodeRate, float connectionRate, float perturbWeightsRate, float enableRate) noexcept{
+        if(doAction(nodeRate)){
+            mutateAddNode();
+        }else if(doAction(connectionRate)){
+            mutateAddConnection();
+        }else if(doAction(perturbWeightsRate)){
+            mutateWeights(2);
+        }else if(doAction(enableRate)){
+            mutateEnable();
+        }
+    }
+    bool Genome::isValid() noexcept{
+        for(auto& n:nodeChromosomes){
+            if(((n.getLayerID() < 0) || (n.getLayerID() > 3)) 
+                    || (n.getNeuronID() >= getNumOfNodes(n.getLayerID()))){
+                return false;
+            }
+        }
+        for(auto& c:connectionChromosomes){
+            auto& src = c.getSrc();
+            auto& dest = c.getDest();
+            if((src.layer > 3) || (src.layer < 0)
+                || (src.neuron >= getNumOfNodes(src.layer))
+                || (dest.layer > 3) || (dest.layer < 0)
+                || (dest.neuron >= getNumOfNodes(dest.layer))){
+                return false;
+            }
+        }
+        return true;
     }
 //////////
 //// Static Functions

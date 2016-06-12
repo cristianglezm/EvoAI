@@ -27,8 +27,9 @@ namespace EvoAI{
             using disjointConnectionGenes = std::vector<ConnectionGene>;
             using disjointGenes = std::pair<disjointNodeGenes, disjointConnectionGenes>;
         public:
+            Genome();
             Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive = true, bool cppn = false);
-            Genome::Genome(JsonBox::Object o);
+            Genome(JsonBox::Object o);
             Genome(const std::string& jsonfile);
             void addGene(const NodeGene& ng) noexcept;
             void addGene(const ConnectionGene& cg) noexcept;
@@ -67,6 +68,11 @@ namespace EvoAI{
              * @param enableRate float
              */
             void mutate(float nodeRate = 0.3, float connectionRate = 0.4, float perturbWeightsRate = 0.7, float enableRate = 0.2) noexcept;
+            /**
+             * @brief Checks if the genome is valid.
+             * @return bool true if all is ok 
+             */
+            bool isValid() noexcept;
             ~Genome() = default;
             /**
              * @brief returns a random ActivationType.
