@@ -8,6 +8,8 @@
 #include "GenomeTest/GenomeTest.hpp"
 #include "NodeGeneTest/NodeGeneTest.hpp"
 #include "ConnectionGeneTest/ConnectionGeneTest.hpp"
+#include "PopulationTest/PopulationTest.hpp"
+#include "SpeciesTest/SpeciesTest.hpp"
 
 int main(int argc, char** argv){
     std::cout << "Initializing Tests...." << std::endl;

@@ -178,7 +178,6 @@ namespace EvoAI{
         connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], random(-5.0,5.0));
     }
     void Genome::mutateWeights(double power) noexcept{
-        /// @todo review
         auto nodeOrConn = doAction(0.5);
         auto shakeThingsUp = doAction(0.5);
         auto isNegative = doAction(0.5);
@@ -199,6 +198,9 @@ namespace EvoAI{
             }
         }else{
             auto selectedConnection = random(0,connectionChromosomes.size() - 1);
+            if(connectionChromosomes[selectedConnection].isFrozen()){
+                return;
+            }
             auto isOld = ((static_cast<std::size_t>(selectedConnection)) < (connectionChromosomes.size() / 2));
             if(isOld){
                 power += power * -selectedConnection * 0.8;

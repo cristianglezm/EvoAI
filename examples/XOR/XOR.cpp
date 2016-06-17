@@ -35,7 +35,6 @@ int main(){
         nn->train(std::move(inputs),std::move(outputs),0.7,0.3,50);
     }while(nn->getMSE() > 0.01);
     std::cout << "Post Training" << std::endl;
-    nn->writeToFile("XORNN-PostTraining.json");
     for(auto i=0u;i<4;++i){
         std::vector<double> input;
         input.emplace_back(x[i]);

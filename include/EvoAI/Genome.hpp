@@ -11,10 +11,6 @@
 #include <functional>
 
 namespace EvoAI{
-     /**
-      * @todo Shared fitness with species formula
-      * @todo document
-      */
     class Genome final{
         public:
             using matchingNodeGenes = std::pair<std::vector<NodeGene>, std::vector<NodeGene>>;
@@ -89,9 +85,9 @@ namespace EvoAI{
              * @return double
              */
             static double distance(const Genome& g1, const Genome& g2, 
-                                    const double& c1 = 0.4, 
-                                    const double& c2 = 0.3, 
-                                    const double& c3 = 0.1) noexcept;
+                                    const double& c1 = 2.0, 
+                                    const double& c2 = 2.0, 
+                                    const double& c3 = 1.0) noexcept;
             /**
              * @brief returns the matching NodeGenes between two genomes.
              * @param g1 Genome

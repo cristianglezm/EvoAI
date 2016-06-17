@@ -103,6 +103,9 @@ namespace EvoAI{
 }
 
 namespace std{
+    /**
+     * @brief specialization of std::hash for EvoAI::NodeGene
+     */
     template<>
     struct hash<EvoAI::NodeGene>{
         using argument_type = EvoAI::NodeGene;

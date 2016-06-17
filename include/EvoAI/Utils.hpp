@@ -33,7 +33,8 @@ namespace EvoAI{
     /**
      * @brief Combines two hashes
      * @param seed std::size_t
-     * @param v T&
+     * @param v const T& hasheable Object
+     * @return std::size_t
      */
     template <class T>
     inline std::size_t hashCombine(std::size_t seed, const T& v) noexcept;
@@ -69,7 +70,7 @@ namespace EvoAI{
      * 
      * @param numInputs number of inputs
      * @param numHidden number of hidden layers
-     * @param numNeuronsPerHidden number of neurons per hidden layer
+     * @param numNeuronsPerHiddenLayer number of neurons per hidden layer
      * @param numOutputs number of outputs
      * @param bias bias
      * @return std::unique_ptr<NeuralNetwork>
@@ -80,7 +81,7 @@ namespace EvoAI{
      * @brief Creates a fully connected CPPN with random activations functions.
      * @param numInputs number of inputs
      * @param numHidden number of hidden layers
-     * @param numNeuronsPerHidden number of neurons per hidden layer
+     * @param numNeuronsPerHiddenLayer number of neurons per hidden layer
      * @param numOutputs number of outputs
      * @param bias bias
      * @return std::unique_ptr<NeuralNetwork>
@@ -91,7 +92,7 @@ namespace EvoAI{
      * @brief Creates a CPPN with random activations functions and some random connections.
      * @param numInputs number of inputs
      * @param numHidden number of hidden layers
-     * @param numNeuronsPerHidden number of neurons per hidden layer
+     * @param numNeuronsPerHiddenLayer number of neurons per hidden layer
      * @param numOutputs number of outputs
      * @param bias bias
      * @return std::unique_ptr<NeuralNetwork>

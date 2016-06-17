@@ -3,8 +3,7 @@
 TODO:
 
 * Implement NEAT-CPPN
-    * genome, species, pop?
-    * GRenderer, GenomeVisualizer?
+    * species, pop?
 * ImageGenerator implement genome options etc
 * SoundGenerator implement genome options etc
 * Implement ES-HyperNEAT?

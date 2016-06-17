@@ -23,7 +23,7 @@ namespace EvoAI{
              * INPUT: this neuron will take the values provided and just pass them along.
              * OUTPUT: this neuron will hold the results.
              */
-            enum class Type{
+            enum Type{
                 CONTEXT,
                 HIDDEN,
                 INPUT,
@@ -55,8 +55,8 @@ namespace EvoAI{
                 NOISY_RELU,
                 LEAKY_RELU,
                 EXPONENTIAL,
-                LAST_CPPN_ACTIVATION_TYPE,
                 GAUSSIAN,
+                LAST_CPPN_ACTIVATION_TYPE,
                 SOFTMAX
             };
             /**

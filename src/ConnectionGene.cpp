@@ -30,7 +30,7 @@ namespace EvoAI{
         std::string str;
         str += "ID: " + std::to_string(innovationID) + delimiter + "conn: [" + std::to_string(getSrc().layer) + ", " + std::to_string(getSrc().neuron)
             + "] -> [" + std::to_string(getDest().layer) + ", " + std::to_string(getDest().neuron) + "]" + delimiter + "w: " + std::to_string(getWeight())
-            + delimiter + "disabled: " + (enabled ? "true":"false");
+            + delimiter + "enabled: " + (enabled ? "true":"false");
         return str;
     }
     JsonBox::Value ConnectionGene::toJson() const noexcept{

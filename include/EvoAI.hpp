@@ -1,7 +1,8 @@
 #ifndef EVOAI_HPP
 #define EVOAI_HPP
 
-#include "EvoAI/Neat.hpp"
+#include "EvoAI/Population.hpp"
+#include "EvoAI/Species.hpp"
 #include "EvoAI/Activations.hpp"
 #include "EvoAI/Connection.hpp"
 #include "EvoAI/Connector.hpp"

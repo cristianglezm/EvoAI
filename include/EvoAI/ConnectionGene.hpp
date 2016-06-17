@@ -121,6 +121,9 @@ namespace EvoAI{
     };
 }
 namespace std{
+    /**
+     * @brief specialization of std::hash for EvoAI::ConnectionGene
+     */
     template<>
     struct hash<EvoAI::ConnectionGene>{
         using argument_type = EvoAI::ConnectionGene;
