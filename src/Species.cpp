@@ -73,11 +73,14 @@ namespace EvoAI{
                         return (g1->getFitness() > g2->getFitness());
                     });
     }
-    void Species::clear() noexcept{
+    void Species::clearGenomes() noexcept{
         genomes.clear();
     }
     Genome* Species::getRepresentative() const noexcept{
-        return genomes[0];
+        if(!genomes.empty()){
+            return genomes[0];
+        }
+        return nullptr;
     }
     Genome* Species::getChampion() noexcept{
         Genome* champ = nullptr;
@@ -116,6 +119,10 @@ namespace EvoAI{
     }
     const std::size_t& Species::getAge() const noexcept{
         return age;
+    }
+    bool Species::has(Genome* g) const noexcept{
+        auto found = std::find(std::begin(genomes),std::end(genomes),g);
+        return (found != std::end(genomes));
     }
     void Species::setGenomes(std::vector<Genome*>&& gs) noexcept{
         genomes = std::move(gs);

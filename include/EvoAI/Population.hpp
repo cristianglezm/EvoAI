@@ -19,21 +19,22 @@ namespace EvoAI{
     class Population{
         public:
             Population();
-            Population(const std::size_t& numInputs, const std::size_t& numOutputs, const std::size_t& size, bool canBeRecurrent = false, bool cppn = false);
+            Population(const std::size_t& size, const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecurrent = false, bool cppn = false);
             Population(JsonBox::Object o);
             Population(const std::string& filename);
             Genome* findGenome(const std::size_t& id) noexcept;
+            Genome* getBestGenome() const noexcept;
             Species* findSpecies(const std::size_t& id) noexcept;
             std::vector<std::unique_ptr<Genome>>& getGenomes() noexcept;
             std::vector<std::unique_ptr<Species>>& getSpecies() noexcept;
-            void speciate(const double& CompatibilityThreshold = 6.0) noexcept;
+            void speciate(const double& CompatibilityThreshold = 6.0, const std::size_t& maxAge = 20) noexcept;
             void reproduce(bool interSpecies) noexcept;
             void orderGenomesByFitness() noexcept;
             void orderSpeciesByAge() noexcept;
             void orderSpeciesByFitness() noexcept;
             void rankWithinSpecies() noexcept;
             void removeGenomesFromSpecies(const std::size_t& speciesID) noexcept;
-            std::size_t getGenomesSize() const noexcept;
+            std::size_t getPopulationSize() const noexcept;
             std::size_t getSpeciesSize() const noexcept;
             JsonBox::Value toJson() const noexcept;
             void writeToFile(const std::string& filename);
@@ -41,6 +42,7 @@ namespace EvoAI{
         private:
             std::vector<std::unique_ptr<Genome>> genomes;
             std::vector<std::unique_ptr<Species>> species;
+            std::size_t PopulationSize;
     };
 }
 

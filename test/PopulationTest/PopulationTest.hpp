@@ -8,12 +8,12 @@ namespace EvoAI{
     namespace Test{
         TEST(PopulationTest, Constructor){
             /// @todo
-            Population p(2,1,50);
+            Population p(10,2,1);
             std::vector<double> x = {0.0,0.0,1.0,1.0};
             std::vector<double> y = {0.0,1.0,0.0,1.0};
             std::vector<double> truth = {0.0,1.0,1.0,0.0};
-            auto winner = 0u;
             for(auto i=0u;i<15;++i){
+                std::cout << "GEN " << i << std::endl;
                 for(auto& g:p.getGenomes()){
                     std::vector<double> results;
                     std::cout << "--start----" << std::endl;
@@ -29,26 +29,22 @@ namespace EvoAI{
                                         + std::fabs(1.0-results[1])
                                         + std::fabs(1.0-results[2])
                                         + std::fabs(results[3]));
-                    if(results[0] == 0 && results[1] == 1 && results[2] == 1 && results[3] == 0){
-                        winner = g->getGenomeID();
-                    }
                     g->setFitness(std::pow((4.0 - errorSum), 2));
                     std::cout << "error: "<< errorSum << std::endl;
                     std::cout << "Fitness: " << g->getFitness() << std::endl;
                 }
-                if(winner){
-                    break;
-                }
-                p.reproduce(true);
+                //p.reproduce(true);
             }
             std::cout << "Selecting Winner..." << std::endl;
-            auto g = p.findGenome(winner);
-            g->writeToFile("genomeSolvedXOR.json");
-            auto nn = Genome::makePhenotype(*g);
-            for(auto i=0u;i<4;++i){
-                nn->setInputs({x[i],y[i]});
-                auto out = nn->run();
-                std::cout << "x: " << x[i] << ", y: " << y[i] << " -> " << (out[0] > 0.5 ? 1:0) << " == " << truth[i]<< std::endl;
+            auto g = p.getBestGenome();
+            if(g){
+                g->writeToFile("genomeSolvedXOR.json");
+                auto nn = Genome::makePhenotype(*g);
+                for(auto i=0u;i<4;++i){
+                    nn->setInputs({x[i],y[i]});
+                    auto out = nn->run();
+                    std::cout << "x: " << x[i] << ", y: " << y[i] << " -> " << (out[0] > 0.5 ? 1:0) << " == " << truth[i]<< std::endl;
+                }
             }
         }
     }

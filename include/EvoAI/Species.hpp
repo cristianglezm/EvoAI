@@ -13,7 +13,9 @@
 
 namespace EvoAI{
     /**
-     * @todo implement
+     * @class Species
+     * @author Cristian Glez <Cristian.glez.m@gmail.com>
+     * @brief Class that represents a species
      */
     class Species{
         public:
@@ -25,7 +27,7 @@ namespace EvoAI{
             void computeAvgFitness() noexcept;
             void computeMaxFitness() noexcept;
             void rank() noexcept;
-            void clear() noexcept;
+            void clearGenomes() noexcept;
             Genome* getRepresentative() const noexcept;
             Genome* getChampion() noexcept;
             bool isNovel() const noexcept;
@@ -40,6 +42,7 @@ namespace EvoAI{
             void setGenomes(std::vector<Genome*>&& gs) noexcept;
             void addGenome(Genome* g) noexcept;
             void removeGenome(Genome* g) noexcept;
+            bool has(Genome* g) const noexcept;
             std::vector<Genome*>& getGenomes() noexcept;
             const double& getAvgFitness() const noexcept;
             const double& getMaxFitness() const noexcept;
