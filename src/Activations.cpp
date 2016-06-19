@@ -15,6 +15,12 @@ namespace EvoAI{
     double Activations::sinusoid(const double& v){
         return std::sin(v);
     }
+    double Activations::cosine(const double& v){
+        return std::cos(v);
+    }
+    double Activations::tan(const double& v){
+        return std::tan(v);
+    }
     double Activations::relu(const double& v){
         return std::max(0.0,v);
     }

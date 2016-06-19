@@ -425,6 +425,8 @@ namespace EvoAI{
                 }
             }
         }
+        std::unique(std::begin(nGenes), std::end(nGenes));
+        std::unique(std::begin(cGenes), std::end(cGenes));
         child->setNodeChromosomes(std::move(nGenes));
         child->setConnectionChromosomes(std::move(cGenes));
         return child;

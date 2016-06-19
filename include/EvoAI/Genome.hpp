@@ -63,7 +63,7 @@ namespace EvoAI{
              * @param perturbWeightsRate float
              * @param enableRate float
              */
-            void mutate(float nodeRate = 0.3, float connectionRate = 0.4, float perturbWeightsRate = 0.7, float enableRate = 0.2) noexcept;
+            void mutate(float nodeRate = 0.5, float connectionRate = 0.3, float perturbWeightsRate = 0.6, float enableRate = 0.4) noexcept;
             /**
              * @brief Checks if the genome is valid.
              * @return bool true if all is ok 

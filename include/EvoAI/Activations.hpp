@@ -31,6 +31,18 @@ namespace EvoAI{
          * @param v
          * @return 
          */
+        double cosine(const double& v);
+        /**
+         * @brief 
+         * @param v
+         * @return 
+         */
+        double tan(const double& v);
+        /**
+         * @brief 
+         * @param v
+         * @return 
+         */
         double relu(const double& v);
         /**
          * @brief 

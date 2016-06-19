@@ -14,7 +14,12 @@
 
 namespace EvoAI{
     /**
-     * @todo implement
+     * @todo refactor
+     * species owns genomes
+     * pop spawn and add to species
+     * reproduce clears killable species
+     *      interspecie rep triggers a spawn and add to species
+     *      normal reproduction is % of the best species
      */
     class Population{
         public:
@@ -37,6 +42,7 @@ namespace EvoAI{
             std::size_t getPopulationSize() const noexcept;
             std::size_t getSpeciesSize() const noexcept;
             JsonBox::Value toJson() const noexcept;
+            void spawn(const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecurrent = false, bool cppn = false) noexcept;
             void writeToFile(const std::string& filename);
             ~Population() = default;
         private:

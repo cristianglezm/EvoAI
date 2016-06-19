@@ -8,7 +8,7 @@ namespace EvoAI{
     namespace Test{
         TEST(PopulationTest, Constructor){
             /// @todo
-            Population p(10,2,1);
+            Population p(120,2,1);
             std::vector<double> x = {0.0,0.0,1.0,1.0};
             std::vector<double> y = {0.0,1.0,0.0,1.0};
             std::vector<double> truth = {0.0,1.0,1.0,0.0};
@@ -33,7 +33,7 @@ namespace EvoAI{
                     std::cout << "error: "<< errorSum << std::endl;
                     std::cout << "Fitness: " << g->getFitness() << std::endl;
                 }
-                //p.reproduce(true);
+                p.reproduce(true);
             }
             std::cout << "Selecting Winner..." << std::endl;
             auto g = p.getBestGenome();

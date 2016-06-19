@@ -2,8 +2,10 @@
 
 TODO:
 
+* Solve genome reproduce bug
+* Implement functions to create images that return sf::Image and another that takes a sf::Image and modifies it? imageEvoler?
 * Implement NEAT-CPPN
-    * species, pop?
+    * Population, Species refactoring
 * ImageGenerator implement genome options etc
 * SoundGenerator implement genome options etc
 * Implement ES-HyperNEAT?

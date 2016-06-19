@@ -50,12 +50,14 @@ namespace EvoAI{
                 SIGMOID,
                 STEPPED_SIGMOID,
                 TANH,
+                TAN,
                 SINUSOID,
+                COSINE,
+                GAUSSIAN,
                 RELU,
                 NOISY_RELU,
                 LEAKY_RELU,
                 EXPONENTIAL,
-                GAUSSIAN,
                 LAST_CPPN_ACTIVATION_TYPE,
                 SOFTMAX
             };

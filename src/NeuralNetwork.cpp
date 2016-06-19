@@ -432,6 +432,10 @@ namespace EvoAI{
                 return Activations::tanh(n.getSum());
             case Neuron::ActivationType::SINUSOID:
                 return Activations::sinusoid(n.getSum());
+            case Neuron::ActivationType::COSINE:
+                return Activations::cosine(n.getSum());
+            case Neuron::ActivationType::TAN:
+                return Activations::tan(n.getSum());
             case Neuron::ActivationType::SIGMOID:
                 return Activations::sigmoid(n.getSum());
             case Neuron::ActivationType::RELU:

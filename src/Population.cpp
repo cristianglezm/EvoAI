@@ -136,11 +136,12 @@ namespace EvoAI{
     }
     void Population::reproduce(bool interSpecies) noexcept{
         /// @todo implement
-        speciate();
+        //speciate();
         if(interSpecies){
             orderGenomesByFitness();
             std::size_t half = (genomes.size()/2);
             for(auto i=half;i<genomes.size();++i){
+                std::cout << "reproduce..." << std::endl;
                 auto selectedFather = random(0,static_cast<int>(half));
                 auto selectedMother = random(0,static_cast<int>(half));
                 auto genID = genomes[i]->getGenomeID();
