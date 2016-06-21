@@ -27,7 +27,6 @@ namespace EvoAI{
             void computeAvgFitness() noexcept;
             void computeMaxFitness() noexcept;
             void rank() noexcept;
-            void clearGenomes() noexcept;
             Genome* getRepresentative() const noexcept;
             Genome* getChampion() noexcept;
             bool isNovel() const noexcept;
@@ -39,11 +38,11 @@ namespace EvoAI{
             void setAge(const std::size_t& speciesAge) noexcept;
             void addAge(const std::size_t& amount) noexcept;
             const std::size_t& getAge() const noexcept;
-            void setGenomes(std::vector<Genome*>&& gs) noexcept;
-            void addGenome(Genome* g) noexcept;
+            void setGenomes(std::vector<std::unique_ptr<Genome>>&& gs) noexcept;
+            void addGenome(std::unique_ptr<Genome>&& g) noexcept;
             void removeGenome(Genome* g) noexcept;
-            bool has(Genome* g) const noexcept;
-            std::vector<Genome*>& getGenomes() noexcept;
+            bool has(Genome* g) noexcept;
+            std::vector<std::unique_ptr<Genome>>& getGenomes() noexcept;
             const double& getAvgFitness() const noexcept;
             const double& getMaxFitness() const noexcept;
             std::size_t getSize() const noexcept;
@@ -57,7 +56,9 @@ namespace EvoAI{
             bool killable;
             double avgFitness;
             double maxFitness;
-            std::vector<Genome*> genomes;
+            double oldAvgFitness;
+            std::size_t numOffsprings;
+            std::vector<std::unique_ptr<Genome>> genomes;
     };
 }
 

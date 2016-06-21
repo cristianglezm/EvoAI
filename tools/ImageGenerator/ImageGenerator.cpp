@@ -9,7 +9,10 @@
 #include "imageUtils.hpp"
 
 void usage(){
-    std::cout << "-g, --genome <filename>\t\t\tload a genome json file.\n";
+    std::cout << "-g, --genome [m|r] <filename> [<filename> with r]\tload a genome json file\n";
+    std::cout << "\t\t\t\t\tWith m will mutate the genome.\n\t\t\t\t\tWith r will combine two genomes, without m or r will load the genome.\n";
+    std::cout << "-G, --genome-type <type> <numHidden>\twill generate a genome of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
+                                                            "0. Without hidden neurons\n\t\t\t\t\t\t\t1. With hidden neurons.\n";
     std::cout << "-n, --neuralnetwork <filename>\t\tload a neural network json file.\n";
     std::cout << "-N, --neuralnetwork-type <type> <numLayers> <numNLayers> will generate a random neural network of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
                                                             "0. CPPN\n\t\t\t\t\t\t\t1. FeedForward\n\t\t\t\t\t\t\t2. Elman Network\n";
@@ -17,6 +20,7 @@ void usage(){
     std::cout << "-C, --coords\t\t\t\twill use coordinates as input for the neural network (can be used with -c)\n";
     std::cout << "-bw\t\t\t\t\tthe output image is black and white.\n";
     std::cout << "-s, --save <filename>\t\t\twill save the neural network generated.\n";
+    std::cout << "-sg, --save-genome <filename>\t\twill save the genome generated.\n";
     std::cout << "-f, --file-output <filename>\t\timage that will output.\n";
     std::cout << "-res, --resolution <width height>\twill create a image of that resolution(ignored if --image is specified).\n";
     std::cout << "--image <filename>\t\t\tload a image and generate another.\n";
@@ -25,7 +29,13 @@ void usage(){
 }
 int main(int argc, char **argv){
     bool optGenome = false;
-    std::string genomeFile = "genome.json";
+    bool optGenomeType = false;
+    bool optMutate = false;
+    bool optReproduce = false;
+    std::string genomeType = "0";
+    int numHidden = 0;
+    std::string genomeFile1 = "genome1.json";
+    std::string genomeFile2 = "genome2.json";
     bool optNeuralType = false;
     std::string NeuralType = "0";
     bool optNeuralFile = false;
@@ -35,6 +45,8 @@ int main(int argc, char **argv){
     bool optBW = false;
     bool optSave = false;
     std::string saveFile = "nn.json";
+    bool optSaveGenome = false;
+    std::string saveFileGenome = "g.json";
     std::string fileOutput = "image.png";
     int resWidth = 150;
     int resHeight = 150;
@@ -44,7 +56,7 @@ int main(int argc, char **argv){
     std::string imageInput = "image.png";
     int repeat = 1;
     if(argc < 3){
-        std::cout << std::string(argv[0]) << " [options] <filename>\n";
+        std::cout << std::string(argv[0]) << " [options]\n";
         usage();
         return EXIT_FAILURE;
     }
@@ -52,7 +64,26 @@ int main(int argc, char **argv){
         auto val = std::string(argv[i]);
         if(val == "-g" || val == "--genome"){
             optGenome = true;
-            genomeFile = std::string(argv[i+1]);
+            if(std::string(argv[i+1]) == "m"){
+                optMutate = true;
+                genomeFile1 = std::string(argv[i+2]);
+            }else if(std::string(argv[i+1]) == "r"){
+                optReproduce = true;
+                genomeFile1 = std::string(argv[i+2]);
+                genomeFile2 = std::string(argv[i+3]);
+            }else{
+                genomeFile1 = std::string(argv[i+1]);
+            }
+        }
+        if(val == "-G" || val == "--genome-type"){
+            optGenomeType = true;
+            if(std::string(argv[i+1]) == "0"){
+                genomeType = "0";
+                numHidden = 0;
+            }else if(std::string(argv[i+1]) == "1"){
+                genomeType = "1";
+                numHidden = std::stoi(std::string(argv[i+2]));
+            }
         }
         if(val == "-n" || val == "--neuralnetwork"){
             optNeuralFile = true;
@@ -73,6 +104,10 @@ int main(int argc, char **argv){
         if(val == "-bw"){
             optBW = true;
         }
+        if(val == "-sg" || val == "--save-genome"){
+            optSaveGenome = true;
+            saveFileGenome = std::string(argv[i+1]);
+        }
         if(val == "-s" || val == "--save"){
             optSave = true;
             saveFile = std::string(argv[i+1]);
@@ -92,12 +127,13 @@ int main(int argc, char **argv){
             repeat = std::stoi(std::string(argv[i+1]));
         }
         if(val == "--help" || val == "-h"){
-            std::cout << std::string(argv[0]) << " [options] <filename>\n";
+            std::cout << std::string(argv[0]) << " [options]\n";
             usage();
             return EXIT_FAILURE;
         }
     }
     std::unique_ptr<EvoAI::NeuralNetwork> nn = nullptr;
+    std::unique_ptr<EvoAI::Genome> g = nullptr;
     if(optNeuralFile){
         std::cout << "Loading File " << argv[2] << std::endl;
         nn = std::make_unique<EvoAI::NeuralNetwork>(std::string(argv[2]));
@@ -137,13 +173,48 @@ int main(int argc, char **argv){
             }
         }
     }else if(optGenome){
-        std::cout << "Not yet Implemented." << std::endl; /// @todo
-        //nn = Genome::makePhenotype(Genome(genomeFile));
-        return EXIT_FAILURE;
+        if(optMutate){
+            g = std::make_unique<EvoAI::Genome>(genomeFile1);
+            g->mutate();
+        }else if(optReproduce){
+            auto g1 = std::make_unique<EvoAI::Genome>(genomeFile1);
+            auto g2 = std::make_unique<EvoAI::Genome>(genomeFile2);
+            g = EvoAI::Genome::reproduce(*g1,*g2);
+        }else{
+            g = std::make_unique<EvoAI::Genome>(genomeFile1);
+        }
+        nn = EvoAI::Genome::makePhenotype(*g);
+    }else if(optGenomeType){
+        if(genomeType == "0"){
+            if(optColor && optCoords && !optBW){
+                g = std::make_unique<EvoAI::Genome>(6,3,true,true);
+            }else if(optColor && optCoords && optBW){
+                g = std::make_unique<EvoAI::Genome>(6,1,true,true);
+            }else if((optColor || optCoords) && !optBW){
+                g = std::make_unique<EvoAI::Genome>(3,3,true,true);
+            }else if(optBW){
+                g = std::make_unique<EvoAI::Genome>(3,1,true,true);
+            }
+        }else if(genomeType == "1"){
+            if(optColor && optCoords && !optBW){
+                g = std::make_unique<EvoAI::Genome>(6,numHidden,3,true,true);
+            }else if(optColor && optCoords && optBW){
+                g = std::make_unique<EvoAI::Genome>(6,numHidden,1,true,true);
+            }else if((optColor || optCoords) && !optBW){
+                g = std::make_unique<EvoAI::Genome>(3,numHidden,3,true,true);
+            }else if(optBW){
+                g = std::make_unique<EvoAI::Genome>(3,numHidden,1,true,true);
+            }
+        }
+        nn = EvoAI::Genome::makePhenotype(*g);
     }
     if(optSave){
         std::cout << "Saving Neural Network to " << saveFile << " ..." << std::endl;
         nn->writeToFile(saveFile);
+    }
+    if(optSaveGenome){
+        std::cout << "Saving Genome to " << saveFileGenome << "..." << std::endl;
+        g->writeToFile(saveFileGenome);
     }
     sf::Image imgInput;
     if(!optImage){

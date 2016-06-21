@@ -10,6 +10,8 @@ namespace EvoAI{
     , killable(false)
     , avgFitness(0.0)
     , maxFitness(0.0)
+    , oldAvgFitness(0.0)
+    , numOffsprings(0)
     , genomes(){}
     Species::Species(std::size_t id, bool novel)
     : id(id)
@@ -18,6 +20,8 @@ namespace EvoAI{
     , killable(false)
     , avgFitness(0.0)
     , maxFitness(0.0)
+    , oldAvgFitness(0.0)
+    , numOffsprings(0)
     , genomes(){}
     Species::Species(JsonBox::Object o)
     : id(std::stoull(o["id"].getString()))
@@ -26,7 +30,14 @@ namespace EvoAI{
     , killable(o["killable"].getBoolean())
     , avgFitness(o["avgFitness"].getDouble())
     , maxFitness(o["maxFitness"].getDouble())
-    , genomes(){}
+    , oldAvgFitness(o["oldAvgFitness"].getDouble())
+    , numOffsprings(std::stoull(o["numOffsprings"].getString()))
+    , genomes(){
+        auto gnms = o["genomes"].getArray();
+        for(auto& g:gnms){
+            genomes.push_back(std::make_unique<Genome>(g.getObject()));
+        }
+    }
     Species::Species(const std::string& filename)
     : id(0)
     , age(0)
@@ -34,6 +45,8 @@ namespace EvoAI{
     , killable(false)
     , avgFitness(0.0)
     , maxFitness(0.0)
+    , oldAvgFitness(0.0)
+    , numOffsprings(0)
     , genomes(){
         JsonBox::Value json;
         json.loadFromFile(filename);
@@ -44,6 +57,12 @@ namespace EvoAI{
         killable = v["killable"].getBoolean();
         avgFitness = v["avgFitness"].getDouble();
         maxFitness = v["maxFitness"].getDouble();
+        oldAvgFitness = v["oldAvgFitness"].getDouble();
+        numOffsprings = std::stoull(v["numOffsprings"].getString());
+        auto gnms = v["genomes"].getArray();
+        for(auto& g:gnms){
+            genomes.push_back(std::make_unique<Genome>(g.getObject()));
+        }
     }
     void Species::adjustFitness() noexcept{
         auto size = (genomes.size() - 1);
@@ -69,16 +88,13 @@ namespace EvoAI{
     }
     void Species::rank() noexcept{
         std::sort(std::begin(genomes),std::end(genomes),
-                    [](Genome* g1, Genome* g2){
+                    [](std::unique_ptr<Genome>& g1, std::unique_ptr<Genome>& g2){
                         return (g1->getFitness() > g2->getFitness());
                     });
     }
-    void Species::clearGenomes() noexcept{
-        genomes.clear();
-    }
     Genome* Species::getRepresentative() const noexcept{
         if(!genomes.empty()){
-            return genomes[0];
+            return genomes[0].get();
         }
         return nullptr;
     }
@@ -87,7 +103,7 @@ namespace EvoAI{
         auto fitness = 0.0;
         for(auto& g:genomes){
             if(g->getFitness() > fitness){
-                champ = g;
+                champ = g.get();
                 fitness = g->getFitness();
             }
         }
@@ -120,20 +136,26 @@ namespace EvoAI{
     const std::size_t& Species::getAge() const noexcept{
         return age;
     }
-    bool Species::has(Genome* g) const noexcept{
-        auto found = std::find(std::begin(genomes),std::end(genomes),g);
+    bool Species::has(Genome* g) noexcept{
+        auto found = std::find_if(std::begin(genomes),std::end(genomes),
+                                [&](std::unique_ptr<Genome>& g2){
+                                    return (g2.get() == g);
+                                });
         return (found != std::end(genomes));
     }
-    void Species::setGenomes(std::vector<Genome*>&& gs) noexcept{
+    void Species::setGenomes(std::vector<std::unique_ptr<Genome>>&& gs) noexcept{
         genomes = std::move(gs);
     }
-    void Species::addGenome(Genome* g) noexcept{
-        genomes.push_back(g);
+    void Species::addGenome(std::unique_ptr<Genome>&& g) noexcept{
+        genomes.push_back(std::move(g));
     }
     void Species::removeGenome(Genome* g) noexcept{
-        genomes.erase(std::remove(std::begin(genomes),std::end(genomes),g),std::end(genomes));
+        genomes.erase(std::remove_if(std::begin(genomes),std::end(genomes),
+                        [&](std::unique_ptr<Genome>& g2){
+                            return (g2.get() == g);
+                        }), std::end(genomes));
     }
-    std::vector<Genome*>& Species::getGenomes() noexcept{
+    std::vector<std::unique_ptr<Genome>>& Species::getGenomes() noexcept{
         return genomes;
     }
     const double& Species::getAvgFitness() const noexcept{
@@ -153,6 +175,13 @@ namespace EvoAI{
         o["killable"] = killable;
         o["avgFitness"] = avgFitness;
         o["maxFitness"] = maxFitness;
+        o["oldAvgFitness"] = oldAvgFitness;
+        o["numOffsprings"] = std::to_string(numOffsprings);
+        JsonBox::Array gnms;
+        for(auto& g:genomes){
+            gnms.push_back(g->toJson());
+        }
+        o["genomes"] = JsonBox::Value(gnms);
         return JsonBox::Value(o);
     }
     void Species::writeToFile(const std::string& filename) const noexcept{

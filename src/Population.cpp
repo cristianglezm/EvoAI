@@ -2,68 +2,81 @@
 
 namespace EvoAI{
     Population::Population()
-    : genomes()
-    , species()
-    , PopulationSize(50){}
+    : species()
+    , genomes()
+    , PopulationSize(50)
+    , genomesCached(false){}
     Population::Population(const std::size_t& size, const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecurrent, bool cppn)
-    : genomes()
-    , species()
-    , PopulationSize(size){
+    : species()
+    , genomes()
+    , PopulationSize(size)
+    , genomesCached(false){
+        /** @todo spawn genomes and check species and add it to species.
         for(auto i=0u;i<size;++i){
             genomes.emplace_back(std::make_unique<Genome>(numInputs, numOutputs,canBeRecurrent,cppn));
             genomes[i]->setGenomeID(i);
         }
+         */
+    }
+    Population::Population(const std::size_t& size, const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numOutputs, bool canBeRecurrent, bool cppn)
+    : species()
+    , genomes()
+    , PopulationSize(size)
+    , genomesCached(false){
+        /** @todo
+        for(auto i=0u;i<size;++i){
+            genomes.emplace_back(std::make_unique<Genome>(numInputs, numOutputs,canBeRecurrent,cppn));
+            genomes[i]->setGenomeID(i);
+        }
+         */
     }
     Population::Population(JsonBox::Object o)
-    : genomes()
-    , species()
-    , PopulationSize(std::stoull(o["PopulationSize"].getString())){
-        auto gnms = o["genomes"].getArray();
-        for(auto& g:gnms){
-            genomes.push_back(std::make_unique<Genome>(g.getObject()));
-        }
+    : species()
+    , genomes()
+    , PopulationSize(std::stoull(o["PopulationSize"].getString()))
+    , genomesCached(false){
         auto specs = o["species"].getArray();
         for(auto& sp:specs){
             species.push_back(std::make_unique<Species>(sp.getObject()));
         }
-        for(auto& g:genomes){
-            auto sp = findSpecies(g->getSpeciesID());
-            if(sp)
-                sp->addGenome(g.get());
-        }
     }
     Population::Population(const std::string& filename)
-    : genomes()
-    , species()
-    , PopulationSize(50){
+    : species()
+    , genomes()
+    , PopulationSize(50)
+    , genomesCached(false){
         JsonBox::Value json;
         json.loadFromFile(filename);
         auto v = json["Population"];
-        auto gnms = v["genomes"].getArray();
-        for(auto& g:gnms){
-            genomes.push_back(std::make_unique<Genome>(g.getObject()));
-        }
         auto specs = v["species"].getArray();
         for(auto& sp:specs){
             species.push_back(std::make_unique<Species>(sp.getObject()));
         }
-        for(auto& g:genomes){
-            auto sp = findSpecies(g->getSpeciesID());
-            if(sp)
-                sp->addGenome(g.get());
-        }
-        PopulationSize = std::stoull(v["populationSize"].getString());
+        PopulationSize = std::stoull(v["PopulationSize"].getString());
     }
-    std::vector<std::unique_ptr<Genome>>& Population::getGenomes() noexcept{
+    void Population::addGenome(std::unique_ptr<Genome> g) noexcept{
+        /// @todo
+    }
+    void Population::removeGenome(Genome* g) noexcept{
+        /// @todo
+    }
+    void Population::addSpecies(std::unique_ptr<Species> sp) noexcept{
+        /// @todo
+    }
+    void Population::removeSpecies(Species* sp) noexcept{
+        /// @todo
+    }
+    std::vector<Genome*>& Population::getGenomes() noexcept{
+        /// @todo reimplement
         return genomes;
     }
     Genome* Population::findGenome(const std::size_t& id) noexcept{
         auto found = std::find_if(std::begin(genomes),std::end(genomes),
-                                    [&](std::unique_ptr<Genome>& g){
+                                    [&](Genome* g){
                                         return (g->getGenomeID() == id);
                                     });
         if(found != std::end(genomes)){
-            return (*found).get();
+            return (*found);
         }
         return nullptr;
     }
@@ -78,12 +91,13 @@ namespace EvoAI{
         return nullptr;
     }
     Genome* Population::getBestGenome() const noexcept{
+        /// @todo reimplement
         Genome* best = nullptr;
         auto fitness = 0.0;
         for(auto& g:genomes){
             if(g->getFitness() > fitness){
                 fitness = g->getFitness();
-                best = g.get();
+                best = g;
             }
         }
         return best;
@@ -92,7 +106,7 @@ namespace EvoAI{
         return species;
     }
     void Population::speciate(const double& CompatibilityThreshold, const std::size_t& maxAge) noexcept{
-        /// @todo implement
+        /** @todo reimplement
         species.erase(std::remove_if(std::begin(species),std::end(species),
                             [&](std::unique_ptr<Species>& sp){
                                 if(!sp->isNovel()){
@@ -133,9 +147,10 @@ namespace EvoAI{
                 species.push_back(std::move(sp));
             }
         }
+         */
     }
     void Population::reproduce(bool interSpecies) noexcept{
-        /// @todo implement
+        /** @todo reimplement
         //speciate();
         if(interSpecies){
             orderGenomesByFitness();
@@ -162,22 +177,23 @@ namespace EvoAI{
         }else{
             
         }
+        */
     }
     void Population::orderGenomesByFitness() noexcept{
+        /// @todo reimplement
         std::sort(std::begin(genomes),std::end(genomes),
-                    [](std::unique_ptr<Genome>& g1,std::unique_ptr<Genome>& g2){
-                        return (g1->getFitness() > g2->getFitness());
+                        [](Genome* g1, Genome* g2){
+                            return (g1->getFitness() > g2->getFitness());
                     });
     }
     void Population::orderSpeciesByAge() noexcept{
-        speciate(6.0);
         std::sort(std::begin(species),std::end(species),
                         [](std::unique_ptr<Species>& s1, std::unique_ptr<Species>& s2){
                             return (s1->getAge() > s2->getAge());
                         });
     }
     void Population::orderSpeciesByFitness() noexcept{
-        speciate(6.0);
+        /// @todo computeAvg...?
         std::sort(std::begin(species),std::end(species),
                         [](std::unique_ptr<Species>& s1, std::unique_ptr<Species>& s2){
                             s1->computeAvgFitness();
@@ -198,11 +214,6 @@ namespace EvoAI{
     }
     JsonBox::Value Population::toJson() const noexcept{
         JsonBox::Object o;
-        JsonBox::Array gnms;
-        for(auto& g:genomes){
-            gnms.push_back(g->toJson());
-        }
-        o["genomes"] = JsonBox::Value(gnms);
         JsonBox::Array spcs;
         for(auto& sp:species){
             spcs.push_back(sp->toJson());
@@ -216,11 +227,5 @@ namespace EvoAI{
         v["version"] = 1.0;
         v["Population"] = toJson();
         v.writeToFile(filename);
-    }
-    void Population::removeGenomesFromSpecies(const std::size_t& speciesID) noexcept{
-        genomes.erase(std::remove_if(std::begin(genomes),std::end(genomes),
-                            [&speciesID](std::unique_ptr<Genome>& g){
-                                return (g->getSpeciesID() == speciesID);
-                            }),std::end(genomes));
     }
 }

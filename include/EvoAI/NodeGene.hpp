@@ -55,10 +55,20 @@ namespace EvoAI{
              */
             std::size_t getNeuronID() const noexcept;
             /**
+             * @brief sets a new Neuron::Type
+             * @param t Neuron::Type
+             */
+            void setNeuronType(Neuron::Type t) noexcept;
+            /**
              * @brief getter for Neuron::Type
              * @return Neuron::Type
              */
             Neuron::Type getNeuronType() const noexcept;
+            /**
+             * @brief sets a new Neuron::ActivationType
+             * @param at Neuron::ActivationType
+             */
+            void setActType(Neuron::ActivationType at) noexcept;
             /**
              * @brief getter for Neuron::ActivationType
              * @return Neuron::ActivationType

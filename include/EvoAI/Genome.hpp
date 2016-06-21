@@ -11,6 +11,11 @@
 #include <functional>
 
 namespace EvoAI{
+    /**
+     * @class Genome
+     * @author Cristian Glez <Cristian.glez.m@gmail.com>
+     * @brief A genome is a description of a NeuralNetwork.
+     */
     class Genome final{
         public:
             using matchingNodeGenes = std::pair<std::vector<NodeGene>, std::vector<NodeGene>>;
@@ -25,6 +30,7 @@ namespace EvoAI{
         public:
             Genome();
             Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive = true, bool cppn = false);
+            Genome(std::size_t numInputs, std::size_t numHidden, std::size_t numOutputs, bool canBeRecursive = true, bool cppn = false);
             Genome(JsonBox::Object o);
             Genome(const std::string& jsonfile);
             void addGene(const NodeGene& ng) noexcept;
@@ -41,13 +47,35 @@ namespace EvoAI{
             bool hasNodeGene(const NodeGene& ng) const noexcept;
             bool hasConnectionGene(const ConnectionGene& cg) const noexcept;
             void setGenomeID(std::size_t gnmID) noexcept;
+            /**
+             * @brief gets the genome id
+             * @return std::size_t
+             */
             const std::size_t& getGenomeID() const noexcept;
+            /**
+             * @brief setter for species ID
+             * @param spcID species id
+             */
             void setSpeciesID(std::size_t spcID) noexcept;
+            /**
+             * @brief returns the species id.
+             * @return std::size_t&
+             */
             const std::size_t& getSpeciesID() const noexcept;
+            /**
+             * @brief Adds a node and random connection and slices the connection adding the node in between.
+             */
             void mutateAddNode() noexcept;
+            /**
+             * @brief Adds a random connection between two nodeGenes.
+             */
             void mutateAddConnection() noexcept;
             /**
-             * @brief mutates the weights of NodeGenes and ConnectionGenes.
+             * @brief Removes a random connection between two nodeGenes.
+             */
+            void mutateRemoveConnection() noexcept;
+            /**
+             * @brief mutates the weights of a NodeGene or ConnectionGene.
              * @param power
              */
             void mutateWeights(double power) noexcept;
@@ -56,6 +84,10 @@ namespace EvoAI{
              */
             void mutateEnable() noexcept;
             /**
+             * @brief selects a random nodeGene and changes it activation function.
+             */
+            void mutateActivationType() noexcept;
+            /**
              * @brief mutates the genome
              * Rates 0.0-1.0
              * @param nodeRate float
@@ -63,7 +95,7 @@ namespace EvoAI{
              * @param perturbWeightsRate float
              * @param enableRate float
              */
-            void mutate(float nodeRate = 0.5, float connectionRate = 0.3, float perturbWeightsRate = 0.6, float enableRate = 0.4) noexcept;
+            void mutate(float nodeRate = 0.2, float addConnRate = 0.3, float removeConnRate = 0.2, float perturbWeightsRate = 0.6, float enableRate = 0.4, float actTypeRate = 0.4) noexcept;
             /**
              * @brief Checks if the genome is valid.
              * @return bool true if all is ok 

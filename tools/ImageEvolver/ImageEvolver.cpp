@@ -20,7 +20,7 @@ int main(int argc, char **argv){
     std::vector<sf::Texture> textures(size);
     std::vector<sf::Sprite> sprites(size);
     for(auto i=0u;i<size;++i){
-        genomes.push_back(std::make_unique<EvoAI::Genome>(3,3,true,true));
+        genomes.push_back(std::make_unique<EvoAI::Genome>(3,2,3,true,true));
         genomes[i]->mutate();
     }
     updateImages(genomes,textures,sprites,size,bw);
@@ -71,7 +71,7 @@ int main(int argc, char **argv){
                         index = 4;
                     }
                     if(event.key.code == sf::Keyboard::G){
-                        genomes[index] = std::make_unique<EvoAI::Genome>(3,3,true,true);
+                        genomes[index] = std::make_unique<EvoAI::Genome>(3,2,3,true,true);
                         genomes[index]->mutate();
                     }
                     if(event.key.code == sf::Keyboard::Return){

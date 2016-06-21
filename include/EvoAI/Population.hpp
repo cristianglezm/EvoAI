@@ -16,6 +16,9 @@ namespace EvoAI{
     /**
      * @todo refactor
      * species owns genomes
+     * species constructors, serialize unserialize
+     * pop constructors, serialize unserialize
+     * functions in general, algorithms.
      * pop spawn and add to species
      * reproduce clears killable species
      *      interspecie rep triggers a spawn and add to species
@@ -25,12 +28,17 @@ namespace EvoAI{
         public:
             Population();
             Population(const std::size_t& size, const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecurrent = false, bool cppn = false);
+            Population(const std::size_t& size, const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numOutputs, bool canBeRecurrent = false, bool cppn = false);
             Population(JsonBox::Object o);
             Population(const std::string& filename);
+            void addGenome(std::unique_ptr<Genome> g) noexcept;
+            void removeGenome(Genome* g) noexcept;
+            void addSpecies(std::unique_ptr<Species> sp) noexcept;
+            void removeSpecies(Species* sp) noexcept;
             Genome* findGenome(const std::size_t& id) noexcept;
             Genome* getBestGenome() const noexcept;
             Species* findSpecies(const std::size_t& id) noexcept;
-            std::vector<std::unique_ptr<Genome>>& getGenomes() noexcept;
+            std::vector<Genome*>& getGenomes() noexcept;
             std::vector<std::unique_ptr<Species>>& getSpecies() noexcept;
             void speciate(const double& CompatibilityThreshold = 6.0, const std::size_t& maxAge = 20) noexcept;
             void reproduce(bool interSpecies) noexcept;
@@ -46,9 +54,10 @@ namespace EvoAI{
             void writeToFile(const std::string& filename);
             ~Population() = default;
         private:
-            std::vector<std::unique_ptr<Genome>> genomes;
             std::vector<std::unique_ptr<Species>> species;
+            std::vector<Genome*> genomes;
             std::size_t PopulationSize;
+            bool genomesCached;
     };
 }
 

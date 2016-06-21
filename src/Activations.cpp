@@ -1,7 +1,8 @@
 #include <EvoAI/Activations.hpp>
 #include <EvoAI/NeuralNetwork.hpp>
-/// TODO
-/// 
+
+#include <chrono>
+/// @todo review activations and derivatives.
 namespace EvoAI{
     double Activations::identity(const double& v){
         return v;
@@ -25,10 +26,10 @@ namespace EvoAI{
         return std::max(0.0,v);
     }
     double Activations::noisyRelu(const double& v){
-        static std::random_device rd;
-        static std::default_random_engine generator(rd());
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        static std::mt19937 rEngine(seed);
         std::normal_distribution<double> distribution(0,sigmoid(v));
-        return std::max(0.0,v+distribution(generator));
+        return std::max(0.0,v+distribution(rEngine));
     }
     double Activations::leakyRelu(const double& x){
         //return (x > 0 ? x:(0.01*x));
@@ -47,10 +48,10 @@ namespace EvoAI{
         return (std::exp(v) / (sum));
     }
     double Activations::gaussian(const double& v){
-        static std::random_device rd;
-        static std::default_random_engine eng(rd());
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        static std::mt19937 rEngine(seed);
         static std::normal_distribution<double> d(0.0,v);
-        return d(eng);
+        return d(rEngine);
     }
     double Activations::modulus(const double& v){
         return std::fmod(v,1.0);
@@ -73,7 +74,7 @@ namespace EvoAI{
         return (v > 0.0 ? 1.0:0.0);
     }
     double Derivatives::softmax(const double& v, NeuralNetwork& nn){
-        int index = nn.size()-1; // TODO FIX
+        int index = nn.size()-1; /// @todo FIX softmax derivative
         auto& outputs = nn[index];
         auto sum = 0.0;
         for(auto& n:outputs.getNeurons()){

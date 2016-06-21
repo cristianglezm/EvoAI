@@ -44,8 +44,14 @@ namespace EvoAI{
     std::size_t NodeGene::getNeuronID() const noexcept{
         return neuronID;
     }
+    void NodeGene::setNeuronType(Neuron::Type t) noexcept{
+        nrnType = t;
+    }
     Neuron::Type NodeGene::getNeuronType() const noexcept{
         return nrnType;
+    }
+    void NodeGene::setActType(Neuron::ActivationType at) noexcept{
+        actType = at;
     }
     Neuron::ActivationType NodeGene::getActType() const noexcept{
         return actType;

@@ -33,7 +33,44 @@ namespace EvoAI{
         }
         for(auto i=0u;i<numInputs;++i){
             for(auto j=0u;j<numOutputs;++j){
-                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(2,j), random(-5.0,5.0));
+                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(2,j), random(-3.0,3.0));
+            }
+        }
+    }
+    Genome::Genome(std::size_t numInputs, std::size_t numHidden, std::size_t numOutputs, bool canBeRecursive, bool cppn)
+    : genomeID(0)
+    , speciesID(0)
+    , fitness(0.0)
+    , rnnAllowed(canBeRecursive)
+    , cppn(cppn)
+    , nodeChromosomes()
+    , connectionChromosomes(){
+        for(auto i=0u;i<numInputs;++i){
+            // activation function is not used by Neuron::Type::INPUT
+            nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,Neuron::ActivationType::SIGMOID);
+        }
+        for(auto i=0u;i<numHidden;++i){
+            Neuron::ActivationType at = Neuron::ActivationType::SIGMOID;
+            if(cppn){
+                at = Genome::getRandomActivationType();
+            }
+            nodeChromosomes.emplace_back(1,i,Neuron::Type::HIDDEN,at);
+        }
+        for(auto i=0u;i<numOutputs;++i){
+            Neuron::ActivationType at = Neuron::ActivationType::SIGMOID;
+            if(cppn){
+                at = Genome::getRandomActivationType();
+            }
+            nodeChromosomes.emplace_back(2,i,Neuron::Type::OUTPUT,at);
+        }
+        for(auto i=0u;i<numInputs;++i){
+            for(auto j=0u;j<numHidden;++j){
+                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(1,j), random(-3.0,3.0));
+            }
+        }
+        for(auto i=0u;i<numHidden;++i){
+            for(auto j=0u;j<numOutputs;++j){
+                connectionChromosomes.emplace_back(NodeGene(1,i), NodeGene(2,j), random(-3.0,3.0));
             }
         }
     }
@@ -175,7 +212,14 @@ namespace EvoAI{
     void Genome::mutateAddConnection() noexcept{
         auto selectedNode1 = random(0,nodeChromosomes.size()-1);
         auto selectedNode2 = random(0,nodeChromosomes.size()-1);
-        connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], random(-5.0,5.0));
+        connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], random(-3.0,3.0));
+    }
+    void Genome::mutateRemoveConnection() noexcept{
+        auto selectedConn = random(0,connectionChromosomes.size()-1);
+        connectionChromosomes.erase(std::remove(std::begin(connectionChromosomes),
+                                                std::end(connectionChromosomes),
+                                                connectionChromosomes[selectedConn]),
+                                                std::end(connectionChromosomes));
     }
     void Genome::mutateWeights(double power) noexcept{
         auto nodeOrConn = doAction(0.5);
@@ -185,9 +229,9 @@ namespace EvoAI{
             auto selectedNode = random(0,nodeChromosomes.size() - 1);
             auto isOld = ((static_cast<std::size_t>(selectedNode)) < (nodeChromosomes.size() / 2));
             if(isOld){
-                power += power * -selectedNode * 0.8;
+                power += (power * power) * 0.8;
             }
-            auto weight = power * random(0.0,5.0);
+            auto weight = power * random(0.0,2.0);
             if(isNegative){
                 weight = -weight;
             }
@@ -203,9 +247,9 @@ namespace EvoAI{
             }
             auto isOld = ((static_cast<std::size_t>(selectedConnection)) < (connectionChromosomes.size() / 2));
             if(isOld){
-                power += power * -selectedConnection * 0.8;
+                power += (power*power) * 0.8;
             }
-            auto weight = power * random(0.0,5.0);
+            auto weight = power * random(0.0,2.0);
             if(isNegative){
                 weight = -weight;
             }
@@ -224,15 +268,25 @@ namespace EvoAI{
             }
         }
     }
-    void Genome::mutate(float nodeRate, float connectionRate, float perturbWeightsRate, float enableRate) noexcept{
+    void Genome::mutateActivationType() noexcept{
+        auto selectedNode = random(0,nodeChromosomes.size()-1);
+        nodeChromosomes[selectedNode].setActType(getRandomActivationType());
+    }
+    void Genome::mutate(float nodeRate, float addConnRate, float removeConnRate, float perturbWeightsRate, float enableRate, float actTypeRate) noexcept{
         if(doAction(nodeRate)){
             mutateAddNode();
-        }else if(doAction(connectionRate)){
+        }else if(doAction(addConnRate)){
             mutateAddConnection();
+        }else if(doAction(removeConnRate)){
+            mutateRemoveConnection();
         }else if(doAction(perturbWeightsRate)){
             mutateWeights(2);
         }else if(doAction(enableRate)){
             mutateEnable();
+        }else if(doAction(actTypeRate)){
+            if(cppn){
+                mutateActivationType();
+            }
         }
     }
     bool Genome::isValid() noexcept{
