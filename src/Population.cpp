@@ -5,36 +5,42 @@ namespace EvoAI{
     : species()
     , genomes()
     , PopulationSize(50)
-    , genomesCached(false){}
+    , genomesCached(false)
+    , compatibilityThreshold(6.0)
+    , maxAge(20){}
     Population::Population(const std::size_t& size, const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecurrent, bool cppn)
     : species()
     , genomes()
     , PopulationSize(size)
-    , genomesCached(false){
-        /** @todo spawn genomes and check species and add it to species.
+    , genomesCached(false)
+    , compatibilityThreshold(6.0)
+    , maxAge(20){
         for(auto i=0u;i<size;++i){
-            genomes.emplace_back(std::make_unique<Genome>(numInputs, numOutputs,canBeRecurrent,cppn));
-            genomes[i]->setGenomeID(i);
+            auto g = std::make_unique<Genome>(numInputs, numOutputs, canBeRecurrent, cppn);
+            g->setGenomeID(i);
+            addGenome(std::move(g));
         }
-         */
     }
     Population::Population(const std::size_t& size, const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numOutputs, bool canBeRecurrent, bool cppn)
     : species()
     , genomes()
     , PopulationSize(size)
-    , genomesCached(false){
-        /** @todo
+    , genomesCached(false)
+    , compatibilityThreshold(6.0)
+    , maxAge(20){
         for(auto i=0u;i<size;++i){
-            genomes.emplace_back(std::make_unique<Genome>(numInputs, numOutputs,canBeRecurrent,cppn));
-            genomes[i]->setGenomeID(i);
+            auto g = std::make_unique<Genome>(numInputs, numHidden, numOutputs, canBeRecurrent, cppn);
+            g->setGenomeID(i);
+            addGenome(std::move(g));
         }
-         */
     }
     Population::Population(JsonBox::Object o)
     : species()
     , genomes()
     , PopulationSize(std::stoull(o["PopulationSize"].getString()))
-    , genomesCached(false){
+    , genomesCached(false)
+    , compatibilityThreshold(o["compatibilityThreshold"].getDouble())
+    , maxAge(std::stoull(o["maxAge"].getString())){
         auto specs = o["species"].getArray();
         for(auto& sp:specs){
             species.push_back(std::make_unique<Species>(sp.getObject()));
@@ -53,24 +59,65 @@ namespace EvoAI{
             species.push_back(std::make_unique<Species>(sp.getObject()));
         }
         PopulationSize = std::stoull(v["PopulationSize"].getString());
+        compatibilityThreshold = v["compatibilityThreshold"].getDouble();
+        maxAge = std::stoull(v["maxAge"].getString());
     }
     void Population::addGenome(std::unique_ptr<Genome> g) noexcept{
-        /// @todo
+        genomesCached = false;
+        auto added = false;
+        for(auto& sp:species){
+            auto rep = sp->getRepresentative();
+            if(rep){
+                auto dist = Genome::distance(*g,*rep);
+                if(dist >= -compatibilityThreshold && dist <= compatibilityThreshold){
+                    added = true;
+                    g->setSpeciesID(sp->getID());
+                    sp->addGenome(std::move(g));
+                    break;
+                }
+            }
+        }
+        if(!added){
+            auto currentSpeciesID = species.size();
+            auto sp = std::make_unique<Species>(currentSpeciesID,true);
+            g->setSpeciesID(currentSpeciesID);
+            sp->addGenome(std::move(g));
+            species.push_back(std::move(sp));
+        }
     }
     void Population::removeGenome(Genome* g) noexcept{
-        /// @todo
+        auto sp = findSpecies(g->getSpeciesID());
+        sp->removeGenome(g);
+        genomesCached = false;
     }
     void Population::addSpecies(std::unique_ptr<Species> sp) noexcept{
-        /// @todo
+        species.push_back(std::move(sp));
+        genomesCached = false;
     }
     void Population::removeSpecies(Species* sp) noexcept{
-        /// @todo
+        species.erase(std::remove_if(std::begin(species),std::end(species),
+                                    [&](std::unique_ptr<Species>& sp2){
+                                        return (sp2.get() == sp);
+                                    }),std::end(species));
+        genomesCached = false;
     }
     std::vector<Genome*>& Population::getGenomes() noexcept{
-        /// @todo reimplement
+        if(genomesCached){
+            return genomes;
+        }
+        genomesCached = true;
+        genomes.clear();
+        for(auto& sp:species){
+            for(auto& g:sp->getGenomes()){
+                genomes.push_back(g.get());
+            }
+        }
         return genomes;
     }
     Genome* Population::findGenome(const std::size_t& id) noexcept{
+        if(!genomesCached){
+            getGenomes();
+        }
         auto found = std::find_if(std::begin(genomes),std::end(genomes),
                                     [&](Genome* g){
                                         return (g->getGenomeID() == id);
@@ -90,8 +137,10 @@ namespace EvoAI{
         }
         return nullptr;
     }
-    Genome* Population::getBestGenome() const noexcept{
-        /// @todo reimplement
+    Genome* Population::getBestGenome() noexcept{
+        if(!genomesCached){
+            getGenomes();
+        }
         Genome* best = nullptr;
         auto fitness = 0.0;
         for(auto& g:genomes){
@@ -105,8 +154,8 @@ namespace EvoAI{
     std::vector<std::unique_ptr<Species>>& Population::getSpecies() noexcept{
         return species;
     }
-    void Population::speciate(const double& CompatibilityThreshold, const std::size_t& maxAge) noexcept{
-        /** @todo reimplement
+    void Population::removeOldSpecies() noexcept{
+        genomesCached = false;
         species.erase(std::remove_if(std::begin(species),std::end(species),
                             [&](std::unique_ptr<Species>& sp){
                                 if(!sp->isNovel()){
@@ -117,37 +166,8 @@ namespace EvoAI{
                                 if(sp->getAge() > maxAge){
                                     sp->setKillable(true);
                                 }
-                                if(sp->isKillable()){
-                                    removeGenomesFromSpecies(sp->getID());
-                                    return true;
-                                }
-                                return false;
+                                return sp->isKillable();
                             }), std::end(species));
-        for(auto& g:genomes){
-            auto added = false;
-            for(auto& sp:species){
-                auto rep = sp->getRepresentative();
-                if(rep){
-                    auto dist = Genome::distance(*g,*rep);
-                    if(dist >= -CompatibilityThreshold && dist <= CompatibilityThreshold){
-                        added = true;
-                        if(!sp->has(g.get())){
-                            g->setSpeciesID(sp->getID());
-                            sp->addGenome(g.get());
-                        }
-                        break;
-                    }
-                }
-            }
-            if(!added){
-                auto currentSpeciesID = species.size();
-                g->setSpeciesID(currentSpeciesID);
-                auto sp = std::make_unique<Species>(currentSpeciesID,true);
-                sp->addGenome(g.get());
-                species.push_back(std::move(sp));
-            }
-        }
-         */
     }
     void Population::reproduce(bool interSpecies) noexcept{
         /** @todo reimplement
@@ -180,7 +200,9 @@ namespace EvoAI{
         */
     }
     void Population::orderGenomesByFitness() noexcept{
-        /// @todo reimplement
+        if(!genomesCached){
+            getGenomes();
+        }
         std::sort(std::begin(genomes),std::end(genomes),
                         [](Genome* g1, Genome* g2){
                             return (g1->getFitness() > g2->getFitness());
@@ -212,6 +234,18 @@ namespace EvoAI{
     std::size_t Population::getSpeciesSize() const noexcept{
         return species.size();
     }
+    void Population::setMaxAge(std::size_t age) noexcept{
+        maxAge = age;
+    }
+    const std::size_t& Population::getMaxAge() const noexcept{
+        return maxAge;
+    }
+    void Population::setCompatibilityThreshold(const double& compThreshold) noexcept{
+        compatibilityThreshold = compThreshold;
+    }
+    const double& Population::getCompatibilityThreshold() const noexcept{
+        return compatibilityThreshold;
+    }
     JsonBox::Value Population::toJson() const noexcept{
         JsonBox::Object o;
         JsonBox::Array spcs;
@@ -220,6 +254,8 @@ namespace EvoAI{
         }
         o["species"] = JsonBox::Value(spcs);
         o["PopulationSize"] = std::to_string(PopulationSize);
+        o["compatibilityThreshold"] = compatibilityThreshold;
+        o["maxAge"] = std::to_string(maxAge);
         return JsonBox::Value(o);
     }
     void Population::writeToFile(const std::string& filename){

@@ -7,7 +7,12 @@
 namespace EvoAI{
     namespace Test{
         TEST(SpeciesTest, Constructor){
-            /// @todo implement tests.
+            Species sp(1u,true);
+            EXPECT_EQ(1u,sp.getID());
+            EXPECT_TRUE(sp.isNovel());
+            EXPECT_FALSE(sp.isKillable());
+            EXPECT_EQ(0u,sp.getAge());
+            EXPECT_EQ(0u,sp.getSize());
         }
     }
 }

@@ -36,21 +36,23 @@ namespace EvoAI{
             void addSpecies(std::unique_ptr<Species> sp) noexcept;
             void removeSpecies(Species* sp) noexcept;
             Genome* findGenome(const std::size_t& id) noexcept;
-            Genome* getBestGenome() const noexcept;
+            Genome* getBestGenome() noexcept;
             Species* findSpecies(const std::size_t& id) noexcept;
             std::vector<Genome*>& getGenomes() noexcept;
             std::vector<std::unique_ptr<Species>>& getSpecies() noexcept;
-            void speciate(const double& CompatibilityThreshold = 6.0, const std::size_t& maxAge = 20) noexcept;
+            void removeOldSpecies() noexcept;
             void reproduce(bool interSpecies) noexcept;
             void orderGenomesByFitness() noexcept;
             void orderSpeciesByAge() noexcept;
             void orderSpeciesByFitness() noexcept;
             void rankWithinSpecies() noexcept;
-            void removeGenomesFromSpecies(const std::size_t& speciesID) noexcept;
             std::size_t getPopulationSize() const noexcept;
             std::size_t getSpeciesSize() const noexcept;
+            void setMaxAge(std::size_t age) noexcept;
+            const std::size_t& getMaxAge() const noexcept;
+            void setCompatibilityThreshold(const double& compThreshold) noexcept;
+            const double& getCompatibilityThreshold() const noexcept;
             JsonBox::Value toJson() const noexcept;
-            void spawn(const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecurrent = false, bool cppn = false) noexcept;
             void writeToFile(const std::string& filename);
             ~Population() = default;
         private:
@@ -58,6 +60,8 @@ namespace EvoAI{
             std::vector<Genome*> genomes;
             std::size_t PopulationSize;
             bool genomesCached;
+            double compatibilityThreshold;
+            std::size_t maxAge;
     };
 }
 

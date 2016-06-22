@@ -195,37 +195,46 @@ namespace EvoAI{
         return speciesID;
     }
     void Genome::mutateAddNode() noexcept{
-        auto selectedConnection = random(0,connectionChromosomes.size()-1);
-        auto& selConn = connectionChromosomes[selectedConnection];
-        auto at = Neuron::ActivationType::SIGMOID;
-        if(cppn){
-            at = getRandomActivationType();
+        if(!connectionChromosomes.empty()){
+            auto selectedConnection = random(0,connectionChromosomes.size()-1);
+            auto& selConn = connectionChromosomes[selectedConnection];
+            auto at = Neuron::ActivationType::SIGMOID;
+            if(cppn){
+                at = getRandomActivationType();
+            }
+            NodeGene ng(1,getNumOfNodes(1),Neuron::Type::HIDDEN,at);
+            nodeChromosomes.push_back(ng);
+            selConn.setEnabled(false);
+            ConnectionGene cg1(NodeGene(selConn.getSrc().layer,selConn.getSrc().neuron), ng, 1.0);
+            ConnectionGene cg2(ng,NodeGene(selConn.getDest().layer,selConn.getDest().neuron), selConn.getWeight());
+            connectionChromosomes.push_back(cg1);
+            connectionChromosomes.push_back(cg2);
         }
-        NodeGene ng(1,getNumOfNodes(1),Neuron::Type::HIDDEN,at);
-        nodeChromosomes.push_back(ng);
-        selConn.setEnabled(false);
-        ConnectionGene cg1(NodeGene(selConn.getSrc().layer,selConn.getSrc().neuron), ng, 1.0);
-        ConnectionGene cg2(ng,NodeGene(selConn.getDest().layer,selConn.getDest().neuron), selConn.getWeight());
-        connectionChromosomes.push_back(cg1);
-        connectionChromosomes.push_back(cg2);
     }
     void Genome::mutateAddConnection() noexcept{
-        auto selectedNode1 = random(0,nodeChromosomes.size()-1);
-        auto selectedNode2 = random(0,nodeChromosomes.size()-1);
-        connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], random(-3.0,3.0));
+        if(!nodeChromosomes.empty()){
+            auto selectedNode1 = random(0,nodeChromosomes.size()-1);
+            auto selectedNode2 = random(0,nodeChromosomes.size()-1);
+            connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], random(-3.0,3.0));
+        }
     }
     void Genome::mutateRemoveConnection() noexcept{
-        auto selectedConn = random(0,connectionChromosomes.size()-1);
-        connectionChromosomes.erase(std::remove(std::begin(connectionChromosomes),
+        if(!connectionChromosomes.empty()){
+            auto selectedConn = random(0,connectionChromosomes.size()-1);
+            connectionChromosomes.erase(std::remove(std::begin(connectionChromosomes),
                                                 std::end(connectionChromosomes),
                                                 connectionChromosomes[selectedConn]),
                                                 std::end(connectionChromosomes));
+        }
     }
     void Genome::mutateWeights(double power) noexcept{
         auto nodeOrConn = doAction(0.5);
         auto shakeThingsUp = doAction(0.5);
         auto isNegative = doAction(0.5);
         if(nodeOrConn){
+            if(nodeChromosomes.empty()){
+                return;
+            }
             auto selectedNode = random(0,nodeChromosomes.size() - 1);
             auto isOld = ((static_cast<std::size_t>(selectedNode)) < (nodeChromosomes.size() / 2));
             if(isOld){
@@ -241,6 +250,9 @@ namespace EvoAI{
                 nodeChromosomes[selectedNode].addBias(weight);
             }
         }else{
+            if(connectionChromosomes.empty()){
+                return;
+            }
             auto selectedConnection = random(0,connectionChromosomes.size() - 1);
             if(connectionChromosomes[selectedConnection].isFrozen()){
                 return;
@@ -269,8 +281,10 @@ namespace EvoAI{
         }
     }
     void Genome::mutateActivationType() noexcept{
-        auto selectedNode = random(0,nodeChromosomes.size()-1);
-        nodeChromosomes[selectedNode].setActType(getRandomActivationType());
+        if(!nodeChromosomes.empty()){
+            auto selectedNode = random(0,nodeChromosomes.size()-1);
+            nodeChromosomes[selectedNode].setActType(getRandomActivationType());
+        }
     }
     void Genome::mutate(float nodeRate, float addConnRate, float removeConnRate, float perturbWeightsRate, float enableRate, float actTypeRate) noexcept{
         if(doAction(nodeRate)){
