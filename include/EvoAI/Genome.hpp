@@ -28,24 +28,117 @@ namespace EvoAI{
             using disjointConnectionGenes = std::vector<ConnectionGene>;
             using disjointGenes = std::pair<disjointNodeGenes, disjointConnectionGenes>;
         public:
+            /**
+             * @brief default constructor builds an empty Genome.
+             */ 
             Genome();
+            /**
+             * @brief builds a Genome that is feedforward connected from inputs to outputs.
+             * @param numInputs
+             * @param numOutputs
+             * @param canBeRecursive
+             * @param cppn with this true the genome will have random activation functions and will be able to change activations with Genome::mutate
+             * @return Genome
+             */
             Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive = true, bool cppn = false);
+            /**
+             * @brief builds a Genome that is feedforward connected from inputs to hidden to outputs.
+             * @param numInputs
+             * @param numHidden 
+             * @param numOutputs
+             * @param canBeRecursive
+             * @param cppn with this true the genome will have random activation functions and will be able to change activations with Genome::mutate
+             * @return Genome
+             */
             Genome(std::size_t numInputs, std::size_t numHidden, std::size_t numOutputs, bool canBeRecursive = true, bool cppn = false);
+            /**
+             * @brief loads a Genome previously saved with Genome::toJson
+             * @param o JsonBox::Object
+             * @return Genome
+             */
             Genome(JsonBox::Object o);
+            /**
+             * @brief loads a Genome from a jsonfile previously saved with Genome::writeToFile
+             * @param jsonfile std::string&
+             * @return Genome
+             */
             Genome(const std::string& jsonfile);
+            /**
+             * @brief adds a NodeGene
+             * @param ng NodeGene
+             */
             void addGene(const NodeGene& ng) noexcept;
+            /**
+             * @brief adds a ConnectionGene
+             * @param cg ConnectionGene
+             */
             void addGene(const ConnectionGene& cg) noexcept;
+            /**
+             * @brief setter for the NodeGene.
+             * @param ngenes std::vector<NodeGene>&&
+             */
             void setNodeChromosomes(std::vector<NodeGene>&& ngenes) noexcept;
+            /**
+             * @brief getter for NodeGenes
+             * @return std::vector<NodeGene>&
+             */
             std::vector<NodeGene>& getNodeChromosomes() noexcept;
+            /**
+             * @brief setter for the ConnectionGene
+             * @param cgenes std::vector<ConnectionGene>&&
+             */
             void setConnectionChromosomes(std::vector<ConnectionGene>&& cgenes) noexcept;
+            /**
+             * @brief getter for the connectionGenes
+             * @return std::vector<ConnectionGene>&
+             */
             std::vector<ConnectionGene>& getConnectionChromosomes() noexcept;
+            /**
+             * @brief gets the number of nodes from a layer.
+             * @param layerID count the nodes from that layer.
+             * @return std::size_t number of nodes
+             */
             std::size_t getNumOfNodes(std::size_t layerID) const noexcept;
+            /**
+             * @brief returns a Json value with the information of the genome.
+             * @return JsonBox::Value
+             */
             JsonBox::Value toJson() noexcept;
+            /**
+             * @brief writes the genome to a json file.
+             * it can be loaded again with the constructor
+             * @code
+             * EvoAI::Genome g(jsonfile);
+             * @endcode
+             * @param filename std::string file to write
+             */
             void writeToFile(const std::string& filename) noexcept;
+            /**
+             * @brief gets the genome id
+             * @param fit double
+             */
             void setFitness(const double& fit) noexcept;
+            /**
+             * @brief gets the fitness
+             * @return double
+             */
             const double& getFitness() const noexcept;
+            /**
+             * @brief Checks if it has the NodeGene.
+             * @param ng NodeGene
+             * @return bool
+             */
             bool hasNodeGene(const NodeGene& ng) const noexcept;
+            /**
+             * @brief Checks if it has the ConnectionGene
+             * @param cg ConnectionGene
+             * @return bool true if it has the connection gene.
+             */
             bool hasConnectionGene(const ConnectionGene& cg) const noexcept;
+            /**
+             * @brief sets the genome id
+             * @param gnmID std::size_t
+             */
             void setGenomeID(std::size_t gnmID) noexcept;
             /**
              * @brief gets the genome id
