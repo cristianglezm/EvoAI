@@ -71,6 +71,7 @@ namespace EvoAI{
         }
     }
     void Species::computeAvgFitness() noexcept{
+        oldAvgFitness = avgFitness;
         auto sum = 0.0;
         for(auto& g:genomes){
             sum += g->getFitness();
@@ -166,6 +167,12 @@ namespace EvoAI{
     }
     std::size_t Species::getSize() const noexcept{
         return genomes.size();
+    }
+    void Species::setNumOffsprings(std::size_t& numOff) noexcept{
+        numOffsprings = numOff;
+    }
+    const std::size_t& Species::getNumOffsprings() const noexcept{
+        return numOffsprings;
     }
     JsonBox::Value Species::toJson() const noexcept{
         JsonBox::Object o;

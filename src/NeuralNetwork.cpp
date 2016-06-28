@@ -104,7 +104,7 @@ namespace EvoAI{
                         nrnDest.addSum(output * w);
                         if(nrnDest.getType() == Neuron::Type::CONTEXT){
                             if(c->getCycles() > layers[dest.layer].getCyclesLimit()){
-                                nrnDest.resetContext(); /// is this necesary? review
+                                nrnDest.resetContext(); /// @todo review
                                 c->setCycles(0);
                             }
                             nrnDest.setSum(nrnSrc.getSum());
@@ -112,11 +112,10 @@ namespace EvoAI{
                         }
                     break;
                 case Neuron::Type::OUTPUT:{
-                        // if output is connected somewhere is to a context if not is wrong.
                         double oldSum = nrnSrc.getSum();
                         nrnSrc.addSum(layers[src.layer].getBias() * nrnSrc.getBiasWeight());
                         if(c->getCycles() > layers[dest.layer].getCyclesLimit()){
-                            nrnDest.resetContext(); /// is this necesary? review
+                            nrnDest.resetContext(); /// @todo review
                             c->setCycles(0);
                         }
                         nrnDest.setSum(nrnSrc.getSum());

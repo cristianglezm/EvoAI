@@ -215,7 +215,15 @@ namespace EvoAI{
         if(!nodeChromosomes.empty()){
             auto selectedNode1 = random(0,nodeChromosomes.size()-1);
             auto selectedNode2 = random(0,nodeChromosomes.size()-1);
-            connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], random(-3.0,3.0));
+            if(!rnnAllowed){
+                if(nodeChromosomes[selectedNode1].getLayerID() <= nodeChromosomes[selectedNode2].getLayerID()){
+                    connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], random(-3.0,3.0));
+                }else{
+                    connectionChromosomes.emplace_back(nodeChromosomes[selectedNode2], nodeChromosomes[selectedNode1], random(-3.0,3.0));
+                }
+            }else{
+                connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], random(-3.0,3.0));
+            }
         }
     }
     void Genome::mutateRemoveConnection() noexcept{

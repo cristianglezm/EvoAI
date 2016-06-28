@@ -8,12 +8,13 @@ namespace EvoAI{
     namespace Test{
         TEST(PopulationTest, Constructor){
             /// @todo
-            Population p(15,2,1,1,false,false);
+            Population p(5,2,1);
             std::vector<double> x = {0.0,0.0,1.0,1.0};
             std::vector<double> y = {0.0,1.0,0.0,1.0};
             std::vector<double> truth = {0.0,1.0,1.0,0.0};
             auto errorSum = 999.0;
-            while(errorSum > 0.1){
+            while(errorSum > 0.8){
+                std::cout << "Pop size: " << p.getGenomes().size() << std::endl;
                 for(auto& g:p.getGenomes()){
                     std::vector<double> results;
                     std::cout << "--start----" << std::endl;
@@ -28,11 +29,10 @@ namespace EvoAI{
                     errorSum = (std::fabs(results[0]) + std::fabs(1.0-results[1])
                                 + std::fabs(1.0-results[2]) + std::fabs(results[3]));
                     g->setFitness(std::pow((4.0 - errorSum), 2));
-                    g->mutate(0.01,0.02,0.001,0.8,0.5,0.0);
                     std::cout << "error: "<< errorSum << std::endl;
                     std::cout << "Fitness: " << g->getFitness() << std::endl;
                 }
-                //p.reproduce(true);
+                p.reproduce(false,Population::SelectionType::TRUNCATION);
             }
             std::cout << "Selecting Winner..." << std::endl;
             auto g = p.getBestGenome();
@@ -45,6 +45,11 @@ namespace EvoAI{
                     std::cout << "x: " << x[i] << ", y: " << y[i] << " -> " << (out[0] > 0.5 ? 1:0) << " == " << truth[i]<< std::endl;
                 }
             }
+        }
+        TEST(PopulationTest, SavingAndLoading){
+            Population p(50,1,2);
+            p.writeToFile("Population.json");
+            Population s("Population.json");
         }
     }
 }

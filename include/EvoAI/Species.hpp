@@ -46,6 +46,8 @@ namespace EvoAI{
             const double& getAvgFitness() const noexcept;
             const double& getMaxFitness() const noexcept;
             std::size_t getSize() const noexcept;
+            void setNumOffsprings(std::size_t& numOff) noexcept;
+            const std::size_t& getNumOffsprings() const noexcept;
             JsonBox::Value toJson() const noexcept;
             void writeToFile(const std::string& filename) const noexcept;
             ~Species() = default;

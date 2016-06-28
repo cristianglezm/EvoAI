@@ -15,16 +15,19 @@
 namespace EvoAI{
     /**
      * @todo refactor
-     * species owns genomes
-     * species constructors, serialize unserialize
-     * pop constructors, serialize unserialize
      * functions in general, algorithms.
-     * pop spawn and add to species
      * reproduce clears killable species
      *      interspecie rep triggers a spawn and add to species
      *      normal reproduction is % of the best species
      */
     class Population{
+        public:
+            enum SelectionType{
+                TRUNCATION,
+                TOURNAMENT,
+                FPS,
+                SUS
+                };
         public:
             Population();
             Population(const std::size_t& size, const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecurrent = false, bool cppn = false);
@@ -41,13 +44,14 @@ namespace EvoAI{
             std::vector<Genome*>& getGenomes() noexcept;
             std::vector<std::unique_ptr<Species>>& getSpecies() noexcept;
             void removeOldSpecies() noexcept;
-            void reproduce(bool interSpecies) noexcept;
+            void reproduce(bool interSpecies = false, SelectionType st = SelectionType::TOURNAMENT) noexcept;
             void orderGenomesByFitness() noexcept;
             void orderSpeciesByAge() noexcept;
             void orderSpeciesByFitness() noexcept;
             void rankWithinSpecies() noexcept;
             std::size_t getPopulationSize() const noexcept;
             std::size_t getSpeciesSize() const noexcept;
+            std::size_t getNewID() const noexcept;
             void setMaxAge(std::size_t age) noexcept;
             const std::size_t& getMaxAge() const noexcept;
             void setCompatibilityThreshold(const double& compThreshold) noexcept;

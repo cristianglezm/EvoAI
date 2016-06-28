@@ -17,7 +17,7 @@ namespace EvoAI{
     , maxAge(20){
         for(auto i=0u;i<size;++i){
             auto g = std::make_unique<Genome>(numInputs, numOutputs, canBeRecurrent, cppn);
-            g->setGenomeID(i);
+            g->setGenomeID(getNewID());
             addGenome(std::move(g));
         }
     }
@@ -30,7 +30,7 @@ namespace EvoAI{
     , maxAge(20){
         for(auto i=0u;i<size;++i){
             auto g = std::make_unique<Genome>(numInputs, numHidden, numOutputs, canBeRecurrent, cppn);
-            g->setGenomeID(i);
+            g->setGenomeID(getNewID());
             addGenome(std::move(g));
         }
     }
@@ -50,7 +50,9 @@ namespace EvoAI{
     : species()
     , genomes()
     , PopulationSize(50)
-    , genomesCached(false){
+    , genomesCached(false)
+    , compatibilityThreshold(6.0)
+    , maxAge(20){
         JsonBox::Value json;
         json.loadFromFile(filename);
         auto v = json["Population"];
@@ -63,6 +65,7 @@ namespace EvoAI{
         maxAge = std::stoull(v["maxAge"].getString());
     }
     void Population::addGenome(std::unique_ptr<Genome> g) noexcept{
+        std::cout << "\t\tAddGenome" << std::endl; /// @todo remove
         genomesCached = false;
         auto added = false;
         for(auto& sp:species){
@@ -78,11 +81,12 @@ namespace EvoAI{
             }
         }
         if(!added){
-            auto currentSpeciesID = species.size();
+            static auto currentSpeciesID = 0;
             auto sp = std::make_unique<Species>(currentSpeciesID,true);
             g->setSpeciesID(currentSpeciesID);
             sp->addGenome(std::move(g));
             species.push_back(std::move(sp));
+            currentSpeciesID++;
         }
     }
     void Population::removeGenome(Genome* g) noexcept{
@@ -163,41 +167,128 @@ namespace EvoAI{
                                 }else{
                                     sp->setNovel(false);
                                 }
-                                if(sp->getAge() > maxAge){
+                                if((sp->getAge() > maxAge) || (sp->getGenomes().size() < 2)){
                                     sp->setKillable(true);
                                 }
+                                std::cout << "\tID: " << std::to_string(sp->getID()) << "\tKilled: " << (sp->isKillable() ? "TRUE":"False") << std::endl; /// @todo remove
                                 return sp->isKillable();
                             }), std::end(species));
     }
-    void Population::reproduce(bool interSpecies) noexcept{
-        /** @todo reimplement
-        //speciate();
+    std::size_t Population::getNewID() const noexcept{
+        static auto currentID = 0;
+        return currentID++;
+    }
+    void Population::reproduce(bool interSpecies, Population::SelectionType st) noexcept{
+        removeOldSpecies();
+        auto numOffsprings = ((PopulationSize - getGenomes().size()) / species.size());
+        std::cout << "\t\t numOff: " << numOffsprings << std::endl; /// @todo remove
         if(interSpecies){
-            orderGenomesByFitness();
-            std::size_t half = (genomes.size()/2);
-            for(auto i=half;i<genomes.size();++i){
-                std::cout << "reproduce..." << std::endl;
-                auto selectedFather = random(0,static_cast<int>(half));
-                auto selectedMother = random(0,static_cast<int>(half));
-                auto genID = genomes[i]->getGenomeID();
-                if(genomes.size() < PopulationSize){
-                    genomes.push_back(Genome::reproduce(*genomes[selectedFather],*genomes[selectedMother]));
-                    genomes.back()->setGenomeID(genomes.size());
-                    if(doAction(0.6)){
-                        genomes.back()->mutate();
-                    }
-                }else{
-                    genomes[i] = Genome::reproduce(*genomes[selectedFather],*genomes[selectedMother]);
-                    genomes[i]->setGenomeID(genID);
-                    if(doAction(0.6)){
-                        genomes[i]->mutate();
-                    }
-                }
-            }
-        }else{
             
+        }else{
+            switch(st){
+                case Population::SelectionType::TRUNCATION:{
+                        std::vector<std::unique_ptr<Genome>> temp;
+                        for(auto& sp:species){
+                            sp->rank();
+                            auto& spGenomes = sp->getGenomes();
+                            auto fatherCounter = 0u;
+                            auto motherCounter = 1u;
+                            for(auto i=0u;i<numOffsprings;++i){
+                                auto child = Genome::reproduce(*spGenomes[fatherCounter],*spGenomes[motherCounter]);
+                                if(doAction(0.6)){
+                                    child->mutate();
+                                }
+                                child->setGenomeID(getNewID());
+                                temp.push_back(std::move(child));
+                                if(fatherCounter < spGenomes.size()){
+                                    ++fatherCounter;
+                                }else{
+                                    fatherCounter = 0;
+                                }
+                                if(motherCounter < spGenomes.size()){
+                                    ++motherCounter;
+                                }else{
+                                    motherCounter = 1;
+                                }
+                            }
+                            auto half = (spGenomes.size() / 2) - 1;
+                            auto halfCounter = half;
+                            for(auto i=0u;i<half;++i){
+                                auto child = Genome::reproduce(*spGenomes[i],*spGenomes[i+1]);
+                                auto oldID = spGenomes[halfCounter]->getGenomeID();
+                                child->setGenomeID(oldID);
+                                spGenomes[halfCounter] = std::move(child);
+                                if(halfCounter < spGenomes.size()){
+                                    ++halfCounter;
+                                }
+                            }
+                        }
+                        for(auto i=0u;i<temp.size();++i){
+                            addGenome(std::move(temp[i]));
+                        }
+                }   break;
+                case Population::SelectionType::TOURNAMENT:{
+                        std::vector<std::unique_ptr<Genome>> temp;
+                        std::cout << "------------ SP SIZE: "<< species.size() << std::endl; /// @todo remove
+                        for(auto& sp: species){
+                            std::cout << "\t------------ SP ID: " << std::to_string(sp->getID()) << std::endl; /// @todo remove
+                            auto& spGenomes = sp->getGenomes();
+                            sp->adjustFitness();
+                            auto tournamentSelection = [&](std::size_t rounds){
+                                int champ = -1;
+                                int looser = -1;
+                                for(auto i=0u;i<rounds;++i){
+                                    auto contender = random(0,spGenomes.size()-1);
+                                    if(champ == -1){
+                                        champ = contender;
+                                        looser = contender;
+                                    }else if(spGenomes[contender]->getFitness() > spGenomes[champ]->getFitness()){
+                                        looser = champ;
+                                        champ = contender;
+                                    }
+                                }
+                                return std::make_pair(champ,looser);
+                            };
+                            for(auto i=0u;i<numOffsprings;++i){
+                                auto father = tournamentSelection(2);
+                                auto mother = tournamentSelection(2);
+                                auto child = Genome::reproduce(*spGenomes[father.first],*spGenomes[mother.first]);
+                                if(doAction(0.6)){
+                                    child->mutate();
+                                }
+                                std::cout << "\t\tAdding"<< std::endl; /// @todo remove
+                                child->setGenomeID(getNewID());
+                                temp.push_back(std::move(child));
+                            }
+                            auto spSize = (spGenomes.size());
+                            for(auto i=0u;i<(spSize / 2);++i){
+                                auto father = tournamentSelection(2);
+                                auto mother = tournamentSelection(2);
+                                auto newChild = mother.second;
+                                auto child = Genome::reproduce(*spGenomes[father.first],*spGenomes[mother.first]);
+                                if(doAction(0.6)){
+                                    child->mutate();
+                                }
+                                std::cout << "\t\tReplacing"<< std::endl; /// @todo remove
+                                auto oldID = spGenomes[newChild]->getGenomeID();
+                                child->setGenomeID(oldID);
+                                temp.push_back(std::move(child));
+                                sp->removeGenome(spGenomes[newChild].get());
+                            }
+                        }
+                        for(auto i=0u;i<temp.size();++i){
+                            std::cout << "temp Adding" << std::endl; /// @todo remove
+                            addGenome(std::move(temp[i]));
+                        }
+                }   break;
+                case Population::SelectionType::FPS:{ /// @todo
+                }    break;
+                case Population::SelectionType::SUS:
+                default:{ /// @todo
+                    
+                }   break;
+            }
         }
-        */
     }
     void Population::orderGenomesByFitness() noexcept{
         if(!genomesCached){
