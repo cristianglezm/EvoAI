@@ -13,13 +13,6 @@
 #include <JsonBox.h>
 
 namespace EvoAI{
-    /**
-     * @todo refactor
-     * functions in general, algorithms.
-     * reproduce clears killable species
-     *      interspecie rep triggers a spawn and add to species
-     *      normal reproduction is % of the best species
-     */
     class Population{
         public:
             enum SelectionType{

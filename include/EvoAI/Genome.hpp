@@ -84,6 +84,11 @@ namespace EvoAI{
              */
             std::vector<NodeGene>& getNodeChromosomes() noexcept;
             /**
+             * @brief const getter for NodeGenes
+             * @return const std::vector<NodeGene>&
+             */
+            const std::vector<NodeGene>& getNodeChromosomes() const noexcept;
+            /**
              * @brief setter for the ConnectionGene
              * @param cgenes std::vector<ConnectionGene>&&
              */
@@ -93,6 +98,11 @@ namespace EvoAI{
              * @return std::vector<ConnectionGene>&
              */
             std::vector<ConnectionGene>& getConnectionChromosomes() noexcept;
+            /**
+             * @brief const getter for the connectionGenes
+             * @return const std::vector<ConnectionGene>&
+             */
+            const std::vector<ConnectionGene>& getConnectionChromosomes() const noexcept;
             /**
              * @brief gets the number of nodes from a layer.
              * @param layerID count the nodes from that layer.
@@ -250,6 +260,7 @@ namespace EvoAI{
             static disjointGenes getDisjointGenes(const Genome& g1, const Genome& g2) noexcept;
             /**
              * @brief Creates a new Genome from two parents.
+             * if g1 and g2 are equal it will copy g1.
              * @param g1 const Genome&
              * @param g2 const Genome&
              * @return std::unique_ptr<Genome>

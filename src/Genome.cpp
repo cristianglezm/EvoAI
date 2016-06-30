@@ -128,10 +128,16 @@ namespace EvoAI{
     std::vector<NodeGene>& Genome::getNodeChromosomes() noexcept{
         return nodeChromosomes;
     }
+    const std::vector<NodeGene>& Genome::getNodeChromosomes() const noexcept{
+        return nodeChromosomes;
+    }
     void Genome::setConnectionChromosomes(std::vector<ConnectionGene>&& cgenes) noexcept{
         connectionChromosomes = std::move(cgenes);
     }
     std::vector<ConnectionGene>& Genome::getConnectionChromosomes() noexcept{
+        return connectionChromosomes;
+    }
+    const std::vector<ConnectionGene>& Genome::getConnectionChromosomes() const noexcept{
         return connectionChromosomes;
     }
     std::size_t Genome::getNumOfNodes(std::size_t layerID) const noexcept{
@@ -421,6 +427,25 @@ namespace EvoAI{
         auto child = std::make_unique<Genome>();
         std::vector<NodeGene> nGenes;
         std::vector<ConnectionGene> cGenes;
+        if(&g1 == &g2){
+            for(auto& ng:g1.getNodeChromosomes()){
+                nGenes.push_back(ng);
+            }
+            for(auto& cg:g1.getConnectionChromosomes()){
+                cGenes.push_back(cg);
+            }
+            nGenes.erase(std::unique(std::begin(nGenes), std::end(nGenes),
+                                        [](NodeGene& ng1,NodeGene& ng2){
+                                            return (ng1.getInnovationID() == ng2.getInnovationID());
+                                        }), std::end(nGenes));
+            cGenes.erase(std::unique(std::begin(cGenes), std::end(cGenes),
+                                    [](ConnectionGene& cg1,ConnectionGene& cg2){
+                                        return (cg1.getInnovationID() == cg2.getInnovationID());
+                                    }), std::end(cGenes));
+            child->setNodeChromosomes(std::move(nGenes));
+            child->setConnectionChromosomes(std::move(cGenes));
+            return child;
+        }
         matchingChromosomes mChromo = getMatchingChromosomes(g1,g2);
         auto matchingNodeSize = mChromo.first.first.size();
         for(auto i=0u;i<matchingNodeSize;++i){
@@ -501,8 +526,14 @@ namespace EvoAI{
                 }
             }
         }
-        std::unique(std::begin(nGenes), std::end(nGenes));
-        std::unique(std::begin(cGenes), std::end(cGenes));
+        nGenes.erase(std::unique(std::begin(nGenes), std::end(nGenes),
+                                        [](NodeGene& ng1,NodeGene& ng2){
+                                            return (ng1.getInnovationID() == ng2.getInnovationID());
+                                        }), std::end(nGenes));
+        cGenes.erase(std::unique(std::begin(cGenes), std::end(cGenes),
+                                    [](ConnectionGene& cg1,ConnectionGene& cg2){
+                                        return (cg1.getInnovationID() == cg2.getInnovationID());
+                                    }), std::end(cGenes));
         child->setNodeChromosomes(std::move(nGenes));
         child->setConnectionChromosomes(std::move(cGenes));
         return child;
