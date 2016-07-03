@@ -2,7 +2,7 @@
 
 TODO:
 
-* Implement functions to create images that return sf::Image and another that takes a sf::Image and modifies it? imageEvoler?
+* Implement functions to create images that return sf::Image and another that takes a sf::Image and modifies it? imageEvolver?
 * Implement NEAT-CPPN
     * Population, Species document, finish selection Types
 * SoundGenerator implement genome options etc

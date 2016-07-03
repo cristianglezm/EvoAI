@@ -286,12 +286,26 @@ namespace EvoAI{
             }
         }
     }
+    void Genome::mutateDisable() noexcept{
+        std::vector<ConnectionGene*> cgs;
+        for(auto& c:connectionChromosomes){
+            if(c.isEnabled()){
+                cgs.push_back(&c);
+            }
+        }
+        if(!cgs.empty()){
+            cgs[random(0,cgs.size()-1)]->setEnabled(false);
+        }
+    }
     void Genome::mutateEnable() noexcept{
+        std::vector<ConnectionGene*> cgs;
         for(auto& c:connectionChromosomes){
             if(!c.isEnabled()){
-                c.setEnabled(true);
-                break;
+                cgs.push_back(&c);
             }
+        }
+        if(!cgs.empty()){
+            cgs[random(0,cgs.size()-1)]->setEnabled(true);
         }
     }
     void Genome::mutateActivationType() noexcept{
@@ -300,7 +314,7 @@ namespace EvoAI{
             nodeChromosomes[selectedNode].setActType(getRandomActivationType());
         }
     }
-    void Genome::mutate(float nodeRate, float addConnRate, float removeConnRate, float perturbWeightsRate, float enableRate, float actTypeRate) noexcept{
+    void Genome::mutate(float nodeRate, float addConnRate, float removeConnRate, float perturbWeightsRate, float enableRate, float disableRate, float actTypeRate) noexcept{
         if(doAction(nodeRate)){
             mutateAddNode();
         }else if(doAction(addConnRate)){
@@ -311,6 +325,8 @@ namespace EvoAI{
             mutateWeights(2);
         }else if(doAction(enableRate)){
             mutateEnable();
+        }else if(doAction(disableRate)){
+            mutateDisable();
         }else if(doAction(actTypeRate)){
             if(cppn){
                 mutateActivationType();
@@ -396,9 +412,15 @@ namespace EvoAI{
                 eng.push_back(n1);
             }
         }
-        for(auto& c1:g1.connectionChromosomes){
-            if(!g2.hasConnectionGene(c1)
-                && c1.getInnovationID() > (*end2).getInnovationID()){
+        if(!g2.connectionChromosomes.empty()){
+            for(auto& c1:g1.connectionChromosomes){
+                if(!g2.hasConnectionGene(c1)
+                    && c1.getInnovationID() > (*end2).getInnovationID()){
+                    ecg.push_back(c1);
+                }
+            }
+        }else{
+            for(auto& c1:g1.connectionChromosomes){
                 ecg.push_back(c1);
             }
         }
@@ -415,9 +437,15 @@ namespace EvoAI{
                 dng.push_back(n1);
             }
         }
-        for(auto& c1:g1.connectionChromosomes){
-            if(!g2.hasConnectionGene(c1)
-                && c1.getInnovationID() < (*end2).getInnovationID()){
+        if(!g2.connectionChromosomes.empty()){
+            for(auto& c1:g1.connectionChromosomes){
+                if(!g2.hasConnectionGene(c1)
+                    && c1.getInnovationID() < (*end2).getInnovationID()){
+                    dcg.push_back(c1);
+                }
+            }
+        }else{
+            for(auto& c1:g1.connectionChromosomes){
                 dcg.push_back(c1);
             }
         }

@@ -183,7 +183,11 @@ namespace EvoAI{
              */
             void mutateWeights(double power) noexcept;
             /**
-             * @brief finds a connectionGene that is not enabled and enables it.
+             * @brief selects a random connectionGene that is enabled and disables it
+             */
+            void mutateDisable() noexcept;
+            /**
+             * @brief selects a random connectionGene that is not enabled and enables it.
              */
             void mutateEnable() noexcept;
             /**
@@ -197,8 +201,12 @@ namespace EvoAI{
              * @param connectionRate float
              * @param perturbWeightsRate float
              * @param enableRate float
+             * @param disableRate float
+             * @param actTypeRate float
              */
-            void mutate(float nodeRate = 0.2, float addConnRate = 0.3, float removeConnRate = 0.2, float perturbWeightsRate = 0.6, float enableRate = 0.4, float actTypeRate = 0.4) noexcept;
+            void mutate(float nodeRate = 0.2, float addConnRate = 0.3, float removeConnRate = 0.2,
+                                        float perturbWeightsRate = 0.6, float enableRate = 0.35,
+                                        float disableRate = 0.3, float actTypeRate = 0.4) noexcept;
             /**
              * @brief Checks if the genome is valid.
              * @return bool true if all is ok 

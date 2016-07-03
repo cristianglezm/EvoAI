@@ -85,7 +85,7 @@ namespace EvoAI{
             g->setSpeciesID(currentSpeciesID);
             sp->addGenome(std::move(g));
             species.push_back(std::move(sp));
-            currentSpeciesID++;
+            ++currentSpeciesID;
         }
     }
     void Population::removeGenome(Genome* g) noexcept{
@@ -177,19 +177,18 @@ namespace EvoAI{
         return currentID++;
     }
     void Population::reproduce(bool interSpecies, Population::SelectionType st) noexcept{
-        removeOldSpecies();
         auto numOffsprings = 0u;
         if(species.size() > 1){
+            removeOldSpecies();
             numOffsprings = ((PopulationSize - getGenomes().size()) / species.size());
         }
         if(interSpecies){
             switch(st){
                 case Population::SelectionType::TRUNCATION:{
                         std::vector<std::unique_ptr<Genome>> genomesToAdd;
-                        std::vector<Genome*> genomesToRemove;
                         orderGenomesByFitness();
-                        auto size = genomes.size();
-                        auto half = size / 2;
+                        std::size_t size = genomes.size();
+                        std::size_t half = (size / 2);
                         if(numOffsprings > 0){
                             for(auto i=0u;i<numOffsprings;++i){
                                 auto selectedFather = random(0,half);
@@ -199,6 +198,7 @@ namespace EvoAI{
                                 genomesToAdd.push_back(std::move(child));
                             }
                         }
+                        std::vector<Genome*> genomesToRemove;
                         for(auto i=half;i<size;++i){
                             auto selectedFather = random(0,half);
                             auto selectedMother = random(0,half);
@@ -220,53 +220,55 @@ namespace EvoAI{
                 }   break;
                 case Population::SelectionType::TOURNAMENT:{
                         std::vector<std::unique_ptr<Genome>> genomesToAdd;
-                        std::vector<Genome*> genomesToRemove;
-                        /// @todo check high memory usage
-                        /// getGenomes();
                         auto tournamentSelection = [&](std::size_t rounds){
-                                int champ = -1;
-                                int looser = -1;
-                                for(auto i=0u;i<rounds;++i){
-                                    auto contender = random(0,genomes.size()-1);
-                                    if(champ == -1){
-                                        champ = contender;
-                                        looser = contender;
-                                    }else if(genomes[contender]->getFitness() > genomes[champ]->getFitness()){
-                                        looser = champ;
-                                        champ = contender;
-                                    }
-                                }
-                                return std::make_pair(champ,looser);
-                            };
-                            if(numOffsprings > 0){
-                                for(auto i=0u;i<numOffsprings;++i){
-                                    auto father = tournamentSelection(3);
-                                    auto mother = tournamentSelection(3);
-                                    auto child = Genome::reproduce(*genomes[father.first],*genomes[mother.first]);
-                                    child->setGenomeID(getNewID());
-                                    genomesToAdd.push_back(std::move(child));
+                            int champ = -1;
+                            int looser = -1;
+                            for(auto i=0u;i<rounds;++i){
+                                auto contender = random(0,genomes.size()-1);
+                                if(champ == -1){
+                                    champ = contender;
+                                    looser = contender;
+                                }else if(genomes[contender]->getFitness() > genomes[champ]->getFitness()){
+                                    looser = champ;
+                                    champ = contender;
                                 }
                             }
-                            auto half = (genomes.size() / 2);
-                            for(auto i=0u;i<half;++i){
+                            return std::make_pair(champ,looser);
+                        };
+                        if(numOffsprings > 0){
+                            for(auto i=0u;i<numOffsprings;++i){
                                 auto father = tournamentSelection(3);
                                 auto mother = tournamentSelection(3);
-                                auto newChild = mother.second;
                                 auto child = Genome::reproduce(*genomes[father.first],*genomes[mother.first]);
-                                auto oldID = genomes[newChild]->getGenomeID();
-                                child->setGenomeID(oldID);
+                                child->setGenomeID(getNewID());
                                 genomesToAdd.push_back(std::move(child));
-                                genomesToRemove.push_back(genomes[newChild]);
                             }
-                            for(auto& g:genomesToRemove){
-                                auto sp = findSpecies(g->getSpeciesID());
-                                if(sp){
-                                    sp->removeGenome(g);
-                                }
+                        }
+                        std::vector<Genome*> genomesToRemove;
+                        std::size_t half = (genomes.size() / 2);
+                        for(auto i=0u;i<half;++i){
+                            auto father = tournamentSelection(3);
+                            auto mother = tournamentSelection(3);
+                            auto newChild = mother.second;
+                            auto found = std::find(std::begin(genomesToRemove),std::end(genomesToRemove),genomes[newChild]);
+                            if(found != std::end(genomesToRemove)){
+                                continue;
                             }
-                            for(auto& g:genomesToAdd){
-                                addGenome(std::move(g));
+                            auto child = Genome::reproduce(*genomes[father.first],*genomes[mother.first]);
+                            auto oldID = genomes[newChild]->getGenomeID();
+                            child->setGenomeID(oldID);
+                            genomesToAdd.push_back(std::move(child));
+                            genomesToRemove.push_back(genomes[newChild]);
+                        }
+                        for(auto& g:genomesToRemove){
+                            auto sp = findSpecies(g->getSpeciesID());
+                            if(sp){
+                                sp->removeGenome(g);
                             }
+                        }
+                        for(auto& g:genomesToAdd){
+                            addGenome(std::move(g));
+                        }
                 }   break;
                 case Population::SelectionType::FPS:{ 
                         /// @todo
@@ -281,11 +283,10 @@ namespace EvoAI{
                 case Population::SelectionType::TRUNCATION:{
                         std::vector<std::unique_ptr<Genome>> genomesToAdd;
                         for(auto& sp:species){
-                            std::vector<Genome*> genomesToRemove;
                             sp->rank();
                             auto& spGenomes = sp->getGenomes();
-                            auto size = spGenomes.size();
-                            auto half = size / 2;
+                            std::size_t size = spGenomes.size();
+                            std::size_t half = size / 2;
                             if(numOffsprings > 0){
                                 for(auto i=0u;i<numOffsprings;++i){
                                     auto selectedFather = random(0,half);
@@ -295,6 +296,7 @@ namespace EvoAI{
                                     genomesToAdd.push_back(std::move(child));
                                 }
                             }
+                            std::vector<Genome*> genomesToRemove;
                             for(auto i=half;i<size;++i){
                                 auto selectedFather = random(0,half);
                                 auto selectedMother = random(0,half);
@@ -315,7 +317,6 @@ namespace EvoAI{
                 case Population::SelectionType::TOURNAMENT:{
                         std::vector<std::unique_ptr<Genome>> genomesToAdd;
                         for(auto& sp: species){
-                            std::vector<Genome*> genomesToRemove;
                             auto& spGenomes = sp->getGenomes();
                             auto tournamentSelection = [&](std::size_t rounds){
                                 int champ = -1;
@@ -341,11 +342,16 @@ namespace EvoAI{
                                     genomesToAdd.push_back(std::move(child));
                                 }
                             }
+                            std::vector<Genome*> genomesToRemove;
                             auto half = (spGenomes.size() / 2);
                             for(auto i=0u;i<half;++i){
                                 auto father = tournamentSelection(3);
                                 auto mother = tournamentSelection(3);
                                 auto newChild = mother.second;
+                                auto found = std::find(std::begin(genomesToRemove),std::end(genomesToRemove),spGenomes[newChild].get());
+                                if(found != std::end(genomesToRemove)){
+                                    continue;
+                                }
                                 auto child = Genome::reproduce(*spGenomes[father.first],*spGenomes[mother.first]);
                                 auto oldID = spGenomes[newChild]->getGenomeID();
                                 child->setGenomeID(oldID);
@@ -387,7 +393,6 @@ namespace EvoAI{
                         });
     }
     void Population::orderSpeciesByFitness() noexcept{
-        /// @todo computeAvg...?
         std::sort(std::begin(species),std::end(species),
                         [](std::unique_ptr<Species>& s1, std::unique_ptr<Species>& s2){
                             s1->computeAvgFitness();
