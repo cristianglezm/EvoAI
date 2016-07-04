@@ -8,7 +8,7 @@ namespace EvoAI{
     namespace Test{
         TEST(PopulationTest, Constructor){
             /// @todo
-            Population p(1500,2,1);
+            Population p(150,2,1,1,false,false);
             std::vector<double> x = {0.0,0.0,1.0,1.0};
             std::vector<double> y = {0.0,1.0,0.0,1.0};
             std::vector<double> truth = {0.0,1.0,1.0,0.0};
@@ -43,7 +43,8 @@ namespace EvoAI{
             std::cout << "Selecting Winner..." << std::endl;
             auto g = p.getBestGenome();
             if(g){
-                g->writeToFile("genomeSolvedXOR.json");
+                g->writeToFile("SolvedXORg.json");
+                Genome::makePhenotype(*g)->writeToFile("SolvedXORnn.json");
                 std::cout << "Winner Fitness: " << g->getFitness() << std::endl;
                 auto nn = Genome::makePhenotype(*g);
                 for(auto i=0u;i<4;++i){

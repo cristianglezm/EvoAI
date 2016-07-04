@@ -21,7 +21,6 @@ namespace EvoAI{
     , nodeChromosomes()
     , connectionChromosomes(){
         for(auto i=0u;i<numInputs;++i){
-            // activation function is not used by Neuron::Type::INPUT
             nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,Neuron::ActivationType::SIGMOID);
         }
         for(auto i=0u;i<numOutputs;++i){
@@ -46,7 +45,6 @@ namespace EvoAI{
     , nodeChromosomes()
     , connectionChromosomes(){
         for(auto i=0u;i<numInputs;++i){
-            // activation function is not used by Neuron::Type::INPUT
             nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,Neuron::ActivationType::SIGMOID);
         }
         for(auto i=0u;i<numHidden;++i){
@@ -222,7 +220,7 @@ namespace EvoAI{
             auto selectedNode1 = random(0,nodeChromosomes.size()-1);
             auto selectedNode2 = random(0,nodeChromosomes.size()-1);
             if(!rnnAllowed){
-                if(nodeChromosomes[selectedNode1].getLayerID() <= nodeChromosomes[selectedNode2].getLayerID()){
+                if(nodeChromosomes[selectedNode1].getLayerID() < nodeChromosomes[selectedNode2].getLayerID()){
                     connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], random(-3.0,3.0));
                 }else{
                     connectionChromosomes.emplace_back(nodeChromosomes[selectedNode2], nodeChromosomes[selectedNode1], random(-3.0,3.0));
