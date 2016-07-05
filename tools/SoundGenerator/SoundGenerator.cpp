@@ -119,7 +119,7 @@ int main(int argc, char **argv){
             }
         }
     }else if(optGenome){
-        std::cout << "Not yet Implemented." << std::endl; /// TODO
+        std::cout << "Not yet Implemented." << std::endl; /// @todo
         return EXIT_FAILURE;
     }
     if(optSave){

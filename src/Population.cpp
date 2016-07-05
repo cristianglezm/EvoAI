@@ -17,7 +17,7 @@ namespace EvoAI{
     , maxAge(120){
         for(auto i=0u;i<size;++i){
             auto g = std::make_unique<Genome>(numInputs, numOutputs, canBeRecurrent, cppn);
-            g->setGenomeID(getNewID());
+            g->setGenomeID(Population::getNewID());
             addGenome(std::move(g));
         }
     }
@@ -30,7 +30,7 @@ namespace EvoAI{
     , maxAge(120){
         for(auto i=0u;i<size;++i){
             auto g = std::make_unique<Genome>(numInputs, numHidden, numOutputs, canBeRecurrent, cppn);
-            g->setGenomeID(getNewID());
+            g->setGenomeID(Population::getNewID());
             addGenome(std::move(g));
         }
     }
@@ -162,7 +162,12 @@ namespace EvoAI{
         species.erase(std::remove_if(std::begin(species),std::end(species),
                             [&](std::unique_ptr<Species>& sp){
                                 if(!sp->isNovel()){
-                                    sp->addAge(1);
+                                    sp->computeAvgFitness();
+                                    if(sp->isStagnant()){
+                                        sp->addAge(2);
+                                    }else{
+                                        sp->addAge(1);
+                                    }
                                 }else{
                                     sp->setNovel(false);
                                 }
@@ -171,10 +176,6 @@ namespace EvoAI{
                                 }
                                 return sp->isKillable();
                             }), std::end(species));
-    }
-    std::size_t Population::getNewID() const noexcept{
-        static auto currentID = 0;
-        return currentID++;
     }
     void Population::reproduce(bool interSpecies, Population::SelectionType st) noexcept{
         auto numOffsprings = 0u;
@@ -194,7 +195,7 @@ namespace EvoAI{
                                 auto selectedFather = random(0,half);
                                 auto selectedMother = random(0,half);
                                 auto child = Genome::reproduce(*genomes[selectedFather],*genomes[selectedMother]);
-                                child->setGenomeID(getNewID());
+                                child->setGenomeID(Population::getNewID());
                                 genomesToAdd.push_back(std::move(child));
                             }
                         }
@@ -240,7 +241,7 @@ namespace EvoAI{
                                 auto father = tournamentSelection(3);
                                 auto mother = tournamentSelection(3);
                                 auto child = Genome::reproduce(*genomes[father.first],*genomes[mother.first]);
-                                child->setGenomeID(getNewID());
+                                child->setGenomeID(Population::getNewID());
                                 genomesToAdd.push_back(std::move(child));
                             }
                         }
@@ -270,13 +271,63 @@ namespace EvoAI{
                             addGenome(std::move(g));
                         }
                 }   break;
-                case Population::SelectionType::FPS:{ 
-                        /// @todo
-                }    break;
-                case Population::SelectionType::SUS:
+                case Population::SelectionType::FPS:
                 default:{
-                        /// @todo
-                }   break;
+                        std::vector<std::unique_ptr<Genome>> genomesToAdd;
+                        orderGenomesByFitness();
+                        auto totalFitness = 0.0;
+                        for(auto& g:genomes){
+                            totalFitness += g->getFitness();
+                        }
+                        auto fpSelection = [&](double totalFitness) -> Genome*{
+                            auto r = random(0.0,1.0);
+                            auto covered = 0.0;
+                            for(auto& g:genomes){
+                                covered += (g->getFitness()/totalFitness);
+                                if(r<covered){
+                                    return g;
+                                }
+                            }
+                            return nullptr;
+                        };
+                        if(numOffsprings > 0){
+                            for(auto i=0u;i<numOffsprings;++i){
+                                auto father = fpSelection(totalFitness);
+                                auto mother = fpSelection(totalFitness);
+                                if(father && mother){
+                                    auto child = Genome::reproduce(*father,*mother);
+                                    child->setGenomeID(Population::getNewID());
+                                    genomesToAdd.push_back(std::move(child));
+                                }
+                            }
+                        }
+                        std::vector<Genome*> genomesToRemove;
+                        auto half = (genomes.size() / 2);
+                        for(auto i=half;i<genomes.size();++i){
+                            auto father = fpSelection(totalFitness);
+                            auto mother = fpSelection(totalFitness);
+                            auto found = std::find(std::begin(genomesToRemove),std::end(genomesToRemove),genomes[i]);
+                            if(found != std::end(genomesToRemove)){
+                                continue;
+                            }
+                            if(father && mother){
+                                auto child = Genome::reproduce(*father,*mother);
+                                auto oldID = genomes[i]->getGenomeID();
+                                child->setGenomeID(oldID);
+                                genomesToAdd.push_back(std::move(child));
+                                genomesToRemove.push_back(genomes[i]);
+                            }
+                        }
+                        for(auto& g:genomesToRemove){
+                            auto sp = findSpecies(g->getSpeciesID());
+                            if(sp){
+                                sp->removeGenome(g);
+                            }
+                        }
+                        for(auto& g:genomesToAdd){
+                            addGenome(std::move(g));
+                        }
+                }    break;
             }
         }else{
             switch(st){
@@ -292,7 +343,7 @@ namespace EvoAI{
                                     auto selectedFather = random(0,half);
                                     auto selectedMother = random(0,half);
                                     auto child = Genome::reproduce(*spGenomes[selectedFather],*spGenomes[selectedMother]);
-                                    child->setGenomeID(getNewID());
+                                    child->setGenomeID(Population::getNewID());
                                     genomesToAdd.push_back(std::move(child));
                                 }
                             }
@@ -338,7 +389,7 @@ namespace EvoAI{
                                     auto father = tournamentSelection(3);
                                     auto mother = tournamentSelection(3);
                                     auto child = Genome::reproduce(*spGenomes[father.first],*spGenomes[mother.first]);
-                                    child->setGenomeID(getNewID());
+                                    child->setGenomeID(Population::getNewID());
                                     genomesToAdd.push_back(std::move(child));
                                 }
                             }
@@ -366,13 +417,63 @@ namespace EvoAI{
                             addGenome(std::move(g));
                         }
                 }   break;
-                case Population::SelectionType::FPS:{ 
-                        /// @todo
-                }    break;
-                case Population::SelectionType::SUS:
+                case Population::SelectionType::FPS:
                 default:{
-                        /// @todo
-                }   break;
+                        std::vector<std::unique_ptr<Genome>> genomesToAdd;
+                        for(auto& sp:species){
+                            sp->rank();
+                            auto totalFitness = 0.0;
+                            auto& spGenomes = sp->getGenomes();
+                            for(auto& g:spGenomes){
+                                totalFitness += g->getFitness();
+                            }
+                            auto fpSelection = [&](double totalFitness) -> Genome*{
+                                auto r = random(0.0,1.0);
+                                auto covered = 0.0;
+                                for(auto& g:spGenomes){
+                                    covered += (g->getFitness()/totalFitness);
+                                    if(r<covered){
+                                        return g.get();
+                                    }
+                                }
+                                return nullptr;
+                            };
+                            if(numOffsprings > 0){
+                                for(auto i=0u;i<numOffsprings;++i){
+                                    auto father = fpSelection(totalFitness);
+                                    auto mother = fpSelection(totalFitness);
+                                    if(father && mother){
+                                        auto child = Genome::reproduce(*father,*mother);
+                                        child->setGenomeID(Population::getNewID());
+                                        genomesToAdd.push_back(std::move(child));
+                                    }
+                                }
+                            }
+                            std::vector<Genome*> genomesToRemove;
+                            auto half = (spGenomes.size() / 2);
+                            for(auto i=half;i<spGenomes.size();++i){
+                                auto father = fpSelection(totalFitness);
+                                auto mother = fpSelection(totalFitness);
+                                auto found = std::find(std::begin(genomesToRemove),std::end(genomesToRemove),spGenomes[i].get());
+                                if(found != std::end(genomesToRemove)){
+                                    continue;
+                                }
+                                if(father && mother){
+                                    auto child = Genome::reproduce(*father,*mother);
+                                    auto oldID = spGenomes[i]->getGenomeID();
+                                    child->setGenomeID(oldID);
+                                    genomesToAdd.push_back(std::move(child));
+                                    genomesToRemove.push_back(spGenomes[i].get());
+                                }
+                            }
+                            for(auto& g:genomesToRemove){
+                                sp->removeGenome(g);
+                            }
+                        }
+                        for(auto& g:genomesToAdd){
+                            addGenome(std::move(g));
+                        }
+                }    break;
             }
         }
         genomesCached = false;
@@ -423,6 +524,16 @@ namespace EvoAI{
     const double& Population::getCompatibilityThreshold() const noexcept{
         return compatibilityThreshold;
     }
+    double Population::computeAvgFitness() noexcept{
+        if(!genomesCached){
+            getGenomes();
+        }
+        double avgFitness = 0.0;
+        for(auto& g:genomes){
+            avgFitness += g->getFitness();
+        }
+        return (avgFitness/genomes.size());
+    }
     JsonBox::Value Population::toJson() const noexcept{
         JsonBox::Object o;
         JsonBox::Array spcs;
@@ -440,5 +551,12 @@ namespace EvoAI{
         v["version"] = 1.0;
         v["Population"] = toJson();
         v.writeToFile(filename);
+    }
+//////////////
+///// private
+//////////////
+    std::size_t Population::getNewID() noexcept{
+        static auto currentID = 0;
+        return currentID++;
     }
 }

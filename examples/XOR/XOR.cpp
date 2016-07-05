@@ -60,12 +60,13 @@ int main(int argc, char* argv[]){
         testXOR(*nn);
     }else if(evolutionMode){
         std::cout << "Evolving a population..." << std::endl;
-        Population p(150,2,1,1,false,false);
+        Population p(150,2,1);
         std::vector<double> x = {0.0,0.0,1.0,1.0};
         std::vector<double> y = {0.0,1.0,0.0,1.0};
         std::vector<double> truth = {0.0,1.0,1.0,0.0};
         auto errorSum = 999.0;
         auto minError = 0.1;
+        auto gen = 0u;
         while(errorSum >= minError){
             p.orderGenomesByFitness();
             for(auto& ge:p.getGenomes()){
@@ -79,10 +80,13 @@ int main(int argc, char* argv[]){
                     phenotype->reset();
                 }
                 errorSum = (std::fabs(results[0]) + std::fabs(1.0-results[1]) + std::fabs(1.0-results[2]) + std::fabs(results[3]));
-                ge->setFitness(std::pow((2.0 - errorSum), 2));
+                ge->setFitness(std::pow((4.0 - errorSum), 2));
             }
+            std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " ";
+            std::flush(std::cout);
             if(errorSum >= minError){
                 p.reproduce(false,Population::SelectionType::TOURNAMENT);
+                ++gen;
             }
         }
         std::cout << "Selecting Winner..." << std::endl;
@@ -137,12 +141,22 @@ void testXOR(EvoAI::NeuralNetwork& nn){
     std::vector<double> truth = {0.0,1.0,1.0,0.0};
     for(auto i=0u;i<4;++i){
         std::vector<double> input;
-        input.emplace_back(y[i]);
         input.emplace_back(x[i]);
+        input.emplace_back(y[i]);
         nn.setInputs(std::move(input));
         auto res = nn.run();
         nn.reset();
-        std::cout << "x: " << x[i] << ", y: " << y[i] << " : raw answer: " << res[0] << " binary: " << (res[0] >= 0.5 ? 1:0) << " Correct Answer: " << truth[i] << std::endl;
+        std::cout << "x: " << x[i] << ", y: " << y[i] << " : raw answer: " << res[0] << "\t\tbinary: " << (res[0] >= 0.5 ? 1:0) << " Correct Answer: " << truth[i] << std::endl;
+    }
+    std::cout << "altering order..." << std::endl;
+    for(auto i=3u;i>=0;--i){
+        std::vector<double> input;
+        input.emplace_back(x[i]);
+        input.emplace_back(y[i]);
+        nn.setInputs(std::move(input));
+        auto res = nn.run();
+        nn.reset();
+        std::cout << "x: " << x[i] << ", y: " << y[i] << " : raw answer: " << res[0] << "\t\tbinary: " << (res[0] >= 0.5 ? 1:0) << " Correct Answer: " << truth[i] << std::endl;
     }
 }
 void usage() noexcept{

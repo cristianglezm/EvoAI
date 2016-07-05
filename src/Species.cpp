@@ -11,7 +11,6 @@ namespace EvoAI{
     , avgFitness(0.0)
     , maxFitness(0.0)
     , oldAvgFitness(0.0)
-    , numOffsprings(0)
     , genomes(){}
     Species::Species(std::size_t id, bool novel)
     : id(id)
@@ -21,7 +20,6 @@ namespace EvoAI{
     , avgFitness(0.0)
     , maxFitness(0.0)
     , oldAvgFitness(0.0)
-    , numOffsprings(0)
     , genomes(){}
     Species::Species(JsonBox::Object o)
     : id(std::stoull(o["id"].getString()))
@@ -31,7 +29,6 @@ namespace EvoAI{
     , avgFitness(o["avgFitness"].getDouble())
     , maxFitness(o["maxFitness"].getDouble())
     , oldAvgFitness(o["oldAvgFitness"].getDouble())
-    , numOffsprings(std::stoull(o["numOffsprings"].getString()))
     , genomes(){
         auto gnms = o["genomes"].getArray();
         for(auto& g:gnms){
@@ -46,7 +43,6 @@ namespace EvoAI{
     , avgFitness(0.0)
     , maxFitness(0.0)
     , oldAvgFitness(0.0)
-    , numOffsprings(0)
     , genomes(){
         JsonBox::Value json;
         json.loadFromFile(filename);
@@ -58,7 +54,6 @@ namespace EvoAI{
         avgFitness = v["avgFitness"].getDouble();
         maxFitness = v["maxFitness"].getDouble();
         oldAvgFitness = v["oldAvgFitness"].getDouble();
-        numOffsprings = std::stoull(v["numOffsprings"].getString());
         auto gnms = v["genomes"].getArray();
         for(auto& g:gnms){
             genomes.push_back(std::make_unique<Genome>(g.getObject()));
@@ -69,23 +64,6 @@ namespace EvoAI{
         for(auto& g1:genomes){
             g1->setFitness(g1->getFitness()/size);
         }
-    }
-    void Species::computeAvgFitness() noexcept{
-        oldAvgFitness = avgFitness;
-        auto sum = 0.0;
-        for(auto& g:genomes){
-            sum += g->getFitness();
-        }
-        avgFitness = sum / genomes.size();
-    }
-    void Species::computeMaxFitness() noexcept{
-        auto max = 0.0;
-        for(auto& g:genomes){
-            if(g->getFitness() > max){
-                max = g->getFitness();
-            }
-        }
-        maxFitness = max;
     }
     void Species::rank() noexcept{
         std::sort(std::begin(genomes),std::end(genomes),
@@ -168,11 +146,8 @@ namespace EvoAI{
     std::size_t Species::getSize() const noexcept{
         return genomes.size();
     }
-    void Species::setNumOffsprings(std::size_t& numOff) noexcept{
-        numOffsprings = numOff;
-    }
-    const std::size_t& Species::getNumOffsprings() const noexcept{
-        return numOffsprings;
+    bool Species::isStagnant() const noexcept{
+        return (oldAvgFitness <= avgFitness);
     }
     JsonBox::Value Species::toJson() const noexcept{
         JsonBox::Object o;
@@ -183,7 +158,6 @@ namespace EvoAI{
         o["avgFitness"] = avgFitness;
         o["maxFitness"] = maxFitness;
         o["oldAvgFitness"] = oldAvgFitness;
-        o["numOffsprings"] = std::to_string(numOffsprings);
         JsonBox::Array gnms;
         for(auto& g:genomes){
             gnms.push_back(g->toJson());
@@ -196,5 +170,22 @@ namespace EvoAI{
         v["version"] = 1.0;
         v["Species"] = toJson();
         v.writeToFile(filename);
+    }
+    void Species::computeAvgFitness() noexcept{
+        oldAvgFitness = avgFitness;
+        auto sum = 0.0;
+        for(auto& g:genomes){
+            sum += g->getFitness();
+        }
+        avgFitness = sum / genomes.size();
+    }
+    void Species::computeMaxFitness() noexcept{
+        auto max = 0.0;
+        for(auto& g:genomes){
+            if(g->getFitness() > max){
+                max = g->getFitness();
+            }
+        }
+        maxFitness = max;
     }
 }

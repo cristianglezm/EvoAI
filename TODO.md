@@ -2,8 +2,6 @@
 
 TODO:
 
-* Implement NEAT-CPPN
-    * Population, Species document, finish selection Types
 * SoundGenerator implement genome options etc
 * Implement ES-HyperNEAT?
 * Fix Activations and derivatives
