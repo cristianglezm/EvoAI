@@ -21,7 +21,7 @@ namespace EvoAI{
                 std::vector<double> inputs;
                 inputs.emplace_back(normalize<double>(x, -1.0, 1.0, 0, width));
                 inputs.emplace_back(normalize<double>(y, -1.0, 1.0, 0, height));
-                inputs.emplace_back((double)d);
+                inputs.emplace_back(static_cast<double>(d));
                 nn->setInputs(std::move(inputs));
                 auto audio = nn->run();
                 nn->reset();
@@ -119,9 +119,9 @@ namespace EvoAI{
                 inputs.emplace_back(normalize<double>(imgColor.r,-1.0,1.0,0.0,255.0));
                 inputs.emplace_back(normalize<double>(imgColor.g,-1.0,1.0,0.0,255.0));
                 inputs.emplace_back(normalize<double>(imgColor.b,-1.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(x, -1.0, 1.0, 0.0, width));
-                inputs.emplace_back(normalize<double>(y, -1.0, 1.0, 0.0, height));
-                inputs.emplace_back((double)d);
+                inputs.emplace_back(normalize<double>(x, -1.0, 1.0, 0, width));
+                inputs.emplace_back(normalize<double>(y, -1.0, 1.0, 0, height));
+                inputs.emplace_back(static_cast<double>(d));
                 nn->setInputs(std::move(inputs));
                 auto audio = nn->run();
                 nn->reset();

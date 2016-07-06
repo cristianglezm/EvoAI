@@ -149,7 +149,7 @@ void testXOR(EvoAI::NeuralNetwork& nn){
         std::cout << "x: " << x[i] << ", y: " << y[i] << " : raw answer: " << res[0] << "\t\tbinary: " << (res[0] >= 0.5 ? 1:0) << " Correct Answer: " << truth[i] << std::endl;
     }
     std::cout << "altering order..." << std::endl;
-    for(auto i=3u;i>=0;--i){
+    for(auto i=3u;i>=0u;--i){
         std::vector<double> input;
         input.emplace_back(x[i]);
         input.emplace_back(y[i]);

@@ -27,7 +27,7 @@ namespace EvoAI{
                 std::vector<double> inputs;
                 inputs.emplace_back(normalize<double>(x, -1.0, 1.0, 0, width));
                 inputs.emplace_back(normalize<double>(y, -1.0, 1.0, 0, height));
-                inputs.emplace_back((double)d);
+                inputs.emplace_back(static_cast<double>(d));
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
@@ -91,9 +91,9 @@ namespace EvoAI{
             for(auto y=0;y<height;++y){
                 std::vector<double> inputs;
                 auto imgColor = imageInput.getPixel(x,y);
-                inputs.emplace_back(normalize<double>(imgColor.r,-1.0,1.0,0,255));
-                inputs.emplace_back(normalize<double>(imgColor.g,-1.0,1.0,0,255));
-                inputs.emplace_back(normalize<double>(imgColor.b,-1.0,1.0,0,255));
+                inputs.emplace_back(normalize<double>(imgColor.r,-1.0,1.0,0.0,255.0));
+                inputs.emplace_back(normalize<double>(imgColor.g,-1.0,1.0,0.0,255.0));
+                inputs.emplace_back(normalize<double>(imgColor.b,-1.0,1.0,0.0,255.0));
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
@@ -128,7 +128,7 @@ namespace EvoAI{
                 std::vector<double> inputs;
                 inputs.emplace_back(normalize<double>(x, -1.0, 1.0, 0, width));
                 inputs.emplace_back(normalize<double>(y, -1.0, 1.0, 0, height));
-                inputs.emplace_back((double)d);
+                inputs.emplace_back(static_cast<double>(d));
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
@@ -167,7 +167,7 @@ namespace EvoAI{
                 inputs.emplace_back(normalize<double>(imgColor.b,-1.0,1.0,0.0,255.0));
                 inputs.emplace_back(normalize<double>(x, -1.0, 1.0, 0, width));
                 inputs.emplace_back(normalize<double>(y, -1.0, 1.0, 0, height));
-                inputs.emplace_back((double)d);
+                inputs.emplace_back(static_cast<double>(d));
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
@@ -206,7 +206,7 @@ namespace EvoAI{
                 inputs.emplace_back(normalize<double>(imgColor.b,-1.0,1.0,0.0,255.0));
                 inputs.emplace_back(normalize<double>(x, -1.0, 1.0, 0, width));
                 inputs.emplace_back(normalize<double>(y, -1.0, 1.0, 0, height));
-                inputs.emplace_back((double)d);
+                inputs.emplace_back(static_cast<double>(d));
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
