@@ -2,7 +2,6 @@
 
 TODO:
 
-* SoundGenerator implement genome options etc.
 * Implement HyperNEAT?
 * Fix Activations and derivatives
 * Check training from NeuralNetwork
