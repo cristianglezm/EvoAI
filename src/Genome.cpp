@@ -147,7 +147,7 @@ namespace EvoAI{
         }
         return num;
     }
-    JsonBox::Value Genome::toJson() noexcept{
+    JsonBox::Value Genome::toJson() const noexcept{
         JsonBox::Object o;
         o["GenomeID"] = JsonBox::Value(std::to_string(genomeID));
         o["SpeciesID"] = JsonBox::Value(std::to_string(speciesID));
@@ -166,7 +166,7 @@ namespace EvoAI{
         o["ConnectionChromosomes"] = JsonBox::Value(cChromo);
         return JsonBox::Value(o);
     }
-    void Genome::writeToFile(const std::string& filename) noexcept{
+    void Genome::writeToFile(const std::string& filename) const noexcept{
         JsonBox::Value v;
         v["version"] = JsonBox::Value("1.0");
         v["Genome"] = toJson();

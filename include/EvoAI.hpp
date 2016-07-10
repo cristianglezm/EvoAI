@@ -13,5 +13,6 @@
 #include "EvoAI/NodeGene.hpp"
 #include "EvoAI/ConnectionGene.hpp"
 #include "EvoAI/Genome.hpp"
+#include "EvoAI/HyperNeat.hpp"
 
 #endif // EVOAI_HPP

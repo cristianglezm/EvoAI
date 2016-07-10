@@ -10,6 +10,7 @@
 #include "ConnectionGeneTest/ConnectionGeneTest.hpp"
 #include "PopulationTest/PopulationTest.hpp"
 #include "SpeciesTest/SpeciesTest.hpp"
+#include "HyperNeatTest/HyperNeatTest.hpp"
 
 int main(int argc, char** argv){
     std::cout << "Initializing Tests...." << std::endl;

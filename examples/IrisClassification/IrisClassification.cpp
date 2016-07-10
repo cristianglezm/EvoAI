@@ -23,8 +23,6 @@ int main(int argc,char **argv){
         std::mt19937 g(std::random_device{}());
         std::cout << "Randomizing Data Order..." << std::endl;
         std::shuffle(std::begin(irisData),std::end(irisData),g);
-        std::cout << "Creating Test dataSets..." << std::endl;
-        auto testSets = createTrainingSets(irisData,irisData.size()/2,irisData.size());
         std::unique_ptr<EvoAI::NeuralNetwork> nn = nullptr;
         std::string opt(argv[2]);
         std::string filename("");
@@ -43,11 +41,13 @@ int main(int argc,char **argv){
             do{
                 auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
                 //normalizeData(trainingSets.first);
-                nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.001,0.2,500);
+                nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.001,0.02,500);
                 std::cout << "MSE: " << nn->getMSE() << std::endl;
-                nn->writeToFile("IrisClassification.json");
-            }while(nn->getMSE() > 0.000001);
+            }while(nn->getMSE() > 0.001);
+            nn->writeToFile("IrisClassification.json");
         }else if(opt == "-c" || opt == "--classify"){
+            std::cout << "Creating Test dataSets..." << std::endl;
+            auto testSets = createTrainingSets(irisData,irisData.size()/2,irisData.size());
             std::cout << "Processing Test Classification..." << std::endl;
             auto error = 0.0;
             for(auto i=0u;i<testSets.first.size();++i){
@@ -80,6 +80,73 @@ int main(int argc,char **argv){
             error *= 100;
             auto accuracy = 100 - error;
             std::cout << "Error: " << error << "%" << " Accuracy: " << accuracy << "%" << std::endl;
+        }else if(opt == "-e" || opt == "--evolve"){
+            EvoAI::Population p(150,4,3);
+            auto errorSum = 999.0;
+            std::cout << "Evolving Population" << std::endl;
+            while(errorSum > 15.0){
+                for(auto& g:p.getGenomes()){
+                    g->mutate();
+                    nn = EvoAI::Genome::makePhenotype(*g);
+                    auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
+                    std::vector<std::vector<double>> results;
+                    for(auto i=0u;i<trainingSets.first.size();++i){
+                        nn->setInputs(std::move(trainingSets.first[i]));
+                        auto outputs = nn->run();
+                        results.push_back(std::move(outputs));
+                        nn->reset();
+                    }
+                    auto error = 0.0;
+                    for(auto i=0u;i<results.size();++i){
+                        error += std::fabs(trainingSets.second[i][0] - results[i][0]) + std::fabs(trainingSets.second[i][1] - results[i][1]) + std::fabs(trainingSets.second[i][2] - results[i][2]);
+                    }
+                    errorSum = error;
+                    g->setFitness(std::pow((results.size() * 3) - errorSum,2));
+                }
+                std::cout << "\ravg: " << p.computeAvgFitness() << " Error: " << errorSum << " ";
+                std::flush(std::cout);
+                if(errorSum > 15.0){
+                    p.reproduce(false,EvoAI::Population::SelectionType::TRUNCATION);
+                }
+            }
+            auto g = p.getBestGenome();
+            g->writeToFile("irisClassGen.json");
+            nn = EvoAI::Genome::makePhenotype(*g);
+            nn->writeToFile("irisClassNN.json");
+            std::cout << "Creating Test dataSets..." << std::endl;
+            auto testSets = createTrainingSets(irisData,irisData.size()/2,irisData.size());
+            std::cout << "Processing Test Classification..." << std::endl;
+            auto error = 0.0;
+            for(auto i=0u;i<testSets.first.size();++i){
+                nn->setInputs(std::move(testSets.first[i]));
+                auto outputs = nn->run();
+                std::string nnOut = "", expectedOut = "";
+                if(outputs[0] >= 0.5){
+                    nnOut = "Iris-setosa";
+                }else if(outputs[1] >= 0.5){
+                    nnOut = "Iris-versicolor";
+                }else if(outputs[2] >= 0.5){
+                    nnOut = "Iris-virginica";
+                }
+                if(testSets.second[i][0] >= 0.5){
+                    expectedOut = "Iris-setosa";
+                }else if(testSets.second[i][1] >= 0.5){
+                    expectedOut = "Iris-versicolor";
+                }else if(testSets.second[i][2] >= 0.5){
+                    expectedOut = "Iris-virginica";
+                }
+                if(nnOut != expectedOut){
+                    error += 1;
+                }
+                std::cout << nnOut << " : "<< expectedOut << std::endl;
+                std::cout << "\tIris-setosa" << ":" << " - " << (outputs[0] * 100) << "%" << std::endl;
+                std::cout << "\tIris-versicolor" << ":" << " - " << (outputs[1] * 100) << "%" << std::endl;
+                std::cout << "\tIris-virginica" << ":" << " - " << (outputs[2] * 100) << "%" << std::endl;
+                error /= testSets.second.size();
+                error *= 100;
+                auto accuracy = 100 - error;
+                std::cout << "Error: " << error << "%" << " Accuracy: " << accuracy << "%" << std::endl;
+            }
         }else if(opt == "-h" || opt == "--help"){
             usage();
         }

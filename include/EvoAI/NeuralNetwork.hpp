@@ -30,7 +30,7 @@ namespace EvoAI{
              * @param numHiddenLayers const std::size_t& Hidden layers that will be created.
              * @param numNeuronsPerHiddenLayer const std::size_t& neuron per hidden layer
              * @param numOutputs const std::size_t& number of outputs
-             * @param bias const double& bias fot he neural network, it will put the same for every layer.
+             * @param bias const double& bias for the neural network, it will put the same for every layer.
              * @return NeuronNetwork
              */
             NeuralNetwork(const std::size_t& numInputs,const std::size_t& numHiddenLayers,
@@ -177,6 +177,11 @@ namespace EvoAI{
              */
             void clear();
             /**
+             * @brief gives the last MSE
+             * @return const double& MSE
+             */
+            const double& getMSE() const noexcept{ return mse; }
+            /**
              * @brief direct access to layers and neurons
              * Examples: neuralnetwork[1][1].setBiasWeight(-0.3); // sets the biasWeight of layer 1 and neuron 1
              *          neuralnetwork[3][0].getOutput(); // gets output of layer 3 and neuron 0
@@ -184,11 +189,6 @@ namespace EvoAI{
              * @param index const std::size_t& index layer
              */
             NeuronLayer& operator[](const std::size_t& index);
-            /**
-             * @brief gives the last MSE
-             * @return const double& MSE
-             */
-            const double& getMSE() const noexcept{ return mse; }
             /**
              * @brief compares two neural networks
              * @param rhs

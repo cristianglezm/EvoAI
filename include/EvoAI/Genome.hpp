@@ -113,7 +113,7 @@ namespace EvoAI{
              * @brief returns a Json value with the information of the genome.
              * @return JsonBox::Value
              */
-            JsonBox::Value toJson() noexcept;
+            JsonBox::Value toJson() const noexcept;
             /**
              * @brief writes the genome to a json file.
              * it can be loaded again with the constructor
@@ -122,7 +122,7 @@ namespace EvoAI{
              * @endcode
              * @param filename std::string file to write
              */
-            void writeToFile(const std::string& filename) noexcept;
+            void writeToFile(const std::string& filename) const noexcept;
             /**
              * @brief gets the genome id
              * @param fit double
