@@ -4,83 +4,85 @@
 #include <cmath>
 #include <random>
 
+#include <EvoAI/Export.hpp>
+
 namespace EvoAI{
     class NeuralNetwork;
     namespace Activations{
-        double identity(const double& v);
+        EvoAI_API double identity(const double& v);
         /**
          * @brief a sigmoid function
          * @param v
          * @return 
          */
-        double sigmoid(const double& v);
+        EvoAI_API double sigmoid(const double& v);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double tanh(const double& v);
+        EvoAI_API double tanh(const double& v);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double sinusoid(const double& v);
+        EvoAI_API double sinusoid(const double& v);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double cosine(const double& v);
+        EvoAI_API double cosine(const double& v);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double tan(const double& v);
+        EvoAI_API double tan(const double& v);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double relu(const double& v);
+        EvoAI_API double relu(const double& v);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double noisyRelu(const double& v);
+        EvoAI_API double noisyRelu(const double& v);
         /**
          * @brief 
          * @param x
          * @return 
          */
-        double leakyRelu(const double& x);
+        EvoAI_API double leakyRelu(const double& x);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double exponential(const double& v);
+        EvoAI_API double exponential(const double& v);
         /**
          * @brief 
          * @param v
          * @param nn
          * @return 
          */
-        double softmax(const double& v, NeuralNetwork& nn);
+        EvoAI_API double softmax(const double& v, NeuralNetwork& nn);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double gaussian(const double& v);
+        EvoAI_API double gaussian(const double& v);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double modulus(const double& v);
+        EvoAI_API double modulus(const double& v);
     }
     namespace Derivatives{
         /**
@@ -88,44 +90,44 @@ namespace EvoAI{
          * @param v
          * @return 
          */
-        double identity(const double& v);
+        EvoAI_API double identity(const double& v);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double sigmoid(const double& v);
+        EvoAI_API double sigmoid(const double& v);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double tanh(const double& v);
+        EvoAI_API double tanh(const double& v);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double sinusoid(const double& v);
+        EvoAI_API double sinusoid(const double& v);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double relu(const double& v);
+        EvoAI_API double relu(const double& v);
         /**
          * @brief 
          * @param v
          * @param nn
          * @return 
          */
-        double softmax(const double& v, NeuralNetwork& nn);
+        EvoAI_API double softmax(const double& v, NeuralNetwork& nn);
         /**
          * @brief 
          * @param v
          * @return 
          */
-        double gaussian(const double& v);
+        EvoAI_API double gaussian(const double& v);
     }
 }
 

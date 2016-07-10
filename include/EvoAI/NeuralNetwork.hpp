@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <EvoAI/NeuronLayer.hpp>
 #include <EvoAI/Activations.hpp>
+#include <EvoAI/Export.hpp>
 #include <JsonBox.h>
 
 namespace EvoAI{
@@ -15,7 +16,7 @@ namespace EvoAI{
      * @file NeuralNetwork.hpp
      * @brief 
      */
-    class NeuralNetwork final{
+    class EvoAI_API NeuralNetwork final{
         public:
             using trainingFormat = std::vector<std::vector<double>>;
         public:

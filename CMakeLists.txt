@@ -12,6 +12,7 @@ option(EvoAI_BUILD_DOCS "Build documentation" OFF)
 
 if(EvoAI_BUILD_STATIC)
     SET(BUILD_SHARED_LIBS FALSE)
+    add_definitions("-DEvoAI_BUILD_STATIC")
 endif(EvoAI_BUILD_STATIC)
 
 ################################################################################
@@ -31,6 +32,7 @@ set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 
 if(NOT EvoAI_BUILD_STATIC)
+	add_definitions("-DEvoAI_EXPORTS")
 	add_library(EvoAI SHARED ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
 else()
 	add_library(EvoAI STATIC ${EvoAI_SOURCES} ${EvoAI_INCLUDES})

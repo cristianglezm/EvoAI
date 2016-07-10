@@ -18,12 +18,6 @@ set(FIND_EvoAI_PATHS
     /opt/csw
     /opt)
 
-if(EvoAI_ROOT)
-	SET(EvoAI_INCLUDE_DIR "${EvoAI_ROOT}/include")
-	SET(EvoAI_LIBRARIES "${EvoAI_ROOT}/lib/libEvoAI.a")
-	SET(EvoAI_FOUND 1)
-endif(EvoAI_ROOT)
-
 find_path(EvoAI_INCLUDE_DIR EvoAI/include/EvoAI.hpp
           PATH_SUFFIXES include
           PATHS ${FIND_EvoAI_PATHS})
@@ -68,6 +62,12 @@ if(EvoAI_FIND_VERSION AND EvoAI_INCLUDE_DIR)
         endif()
     endif()
 endif()
+
+if(EvoAI_ROOT)
+	SET(EvoAI_INCLUDE_DIR "${EvoAI_ROOT}/include")
+	SET(EvoAI_LIBRARIES "${EvoAI_ROOT}/lib/libEvoAI-${EvoAI_VERSION_MAJOR}.a")
+	SET(EvoAI_FOUND 1)
+endif(EvoAI_ROOT)
 
 set(EvoAI_INCLUDE_DIR "${EvoAI_INCLUDE_DIR}")
 set(EvoAI_LIBRARIES "${EvoAI_LIBRARY}")

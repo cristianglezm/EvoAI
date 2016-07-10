@@ -10,6 +10,7 @@
 #include <EvoAI/NeuralNetwork.hpp>
 #include <EvoAI/Species.hpp>
 #include <EvoAI/Genome.hpp>
+#include <EvoAI/Export.hpp>
 #include <JsonBox.h>
 
 namespace EvoAI{
@@ -18,7 +19,7 @@ namespace EvoAI{
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
      * @brief Population
      */
-    class Population{
+    class EvoAI_API Population{
         public:
             /**
              * @brief Types of selection for reproduce.

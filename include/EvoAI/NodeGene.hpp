@@ -4,6 +4,7 @@
 #include <JsonBox.h>
 
 #include <EvoAI/Neuron.hpp>
+#include <EvoAI/Export.hpp>
 #include <EvoAI/Utils.hpp>
 
 #include <string>
@@ -14,7 +15,7 @@ namespace EvoAI{
      * @author Cristian Glez <cristian.glez.m@gmail.com>
      * @brief NodeGene for NEAT Algorithm
      */
-    class NodeGene final{
+    class EvoAI_API NodeGene final{
         public:
             /**
              * @brief Constructor

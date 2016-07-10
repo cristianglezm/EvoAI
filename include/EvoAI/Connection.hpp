@@ -5,13 +5,15 @@
 #include <sstream>
 #include <JsonBox.h>
 
+#include <EvoAI/Export.hpp>
+
 namespace EvoAI{
     /**
      * @class Link
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
      * @brief A simple link defining a source point layer, neuron
      */
-    struct Link{
+    struct EvoAI_API Link{
         /**
          * @brief default constructor
          * @param layer const std::size_t&
@@ -31,7 +33,7 @@ namespace EvoAI{
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
      * @brief A Connection used to connect neurons from different layers.
      */
-    class Connection{
+    class EvoAI_API Connection{
         public:
             /**
              * @brief default Constructor

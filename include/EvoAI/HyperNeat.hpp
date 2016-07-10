@@ -3,10 +3,18 @@
 
 #include <EvoAI/NeuralNetwork.hpp>
 #include <EvoAI/Genome.hpp>
+#include <EvoAI/Export.hpp>
+
 #include <vector>
 
 namespace EvoAI{
-    struct SubstrateInfo{
+    /**
+     * @class SubstrateInfo
+     * @author Cristian
+     * @brief 
+     * @todo
+     */
+    struct EvoAI_API SubstrateInfo{
         SubstrateInfo();
         SubstrateInfo(const std::size_t& numInputs, const std::size_t& numHiddenLayers,
                         const std::size_t& numHiddenNeurons, const std::size_t& numOutputs);
@@ -22,8 +30,9 @@ namespace EvoAI{
      * @class HyperNeat
      * @author Cristian
      * @brief 
+     * @todo
      */
-    class HyperNeat{
+    class EvoAI_API HyperNeat{
     public:
             /**
              * @brief

@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <JsonBox.h>
+#include <EvoAI/Export.hpp>
 #include <EvoAI/Connection.hpp>
 
 namespace EvoAI{
@@ -14,7 +15,7 @@ namespace EvoAI{
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
      * @brief A basic neuron
      */
-    class Neuron final{
+    class EvoAI_API Neuron final{
         public:
             /**
              * @brief Neuron::Type defines the type of a neuron.

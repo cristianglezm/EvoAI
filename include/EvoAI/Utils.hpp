@@ -8,6 +8,7 @@
 #include <string>
 
 #include <EvoAI/NeuralNetwork.hpp>
+#include <EvoAI/Export.hpp>
 
 namespace EvoAI{
     /**
@@ -16,20 +17,20 @@ namespace EvoAI{
      * @param max const double&
      * @return double
      */
-    double random(const double& min, const double& max);
+    EvoAI_API double random(const double& min, const double& max);
     /**
      * @brief Returns a random number between min and max.
      * @param min const int&
      * @param max const int&
      * @return int
      */
-    int random(const int& min, const int& max);
+    EvoAI_API int random(const int& min, const int& max);
     /**
      * @brief gives a random true or false given the rate.
      * @param rate
      * @return bool
      */
-    bool doAction(float rate) noexcept;
+    EvoAI_API bool doAction(float rate) noexcept;
     /**
      * @brief Combines two hashes
      * @param seed std::size_t
@@ -62,7 +63,8 @@ namespace EvoAI{
      * @param bias
      * @return std::unique_ptr<NeuralNetwork>
      */
-    std::unique_ptr<NeuralNetwork> createFeedForwardNN(const size_t& numInputs, const size_t& numHidden,const size_t& numNeuronsPerHidden, const std::size_t& numOutputs, const double& bias);
+    EvoAI_API std::unique_ptr<NeuralNetwork> createFeedForwardNN(const size_t& numInputs, const size_t& numHidden,
+                                                                        const size_t& numNeuronsPerHidden, const std::size_t& numOutputs, const double& bias);
     /**
      * @brief Creates an Elman Neural Network.
      * 
@@ -75,7 +77,7 @@ namespace EvoAI{
      * @param bias bias
      * @return std::unique_ptr<NeuralNetwork>
      */
-    std::unique_ptr<NeuralNetwork> createElmanNeuralNetwork(const std::size_t& numInputs, const std::size_t& numHidden,
+    EvoAI_API std::unique_ptr<NeuralNetwork> createElmanNeuralNetwork(const std::size_t& numInputs, const std::size_t& numHidden,
                                                             const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
     /**
      * @brief Creates a fully connected CPPN with random activations functions.
@@ -86,7 +88,7 @@ namespace EvoAI{
      * @param bias bias
      * @return std::unique_ptr<NeuralNetwork>
      */
-    std::unique_ptr<NeuralNetwork> createFullyConnectedCPPN(const std::size_t& numInputs, const std::size_t& numHidden,
+    EvoAI_API std::unique_ptr<NeuralNetwork> createFullyConnectedCPPN(const std::size_t& numInputs, const std::size_t& numHidden,
                                                             const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
     /**
      * @brief Creates a CPPN with random activations functions and some random connections.
@@ -97,8 +99,11 @@ namespace EvoAI{
      * @param bias bias
      * @return std::unique_ptr<NeuralNetwork>
      */
-    std::unique_ptr<NeuralNetwork> createCPPN(const std::size_t& numInputs, const std::size_t& numHidden,
+    EvoAI_API std::unique_ptr<NeuralNetwork> createCPPN(const std::size_t& numInputs, const std::size_t& numHidden,
                                                 const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias);
+//////////
+///// implementation inlined functions.
+//////////
     template<typename T = float>
     inline T normalize(const T& val,const T& normMin, const T& normMax, const T& min, const T& max) noexcept{
         return (normMin + (val-min)*(normMax-normMin)/(max-min));

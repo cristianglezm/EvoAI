@@ -15,7 +15,7 @@ namespace EvoAI{
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
      * @brief ConnectionGene for the NEAT algorithm
      */
-    class ConnectionGene final{
+    class EvoAI_API ConnectionGene final{
         public:
             /**
              * @brief Constructor

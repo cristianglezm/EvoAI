@@ -10,13 +10,15 @@
 #include <chrono>
 #include <functional>
 
+#include <EvoAI/Export.hpp>
+
 namespace EvoAI{
     /**
      * @class Genome
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
      * @brief A genome is a description of a NeuralNetwork.
      */
-    class Genome final{
+    class EvoAI_API Genome final{
         public:
             using matchingNodeGenes = std::pair<std::vector<NodeGene>, std::vector<NodeGene>>;
             using matchingConnectionGenes = std::pair<std::vector<ConnectionGene>, std::vector<ConnectionGene>>;

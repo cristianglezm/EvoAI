@@ -4,12 +4,13 @@
 #include <vector>
 
 #include <EVoAI/NeuralNetwork.hpp>
+#include <EvoAI/Export.hpp>
 
 namespace EvoAI{
     /**
      * @brief This class Will connect NeuralNetworks between them.
      */
-    class Connector final{
+    class EvoAI_API Connector final{
         public:
             Connector(){
                 

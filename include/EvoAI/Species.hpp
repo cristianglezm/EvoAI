@@ -7,6 +7,7 @@
 #include <random>
 #include <string>
 
+#include <EvoAI/Export.hpp>
 #include <EvoAI/NeuralNetwork.hpp>
 #include <EvoAI/Genome.hpp>
 #include <JsonBox.h>
@@ -17,8 +18,8 @@ namespace EvoAI{
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
      * @brief Class that represents a species
      */
-    class Species{
-    public:
+    class EvoAI_API Species{
+        public:
             /**
              * @brief basic Constructor
              * @return Species

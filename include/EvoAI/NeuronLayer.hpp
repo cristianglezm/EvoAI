@@ -7,6 +7,7 @@
 
 #include <JsonBox.h>
 #include <EvoAI/Neuron.hpp>
+#include <EvoAI/Export.hpp>
 #include <EvoAI/Connection.hpp>
 
 namespace EvoAI{
@@ -15,7 +16,7 @@ namespace EvoAI{
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
      * @brief A neuron layer.
      */
-    class NeuronLayer final{
+    class EvoAI_API NeuronLayer final{
         public:
             /**
              * @brief default contructor
