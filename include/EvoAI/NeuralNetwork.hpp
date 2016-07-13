@@ -14,7 +14,7 @@ namespace EvoAI{
      * @author Cristian Glez <cristian.glez.m@gmail.com>
      * @date 01/01/2016
      * @file NeuralNetwork.hpp
-     * @brief 
+     * @brief A Neural Network
      */
     class EvoAI_API NeuralNetwork final{
         public:

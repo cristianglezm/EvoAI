@@ -8,6 +8,9 @@
 
 namespace EvoAI{
     class NeuralNetwork;
+    /**
+     * @todo review
+     */
     namespace Activations{
         EvoAI_API double identity(const double& v);
         /**

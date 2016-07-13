@@ -175,6 +175,9 @@ namespace EvoAI{
     void Genome::setFitness(const double& fit) noexcept{
         fitness = fit;
     }
+    void Genome::addFitness(const double& amount) noexcept{
+        fitness += amount;
+    }
     const double& Genome::getFitness() const noexcept{
         return fitness;
     }
@@ -454,22 +457,7 @@ namespace EvoAI{
         std::vector<NodeGene> nGenes;
         std::vector<ConnectionGene> cGenes;
         if(&g1 == &g2){
-            for(auto& ng:g1.getNodeChromosomes()){
-                nGenes.push_back(ng);
-            }
-            for(auto& cg:g1.getConnectionChromosomes()){
-                cGenes.push_back(cg);
-            }
-            nGenes.erase(std::unique(std::begin(nGenes), std::end(nGenes),
-                                        [](NodeGene& ng1,NodeGene& ng2){
-                                            return (ng1.getInnovationID() == ng2.getInnovationID());
-                                        }), std::end(nGenes));
-            cGenes.erase(std::unique(std::begin(cGenes), std::end(cGenes),
-                                    [](ConnectionGene& cg1,ConnectionGene& cg2){
-                                        return (cg1.getInnovationID() == cg2.getInnovationID());
-                                    }), std::end(cGenes));
-            child->setNodeChromosomes(std::move(nGenes));
-            child->setConnectionChromosomes(std::move(cGenes));
+            child = std::make_unique<Genome>(g1);
             return child;
         }
         matchingChromosomes mChromo = getMatchingChromosomes(g1,g2);

@@ -9,6 +9,7 @@
 namespace EvoAI{
     /**
      * @brief This class Will connect NeuralNetworks between them.
+     * @todo implement
      */
     class EvoAI_API Connector final{
         public:

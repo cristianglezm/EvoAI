@@ -11,6 +11,7 @@
 
 sf::Image createImage(EvoAI::Genome* g, int width = 250, int height = 250, bool bw = false) noexcept;
 void updateImages(EvoAI::Population& p, std::vector<sf::Texture>& textures, std::vector<sf::Sprite>& sprites, std::size_t count,bool bw = false);
+
 int main(int argc, char **argv){
     bool running = true;
     bool loading = false;
@@ -53,17 +54,14 @@ int main(int argc, char **argv){
                         App.setView(v);
                     }
                     if(event.key.code == sf::Keyboard::Return){
-                        std::thread([&](){
+                        //std::thread([&](){
                                 loading = true;
                                 p.reproduce(true,EvoAI::Population::SelectionType::TOURNAMENT);
                                 App.setActive(true);
                                 updateImages(p,textures,sprites,size,bw);
                                 App.setActive(false);
                                 loading = false;
-                        }).detach();
-                    }
-                    if(event.key.code == sf::Keyboard::Space){
-                        loading = !loading;
+                        //}).detach();
                     }
                     if(event.key.code == sf::Keyboard::B){
                         bw = !bw;
@@ -93,12 +91,23 @@ int main(int argc, char **argv){
                     break;
                 case sf::Event::MouseButtonReleased:
                     if(event.mouseButton.button == sf::Mouse::Left){
-                        sf::Vector2f pos = static_cast<sf::Vector2f>(App.mapPixelToCoords({event.mouseButton.x,event.mouseButton.y},App.getView()));
+                        sf::Vector2f pos = App.mapPixelToCoords({event.mouseButton.x,event.mouseButton.y},App.getView());
                         auto index = 0u;
                         for(auto& sp:sprites){
                             if(sp.getGlobalBounds().contains(pos)){
                                 auto& genomes = p.getGenomes();
-                                genomes[index]->setFitness(genomes[index]->getFitness() + 1);
+                                genomes[index]->addFitness(1.0);
+                            }
+                            ++index;
+                        }
+                    }
+                    if(event.mouseButton.button == sf::Mouse::Right){
+                        sf::Vector2f pos = App.mapPixelToCoords({event.mouseButton.x,event.mouseButton.y},App.getView());
+                        auto index = 0u;
+                        for(auto& sp:sprites){
+                            if(sp.getGlobalBounds().contains(pos)){
+                                auto& genomes = p.getGenomes();
+                                genomes[index]->writeToFile("ImageEvolver-Genome-" + std::to_string(index) + ".json");
                             }
                             ++index;
                         }

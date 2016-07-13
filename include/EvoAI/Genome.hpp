@@ -131,6 +131,11 @@ namespace EvoAI{
              */
             void setFitness(const double& fit) noexcept;
             /**
+             * @brief adds the amount to the current fitness.
+             * @param amount const double&
+             */
+            void addFitness(const double& amount) noexcept;
+            /**
              * @brief gets the fitness
              * @return double
              */

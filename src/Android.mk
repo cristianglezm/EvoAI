@@ -5,6 +5,7 @@ LOCAL_MODULE := EvoAI
 LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libEvoAI.so
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_SHARED_LIBRARIES := JsonBox
+LOCAL_CFLAGS += -Wall -std=c++11 -DANDROID -DUSE_MAKE_UNIQUE
 
 prebuilt_path := $(call local-prebuilt-path,$(LOCAL_SRC_FILES))
 prebuilt := $(strip $(wildcard $(prebuilt_path)))
@@ -19,6 +20,7 @@ LOCAL_MODULE := EvoAI-static
 LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libEvoAI.a
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_SHARED_LIBRARIES := JsonBox-static
+LOCAL_CFLAGS += -Wall -std=c++11 -DANDROID -DUSE_MAKE_UNIQUE
 
 prebuilt_path := $(call local-prebuilt-path,$(LOCAL_SRC_FILES))
 prebuilt := $(strip $(wildcard $(prebuilt_path)))
