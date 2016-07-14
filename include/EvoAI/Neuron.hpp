@@ -49,18 +49,18 @@ namespace EvoAI{
                 IDENTITY,
                 MODULUS,
                 SIGMOID,
-                STEPPED_SIGMOID,
-                TANH,
-                TAN,
                 SINUSOID,
                 COSINE,
                 GAUSSIAN,
+                STEPPED_SIGMOID,
+                TANH,
+                TAN,
                 RELU,
                 NOISY_RELU,
                 LEAKY_RELU,
                 EXPONENTIAL,
-                LAST_CPPN_ACTIVATION_TYPE,
-                SOFTMAX
+                SOFTMAX,
+		LAST_CPPN_ACTIVATION_TYPE
             };
             /**
              * @brief returns Neuron::ActivationType to String
