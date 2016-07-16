@@ -27,6 +27,7 @@ void usage(){
     std::cout << "-r, --repeat <n>\t\t\tIt will generate the image again.(use it for recurrent nn)\n";
     std::cout << "-h, --help\t\t\t\thelp menu (This)\n";
 }
+
 int main(int argc, char **argv){
     bool optGenome = false;
     bool optGenomeType = false;
@@ -127,7 +128,7 @@ int main(int argc, char **argv){
             repeat = std::stoi(std::string(argv[i+1]));
         }
         if(val == "--help" || val == "-h"){
-            std::cout << std::string(argv[0]) << " [options]\n";
+            std::cout << std::string(argv[0]) << " <options>\n";
             usage();
             return EXIT_FAILURE;
         }
@@ -175,12 +176,15 @@ int main(int argc, char **argv){
     }else if(optGenome){
         if(optMutate){
             g = std::make_unique<EvoAI::Genome>(genomeFile1);
+            std::cout << "Mutating genome " << genomeFile1 << std::endl;
             g->mutate();
         }else if(optReproduce){
             auto g1 = std::make_unique<EvoAI::Genome>(genomeFile1);
             auto g2 = std::make_unique<EvoAI::Genome>(genomeFile2);
+            std::cout << "Reproducing genomes " << genomeFile1 << " And " << genomeFile2 << std::endl;
             g = EvoAI::Genome::reproduce(*g1,*g2);
         }else{
+            std::cout << "Loading genome " << genomeFile1 << std::endl;
             g = std::make_unique<EvoAI::Genome>(genomeFile1);
         }
         nn = EvoAI::Genome::makePhenotype(*g);

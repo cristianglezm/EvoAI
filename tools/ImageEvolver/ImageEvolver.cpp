@@ -20,7 +20,7 @@ int main(int argc, char **argv){
     for(int i=0u;i<argc;++i){
         auto val = std::string(argv[i]);
         if(val == "--help" || val == "-h"){
-            std::cout << "usage: ImageEvolver -n <size> -b" << std::endl;
+            std::cout << "Usage: ImageEvolver -n <size> -b" << std::endl;
             std::cout << "-n <size>\t\tnumber of images is going to display and evolve." << std::endl;
             std::cout << "-b\t\tIf the images will be black and white." << std::endl;
             return EXIT_SUCCESS;
@@ -76,16 +76,6 @@ int main(int argc, char **argv){
                     if(event.key.code == sf::Keyboard::Up){
                         auto v = App.getView();
                         v.move(0,-100);
-                        App.setView(v);
-                    }
-                    if(event.key.code == sf::Keyboard::Right){
-                        auto v = App.getView();
-                        v.move(100,0);
-                        App.setView(v);
-                    }
-                    if(event.key.code == sf::Keyboard::Left){
-                        auto v = App.getView();
-                        v.move(-100,0);
                         App.setView(v);
                     }
                     break;
@@ -159,6 +149,7 @@ sf::Image createImage(EvoAI::Genome* g, int width, int height, bool bw) noexcept
     }
     return imgOutput;
 }
+
 void updateImages(EvoAI::Population& p, std::vector<sf::Texture>& textures, std::vector<sf::Sprite>& sprites, std::size_t count,bool bw){
     auto imageSize = 250;
     auto counter = 0;
