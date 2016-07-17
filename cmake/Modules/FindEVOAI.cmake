@@ -27,7 +27,7 @@ if(NOT EvoAI_FIND_VERSION_MAJOR)
 endif(NOT EvoAI_FIND_VERSION_MAJOR)
 
 find_library(EvoAI_LIBRARY
-        NAMES EvoAI-${EvoAI_FIND_VERSION_MAJOR}
+        NAMES EvoAI EvoAI-1.dll EvoAI-1
         PATH_SUFFIXES lib
         PATHS ${FIND_EvoAI_PATHS})
 
@@ -37,28 +37,27 @@ find_package_handle_standard_args(EvoAI DEFAULT_MSG EvoAI_LIBRARY EvoAI_INCLUDE_
 # check the version number
 set(EvoAI_VERSION_OK TRUE)
 if(EvoAI_FIND_VERSION AND EvoAI_INCLUDE_DIR)
+    # extract the major and minor version numbers from EvoAI/Config.hpp
     set(EvoAI_CONFIG_HPP_INPUT "${EvoAI_INCLUDE_DIR}/EvoAI/Config.hpp")
     FILE(READ "${EvoAI_CONFIG_HPP_INPUT}" EvoAI_CONFIG_HPP_CONTENTS)
-    STRING(REGEX REPLACE ".*#define EvoAI_VERSION_MAJOR ([0-9]+).*" "\\1" EvoAI_VERSION_MAJOR "${EvoAI_CONFIG_HPP_CONTENTS}")
-    STRING(REGEX REPLACE ".*#define EvoAI_VERSION_MINOR ([0-9]+).*" "\\1" EvoAI_VERSION_MINOR "${EvoAI_CONFIG_HPP_CONTENTS}")
-    STRING(REGEX REPLACE ".*#define EvoAI_VERSION_PATCH ([0-9]+).*" "\\1" EvoAI_VERSION_PATCH "${EvoAI_CONFIG_HPP_CONTENTS}")
-    if (NOT "${EvoAI_VERSION_PATCH}" MATCHES "^[0-9]+$")
+    STRING(REGEX REPLACE "^.*#define EVOAI_VERSION_MAJOR ([0-9]+).*$" "\\1" EvoAI_VERSION_MAJOR "${EvoAI_CONFIG_HPP_CONTENTS}")
+    STRING(REGEX REPLACE "^.*#define EVOAI_VERSION_MINOR ([0-9]+).*$" "\\1" EvoAI_VERSION_MINOR "${EvoAI_CONFIG_HPP_CONTENTS}")
+    STRING(REGEX REPLACE "^.*#define EVOAI_VERSION_PATCH ([0-9]+).*$" "\\1" EvoAI_VERSION_PATCH "${EvoAI_CONFIG_HPP_CONTENTS}")
+    if(NOT "${EvoAI_VERSION_PATCH}" MATCHES "^[0-9]+$")
         set(EvoAI_VERSION_PATCH 0)
     endif()
     math(EXPR EvoAI_REQUESTED_VERSION "${EvoAI_FIND_VERSION_MAJOR} * 10000 + ${EvoAI_FIND_VERSION_MINOR} * 100 + ${EvoAI_FIND_VERSION_PATCH}")
-
     # if we could extract them, compare with the requested version number
-    if (EvoAI_VERSION_MAJOR)
+    if(EvoAI_VERSION_MAJOR)
         # transform version numbers to an integer
         math(EXPR EvoAI_VERSION "${EvoAI_VERSION_MAJOR} * 10000 + ${EvoAI_VERSION_MINOR} * 100 + ${EvoAI_VERSION_PATCH}")
-
         # compare them
         if(EvoAI_VERSION LESS EvoAI_REQUESTED_VERSION)
             set(EvoAI_VERSION_OK FALSE)
         endif()
     else()
         # EvoAI version is < 2.0
-        if(EvoAI_REQUESTED_VERSION GREATER 10900)
+        if (EvoAI_REQUESTED_VERSION GREATER 10900)
             set(EvoAI_VERSION_OK FALSE)
             set(EvoAI_VERSION_MAJOR 1)
             set(EvoAI_VERSION_MINOR x)
@@ -69,7 +68,11 @@ endif()
 
 if(EvoAI_ROOT)
 	SET(EvoAI_INCLUDE_DIR "${EvoAI_ROOT}/include")
-	SET(EvoAI_LIBRARY "${EvoAI_ROOT}/lib/libEvoAI-${EvoAI_FIND_VERSION_MAJOR}.a")
+    if(BUILD_STATIC)
+        SET(EvoAI_LIBRARY "${EvoAI_ROOT}/lib/libEvoAI-${EvoAI_FIND_VERSION_MAJOR}.a")
+    elseif(NOT BUILD_STATIC)
+        SET(EvoAI_LIBRARY "${EvoAI_ROOT}/lib/libEvoAI-${EvoAI_FIND_VERSION_MAJOR}.dll.a")
+    endif(BUILD_STATIC)
 	SET(EvoAI_FOUND 1)
 endif(EvoAI_ROOT)
 
