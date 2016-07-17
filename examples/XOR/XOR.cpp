@@ -149,7 +149,7 @@ void testXOR(EvoAI::NeuralNetwork& nn){
         std::cout << "x: " << x[i] << ", y: " << y[i] << " : raw answer: " << res[0] << "\t\tbinary: " << (res[0] >= 0.5 ? 1:0) << " Correct Answer: " << truth[i] << std::endl;
     }
     std::cout << "altering order..." << std::endl;
-    for(auto i=3u;i>=0u;--i){
+    for(auto i=3;i>-1;--i){
         std::vector<double> input;
         input.emplace_back(x[i]);
         input.emplace_back(y[i]);
@@ -160,7 +160,7 @@ void testXOR(EvoAI::NeuralNetwork& nn){
     }
 }
 void usage() noexcept{
-    std::cout << "Usage: XOR.exe <mode>" << std::endl;
+    std::cout << "Usage: XOR <mode>" << std::endl;
     std::cout << "\t\t-e, --evolution\t\t\t\tTries to solve XOR evolving a population to solve the XOR." << std::endl;
     std::cout << "\t\t-t, --training\t\t\t\tTrains a neural network to solve the XOR." << std::endl;
     std::cout << "\t\t-c, --check <g|n> <filename> \t\tcheck a genome or a neural network." << std::endl;

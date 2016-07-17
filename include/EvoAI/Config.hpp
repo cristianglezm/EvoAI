@@ -10,7 +10,7 @@
 #define EVOAI_VERSION_PATCH 0
 
 #if !defined(EvoAI_BUILD_STATIC)
-    #if defined(SFML_SYSTEM_WINDOWS)
+    #if defined(_WIN32)
         // Windows compilers need specific (and different) keywords for export and import
         #define EvoAI_API_EXPORT __declspec(dllexport)
         #define EvoAI_API_IMPORT __declspec(dllimport)

@@ -1,12 +1,13 @@
-#
+######
 # Try to find EvoAI library and include path.
 # Once done this will define
 #
 # EvoAI_FOUND
 # EvoAI_INCLUDE_DIR
+# EvoAI_LIBRARY
 # EvoAI_LIBRARIES
 # EvoAI_ROOT
-#
+######
 
 set(FIND_EvoAI_PATHS
     ${EvoAI_ROOT}
@@ -18,14 +19,17 @@ set(FIND_EvoAI_PATHS
     /opt/csw
     /opt)
 
-find_path(EvoAI_INCLUDE_DIR EvoAI/include/EvoAI.hpp
+find_path(EvoAI_INCLUDE_DIR EvoAi.hpp
           PATH_SUFFIXES include
           PATHS ${FIND_EvoAI_PATHS})
+if(NOT EvoAI_FIND_VERSION_MAJOR)
+    SET(EvoAI_FIND_VERSION_MAJOR 1)
+endif(NOT EvoAI_FIND_VERSION_MAJOR)
 
 find_library(EvoAI_LIBRARY
-		NAMES EvoAI
-		PATH_SUFFIXES lib
-		PATHS ${FIND_EvoAI_PATHS})
+        NAMES EvoAI-${EvoAI_FIND_VERSION_MAJOR}
+        PATH_SUFFIXES lib
+        PATHS ${FIND_EvoAI_PATHS})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(EvoAI DEFAULT_MSG EvoAI_LIBRARY EvoAI_INCLUDE_DIR)
@@ -65,13 +69,12 @@ endif()
 
 if(EvoAI_ROOT)
 	SET(EvoAI_INCLUDE_DIR "${EvoAI_ROOT}/include")
-	SET(EvoAI_LIBRARIES "${EvoAI_ROOT}/lib/libEvoAI-${EvoAI_VERSION_MAJOR}.a")
+	SET(EvoAI_LIBRARY "${EvoAI_ROOT}/lib/libEvoAI-${EvoAI_FIND_VERSION_MAJOR}.a")
 	SET(EvoAI_FOUND 1)
 endif(EvoAI_ROOT)
 
 set(EvoAI_INCLUDE_DIR "${EvoAI_INCLUDE_DIR}")
 set(EvoAI_LIBRARIES "${EvoAI_LIBRARY}")
-
 
 if(NOT EvoAI_VERSION_OK)
 	set(FIND_EvoAI_ERROR "EvoAI found but version too low (requested: ${EvoAI_FIND_VERSION}}, found: ${EvoAI_VERSION_MAJOR}.${EvoAI_VERSION_MINOR}.${EvoAI_VERSION_PATCH})")

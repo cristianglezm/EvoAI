@@ -109,9 +109,9 @@ int main(int argc, char **argv){
             }
         }else if(genomeType == "1"){
             if(optBW){
-                g = std::make_unique<EvoAI::Genome>(3 * imagesInputs.size(),numHidden,1,true,true);
+                g = std::make_unique<EvoAI::Genome>(3 * 20 * imagesInputs.size(),numHidden,1,true,true);
             }else{
-                g = std::make_unique<EvoAI::Genome>(3 * imagesInputs.size(),numHidden,3,true,true);
+                g = std::make_unique<EvoAI::Genome>(3 * 20 * imagesInputs.size(),numHidden,3,true,true);
             }
         }
         nn = EvoAI::Genome::makePhenotype(*g);
