@@ -63,7 +63,7 @@ namespace EvoAI{
              * @brief check if is a recurrent connection
              * @return bool 
              */
-            inline bool isRecurrent() const noexcept{ return !(src<dest); }
+            inline bool isRecurrent() const noexcept;
             /**
              * @brief setter for src
              * @param l Link&
@@ -74,7 +74,7 @@ namespace EvoAI{
              * @brief getter for src
              * @return Link& const
              */
-            inline const Link& getSrc() const noexcept{ return src; }
+            inline const Link& getSrc() const noexcept;
             /**
              * @brief setter for dest
              * @param l Link&
@@ -85,12 +85,12 @@ namespace EvoAI{
              * @brief getter for dest
              * @return Link& const
              */
-            inline const Link& getDest() const noexcept{ return dest; }
+            inline const Link& getDest() const noexcept;
             /**
              * @brief checks if this connection has been visited.
              * @return bool
              */
-            inline const bool& isVisited() const noexcept{ return visited; }
+            inline const bool& isVisited() const noexcept;
             /**
              * @brief setter for visited
              * @param b 
@@ -101,7 +101,7 @@ namespace EvoAI{
              * @brief getter for weight
              * @return double&
              */
-            inline const double& getWeight() const noexcept{ return weight; }
+            inline const double& getWeight() const noexcept;
             /**
              * @brief setter for Weight
              * @param w Weight
@@ -118,7 +118,7 @@ namespace EvoAI{
              * @brief getter for cycles
              * @return int&
              */
-            inline const int& getCycles() const noexcept{ return cycles; }
+            inline const int& getCycles() const noexcept;
             /**
              * @brief returns a string with the info of the connection.
              * @return std::string
@@ -150,7 +150,7 @@ namespace EvoAI{
              * @brief getter for gradients
              * @return double&
              */
-            inline const double& getGradient() const noexcept{ return gradient; }
+            inline const double& getGradient() const noexcept;
             /**
              * @brief setter for delta
              * @param val
@@ -158,11 +158,15 @@ namespace EvoAI{
              */
             Connection& setDelta(const double& val) noexcept;
             /**
-             * @brief 
-             * @return 
+             * @brief getter for delta
+             * @return const double&
              */
-            inline const double& getDelta() const noexcept{ return delta; }
-            inline const double& getOldDelta() const noexcept{ return oldDelta; }
+            inline const double& getDelta() const noexcept;
+            /**
+             * @brief getter for old delta
+             * @return const double&
+             */
+            inline const double& getOldDelta() const noexcept;
             /**
              * @brief resets the connection, visited, and gradient.
              */
@@ -177,5 +181,32 @@ namespace EvoAI{
             double delta;
             double oldDelta;
     };
+    bool Connection::isRecurrent() const noexcept{
+        return (dest<src);
+    }
+    const Link& Connection::getSrc() const noexcept{
+        return src;
+    }
+    const Link& Connection::getDest() const noexcept{
+        return dest;
+    }
+    const bool& Connection::isVisited() const noexcept{
+        return visited;
+    }
+    const double& Connection::getWeight() const noexcept{
+        return weight;
+    }
+    const int& Connection::getCycles() const noexcept{
+        return cycles;
+    }
+    const double& Connection::getGradient() const noexcept{
+        return gradient;
+    }
+    const double& Connection::getDelta() const noexcept{
+        return delta;
+    }
+    const double& Connection::getOldDelta() const noexcept{
+        return oldDelta;
+    }
 }
 #endif // EVOAI_CONNECTION_HPP

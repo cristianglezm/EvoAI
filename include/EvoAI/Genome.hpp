@@ -282,11 +282,17 @@ namespace EvoAI{
              */
             static std::unique_ptr<Genome> reproduce(const Genome& g1, const Genome& g2) noexcept;
             /**
-             * @brief Creates a NeuralNetwork from a Genomme.
+             * @brief Creates a NeuralNetwork from a Genome.
              * @param g Genome
              * @return std::unique_ptr<NeuralNetwork>
              */
             static std::unique_ptr<NeuralNetwork> makePhenotype(Genome& g) noexcept;
+            /**
+             * @brief Creates a genome from a neural network, it will not be exactly the same if the network wasn't made from a genome.
+             * @param nn NeuralNetwork
+             * @return std::unique_ptr<Genome>
+             */
+            static std::unique_ptr<Genome> makeGenome(NeuralNetwork& nn) noexcept;
         private:
             std::size_t genomeID;
             std::size_t speciesID;

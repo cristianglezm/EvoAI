@@ -63,7 +63,7 @@ namespace EvoAI{
              * @brief getter for Neuron::Type
              * @return Neuron::Type&
              */
-            inline const Neuron::Type& getType() const { return type; }
+            inline const Neuron::Type& getType() const{ return type; }
             /**
              * @brief setter for bias
              * @param bias

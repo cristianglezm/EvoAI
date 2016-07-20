@@ -8,12 +8,14 @@
 #include <EvoAI/Genome.hpp>
 #include "imageUtils.hpp"
 
+#include <EvoAI/HyperNeat.hpp>
+
 void usage(){
     std::cout << "-g, --genome [m|r] <filename> [<filename> with r]\tload a genome json file\n";
     std::cout << "\t\t\t\t\tWith m will mutate the genome.\n\t\t\t\t\tWith r will combine two genomes, without m or r will load the genome.\n";
     std::cout << "-G, --genome-type <type> <numHidden>\twill generate a genome of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
                                                             "0. Without hidden neurons\n\t\t\t\t\t\t\t1. With hidden neurons.\n";
-    std::cout << "-n, --neuralnetwork <filename>\t\tload a neural network json file.\n";
+    std::cout << "-n, --neuralnetwork [g] <filename>\t\tload a neural network json file.\n\t\t\t\t\t\t\tif g is specified will make a genome from this network.\n";
     std::cout << "-N, --neuralnetwork-type <type> <numLayers> <numNLayers> will generate a random neural network of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
                                                             "0. CPPN\n\t\t\t\t\t\t\t1. FeedForward\n\t\t\t\t\t\t\t2. Elman Network\n";
     std::cout << "-c, --color\t\t\t\twill use color as input for the neural network (can be used with -C)\n";
@@ -37,6 +39,7 @@ int main(int argc, char **argv){
     int numHidden = 0;
     std::string genomeFile1 = "genome1.json";
     std::string genomeFile2 = "genome2.json";
+    bool optMakeGenome = false;
     bool optNeuralType = false;
     std::string NeuralType = "0";
     bool optNeuralFile = false;
@@ -88,7 +91,12 @@ int main(int argc, char **argv){
         }
         if(val == "-n" || val == "--neuralnetwork"){
             optNeuralFile = true;
-            neuralFile = std::string(argv[i+1]);
+            if(std::string(argv[i+1]) == "g"){
+                optMakeGenome = true;
+                neuralFile = std::string(argv[i+2]);
+            }else{
+                neuralFile = std::string(argv[i+1]);
+            }
         }
         if(val == "-N" || val == "--neuralnetwork-type"){
             optNeuralType = true;
@@ -136,8 +144,11 @@ int main(int argc, char **argv){
     std::unique_ptr<EvoAI::NeuralNetwork> nn = nullptr;
     std::unique_ptr<EvoAI::Genome> g = nullptr;
     if(optNeuralFile){
-        std::cout << "Loading File " << argv[2] << std::endl;
-        nn = std::make_unique<EvoAI::NeuralNetwork>(std::string(argv[2]));
+        std::cout << "Loading File " << neuralFile << std::endl;
+        nn = std::make_unique<EvoAI::NeuralNetwork>(neuralFile);
+        if(optMakeGenome){
+            g = EvoAI::Genome::makeGenome(*nn);
+        }
     }else if(optNeuralType){
         if(NeuralType == "0"){
             std::cout << "Creating a CPPN with " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;

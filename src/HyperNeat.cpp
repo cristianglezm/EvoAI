@@ -163,10 +163,10 @@ namespace EvoAI{
                                     nn->reset();
                                     if(std::fabs(out[1]) > 0.0){
                                         auto weight = out[0];
-                                        if(weight > 5.0){
-                                            weight = random(-5.0,5.0);
-                                        }else if(weight < -5.0){
-                                            weight = random(-5.0,5.0);
+                                        if(weight > 8.0){
+                                            weight = random(-8.0,8.0);
+                                        }else if(weight < -8.0){
+                                            weight = random(-8.0,8.0);
                                         }
                                         substrate.addConnection(Connection(Link(x1, y1), Link(x2, y2), weight));
                                     }
@@ -192,10 +192,10 @@ namespace EvoAI{
                             nn->reset();
                             if(std::fabs(out[1]) > 0.0){
                                 auto weight = out[0];
-                                if(weight > 5.0){
-                                    weight = random(-5.0,5.0);
-                                }else if(weight < -5.0){
-                                    weight = random(-5.0,5.0);
+                                if(weight > 8.0){
+                                    weight = random(-8.0,8.0);
+                                }else if(weight < -8.0){
+                                    weight = random(-8.0,8.0);
                                 }
                                 substrate.addConnection(Connection(substrate.getIndex(neurons[i]),substrate.getIndex(neurons[j]), weight));
                             }
@@ -232,6 +232,12 @@ namespace EvoAI{
     }
     const double& HyperNeat::getFitness() const noexcept{
         return genome.getFitness();
+    }
+    void HyperNeat::setActivationType(std::size_t layer, Neuron::ActivationType at) noexcept{
+        if(!isSubstrateValid){
+            makeSubstrate();
+        }
+        substrate[layer].setActivationType(at);
     }
     JsonBox::Value HyperNeat::toJson() const noexcept{
         JsonBox::Object o;

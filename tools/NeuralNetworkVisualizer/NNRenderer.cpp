@@ -6,8 +6,8 @@ namespace EvoAI{
     , connections()
     , nn(nn){
         font = sf::Font();
-        if(!font.loadFromFile("data/fonts/Times_New_Roman_Normal.ttf")){
-            throw std::runtime_error("Cannot Load Font -> data/fonts/Times_New_Roman_Normal.ttf");
+        if(!font.loadFromFile("data/fonts/Outwrite.ttf")){
+            throw std::runtime_error("Cannot Load Font -> data/fonts/Outwrite.ttf");
         }
         setUp();
     }

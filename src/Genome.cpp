@@ -590,4 +590,69 @@ namespace EvoAI{
         }
         return nn;
     }
+    std::unique_ptr<Genome> Genome::makeGenome(NeuralNetwork& nn) noexcept{
+        auto g = std::make_unique<Genome>();
+        std::vector<NodeGene> nGenes;
+        std::vector<ConnectionGene> cGenes;
+        // add inputs
+        auto& inputs = nn[0].getNeurons();
+        for(auto i=0u;i<inputs.size();++i){
+            auto ng = NodeGene(0,i);
+            ng.setActType(inputs[i].getActivationType());
+            ng.setNeuronType(inputs[i].getType());
+            nGenes.push_back(ng);
+        }
+        // add outputs
+        auto outputNum = (nn.size()-1);
+        auto& outputs = nn[outputNum].getNeurons();
+        for(auto i=0u;i<outputs.size();++i){
+            auto ng = NodeGene(2,i);
+            ng.setActType(outputs[i].getActivationType());
+            ng.setNeuronType(outputs[i].getType());
+            nGenes.push_back(ng);
+        }
+        // add hidden
+        auto lastHiddenLayer = (nn.size()-1);
+        auto id = 0;
+        for(auto i=1u;i<lastHiddenLayer;++i){
+            auto& hidden = nn[i].getNeurons();
+            for(auto j=0u;j<hidden.size();++j){
+                auto ng = NodeGene(1,id++); // get id and increment
+                ng.setActType(hidden[j].getActivationType());
+                ng.setNeuronType(hidden[j].getType());
+                nGenes.push_back(ng);
+            }
+        }
+        // add connections
+        auto outputLayer = nn.size() - 1;
+        for(auto& c:nn.getConnections()){
+            auto src = c->getSrc();
+            auto srcLayer = src.layer;
+            auto srcID = src.neuron;
+            auto dest = c->getDest();
+            auto destLayer = dest.layer;
+            auto destID = dest.neuron;
+            if(srcLayer == outputLayer){
+                srcLayer = 2;
+            }else if(srcLayer > 1){
+                for(auto s=1u;s<srcLayer;++s){
+                    srcID += (nn[s].size());
+                }
+                srcLayer = 1;
+            }
+            if(destLayer == outputLayer){
+                destLayer = 2;
+            }else if(destLayer > 1){
+                for(auto s=1u;s<destLayer;++s){
+                    destID += (nn[s].size());
+                }
+                destLayer = 1;
+            }
+            auto cg = ConnectionGene(Link(srcLayer,srcID), Link(destLayer,destID), c->getWeight());
+            cGenes.push_back(cg);
+        }
+        g->setNodeChromosomes(std::move(nGenes));
+        g->setConnectionChromosomes(std::move(cGenes));
+        return g;
+    }
 }
