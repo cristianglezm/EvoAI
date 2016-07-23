@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <EVoAI/NeuralNetwork.hpp>
+#include <EvoAI/NeuralNetwork.hpp>
 #include <EvoAI/Export.hpp>
 
 namespace EvoAI{

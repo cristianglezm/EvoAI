@@ -1,6 +1,6 @@
-if(NOT EvoAI_BUILD_STATIC)
+if(NOT EvoAI_BUILD_STATIC AND WIN32)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -lpthread -static-libgcc -static-libstdc++")
-endif(NOT EvoAI_BUILD_STATIC)
+endif(NOT EvoAI_BUILD_STATIC AND WIN32)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")

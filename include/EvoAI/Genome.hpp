@@ -3,7 +3,7 @@
 
 #include <JsonBox.h>
 #include <EvoAI/NodeGene.hpp>
-#include <EvoAi/NeuralNetwork.hpp>
+#include <EvoAI/NeuralNetwork.hpp>
 #include <EvoAI/ConnectionGene.hpp>
 #include <EvoAI/Utils.hpp>
 #include <memory>

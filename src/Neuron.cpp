@@ -1,5 +1,5 @@
 #include <EvoAI/Neuron.hpp>
-#include <EVoAI/Utils.hpp>
+#include <EvoAI/Utils.hpp>
 
 namespace EvoAI{
     Neuron::Neuron()

@@ -1,7 +1,7 @@
 #include <EvoAI/Genome.hpp>
 
 #include <random>
-#include <EvoAi/NeuronLayer.hpp>
+#include <EvoAI/NeuronLayer.hpp>
 
 namespace EvoAI{
     Genome::Genome()

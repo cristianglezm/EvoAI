@@ -25,9 +25,9 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fexpensive-optimizations")
 endif()
 
-if(NOT BUILD_STATIC)
+if(NOT BUILD_STATIC AND WIN32)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -lpthread -static-libgcc -static-libstdc++ -mwindows")
-endif(NOT BUILD_STATIC)
+endif(NOT BUILD_STATIC AND WIN32)
 
 install(TARGETS NeuralNetworkVisualizer RUNTIME DESTINATION bin ARCHIVE DESTINATION bin)
 install(DIRECTORY data DESTINATION bin)
