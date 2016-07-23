@@ -157,8 +157,8 @@ namespace EvoAI{
                     auto delta = error * derivate(outLayer[j].getActivationType(),outLayer[j]);
                     outLayer[j].setDelta(delta);
                 }
-                #if defined ANDROID /// @todo check if this is correct or another work around.
-                std::for_each(std::end(getConnections()) - 1,std::begin(getConnections()) + 1,
+                #if defined ANDROID | RASPPI/// @todo check if this is correct or another work around.
+                std::for_each(std::end(getConnections()),std::begin(getConnections()),
                 #else
                 std::for_each(std::rbegin(getConnections()),std::rend(getConnections()),
                 #endif
