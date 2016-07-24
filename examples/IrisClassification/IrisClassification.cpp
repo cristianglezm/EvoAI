@@ -41,10 +41,10 @@ int main(int argc,char **argv){
             do{
                 auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
                 //normalizeData(trainingSets.first);
-                nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.001,0.02,500);
+                nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.01,0.02,5);
                 std::cout << "MSE: " << nn->getMSE() << std::endl;
+		nn->writeToFile("IrisClassification.json");
             }while(nn->getMSE() > 0.001);
-            nn->writeToFile("IrisClassification.json");
         }else if(opt == "-c" || opt == "--classify"){
             std::cout << "Creating Test dataSets..." << std::endl;
             auto testSets = createTrainingSets(irisData,irisData.size()/2,irisData.size());

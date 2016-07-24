@@ -11,7 +11,7 @@ namespace EvoAI{
         return (1.0/(1.0+std::exp(-v)));
     }
     double Activations::tanh(const double& v){
-        return std::tanh(v);
+        return ((std::tanh(v) + 1)/2);
     }
     double Activations::sinusoid(const double& v){
         return std::sin(v);
@@ -65,7 +65,7 @@ namespace EvoAI{
         return (y*(1-y));
     }
     double Derivatives::tanh(const double& v){
-        return 1-std::pow(std::tanh(v),2);
+        return ((1-std::pow(std::tanh(v),2))/2);
     }
     double Derivatives::sinusoid(const double& v){
         return std::cos(v);
