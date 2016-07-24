@@ -552,7 +552,7 @@ namespace EvoAI{
         child->setConnectionChromosomes(std::move(cGenes));
         return child;
     }
-    std::unique_ptr<NeuralNetwork> Genome::makePhenotype(Genome& g) noexcept{
+    std::unique_ptr<NeuralNetwork> Genome::makePhenotype(const Genome& g) noexcept{
         auto nn = std::make_unique<NeuralNetwork>();
         NeuronLayer inputLayer;
         inputLayer.setType(Neuron::Type::INPUT);

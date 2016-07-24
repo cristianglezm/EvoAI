@@ -286,7 +286,7 @@ namespace EvoAI{
              * @param g Genome
              * @return std::unique_ptr<NeuralNetwork>
              */
-            static std::unique_ptr<NeuralNetwork> makePhenotype(Genome& g) noexcept;
+            static std::unique_ptr<NeuralNetwork> makePhenotype(const Genome& g) noexcept;
             /**
              * @brief Creates a genome from a neural network, it will not be exactly the same if the network wasn't made from a genome.
              * @param nn NeuralNetwork

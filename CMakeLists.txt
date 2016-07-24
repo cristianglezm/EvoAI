@@ -160,11 +160,11 @@ endif(EvoAI_BUILD_DOCS)
 ### Installing Library
 #################################################################################
 
-install(TARGETS EvoAI LIBRARY DESTINATION bin RUNTIME DESTINATION bin
+install(TARGETS EvoAI LIBRARY DESTINATION lib RUNTIME DESTINATION bin
                         ARCHIVE DESTINATION lib)
-install(FILES LICENSE.txt DESTINATION .)
-install(FILES README.md DESTINATION .)
+install(FILES LICENSE.txt DESTINATION share/EvoAI)
+install(FILES README.md DESTINATION share/EvoAI)
 if(EvoAI_BUILD_DOCS)
-    install(DIRECTORY docs DESTINATION .)
+    install(DIRECTORY docs DESTINATION share/EvoAI)
 endif(EvoAI_BUILD_DOCS)
 install(DIRECTORY include DESTINATION .)
