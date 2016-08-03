@@ -82,7 +82,6 @@ namespace EvoAI{
         return (lyrRemoved != std::end(layers));
     }
     std::vector<double> NeuralNetwork::run(){
-        std::vector<double> res;
         for(auto& c:getConnections()){
             auto w = c->getWeight();
             auto& src = c->getSrc();
@@ -130,13 +129,14 @@ namespace EvoAI{
         auto numLayers = size();
         auto& outputLayer = layers[numLayers-1];
         auto output = 0.0;
+        std::vector<double> res;
         for(auto& n:outputLayer.getNeurons()){
             n.addSum(outputLayer.getBias() * n.getBiasWeight());
             output = activate(n.getActivationType(),n);
             n.setOutput(output);
             res.emplace_back(output);
         }
-        return std::move(res);
+        return res;
     }
     void NeuralNetwork::train(std::vector<std::vector<double>>&& inputs,std::vector<std::vector<double>>&& expectedOutputs,
                                                                         const double& learningRate, const double& momentum, const int& epoch){

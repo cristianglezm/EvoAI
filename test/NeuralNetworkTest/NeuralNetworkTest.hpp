@@ -74,6 +74,23 @@ namespace EvoAI{
             NeuralNetwork nnJson("testNN.json");
             EXPECT_TRUE(nnJson == nnSave);
         }
+        TEST_F(NeuralNetworkTest,CheckOutputs){
+            NeuralNetwork nn(1,1,1,1,1.0);
+            nn[0][0].setBiasWeight(1.0);
+            nn[1][0].setBiasWeight(1.0);
+            nn[2][0].setBiasWeight(1.0);
+            nn.addConnection(Connection(Link(0,0),Link(1,0),1.0));
+            nn.addConnection(Connection(Link(1,0),Link(2,0),1.0));
+            // Sigmoid(I * w + b * bw) * w + b * bw = Sigmoid(output) = output
+            auto input = 2.0;
+            auto expectedOut = (Activations::sigmoid(Activations::sigmoid(input * 1+1*1) * 1+1*1));
+            std::cout << "ExpectedOutput: " << expectedOut << std::endl;
+            nn.setInputs({input});
+            auto out = nn.run();
+            nn.reset();
+            std::cout << "Output: " << out[0] << std::endl;
+            EXPECT_EQ(expectedOut,out[0]);
+        }
     }
 }
 
