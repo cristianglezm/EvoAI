@@ -6,7 +6,7 @@ A library for Evolving Neural Networks.
 
 Requires CMake and one of the following compilers:
 
-* GCC 4.9 or newer;
+* GCC 5.0 or newer;
 * Clang 3.6 or newer (Xcode 5.0 or newer on OS X);
 * Visual Studio 2010 or newer;
 
@@ -29,6 +29,24 @@ make -j3
 make install
 
 ```
+
+## Tools ##
+
+* GenomeVisualizer: Lets you visualize genome.
+* ImageEvolver: Makes a batch of images and make them reproduce and evolve.
+* ImageGenerator: Makes an image from the parameters.
+* ImageMixer: mix a number of images together(it takes the resolution from the first image).
+* NeuralNetworkVisualizer: Lets you visualize Neural networks.
+* SoundGenerator: Makes a sound from the paramenters.
+
+## Examples ##
+
+* XOR: Trains or evolves a Neural Network to Solve XOR
+* IrisClassifier: Trains or evolves a neural network to classify iris dataset
+
+## Tests ##
+
+* Make tests to check everything.
 
 ## Contributions ##
 
