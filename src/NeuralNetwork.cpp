@@ -117,6 +117,7 @@ namespace EvoAI{
                             nrnDest.resetContext(); /// @todo review
                             c->setCycles(0);
                         }
+                        // nrnDest should be a CONTEXT neuron.
                         nrnDest.setSum(nrnSrc.getSum());
                         nrnSrc.setSum(oldSum);
                         c->setCycles(c->getCycles()+1);

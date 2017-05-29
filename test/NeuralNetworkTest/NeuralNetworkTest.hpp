@@ -81,9 +81,8 @@ namespace EvoAI{
             nn[2][0].setBiasWeight(1.0);
             nn.addConnection(Connection(Link(0,0),Link(1,0),1.0));
             nn.addConnection(Connection(Link(1,0),Link(2,0),1.0));
-            // Sigmoid(I * w + b * bw) * w + b * bw = Sigmoid(output) = output
             auto input = 2.0;
-            auto expectedOut = (Activations::sigmoid(Activations::sigmoid(input * 1+1*1) * 1+1*1));
+            auto expectedOut = (Activations::sigmoid(Activations::sigmoid(input * 1+1*1) * 1 + 1 * 1));
             std::cout << "ExpectedOutput: " << expectedOut << std::endl;
             nn.setInputs({input});
             auto out = nn.run();
