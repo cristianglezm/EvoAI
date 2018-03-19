@@ -10,6 +10,7 @@ namespace EvoAI{
     class NeuralNetwork;
     /**
      * @todo review
+     * @todo add [add, mult, div?, abs, ?]
      */
     namespace Activations{
         EvoAI_API double identity(const double& v);

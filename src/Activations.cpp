@@ -50,7 +50,7 @@ namespace EvoAI{
     double Activations::gaussian(const double& v){
         unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
         static std::mt19937 rEngine(seed);
-        static std::normal_distribution<double> d(0.0,v);
+        static std::normal_distribution<double> d(v,2);
         return d(rEngine);
     }
     double Activations::modulus(const double& v){

@@ -46,12 +46,12 @@ namespace EvoAI{
              * @brief Type of activation that will be used for the neuron.
              */
             enum ActivationType{
-                IDENTITY,
-                MODULUS,
-                SIGMOID,
                 SINUSOID,
                 COSINE,
                 GAUSSIAN,
+                SIGMOID,
+                IDENTITY,
+                MODULUS,
                 STEPPED_SIGMOID,
                 TANH,
                 TAN,
