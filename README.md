@@ -4,7 +4,7 @@ A library for Evolving Neural Networks.
 
 ## Building ##
 
-Requires CMake and one of the following compilers:
+Requires CMake 3.7 and one of the following compilers:
 
 * GCC 5.0 or newer;
 * Clang 3.6 or newer (Xcode 5.0 or newer on OS X);
@@ -25,9 +25,17 @@ mkdir build && cd build
 cmake -G"MinGW Makefiles" -DSFML_ROOT=<baseDir> -DJSONBOX_ROOT=<baseDir> \ 
 -DGMOCK_ROOT=<baseDir> -DGTEST_ROOT=<baseDir> \ 
 -DEvoAI_BUILD_TESTS=TRUE -DEvoAI_BUILD_EXAMPLES=TRUE -DEvoAI_BUILD_DOCS=TRUE -DEvoAI_BUILD_TOOLS=TRUE ..
-make -j3
-make install
+make -j3 install
+```
 
+### Android ###
+
+```
+mkdir build && cd build
+mkdir armeabi && cd armeabi
+cmake -G"MinGW Makefiles" -DCMAKE_SYSTEM_NAME=Android -DANDROID_ABI=armeabi \
+-DCMAKE_BUILD_TYPE=Release -DJSONBOX_ROOT=<baseDir> ../..
+make -j3 install
 ```
 
 ## Tools ##

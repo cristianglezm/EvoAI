@@ -71,8 +71,9 @@ endif(EvoAI_BUILD_TESTS)
 ################################################################################
 ### Enable C++17 and warnings
 ################################################################################
-
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
+if(NOT CMAKE_SYSTEM_NAME MATCHES "Android")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
+endif(NOT CMAKE_SYSTEM_NAME MATCHES "Android")
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
 endif()
@@ -113,20 +114,30 @@ endif(EvoAI_BUILD_TOOLS)
 ### Android
 #################################################################################
 
-if(ANDROID_ABI)
+if(CMAKE_SYSTEM_NAME MATCHES "Android")
 	message("-- Compiling for Android")
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -DANDROID -DUSE_MAKE_UNIQUE")
-	set(ANDROID_API_MIN 9)
+	set(ANDROID_API_MIN 14)
 	set(ANDROID_NATIVE_API_LEVEL ${ANDROID_API_MIN})
 	set(ANDROID_NDK "$ENV{ANDROID_NDK}")
-	set(CMAKE_INSTALL_PREFIX "${ANDROID_NDK}/sources/EvoAI")
-	set(ANDROID_STL "c++_shared")
-	set(LIB_SUFFIX "/${ANDROID_ABI}")
+	set(CMAKE_INSTALL_PREFIX "${ANDROID_NDK}/sources/third_party/EvoAI")
+	set(ANDROID_STL_TYPE "c++_shared")
+	# we install libs in a subdirectory named after the ABI (lib/mips/*.so)
+    set(LIB_SUFFIX "/${CMAKE_ANDROID_ARCH_ABI}")
+	# pass shared STL configuration (if any)
+    if(CMAKE_ANDROID_STL_TYPE MATCHES "c++_shared")
+        add_definitions("-DSTL_LIBRARY=${CMAKE_ANDROID_STL_TYPE}")
+        if(NOT CMAKE_ANDROID_STL_TYPE MATCHES "c\\+\\+_shared")
+            message("Android: Using ${CMAKE_ANDROID_STL_TYPE} as STL. Set CMAKE_ANDROID_STL_TYPE to c++_shared, if there are any issues.")
+        endif()
+    else()
+        message(WARNING "Android: You're using a static STL (${CMAKE_ANDROID_STL_TYPE}). Set CMAKE_ANDROID_STL_TYPE to c++_shared, if there are any issues.")
+    endif()
 	if(ANDROID_STL MATCHES "_shared")
 	        add_definitions("-DSTL_LIBRARY=${ANDROID_STL}")
 	endif()
 	install(FILES src/Android.mk DESTINATION .)
-endif(ANDROID_ABI)
+endif(CMAKE_SYSTEM_NAME MATCHES "Android")
 
 #################################################################################
 ### Docs
