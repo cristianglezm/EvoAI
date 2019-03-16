@@ -423,6 +423,10 @@ namespace EvoAI{
                 return Derivatives::gaussian(n.getSum());
             case Neuron::ActivationType::STEPPED_SIGMOID:
                 return Derivatives::sigmoid(n.getSum()-0.5);
+            case Neuron::ActivationType::SQUARE:
+                return Derivatives::square(n.getSum());
+            case Neuron::ActivationType::CUBE:
+                return Derivatives::cube(n.getSum());
         }
         return Derivatives::sigmoid(n.getSum()-0.5);
     }
@@ -455,7 +459,11 @@ namespace EvoAI{
             case Neuron::ActivationType::GAUSSIAN:
                 return Activations::gaussian(n.getSum());
             case Neuron::ActivationType::STEPPED_SIGMOID:
-                 return Activations::sigmoid(n.getSum()-0.5);
+                return Activations::sigmoid(n.getSum()-0.5);
+            case Neuron::ActivationType::SQUARE:
+                return Activations::square(n.getSum());
+            case Neuron::ActivationType::CUBE:
+                return Activations::cube(n.getSum());
         }
         return Activations::sigmoid(n.getSum()-0.5);
     }

@@ -154,6 +154,8 @@ namespace EvoAI{
             case Neuron::ActivationType::TAN:               return "tan";
             case Neuron::ActivationType::SINUSOID:          return "sinusoid";
             case Neuron::ActivationType::COSINE:            return "cosine";
+            case Neuron::ActivationType::SQUARE:            return "square";
+            case Neuron::ActivationType::CUBE:              return "cube";
             case Neuron::ActivationType::RELU:              return "relu";
             case Neuron::ActivationType::NOISY_RELU:        return "noisyRelu";
             case Neuron::ActivationType::LEAKY_RELU:        return "leakyRelu";
@@ -180,6 +182,10 @@ namespace EvoAI{
             return Neuron::ActivationType::SIGMOID;
         }else if(at == "sinusoid"){
             return Neuron::ActivationType::SINUSOID;
+        }else if(at == "square"){
+            return Neuron::ActivationType::SQUARE;
+        }else if(at == "cube"){
+            return Neuron::ActivationType::CUBE;
         }else if(at == "steppedSigmoid"){
             return Neuron::ActivationType::STEPPED_SIGMOID;
         }else if(at == "softmax"){

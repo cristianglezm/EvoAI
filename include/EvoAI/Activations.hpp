@@ -87,6 +87,18 @@ namespace EvoAI{
          * @return 
          */
         EvoAI_API double modulus(const double& v);
+        /**
+         * @brief
+         * @param v
+         * @return
+         */
+        EvoAI_API double square(const double& v);
+        /**
+         * @brief
+         * @param v
+         * @return
+         */
+        EvoAI_API double cube(const double& v);
     }
     namespace Derivatives{
         /**
@@ -132,6 +144,18 @@ namespace EvoAI{
          * @return 
          */
         EvoAI_API double gaussian(const double& v);
+        /**
+         * @brief
+         * @param v
+         * @return
+         */
+        EvoAI_API double square(const double& v);
+        /**
+         * @brief
+         * @param v
+         * @return
+         */
+        EvoAI_API double cube(const double& v);
     }
 }
 

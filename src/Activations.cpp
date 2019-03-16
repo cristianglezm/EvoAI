@@ -56,6 +56,12 @@ namespace EvoAI{
     double Activations::modulus(const double& v){
         return std::fmod(v,1.0);
     }
+    double Activations::square(const double& v){
+        return (v*v);
+    }
+    double Activations::cube(const double& v){
+        return (v*v*v);
+    }
 // derivatives
     double Derivatives::identity(const double& v){
         return 1;
@@ -84,5 +90,11 @@ namespace EvoAI{
     }
     double Derivatives::gaussian(const double& v){
         return (std::sqrt(2/3.14159265359)*(-std::exp(std::pow(-v,2))));
+    }
+    double Derivatives::square(const double& v){
+        return (v/2);
+    }
+    double Derivatives::cube(const double& v){
+        return (v/3);
     }
 }

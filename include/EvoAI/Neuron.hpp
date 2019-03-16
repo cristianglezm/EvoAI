@@ -59,6 +59,8 @@ namespace EvoAI{
                 NOISY_RELU,
                 LEAKY_RELU,
                 EXPONENTIAL,
+                SQUARE,
+                CUBE,
                 LAST_CPPN_ACTIVATION_TYPE,
                 SOFTMAX
             };
