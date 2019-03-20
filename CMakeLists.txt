@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.7.2...3.14)
 
 ################################################################################
 ### User options.
@@ -71,19 +71,25 @@ endif(EvoAI_BUILD_TESTS)
 ################################################################################
 ### Enable C++17 and warnings
 ################################################################################
-if(NOT CMAKE_SYSTEM_NAME MATCHES "Android")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
-endif(NOT CMAKE_SYSTEM_NAME MATCHES "Android")
+
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
 endif()
 
+if(NOT CMAKE_SYSTEM_NAME MATCHES "Android")
+    SET(CMAKE_CXX_STANDARD 17)
+    SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+    SET(CMAKE_CXX_EXTENSIONS OFF)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fexpensive-optimizations")
+    endif()
+endif(NOT CMAKE_SYSTEM_NAME MATCHES "Android")
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_DEBUG_POSTFIX "_d")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fexpensive-optimizations")
-endif()
+        set(CMAKE_DEBUG_POSTFIX "_d")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 ################################################################################
 ### Testing
@@ -114,18 +120,21 @@ endif(EvoAI_BUILD_TOOLS)
 ### Android
 #################################################################################
 
+# set options for android
 if(CMAKE_SYSTEM_NAME MATCHES "Android")
 	message("-- Compiling for Android")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -DANDROID -DUSE_MAKE_UNIQUE")
-	set(ANDROID_API_MIN 14)
-	set(ANDROID_NATIVE_API_LEVEL ${ANDROID_API_MIN})
+    set(BUILD_SHARED_LIBS TRUE)
+    if (CMAKE_ANDROID_API LESS 14)
+        message(FATAL_ERROR "Android API level (${CMAKE_ANDROID_API}) must be equal or greater than 14.")
+    endif()
+    if(CMAKE_VS_PLATFORM_NAME STREQUAL "Tegra-Android")
+        message(WARNING "CMake might not properly support setting the STL. Make sure to adjust all generated library projects!")
+    endif()
 	set(ANDROID_NDK "$ENV{ANDROID_NDK}")
-	set(CMAKE_INSTALL_PREFIX "${ANDROID_NDK}/sources/third_party/EvoAI")
-	set(ANDROID_STL_TYPE "c++_shared")
-	# we install libs in a subdirectory named after the ABI (lib/mips/*.so)
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_ANDROID_NDK}/sources/third_party/evoai)
+    set(DEFAULT_INSTALL_MISC_DIR ${CMAKE_ANDROID_NDK}/sources/third_party/evoai)
     set(LIB_SUFFIX "/${CMAKE_ANDROID_ARCH_ABI}")
-	# pass shared STL configuration (if any)
-    if(CMAKE_ANDROID_STL_TYPE MATCHES "c++_shared")
+    if(CMAKE_ANDROID_STL_TYPE MATCHES "_shared")
         add_definitions("-DSTL_LIBRARY=${CMAKE_ANDROID_STL_TYPE}")
         if(NOT CMAKE_ANDROID_STL_TYPE MATCHES "c\\+\\+_shared")
             message("Android: Using ${CMAKE_ANDROID_STL_TYPE} as STL. Set CMAKE_ANDROID_STL_TYPE to c++_shared, if there are any issues.")
@@ -133,9 +142,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "Android")
     else()
         message(WARNING "Android: You're using a static STL (${CMAKE_ANDROID_STL_TYPE}). Set CMAKE_ANDROID_STL_TYPE to c++_shared, if there are any issues.")
     endif()
-	if(ANDROID_STL MATCHES "_shared")
-	        add_definitions("-DSTL_LIBRARY=${ANDROID_STL}")
-	endif()
 	install(FILES src/Android.mk DESTINATION .)
 endif(CMAKE_SYSTEM_NAME MATCHES "Android")
 

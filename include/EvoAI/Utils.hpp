@@ -104,7 +104,7 @@ namespace EvoAI{
 //////////
 ///// implementation inlined functions.
 //////////
-    template<typename T = float>
+    template<typename T>
     inline T normalize(const T& val,const T& normMin, const T& normMax, const T& min, const T& max) noexcept{
         return (normMin + (val-min)*(normMax-normMin)/(max-min));
     }
