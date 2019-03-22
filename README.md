@@ -31,12 +31,17 @@ make -j3 install
 ### Android ###
 
 ```
-mkdir build && cd build
-mkdir armeabi && cd armeabi
-cmake -G"MinGW Makefiles" -DCMAKE_SYSTEM_NAME=Android -DANDROID_ABI=armeabi \
--DCMAKE_BUILD_TYPE=Release -DJSONBOX_ROOT=<baseDir> ../..
-make -j3 install
+mkdir build
+cd build && mkdir armeabi-v7a
+cd armeabi-v7a
+cmake -DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_NDK=<android_ndk> \
+        -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_ANDROID_STL_TYPE=c++_static \ 
+        -DCMAKE_BUILD_TYPE=Release -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang \ 
+        -DCMAKE_INSTALL_PREFIX=<android_ndk>/sources/third_party/EvoAI ../..
+make install
 ```
+
+You should replace <android_ndk> with the actual folder.
 
 ## Tools ##
 
