@@ -255,7 +255,7 @@ namespace EvoAI{
             if(isOld){
                 power += (power * power) * 0.8;
             }
-            auto weight = power * random(0.0,2.0);
+            auto weight = power * random(-1.0,1.0);
             if(isNegative){
                 weight = -weight;
             }
@@ -276,7 +276,7 @@ namespace EvoAI{
             if(isOld){
                 power += (power*power) * 0.8;
             }
-            auto weight = power * random(0.0,2.0);
+            auto weight = power * random(-1.0,1.0);
             if(isNegative){
                 weight = -weight;
             }

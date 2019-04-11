@@ -106,7 +106,11 @@ namespace EvoAI{
 //////////
     template<typename T>
     inline T normalize(const T& val,const T& normMin, const T& normMax, const T& min, const T& max) noexcept{
-        return (normMin + (val-min)*(normMax-normMin)/(max-min));
+        if(min<max){
+            return (normMin + (val-min)*(normMax-normMin)/(max-min));
+            //return ((val - min) / (max - min)); // avoid nan values
+        }
+        return val;
     }
     template <class T>
     inline std::size_t hashCombine(std::size_t seed, const T& v) noexcept{

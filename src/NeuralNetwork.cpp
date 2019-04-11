@@ -417,8 +417,14 @@ namespace EvoAI{
                 return Derivatives::sinusoid(n.getSum());
             case Neuron::ActivationType::RELU:
                 return Derivatives::relu(n.getSum());
+            case Neuron::ActivationType::EXPONENTIAL:
+                return Activations::exponential(n.getSum());
             case Neuron::ActivationType::TANH:
                 return Derivatives::tanh(n.getSum());
+            case Neuron::ActivationType::COSINE:
+                return Derivatives::cosine(n.getSum());
+            case Neuron::ActivationType::TAN:
+                return Derivatives::tan(n.getSum());
             case Neuron::ActivationType::GAUSSIAN:
                 return Derivatives::gaussian(n.getSum());
             case Neuron::ActivationType::STEPPED_SIGMOID:

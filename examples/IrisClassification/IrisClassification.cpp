@@ -26,25 +26,32 @@ int main(int argc,char **argv){
         std::unique_ptr<EvoAI::NeuralNetwork> nn = nullptr;
         std::string opt(argv[2]);
         std::string filename("");
+        float errorThreehold = 20.0;
         if(argc > 3){
             filename = std::string(argv[3]);
         }
-        if(filename.empty()){
+        if(filename.empty() && (opt!="-e" || opt!="--evolve")){
             std::cout << "creating neural network..." << std::endl;
-            nn = EvoAI::createFeedForwardNN(4,3,20,3,1.0);
+            nn = EvoAI::createFeedForwardNN(4,2,3,3,1.0);
         }else{
-            std::cout << "loading neural network..." << std::endl;
-            nn = std::make_unique<EvoAI::NeuralNetwork>(filename);
+            if(opt == "-e" || opt == "--evolve"){
+                errorThreehold = std::stof(std::string(argv[3]));
+            }else{
+                std::cout << "loading neural network..." << std::endl;
+                nn = std::make_unique<EvoAI::NeuralNetwork>(filename);
+            }
         }
         if(opt == "-t" || opt == "--train"){
             std::cout << "Training Neural Network..." << std::endl;
             do{
                 auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
-                //normalizeData(trainingSets.first);
-                nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.01,0.02,5);
-                std::cout << "MSE: " << nn->getMSE() << std::endl;
+                normalizeData(trainingSets.first);
+                nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.1,0.02,5);
+                std::cout << "\rMSE: " << nn->getMSE() << " ";
+                std::flush(std::cout);
                 nn->writeToFile("IrisClassification.json");
-            }while(nn->getMSE() > 0.001);
+            }while(nn->getMSE() > 0.002);
+            std::cout << std::endl;
         }else if(opt == "-c" || opt == "--classify"){
             std::cout << "Creating Test dataSets..." << std::endl;
             auto testSets = createTrainingSets(irisData,irisData.size()/2,irisData.size());
@@ -60,6 +67,8 @@ int main(int argc,char **argv){
                     nnOut = "Iris-versicolor";
                 }else if(outputs[2] >= 0.5){
                     nnOut = "Iris-virginica";
+                }else{
+                    nnOut = "???";
                 }
                 if(testSets.second[i][0] >= 0.5){
                     expectedOut = "Iris-setosa";
@@ -67,6 +76,8 @@ int main(int argc,char **argv){
                     expectedOut = "Iris-versicolor";
                 }else if(testSets.second[i][2] >= 0.5){
                     expectedOut = "Iris-virginica";
+                }else{
+                    expectedOut = "???";
                 }
                 if(nnOut != expectedOut){
                     error += 1;
@@ -81,14 +92,15 @@ int main(int argc,char **argv){
             auto accuracy = 100 - error;
             std::cout << "Error: " << error << "%" << " Accuracy: " << accuracy << "%" << std::endl;
         }else if(opt == "-e" || opt == "--evolve"){
-            EvoAI::Population p(150,4,3);
+            EvoAI::Population p(500,4,3);
             auto errorSum = 999.0;
-            std::cout << "Evolving Population" << std::endl;
-            while(errorSum > 15.0){
+            std::cout << "Evolving Population" << " It will stop when error is less than " << errorThreehold << std::endl;
+            while(errorSum > errorThreehold){
                 for(auto& g:p.getGenomes()){
                     g->mutate();
                     nn = EvoAI::Genome::makePhenotype(*g);
                     auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
+                    normalizeData(trainingSets.first);
                     std::vector<std::vector<double>> results;
                     for(auto i=0u;i<trainingSets.first.size();++i){
                         nn->setInputs(std::move(trainingSets.first[i]));
@@ -105,8 +117,10 @@ int main(int argc,char **argv){
                 }
                 std::cout << "\ravg: " << p.computeAvgFitness() << " Error: " << errorSum << " ";
                 std::flush(std::cout);
-                if(errorSum > 15.0){
-                    p.reproduce(false,EvoAI::Population::SelectionType::TRUNCATION);
+                if(errorSum > errorThreehold){
+                    p.reproduce(true,EvoAI::Population::SelectionType::TOURNAMENT);
+                }else{
+                    std::cout << std::endl;
                 }
             }
             auto g = p.getBestGenome();
@@ -174,8 +188,10 @@ void usage(){
     std::cout << "usage: IrisClassification <dataInput> <options> <filename>" << std::endl;
     std::cout << "dataInput is a cvs file with this format <sepal length>,<sepal width>,<petal length>,<petal width>,Iris-setosa || Iris-versicolor || Iris-virginica" << std::endl;
     std::cout << "filename should be a json file of a neural network if empty it will create a random nn." << std::endl;
+    std::cout << "filename with option -e or --evolve is an error Threehold to stop evolving the population." << std::endl;
     std::cout << "-t, --train\t\tWill train the network specified." << std::endl;
     std::cout << "-c, --classify\t\tWill test the network with the test data." << std::endl;
+    std::cout << "-e, --evolve\t\tWill evolve a population and select the best." << std::endl;
     std::cout << "-h, --help\t\tthis menu." << std::endl;
 }
 std::pair<EvoAI::NeuralNetwork::trainingFormat,

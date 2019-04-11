@@ -76,6 +76,13 @@ namespace EvoAI{
     double Derivatives::sinusoid(const double& v){
         return std::cos(v);
     }
+    double Derivatives::cosine(const double& v){
+        return std::sinh(v);
+    }
+    double Derivatives::tan(const double& v){
+        auto x = 1/std::cos(v);
+        return (x * x);
+    }
     double Derivatives::relu(const double& v){
         return (v > 0.0 ? 1.0:0.0);
     }
@@ -92,7 +99,7 @@ namespace EvoAI{
         return (std::sqrt(2/3.14159265359)*(-std::exp(std::pow(-v,2))));
     }
     double Derivatives::square(const double& v){
-        return (v/2);
+        return (2*v);
     }
     double Derivatives::cube(const double& v){
         return (v/3);

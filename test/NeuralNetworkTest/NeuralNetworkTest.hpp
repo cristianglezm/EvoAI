@@ -81,13 +81,13 @@ namespace EvoAI{
             nn[2][0].setBiasWeight(1.0);
             nn.addConnection(Connection(Link(0,0),Link(1,0),1.0));
             nn.addConnection(Connection(Link(1,0),Link(2,0),1.0));
-            auto input = 2.0;
+            auto input = 50.0;
+            // out = S(S(i1 * w1 + b1 * bw1) * w2 + b2 * bw2) //
             auto expectedOut = (Activations::sigmoid(Activations::sigmoid(input * 1+1*1) * 1 + 1 * 1));
-            std::cout << "ExpectedOutput: " << expectedOut << std::endl;
             nn.setInputs({input});
             auto out = nn.run();
             nn.reset();
-            std::cout << "Output: " << out[0] << std::endl;
+            std::cout << "Output: " << out[0] << " ExpectedOutput: " << expectedOut << std::endl;
             EXPECT_EQ(expectedOut,out[0]);
         }
     }

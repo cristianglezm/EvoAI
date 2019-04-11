@@ -6,7 +6,7 @@ namespace EvoAI{
     : output(0.0)
     , sum(0.0)
     , delta(0.0)
-    , biasWeight(random(-1.0,1.0))
+    , biasWeight(1.0)//random(-1.0,1.0))
     , type(Type::HIDDEN)
     , activationType(Neuron::ActivationType::SIGMOID)
     , connections(){}
@@ -27,7 +27,7 @@ namespace EvoAI{
     : output(0.0)
     , sum(0.0)
     , delta(0.0)
-    , biasWeight(random(-1.0,1.0))
+    , biasWeight(1.0)//random(-1.0,1.0))
     , type(t)
     , activationType(Neuron::ActivationType::SIGMOID)
     , connections(){}

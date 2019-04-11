@@ -124,6 +124,18 @@ namespace EvoAI{
          * @param v
          * @return 
          */
+        EvoAI_API double cosine(const double& v);
+        /**
+         * @brief 
+         * @param v
+         * @return 
+         */
+        EvoAI_API double tan(const double& v);
+        /**
+         * @brief 
+         * @param v
+         * @return 
+         */
         EvoAI_API double sinusoid(const double& v);
         /**
          * @brief 

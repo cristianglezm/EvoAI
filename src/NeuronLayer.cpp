@@ -6,7 +6,7 @@ namespace EvoAI{
     : neurons()
     , type(Neuron::Type::HIDDEN)
     , activationType(Neuron::ActivationType::SIGMOID)
-    , bias(0.0)
+    , bias(1.0)
     , cyclesLimit(3){}
     NeuronLayer::NeuronLayer(const std::size_t& numNeurons,const Neuron::Type& t,const double& bias)
     : neurons()
