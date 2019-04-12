@@ -7,14 +7,16 @@ namespace EvoAI{
     , PopulationSize(50)
     , genomesCached(false)
     , compatibilityThreshold(6.0)
-    , maxAge(120){}
+    , maxAge(120)
+    , cppn(false){}
     Population::Population(const std::size_t& size, const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecurrent, bool cppn)
     : species()
     , genomes()
     , PopulationSize(size)
     , genomesCached(false)
     , compatibilityThreshold(6.0)
-    , maxAge(120){
+    , maxAge(120)
+    , cppn(cppn){
         for(auto i=0u;i<size;++i){
             auto g = std::make_unique<Genome>(numInputs, numOutputs, canBeRecurrent, cppn);
             g->setGenomeID(Population::getNewID());
@@ -27,7 +29,8 @@ namespace EvoAI{
     , PopulationSize(size)
     , genomesCached(false)
     , compatibilityThreshold(6.0)
-    , maxAge(120){
+    , maxAge(120)
+    , cppn(cppn){
         for(auto i=0u;i<size;++i){
             auto g = std::make_unique<Genome>(numInputs, numHidden, numOutputs, canBeRecurrent, cppn);
             g->setGenomeID(Population::getNewID());
@@ -40,7 +43,8 @@ namespace EvoAI{
     , PopulationSize(std::stoull(o["PopulationSize"].getString()))
     , genomesCached(false)
     , compatibilityThreshold(o["compatibilityThreshold"].getDouble())
-    , maxAge(std::stoull(o["maxAge"].getString())){
+    , maxAge(std::stoull(o["maxAge"].getString()))
+    , cppn(o["cppn"].getBoolean()){
         auto specs = o["species"].getArray();
         for(auto& sp:specs){
             species.push_back(std::make_unique<Species>(sp.getObject()));
@@ -52,7 +56,8 @@ namespace EvoAI{
     , PopulationSize(50)
     , genomesCached(false)
     , compatibilityThreshold(6.0)
-    , maxAge(120){
+    , maxAge(120)
+    , cppn(false){
         JsonBox::Value json;
         json.loadFromFile(filename);
         auto v = json["Population"];
@@ -63,6 +68,7 @@ namespace EvoAI{
         PopulationSize = std::stoull(v["PopulationSize"].getString());
         compatibilityThreshold = v["compatibilityThreshold"].getDouble();
         maxAge = std::stoull(v["maxAge"].getString());
+        cppn = v["cppn"].getBoolean();
     }
     void Population::addGenome(std::unique_ptr<Genome> g) noexcept{
         genomesCached = false;
@@ -195,6 +201,9 @@ namespace EvoAI{
                                 auto selectedFather = random(0,half);
                                 auto selectedMother = random(0,half);
                                 auto child = Genome::reproduce(*genomes[selectedFather],*genomes[selectedMother]);
+                                if(cppn){
+                                    child->setCppn(true);
+                                }
                                 child->setGenomeID(Population::getNewID());
                                 genomesToAdd.push_back(std::move(child));
                             }
@@ -204,6 +213,9 @@ namespace EvoAI{
                             auto selectedFather = random(0,half);
                             auto selectedMother = random(0,half);
                             auto child = Genome::reproduce(*genomes[selectedFather],*genomes[selectedMother]);
+                            if(cppn){
+                                child->setCppn(true);
+                            }
                             auto oldID = genomes[i]->getGenomeID();
                             child->setGenomeID(oldID);
                             genomesToAdd.push_back(std::move(child));
@@ -241,6 +253,9 @@ namespace EvoAI{
                                 auto father = tournamentSelection(3);
                                 auto mother = tournamentSelection(3);
                                 auto child = Genome::reproduce(*genomes[father.first],*genomes[mother.first]);
+                                if(cppn){
+                                    child->setCppn(true);
+                                }
                                 child->setGenomeID(Population::getNewID());
                                 genomesToAdd.push_back(std::move(child));
                             }
@@ -256,6 +271,9 @@ namespace EvoAI{
                                 continue;
                             }
                             auto child = Genome::reproduce(*genomes[father.first],*genomes[mother.first]);
+                            if(cppn){
+                                child->setCppn(true);
+                            }
                             auto oldID = genomes[newChild]->getGenomeID();
                             child->setGenomeID(oldID);
                             genomesToAdd.push_back(std::move(child));
@@ -296,6 +314,9 @@ namespace EvoAI{
                                 auto mother = fpSelection(totalFitness);
                                 if(father && mother){
                                     auto child = Genome::reproduce(*father,*mother);
+                                    if(cppn){
+                                        child->setCppn(true);
+                                    }
                                     child->setGenomeID(Population::getNewID());
                                     genomesToAdd.push_back(std::move(child));
                                 }
@@ -312,6 +333,9 @@ namespace EvoAI{
                             }
                             if(father && mother){
                                 auto child = Genome::reproduce(*father,*mother);
+                                if(cppn){
+                                    child->setCppn(true);
+                                }
                                 auto oldID = genomes[i]->getGenomeID();
                                 child->setGenomeID(oldID);
                                 genomesToAdd.push_back(std::move(child));
@@ -343,6 +367,9 @@ namespace EvoAI{
                                     auto selectedFather = random(0,half);
                                     auto selectedMother = random(0,half);
                                     auto child = Genome::reproduce(*spGenomes[selectedFather],*spGenomes[selectedMother]);
+                                    if(cppn){
+                                        child->setCppn(true);
+                                    }
                                     child->setGenomeID(Population::getNewID());
                                     genomesToAdd.push_back(std::move(child));
                                 }
@@ -352,6 +379,9 @@ namespace EvoAI{
                                 auto selectedFather = random(0,half);
                                 auto selectedMother = random(0,half);
                                 auto child = Genome::reproduce(*spGenomes[selectedFather],*spGenomes[selectedMother]);
+                                if(cppn){
+                                    child->setCppn(true);
+                                }
                                 auto oldID = spGenomes[i]->getGenomeID();
                                 child->setGenomeID(oldID);
                                 genomesToAdd.push_back(std::move(child));
@@ -389,6 +419,9 @@ namespace EvoAI{
                                     auto father = tournamentSelection(3);
                                     auto mother = tournamentSelection(3);
                                     auto child = Genome::reproduce(*spGenomes[father.first],*spGenomes[mother.first]);
+                                    if(cppn){
+                                        child->setCppn(true);
+                                    }
                                     child->setGenomeID(Population::getNewID());
                                     genomesToAdd.push_back(std::move(child));
                                 }
@@ -404,6 +437,9 @@ namespace EvoAI{
                                     continue;
                                 }
                                 auto child = Genome::reproduce(*spGenomes[father.first],*spGenomes[mother.first]);
+                                if(cppn){
+                                    child->setCppn(true);
+                                }
                                 auto oldID = spGenomes[newChild]->getGenomeID();
                                 child->setGenomeID(oldID);
                                 genomesToAdd.push_back(std::move(child));
@@ -444,6 +480,9 @@ namespace EvoAI{
                                     auto mother = fpSelection(totalFitness);
                                     if(father && mother){
                                         auto child = Genome::reproduce(*father,*mother);
+                                        if(cppn){
+                                            child->setCppn(true);
+                                        }
                                         child->setGenomeID(Population::getNewID());
                                         genomesToAdd.push_back(std::move(child));
                                     }
@@ -460,6 +499,9 @@ namespace EvoAI{
                                 }
                                 if(father && mother){
                                     auto child = Genome::reproduce(*father,*mother);
+                                    if(cppn){
+                                        child->setCppn(true);
+                                    }
                                     auto oldID = spGenomes[i]->getGenomeID();
                                     child->setGenomeID(oldID);
                                     genomesToAdd.push_back(std::move(child));
@@ -518,6 +560,12 @@ namespace EvoAI{
     const std::size_t& Population::getMaxAge() const noexcept{
         return maxAge;
     }
+    void Population::setCppn(bool isCppn) noexcept{
+        cppn = isCppn;
+    }
+    const bool Population::isCppn() const noexcept{
+        return cppn;
+    }
     void Population::setCompatibilityThreshold(const double& compThreshold) noexcept{
         compatibilityThreshold = compThreshold;
     }
@@ -544,6 +592,7 @@ namespace EvoAI{
         o["PopulationSize"] = std::to_string(PopulationSize);
         o["compatibilityThreshold"] = compatibilityThreshold;
         o["maxAge"] = std::to_string(maxAge);
+        o["cppn"] = JsonBox::Value(cppn);
         return JsonBox::Value(o);
     }
     void Population::writeToFile(const std::string& filename){

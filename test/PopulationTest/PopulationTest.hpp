@@ -10,11 +10,13 @@ namespace EvoAI{
             Population p(150,2,1);
             EXPECT_EQ(6.0,p.getCompatibilityThreshold());
             EXPECT_EQ(120u,p.getMaxAge());
+            EXPECT_EQ(false,p.isCppn());
         }
         TEST(PopulationTest, Saving){
             Population p(25,1,2);
             p.setCompatibilityThreshold(2.0);
             p.setMaxAge(250u);
+            p.setCppn(true);
             p.writeToFile("Population.json");
         }
         TEST(PopulationTest, Loading){
@@ -22,6 +24,7 @@ namespace EvoAI{
             EXPECT_EQ(250u,p.getMaxAge());
             EXPECT_EQ(2.0,p.getCompatibilityThreshold());
             EXPECT_EQ(25u,p.getPopulationSize());
+            EXPECT_EQ(true,p.isCppn());
             EXPECT_EQ(250u,p.getMaxAge());
         }
     }

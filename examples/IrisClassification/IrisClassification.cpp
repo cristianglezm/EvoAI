@@ -76,8 +76,6 @@ int main(int argc,char **argv){
                     expectedOut = "Iris-versicolor";
                 }else if(testSets.second[i][2] >= 0.5){
                     expectedOut = "Iris-virginica";
-                }else{
-                    expectedOut = "???";
                 }
                 if(nnOut != expectedOut){
                     error += 1;
@@ -115,7 +113,7 @@ int main(int argc,char **argv){
                     errorSum = error;
                     g->setFitness(std::pow((results.size() * 3) - errorSum,2));
                 }
-                std::cout << "\ravg: " << p.computeAvgFitness() << " Error: " << errorSum << " ";
+                std::cout << "\ravg: " << p.computeAvgFitness() << " Error: " << errorSum << " NumSpecies: " << p.getSpeciesSize() << " ";
                 std::flush(std::cout);
                 if(errorSum > errorThreehold){
                     p.reproduce(true,EvoAI::Population::SelectionType::TOURNAMENT);

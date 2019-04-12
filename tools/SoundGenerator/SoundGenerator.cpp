@@ -172,6 +172,7 @@ int main(int argc, char **argv){
             auto g1 = std::make_unique<EvoAI::Genome>(genomeFile1);
             auto g2 = std::make_unique<EvoAI::Genome>(genomeFile2);
             g = EvoAI::Genome::reproduce(*g1,*g2);
+            g->setCppn(true);
         }else{
             g = std::make_unique<EvoAI::Genome>(genomeFile1);
         }

@@ -173,6 +173,16 @@ namespace EvoAI{
              */
             const std::size_t& getSpeciesID() const noexcept;
             /**
+             * @brief setter for cppn
+             * @param bool isCppn
+             */
+            void setCppn(bool isCppn) noexcept;
+            /**
+             * @brief returns if is cppn
+             * @return const bool
+             */
+            const bool isCppn() const noexcept;
+            /**
              * @brief Adds a node and random connection and slices the connection adding the node in between.
              */
             void mutateAddNode() noexcept;

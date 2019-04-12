@@ -82,11 +82,13 @@ int main(int argc, char* argv[]){
                 errorSum = (std::fabs(results[0]) + std::fabs(1.0-results[1]) + std::fabs(1.0-results[2]) + std::fabs(results[3]));
                 ge->setFitness(std::pow((4.0 - errorSum), 2));
             }
-            std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " ";
+            std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " ";
             std::flush(std::cout);
             if(errorSum >= minError){
-                p.reproduce(false,Population::SelectionType::TOURNAMENT);
+                p.reproduce(true,Population::SelectionType::TOURNAMENT);
                 ++gen;
+            }else{
+                std::cout << std::endl;
             }
         }
         std::cout << "Selecting Winner..." << std::endl;

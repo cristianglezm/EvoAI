@@ -194,6 +194,7 @@ int main(int argc, char **argv){
             auto g2 = std::make_unique<EvoAI::Genome>(genomeFile2);
             std::cout << "Reproducing genomes " << genomeFile1 << " And " << genomeFile2 << std::endl;
             g = EvoAI::Genome::reproduce(*g1,*g2);
+            g->setCppn(true);
         }else{
             std::cout << "Loading genome " << genomeFile1 << std::endl;
             g = std::make_unique<EvoAI::Genome>(genomeFile1);

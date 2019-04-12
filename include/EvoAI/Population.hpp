@@ -178,6 +178,16 @@ namespace EvoAI{
              */
             double computeAvgFitness() noexcept;
             /**
+             * @brief sets if the children the population has will have cppn activated.
+             * @param isCppn bool
+             */
+            void setCppn(bool isCppn) noexcept;
+            /**
+             * @brief checks if the children will have cppn activated.
+             * @return const bool
+             */
+            const bool isCppn() const noexcept;
+            /**
              * @brief returns a JsonBox::Value with the current info.
              * @return JsonBox::Value
              */
@@ -197,6 +207,7 @@ namespace EvoAI{
             bool genomesCached;
             double compatibilityThreshold;
             std::size_t maxAge;
+            bool cppn;
     };
 }
 

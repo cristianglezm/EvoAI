@@ -201,6 +201,12 @@ namespace EvoAI{
     const std::size_t& Genome::getSpeciesID() const noexcept{
         return speciesID;
     }
+    void Genome::setCppn(bool isCppn) noexcept{
+        cppn = isCppn;
+    }
+    const bool Genome::isCppn() const noexcept{
+        return cppn;
+    }
     void Genome::mutateAddNode() noexcept{
         if(!connectionChromosomes.empty()){
             auto selectedConnection = random(0,connectionChromosomes.size()-1);
