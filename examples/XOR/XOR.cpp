@@ -60,7 +60,7 @@ int main(int argc, char* argv[]){
         testXOR(*nn);
     }else if(evolutionMode){
         std::cout << "Evolving a population..." << std::endl;
-        Population p(150,2,1);
+        Population p(1500,2,1);
         std::vector<double> x = {0.0,0.0,1.0,1.0};
         std::vector<double> y = {0.0,1.0,0.0,1.0};
         std::vector<double> truth = {0.0,1.0,1.0,0.0};
@@ -79,7 +79,10 @@ int main(int argc, char* argv[]){
                     results.push_back(out[0]);
                     phenotype->reset();
                 }
-                errorSum = (std::fabs(results[0]) + std::fabs(1.0-results[1]) + std::fabs(1.0-results[2]) + std::fabs(results[3]));
+                errorSum = (std::fabs(0.0 - results[0]) +
+                            std::fabs(1.0 - results[1]) +
+                            std::fabs(1.0 - results[2]) +
+                            std::fabs(0.0 - results[3]));
                 ge->setFitness(std::pow((4.0 - errorSum), 2));
             }
             std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " ";

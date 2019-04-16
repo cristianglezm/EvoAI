@@ -90,6 +90,25 @@ namespace EvoAI{
             std::cout << "Output: " << out[0] << " ExpectedOutput: " << expectedOut << std::endl;
             EXPECT_EQ(expectedOut,out[0]);
         }
+        TEST_F(NeuralNetworkTest,CheckTrain){
+            NeuralNetwork nn(1,1,1,1,1.0);
+            nn[0][0].setBiasWeight(1.0);
+            nn[1][0].setBiasWeight(1.0);
+            nn[2][0].setBiasWeight(1.0);
+            nn.addConnection(Connection(Link(0,0),Link(1,0),1.0));
+            nn.addConnection(Connection(Link(1,0),Link(2,0),1.0));
+            std::vector<std::vector<double>> tInput = {{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}};
+            std::vector<std::vector<double>> tOut = {{0},{0},{0},{0},{0},{0},{0},{0},{0},{0}};
+            nn.train(std::move(tInput),std::move(tOut),0.1,0.02,1000);
+            nn.reset();
+            for(auto i=1;i<=10;++i){
+                nn.setInputs({i});
+                auto out = nn.run();
+                nn.reset();
+                std::cout << "Output: " << out[0] << " Expected: 0" << std::endl;
+                EXPECT_EQ(0,out[0] > 0.5 ? 1:0);
+            }
+        }
     }
 }
 

@@ -45,12 +45,12 @@ You should replace <android_ndk> with the actual folder.
 
 ## Tools ##
 
-* GenomeVisualizer: Lets you visualize genome.
+* GenomeVisualizer: Lets you visualize genomes.
 * ImageEvolver: Makes a batch of images and make them reproduce and evolve.
 * ImageGenerator: Makes an image from the parameters.
 * ImageMixer: mix a number of images together(it takes the resolution from the first image).
 * NeuralNetworkVisualizer: Lets you visualize Neural networks.
-* SoundGenerator: Makes a sound from the paramenters.
+* SoundGenerator: Makes a sound from the parameters.
 
 ## Examples ##
 

@@ -43,8 +43,11 @@ namespace EvoAI{
         auto& outputs = nn[index];
         auto sum = 0.0;
         for(auto& n:outputs.getNeurons()){
-            sum += std::exp(n.getOutput());
+            if(v != n.getOutput()){
+                sum += std::exp(n.getOutput());
+            }
         }
+        sum += std::exp(v);
         return (std::exp(v) / (sum));
     }
     double Activations::gaussian(const double& v){

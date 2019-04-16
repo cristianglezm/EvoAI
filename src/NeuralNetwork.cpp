@@ -153,7 +153,7 @@ namespace EvoAI{
                 auto outputs = run();
                 auto& outLayer = layers[layers.size()-1];
                 for(auto j=0u;j<outLayer.size();++j){
-                    auto error = expectedOutputs[i][j] - outputs[j];
+                    auto error = expectedOutputs[i][j] - outputs[j]; /// @todo add different cost functions
                     totalError += std::pow(error,2);
                     auto delta = error * derivate(outLayer[j].getActivationType(),outLayer[j]);
                     outLayer[j].setDelta(delta);

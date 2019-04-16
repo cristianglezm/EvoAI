@@ -32,7 +32,9 @@ int main(int argc,char **argv){
         }
         if(filename.empty() && (opt!="-e" || opt!="--evolve")){
             std::cout << "creating neural network..." << std::endl;
-            nn = EvoAI::createFeedForwardNN(4,2,3,3,1.0);
+            nn = EvoAI::createFeedForwardNN(4,1,8,3,1.0);
+            (*nn)[1].setActivationType(EvoAI::Neuron::ActivationType::RELU);
+            (*nn)[2].setActivationType(EvoAI::Neuron::ActivationType::SOFTMAX);
         }else{
             if(opt == "-e" || opt == "--evolve"){
                 errorThreehold = std::stof(std::string(argv[3]));
@@ -50,7 +52,7 @@ int main(int argc,char **argv){
                 std::cout << "\rMSE: " << nn->getMSE() << " ";
                 std::flush(std::cout);
                 nn->writeToFile("IrisClassification.json");
-            }while(nn->getMSE() > 0.002);
+            }while(nn->getMSE() > 0.09);
             std::cout << std::endl;
         }else if(opt == "-c" || opt == "--classify"){
             std::cout << "Creating Test dataSets..." << std::endl;
@@ -67,8 +69,6 @@ int main(int argc,char **argv){
                     nnOut = "Iris-versicolor";
                 }else if(outputs[2] >= 0.5){
                     nnOut = "Iris-virginica";
-                }else{
-                    nnOut = "???";
                 }
                 if(testSets.second[i][0] >= 0.5){
                     expectedOut = "Iris-setosa";
@@ -90,7 +90,7 @@ int main(int argc,char **argv){
             auto accuracy = 100 - error;
             std::cout << "Error: " << error << "%" << " Accuracy: " << accuracy << "%" << std::endl;
         }else if(opt == "-e" || opt == "--evolve"){
-            EvoAI::Population p(500,4,3);
+            EvoAI::Population p(1500,4,3);
             auto errorSum = 999.0;
             std::cout << "Evolving Population" << " It will stop when error is less than " << errorThreehold << std::endl;
             while(errorSum > errorThreehold){
@@ -108,7 +108,9 @@ int main(int argc,char **argv){
                     }
                     auto error = 0.0;
                     for(auto i=0u;i<results.size();++i){
-                        error += std::fabs(trainingSets.second[i][0] - results[i][0]) + std::fabs(trainingSets.second[i][1] - results[i][1]) + std::fabs(trainingSets.second[i][2] - results[i][2]);
+                        error += std::fabs(trainingSets.second[i][0] - results[i][0]) +
+                                    std::fabs(trainingSets.second[i][1] - results[i][1]) +
+                                    std::fabs(trainingSets.second[i][2] - results[i][2]);
                     }
                     errorSum = error;
                     g->setFitness(std::pow((results.size() * 3) - errorSum,2));
