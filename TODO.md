@@ -2,8 +2,8 @@
 
 TODO:
 
-* remove Connector->deepNN
 * const-correctness for neural network, and other classes.
+* hyperneat examples for irisClass, XOR.
 * hyperneat more substrateConfigurations? a way to configure it yourself
 -
 * Fix Activations and derivatives

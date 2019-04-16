@@ -1,6 +1,6 @@
 # EvoAI #
 
-A library for Evolving Neural Networks.
+A library for Evolving Neural Networks(NEAT and HyperNEAT).
 
 ## Building ##
 
