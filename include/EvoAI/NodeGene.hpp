@@ -25,7 +25,7 @@ namespace EvoAI{
              * @param nrnID std::size_t
              * @return NodeGene
              */
-            NodeGene(std::size_t lyrID, std::size_t nrnID);
+            NodeGene(const std::size_t& lyrID, const std::size_t& nrnID);
             /**
              * @brief Constructor
              * @param lyrID std::size_t
@@ -34,7 +34,7 @@ namespace EvoAI{
              * @param nat Neuron::ActivationType
              * @return NodeGene
              */
-            NodeGene(std::size_t lyrID, std::size_t nrnID, Neuron::Type nt, Neuron::ActivationType nat);
+            NodeGene(const std::size_t& lyrID, const std::size_t& nrnID, Neuron::Type nt, Neuron::ActivationType nat);
             /**
              * @brief Constructor with a json object
              * @param o JsonBox::Object&

@@ -122,12 +122,12 @@ namespace EvoAI{
              * @brief Removes Connections with dest
              * @param dest Link
              */
-            void removeConnectionsWithDest(Link dest);
+            void removeConnectionsWithDest(const Link& dest);
             /**
              * @brief Removes Connections with src
              * @param src Link&&
              */
-            void removeConnectionsWithSrc(Link src);
+            void removeConnectionsWithSrc(const Link& src);
             /**
              * @brief getter for the connections
              * @return std::vector<Connection*>&

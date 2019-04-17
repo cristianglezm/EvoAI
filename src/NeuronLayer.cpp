@@ -69,7 +69,7 @@ namespace EvoAI{
         neurons[c.getSrc().neuron].addConnection(c);
         return *this;
     }
-    bool NeuronLayer::removeConnection(Connection& c){
+    bool NeuronLayer::removeConnection(const Connection& c){
         return neurons[c.getSrc().neuron].removeConnection(c);
     }
     void NeuronLayer::reset(){

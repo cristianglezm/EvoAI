@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := EvoAI
-LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libEvoAI.so
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libEvoAI-1.so
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_SHARED_LIBRARIES := JsonBox
 
@@ -16,7 +16,7 @@ endif
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := EvoAI-static
-LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libEvoAI.a
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libEvoAI-1.a
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_SHARED_LIBRARIES := JsonBox-static
 

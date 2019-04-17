@@ -39,16 +39,46 @@ namespace EvoAI{
         return std::exp(v);
     }
     double Activations::softmax(const double& v, NeuralNetwork& nn){
+/*
         int index = nn.size()-1;
         auto& outputs = nn[index];
         auto sum = 0.0;
         for(auto& n:outputs.getNeurons()){
-            if(v != n.getOutput()){
+            if(v != n.getSum()){
                 sum += std::exp(n.getOutput());
             }
         }
         sum += std::exp(v);
         return (std::exp(v) / (sum));
+*///
+        int index = nn.size()-1;
+        auto& outputs = nn[index];
+        Neuron* n = nullptr;
+        auto maxEl = std::max_element(std::begin(outputs.getNeurons()),std::end(outputs.getNeurons()),
+            [&](Neuron& n1, Neuron& n2){
+               if(v == n1.getSum()){
+                    n = &n1;
+               }
+               return (n1.getSum() < n2.getSum());
+            });
+        auto sum = 0.0;
+        std::transform(std::begin(outputs.getNeurons()),std::end(outputs.getNeurons()), std::begin(outputs.getNeurons()),
+            [&](Neuron& ne){
+                auto ex = std::exp(ne.getSum() - maxEl->getSum());
+                sum += ex;
+                ne.setSum(ex);
+                return ne;
+            });
+        std::transform(std::begin(outputs.getNeurons()),std::end(outputs.getNeurons()),std::begin(outputs.getNeurons()),
+            [&](Neuron& ne){
+                ne.setOutput(ne.getSum() / sum);
+                return ne;
+            });
+        if(n!=nullptr){
+            return n->getOutput();
+        }else{
+            return v;
+        }
     }
     double Activations::gaussian(const double& v){
         unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();

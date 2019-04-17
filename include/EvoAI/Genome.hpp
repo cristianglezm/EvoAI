@@ -42,7 +42,7 @@ namespace EvoAI{
              * @param cppn with this true the genome will have random activation functions and will be able to change activations with Genome::mutate
              * @return Genome
              */
-            Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive = true, bool cppn = false);
+            Genome(const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecursive = false, bool cppn = false);
             /**
              * @brief builds a Genome that is feedforward connected from inputs to hidden to outputs.
              * @param numInputs
@@ -52,7 +52,7 @@ namespace EvoAI{
              * @param cppn with this true the genome will have random activation functions and will be able to change activations with Genome::mutate
              * @return Genome
              */
-            Genome(std::size_t numInputs, std::size_t numHidden, std::size_t numOutputs, bool canBeRecursive = true, bool cppn = false);
+            Genome(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numOutputs, bool canBeRecursive = false, bool cppn = false);
             /**
              * @brief loads a Genome previously saved with Genome::toJson
              * @param o JsonBox::Object
@@ -110,7 +110,7 @@ namespace EvoAI{
              * @param layerID count the nodes from that layer.
              * @return std::size_t number of nodes
              */
-            std::size_t getNumOfNodes(std::size_t layerID) const noexcept;
+            std::size_t getNumOfNodes(const std::size_t& layerID) const noexcept;
             /**
              * @brief returns a Json value with the information of the genome.
              * @return JsonBox::Value
@@ -156,7 +156,7 @@ namespace EvoAI{
              * @brief sets the genome id
              * @param gnmID std::size_t
              */
-            void setGenomeID(std::size_t gnmID) noexcept;
+            void setGenomeID(const std::size_t& gnmID) noexcept;
             /**
              * @brief gets the genome id
              * @return std::size_t
@@ -166,7 +166,7 @@ namespace EvoAI{
              * @brief setter for species ID
              * @param spcID species id
              */
-            void setSpeciesID(std::size_t spcID) noexcept;
+            void setSpeciesID(const std::size_t& spcID) noexcept;
             /**
              * @brief returns the species id.
              * @return std::size_t&

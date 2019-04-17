@@ -106,10 +106,11 @@ namespace EvoAI{
             NeuronLayer& addConnection(const Connection& c);
             /**
              * @brief removes a connection
-             * @param c
+             * the connection could be invalid.
+             * @param const c& connection
              * @return bool
              */
-            bool removeConnection(Connection& c);
+            bool removeConnection(const Connection& c);
             /**
              * @brief will reset the layer's neurons.
              */
@@ -122,7 +123,7 @@ namespace EvoAI{
              * @brief getter for the ActivationType
              * @return Neuron::ActivationType
              */
-            Neuron::ActivationType getActivationType() const{ return activationType; }
+            inline Neuron::ActivationType getActivationType() const{ return activationType; }
             /**
              * @brief setter for activation type
              * It will traverse each neuron and set the ActivationType to atype.

@@ -12,7 +12,7 @@ namespace EvoAI{
     , maxFitness(0.0)
     , oldAvgFitness(0.0)
     , genomes(){}
-    Species::Species(std::size_t id, bool novel)
+    Species::Species(const std::size_t& id, bool novel)
     : id(id)
     , age(0)
     , novel(novel)

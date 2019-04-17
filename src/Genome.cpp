@@ -8,11 +8,11 @@ namespace EvoAI{
     : genomeID(0)
     , speciesID(0)
     , fitness(0.0)
-    , rnnAllowed(true)
+    , rnnAllowed(false)
     , cppn(false)
     , nodeChromosomes()
     , connectionChromosomes(){}
-    Genome::Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive, bool cppn)
+    Genome::Genome(const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecursive, bool cppn)
     : genomeID(0)
     , speciesID(0)
     , fitness(0.0)
@@ -36,7 +36,7 @@ namespace EvoAI{
             }
         }
     }
-    Genome::Genome(std::size_t numInputs, std::size_t numHidden, std::size_t numOutputs, bool canBeRecursive, bool cppn)
+    Genome::Genome(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numOutputs, bool canBeRecursive, bool cppn)
     : genomeID(0)
     , speciesID(0)
     , fitness(0.0)
@@ -93,8 +93,8 @@ namespace EvoAI{
     : genomeID(0)
     , speciesID(0)
     , fitness(0.0)
-    , rnnAllowed(true)
-    , cppn(true)
+    , rnnAllowed(false)
+    , cppn(false)
     , nodeChromosomes()
     , connectionChromosomes(){
         JsonBox::Value json;
@@ -138,7 +138,7 @@ namespace EvoAI{
     const std::vector<ConnectionGene>& Genome::getConnectionChromosomes() const noexcept{
         return connectionChromosomes;
     }
-    std::size_t Genome::getNumOfNodes(std::size_t layerID) const noexcept{
+    std::size_t Genome::getNumOfNodes(const std::size_t& layerID) const noexcept{
         std::size_t num = 0;
         for(auto& n:nodeChromosomes){
             if(n.getLayerID() == layerID){
@@ -189,13 +189,13 @@ namespace EvoAI{
         auto found = std::find(std::begin(connectionChromosomes),std::end(connectionChromosomes),cg);
         return (found != std::end(connectionChromosomes));
     }
-    void Genome::setGenomeID(std::size_t gnmID) noexcept{
+    void Genome::setGenomeID(const std::size_t& gnmID) noexcept{
         genomeID = gnmID;
     }
     const std::size_t& Genome::getGenomeID() const noexcept{
         return genomeID;
     }
-    void Genome::setSpeciesID(std::size_t spcID) noexcept{
+    void Genome::setSpeciesID(const std::size_t& spcID) noexcept{
         speciesID = spcID;
     }
     const std::size_t& Genome::getSpeciesID() const noexcept{

@@ -132,7 +132,7 @@ namespace EvoAI{
         auto output = 0.0;
         std::vector<double> res;
         for(auto& n:outputLayer.getNeurons()){
-            n.addSum(outputLayer.getBias() * n.getBiasWeight());
+            n.addSum(outputLayer.getBias() * n.getBiasWeight()); 
             output = activate(n.getActivationType(),n);
             n.setOutput(output);
             res.emplace_back(output);
@@ -301,7 +301,7 @@ namespace EvoAI{
         connectionsCached = false;
         return layers[c.getSrc().layer].removeConnection(c);
     }
-    void NeuralNetwork::removeConnectionsWithDest(Link dest){
+    void NeuralNetwork::removeConnectionsWithDest(const Link& dest){
         connectionsCached = false;
         for(auto& l:layers){
             for(auto& n:l.getNeurons()){
@@ -314,7 +314,7 @@ namespace EvoAI{
             }
         }
     }
-    void NeuralNetwork::removeConnectionsWithSrc(Link src){
+    void NeuralNetwork::removeConnectionsWithSrc(const Link& src){
         connectionsCached = false;
         layers[src.layer][src.neuron].clearConnections();
     }
@@ -419,6 +419,8 @@ namespace EvoAI{
                 return Derivatives::relu(n.getSum());
             case Neuron::ActivationType::EXPONENTIAL:
                 return Activations::exponential(n.getSum());
+            case Neuron::ActivationType::SOFTMAX:
+                return Derivatives::softmax(n.getSum(),*this);
             case Neuron::ActivationType::TANH:
                 return Derivatives::tanh(n.getSum());
             case Neuron::ActivationType::COSINE:

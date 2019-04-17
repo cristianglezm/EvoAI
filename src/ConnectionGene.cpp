@@ -44,7 +44,7 @@ namespace EvoAI{
     void ConnectionGene::addWeight(const double& amount) noexcept{
         c.setWeight(c.getWeight() + amount);
     }
-    void ConnectionGene::setWeight(double w) noexcept{
+    void ConnectionGene::setWeight(const double& w) noexcept{
         c.setWeight(w);
     }
     const double& ConnectionGene::getWeight() const noexcept{

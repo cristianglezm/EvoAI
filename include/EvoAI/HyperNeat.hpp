@@ -203,7 +203,7 @@ namespace EvoAI{
              * @brief changes the activation type for an entire layer in the substrate.
              * @param at Neuron::ActivationType
              */
-            void setActivationType(std::size_t layer, Neuron::ActivationType at) noexcept;
+            void setActivationType(const std::size_t& layer, Neuron::ActivationType at) noexcept;
             /**
              * @brief returns a JsonBox::Value thats the HyperNeat.
              * @return JsonBox::Value

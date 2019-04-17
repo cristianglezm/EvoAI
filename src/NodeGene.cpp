@@ -3,7 +3,7 @@
 #include <algorithm>
 
 namespace EvoAI{
-    NodeGene::NodeGene(std::size_t lyrID, std::size_t nrnID)
+    NodeGene::NodeGene(const std::size_t& lyrID, const std::size_t& nrnID)
     : layerID(lyrID)
     , neuronID(nrnID)
     , biasWeight(1.0)
@@ -12,7 +12,7 @@ namespace EvoAI{
     , innovationID(0){
         innovationID = std::hash<NodeGene>{}(*this);
     }
-    NodeGene::NodeGene(std::size_t lyrID, std::size_t nrnID, Neuron::Type nt, Neuron::ActivationType nat)
+    NodeGene::NodeGene(const std::size_t& lyrID, const std::size_t& nrnID, Neuron::Type nt, Neuron::ActivationType nat)
     : layerID(lyrID)
     , neuronID(nrnID)
     , biasWeight(1.0)

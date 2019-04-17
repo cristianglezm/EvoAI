@@ -68,7 +68,7 @@ namespace EvoAI{
              * @brief setter for weight
              * @param w
              */
-            void setWeight(double w) noexcept;
+            void setWeight(const double& w) noexcept;
             /**
              * @brief getter for weight
              * @return double

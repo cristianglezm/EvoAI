@@ -31,7 +31,7 @@ namespace EvoAI{
              * @param novel bool if the species is a new one.
              * @return Species
              */
-            Species(std::size_t id, bool novel);
+            Species(const std::size_t& id, bool novel);
             /**
              * @brief loads a Species from a JsonBox::Object
              * @param o JsonBox::Object

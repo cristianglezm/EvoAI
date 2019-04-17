@@ -233,7 +233,7 @@ namespace EvoAI{
     const double& HyperNeat::getFitness() const noexcept{
         return genome.getFitness();
     }
-    void HyperNeat::setActivationType(std::size_t layer, Neuron::ActivationType at) noexcept{
+    void HyperNeat::setActivationType(const std::size_t& layer, Neuron::ActivationType at) noexcept{
         if(!isSubstrateValid){
             makeSubstrate();
         }
