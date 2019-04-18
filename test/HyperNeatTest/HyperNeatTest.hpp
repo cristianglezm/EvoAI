@@ -32,12 +32,18 @@ namespace EvoAI{
         }
         TEST(HyperNeatTest,Saving){
             HyperNeat hn(SubstrateInfo(2,3,2,2),HyperNeat::SubstrateConfiguration::SANDWICH);
-            hn.mutate();
             hn.makeSubstrate();
-            hn.writeToFile("HyperNeatTest.json");
+            hn.writeToFile("HyperNeatTest01.json");
         }
         TEST(HyperNeatTest,Loading){
-            HyperNeat hn("HyperNeatTest.json");
+            HyperNeat hn("HyperNeatTest01.json");
+            EXPECT_EQ(2u,hn.getNumInputs());
+            EXPECT_EQ(3u,hn.getNumHiddenLayers());
+            EXPECT_EQ(2u,hn.getNumHiddenNeurons());
+            EXPECT_EQ(2u,hn.getNumOutputs());
+            auto g = hn.getGenome();
+            EXPECT_TRUE(g.isRecurrentAllowed());
+            EXPECT_TRUE(g.isCppn());
         }
     }
 }

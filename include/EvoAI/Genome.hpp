@@ -178,10 +178,20 @@ namespace EvoAI{
              */
             void setCppn(bool isCppn) noexcept;
             /**
-             * @brief returns if is cppn
+             * @brief returns true if is a CPPN
              * @return const bool
              */
             const bool isCppn() const noexcept;
+            /**
+             * @brief setter to change RecurrentAllowed
+             * @param isRecurrentAllowed
+             */
+            void setRecurrentAllowed(bool isRecurrentAllowed) noexcept{ rnnAllowed = isRecurrentAllowed; }
+            /**
+             * @brief returns true if it allows to have recurrent connections.
+             * @return bool 
+             */
+            inline const bool isRecurrentAllowed() const noexcept{ return rnnAllowed; }
             /**
              * @brief Adds a node and random connection and slices the connection adding the node in between.
              */

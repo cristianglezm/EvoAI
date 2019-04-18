@@ -94,6 +94,7 @@ int main(int argc,char **argv){
             auto errorSum = 999.0;
             std::cout << "Evolving Population" << " It will stop when error is less than " << errorThreehold << std::endl;
             while(errorSum > errorThreehold){
+                p.orderGenomesByFitness();
                 for(auto& g:p.getGenomes()){
                     g->mutate();
                     nn = EvoAI::Genome::makePhenotype(*g);
@@ -115,7 +116,7 @@ int main(int argc,char **argv){
                     errorSum = error;
                     g->setFitness(std::pow((results.size() * 3) - errorSum,2));
                 }
-                std::cout << "\ravg: " << p.computeAvgFitness() << " Error: " << errorSum << " NumSpecies: " << p.getSpeciesSize() << " ";
+                std::cout << "\ravg: " << p.computeAvgFitness() << " Error: " << errorSum << " NumSpecies: " << p.getSpeciesSize() << "       ";
                 std::flush(std::cout);
                 if(errorSum > errorThreehold){
                     p.reproduce(true,EvoAI::Population::SelectionType::TOURNAMENT);

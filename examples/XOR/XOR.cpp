@@ -138,7 +138,7 @@ void testXOR(EvoAI::NeuralNetwork& nn){
 }
 void evolveNEAT(bool saveGen, const std::string& savingFileGenome) noexcept{
     std::cout << "Evolving NEAT Neural Networks..." << std::endl;
-    Population p(150,2,1);
+    Population p(500,2,1);
     std::vector<double> x = {0.0,0.0,1.0,1.0};
     std::vector<double> y = {0.0,1.0,0.0,1.0};
     std::vector<double> truth = {0.0,1.0,1.0,0.0};
@@ -163,7 +163,7 @@ void evolveNEAT(bool saveGen, const std::string& savingFileGenome) noexcept{
                         std::fabs(0.0 - results[3]));
             ge->setFitness(std::pow((4.0 - errorSum), 2));
         }
-        std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " Error: " << errorSum << " ";
+        std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " Error: " << errorSum << "            ";
         std::flush(std::cout);
         if(errorSum >= minError){
             p.reproduce(true,Population::SelectionType::TOURNAMENT);
@@ -184,7 +184,7 @@ void evolveNEAT(bool saveGen, const std::string& savingFileGenome) noexcept{
 }
 void evolveHyperNeat(bool saveGen, const std::string& savingFileGenome) noexcept{
     std::cout << "Evolving HyperNEAT Neural Networks..." << std::endl;
-    Population p(50,3,2);
+    Population p(500,5,2,false, true); // important for the population to be cppn for HyperNEAT
     std::vector<double> x = {0.0,0.0,1.0,1.0};
     std::vector<double> y = {0.0,1.0,0.0,1.0};
     std::vector<double> truth = {0.0,1.0,1.0,0.0};
@@ -209,10 +209,10 @@ void evolveHyperNeat(bool saveGen, const std::string& savingFileGenome) noexcept
                         std::fabs(0.0 - results[3]));
             ge->setFitness(std::pow((4.0 - errorSum), 2));
         }
-        std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " Error: " << errorSum << " ";
+        std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " Error: " << errorSum << "        ";
         std::flush(std::cout);
         if(errorSum >= minError){
-            p.reproduce(true,Population::SelectionType::TOURNAMENT);
+            p.reproduce(true,Population::SelectionType::TRUNCATION);
             ++gen;
         }else{
             std::cout << std::endl;
