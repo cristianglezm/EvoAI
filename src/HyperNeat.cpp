@@ -152,23 +152,33 @@ namespace EvoAI{
                         for(auto y1=0u;y1<substrate[x1].size();++y1){
                             for(auto x2=0u;x2<substrate.size();++x2){
                                 for(auto y2=0u;y2<substrate[x2].size();++y2){
-                                    auto norm_x1 = (2*(x1/substrate.size()))-1;
-                                    auto norm_y1 = (2*(y1/substrate[x1].size()))-1;
-                                    auto norm_x2 = (2*(x2/substrate.size()))-1;
-                                    auto norm_y2 = (2*(y2/substrate[x2].size()))-1;
-                                    auto d = std::sqrt(((norm_x1/2)^2) + ((norm_y1/2)^2)) + std::sqrt(((norm_x2/2)^2) + ((norm_y2/2)^2));
+                                    //auto norm_x1 = (2*(x1/substrate.size()))-1;
+                                    //auto norm_y1 = (2*(y1/substrate[x1].size()))-1;
+                                    //auto norm_x2 = (2*(x2/substrate.size()))-1;
+                                    //auto norm_y2 = (2*(y2/substrate[x2].size()))-1;
+                                    //auto d = std::sqrt(std::pow(norm_x1/2,2) + 
+                                    //                    std::pow(norm_y1/2,2)) + 
+                                    //        std::sqrt(std::pow(norm_x2/2,2) + 
+                                    //                   std::pow(norm_y2/2,2));
+                                    /// old way
+                                    auto norm_x1 = (substrate.size()-1)/2;
+                                    auto norm_y1 = (substrate[x1].size()-1)/2;
+                                    auto norm_x2 = (substrate.size()-1)/2;
+                                    auto norm_y2 = (substrate[x2].size()-1)/2;
+                                    auto d = std::sqrt(std::pow(norm_x1-x1,2) + 
+                                                        std::pow(norm_y1-y1,2)) + 
+                                             std::sqrt(std::pow(norm_x2-x2,2) + 
+                                                        std::pow(norm_y2-y2,2));
                                     nn->setInputs({normalize<double>(x1,0,substrate.size(),-1.0,1.0), normalize<double>(y1,0,substrate[x1].size(),-1.0,1.0),
                                                     normalize<double>(x2,0,substrate.size(),-1.0,1.0), normalize<double>(y2,0,substrate[x2].size(),-1.0,1.0), d});
                                     auto out = nn->run();
                                     nn->reset();
                                     if(std::fabs(out[1]) > 0.0){
-                                        auto weight = out[0];
-                                        if(weight > 8.0){
-                                            weight = random(-8.0,8.0);
-                                        }else if(weight < -8.0){
-                                            weight = random(-8.0,8.0);
+                                        auto weight = out[0] == 0.0 ? random(-1.0,1.0):out[0];
+                                        auto c = Connection(Link(x1, y1), Link(x2, y2), weight);
+                                        if(!c.isRecurrent()){
+                                            substrate.addConnection(c);
                                         }
-                                        substrate.addConnection(Connection(Link(x1, y1), Link(x2, y2), weight));
                                     }
                                 }
                             }
@@ -184,20 +194,23 @@ namespace EvoAI{
                     auto nn = Genome::makePhenotype(genome);
                     for(auto i=0u;i<size;++i){
                         for(auto j=0u;j<size;++j){
-                            auto norm_i = (2*(i/size))-1;
-                            auto norm_j = (2*(j/size))-1;
-                            auto d = std::sqrt(((norm_i/2)^2) + ((norm_j /2)^2));
-                            nn->setInputs({normalize<double>(i,0,size,-1.0,1.0), normalize<double>(j,0,size,-1.0,1.0), d});
+                            //auto norm_i = (2*(i/size))-1;
+                            //auto norm_j = (2*(j/size))-1;
+                            //auto d = std::sqrt(std::pow(norm_i/2,2) + std::pow(norm_j /2,2));
+                            // old way
+                            auto norm_i = (size-1)/2;
+                            auto norm_j = (size-1)/2;
+                            auto d = std::sqrt(std::pow(norm_i-i,2) + std::pow(norm_j-j,2));
+                            nn->setInputs({normalize<double>(i,0,size,-1.0,1.0),
+                                            normalize<double>(j,0,size,-1.0,1.0), d});
                             auto out = nn->run();
                             nn->reset();
                             if(std::fabs(out[1]) > 0.0){
-                                auto weight = out[0];
-                                if(weight > 8.0){
-                                    weight = random(-8.0,8.0);
-                                }else if(weight < -8.0){
-                                    weight = random(-8.0,8.0);
+                                auto weight = out[0] == 0.0 ? random(-1.0,1.0):out[0];
+                                auto c = Connection(substrate.getIndex(neurons[i]),substrate.getIndex(neurons[j]), weight);
+                                if(!c.isRecurrent()){
+                                    substrate.addConnection(c);
                                 }
-                                substrate.addConnection(Connection(substrate.getIndex(neurons[i]),substrate.getIndex(neurons[j]), weight));
                             }
                         }
                     }

@@ -289,7 +289,7 @@ namespace EvoAI{
     NeuralNetwork& NeuralNetwork::addConnection(const Connection& c){
         if(c.isRecurrent()){
             auto nType = layers[c.getDest().layer][c.getDest().neuron].getType();
-            if( nType != Neuron::Type::INPUT || nType != Neuron::Type::OUTPUT){
+            if(nType != Neuron::Type::INPUT || nType != Neuron::Type::OUTPUT){
                 layers[c.getDest().layer][c.getDest().neuron].setType(Neuron::Type::CONTEXT);
             }
         }

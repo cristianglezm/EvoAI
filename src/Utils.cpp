@@ -102,14 +102,14 @@ namespace EvoAI{
     std::unique_ptr<NeuralNetwork> createCPPN(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias){
         unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
         static std::default_random_engine g(seed);
-        static std::uniform_int_distribution<int> dice(0,Neuron::ActivationType::LAST_CPPN_ACTIVATION_TYPE-1);
+        std::uniform_int_distribution<int> dice(0,Neuron::ActivationType::LAST_CPPN_ACTIVATION_TYPE-1);
         std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>(numInputs,numHidden,numNeuronsPerHiddenLayer,numOutputs,bias);
-        static std::uniform_int_distribution<int> hiddenLayerDice(1,numHidden);
-        static std::uniform_int_distribution<int> outputLayerDice(numHidden,numHidden+1);
-        static std::uniform_int_distribution<int> inputNeuronDice(0,numInputs-1);
-        static std::uniform_int_distribution<int> hiddenNeuronDice(0,numNeuronsPerHiddenLayer-1);
-        static std::uniform_int_distribution<int> outputNeuronDice(0,numOutputs-1);
-        static std::bernoulli_distribution bernoulli(0.5);
+        std::uniform_int_distribution<int> hiddenLayerDice(1,numHidden);
+        std::uniform_int_distribution<int> outputLayerDice(numHidden,numHidden+1);
+        std::uniform_int_distribution<int> inputNeuronDice(0,numInputs-1);
+        std::uniform_int_distribution<int> hiddenNeuronDice(0,numNeuronsPerHiddenLayer-1);
+        std::uniform_int_distribution<int> outputNeuronDice(0,numOutputs-1);
+        std::bernoulli_distribution bernoulli(0.5);
         for(auto i=0u;i<nn->size();++i){
             nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
             nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));

@@ -4,18 +4,22 @@
 #include <memory>
 #include <vector>
 
+using namespace EvoAI;
+
 void usage() noexcept;
+void evolveNEAT(bool saveGen, const std::string& savingFileGenome) noexcept;
+void evolveHyperNeat(bool saveGen, const std::string& savingFileGenome) noexcept;
 void testXOR(EvoAI::NeuralNetwork& nn);
 void trainXOR(EvoAI::NeuralNetwork& nn);
 
 int main(int argc, char* argv[]){
-    using namespace EvoAI;
     if(argc < 2){
         usage();
         return EXIT_FAILURE;
     }
     bool trainingMode = false;
     bool evolutionMode = false;
+    bool hyperneat = false;
     bool checkGenome = false;
     bool checknn = false;
     bool saveGen = false;
@@ -27,6 +31,13 @@ int main(int argc, char* argv[]){
         std::string val(argv[i]);
         if(val == "-e" || val == "--evolution"){
             evolutionMode = true;
+            auto hpn = std::string("");
+            if(argv[i+1] != nullptr){
+                hpn = std::string(argv[i+1]);
+            }
+            if(hpn == "hn"){
+                hyperneat = true;
+            }
         }else if(val == "-t" || val == "--training"){
             trainingMode = true;
         }else if(val == "-c" || val == "--check"){
@@ -59,49 +70,10 @@ int main(int argc, char* argv[]){
         std::cout << "Post-Training" << std::endl;
         testXOR(*nn);
     }else if(evolutionMode){
-        std::cout << "Evolving a population..." << std::endl;
-        Population p(1500,2,1);
-        std::vector<double> x = {0.0,0.0,1.0,1.0};
-        std::vector<double> y = {0.0,1.0,0.0,1.0};
-        std::vector<double> truth = {0.0,1.0,1.0,0.0};
-        auto errorSum = 999.0;
-        auto minError = 0.1;
-        auto gen = 0u;
-        while(errorSum >= minError){
-            p.orderGenomesByFitness();
-            for(auto& ge:p.getGenomes()){
-                std::vector<double> results;
-                ge->mutate();
-                auto phenotype = Genome::makePhenotype(*ge);
-                for(auto i=0u;i<4;++i){
-                    phenotype->setInputs({x[i],y[i]});
-                    auto out = phenotype->run();
-                    results.push_back(out[0]);
-                    phenotype->reset();
-                }
-                errorSum = (std::fabs(0.0 - results[0]) +
-                            std::fabs(1.0 - results[1]) +
-                            std::fabs(1.0 - results[2]) +
-                            std::fabs(0.0 - results[3]));
-                ge->setFitness(std::pow((4.0 - errorSum), 2));
-            }
-            std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " ";
-            std::flush(std::cout);
-            if(errorSum >= minError){
-                p.reproduce(true,Population::SelectionType::TOURNAMENT);
-                ++gen;
-            }else{
-                std::cout << std::endl;
-            }
-        }
-        std::cout << "Selecting Winner..." << std::endl;
-        auto ge = p.getBestGenome();
-        if(ge){
-            if(saveGen){
-                ge->writeToFile(savingFileGenome);
-            }
-            nn = Genome::makePhenotype(*ge);
-            testXOR(*nn);
+        if(hyperneat){
+            evolveHyperNeat(saveGen,savingFileGenome);
+        }else{
+            evolveNEAT(saveGen,savingFileGenome);
         }
     }else if(checkGenome){
         std::cout << "Checking genome..." << loadingFile << std::endl;
@@ -164,9 +136,102 @@ void testXOR(EvoAI::NeuralNetwork& nn){
         std::cout << "x: " << x[i] << ", y: " << y[i] << " : raw answer: " << res[0] << "\t\tbinary: " << (res[0] >= 0.5 ? 1:0) << " Correct Answer: " << truth[i] << std::endl;
     }
 }
+void evolveNEAT(bool saveGen, const std::string& savingFileGenome) noexcept{
+    std::cout << "Evolving NEAT Neural Networks..." << std::endl;
+    Population p(150,2,1);
+    std::vector<double> x = {0.0,0.0,1.0,1.0};
+    std::vector<double> y = {0.0,1.0,0.0,1.0};
+    std::vector<double> truth = {0.0,1.0,1.0,0.0};
+    auto errorSum = 999.0;
+    auto minError = 0.1;
+    auto gen = 0u;
+    while(errorSum >= minError){
+        p.orderGenomesByFitness();
+        for(auto& ge:p.getGenomes()){
+            std::vector<double> results;
+            ge->mutate();
+            auto phenotype = Genome::makePhenotype(*ge);
+            for(auto i=0u;i<4;++i){
+                phenotype->setInputs({x[i],y[i]});
+                auto out = phenotype->run();
+                results.push_back(out[0]);
+                phenotype->reset();
+            }
+            errorSum = (std::fabs(0.0 - results[0]) +
+                        std::fabs(1.0 - results[1]) +
+                        std::fabs(1.0 - results[2]) +
+                        std::fabs(0.0 - results[3]));
+            ge->setFitness(std::pow((4.0 - errorSum), 2));
+        }
+        std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " Error: " << errorSum << " ";
+        std::flush(std::cout);
+        if(errorSum >= minError){
+            p.reproduce(true,Population::SelectionType::TOURNAMENT);
+            ++gen;
+        }else{
+            std::cout << std::endl;
+        }
+    }
+    std::cout << "Selecting Winner..." << std::endl;
+    auto ge = p.getBestGenome();
+    if(ge){
+        if(saveGen){
+            ge->writeToFile(savingFileGenome);
+        }
+        auto nn = Genome::makePhenotype(*ge);
+        testXOR(*nn);
+    }
+}
+void evolveHyperNeat(bool saveGen, const std::string& savingFileGenome) noexcept{
+    std::cout << "Evolving HyperNEAT Neural Networks..." << std::endl;
+    Population p(50,3,2);
+    std::vector<double> x = {0.0,0.0,1.0,1.0};
+    std::vector<double> y = {0.0,1.0,0.0,1.0};
+    std::vector<double> truth = {0.0,1.0,1.0,0.0};
+    auto errorSum = 999.0;
+    auto minError = 0.1;
+    auto gen = 0u;
+    while(errorSum >= minError){
+        p.orderGenomesByFitness();
+        for(auto& ge:p.getGenomes()){
+            std::vector<double> results;
+            ge->mutate();
+            auto phenotype = HyperNeat(SubstrateInfo(2,1,3,1),*ge,HyperNeat::SubstrateConfiguration::GRID);
+            for(auto i=0u;i<4;++i){
+                phenotype.setInputs({x[i],y[i]});
+                auto out = phenotype.run();
+                results.push_back(out[0]);
+                phenotype.reset();
+            }
+            errorSum = (std::fabs(0.0 - results[0]) +
+                        std::fabs(1.0 - results[1]) +
+                        std::fabs(1.0 - results[2]) +
+                        std::fabs(0.0 - results[3]));
+            ge->setFitness(std::pow((4.0 - errorSum), 2));
+        }
+        std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " Error: " << errorSum << " ";
+        std::flush(std::cout);
+        if(errorSum >= minError){
+            p.reproduce(true,Population::SelectionType::TOURNAMENT);
+            ++gen;
+        }else{
+            std::cout << std::endl;
+        }
+    }
+    std::cout << "Selecting Winner..." << std::endl;
+    auto ge = p.getBestGenome();
+    if(ge){
+        if(saveGen){
+            ge->writeToFile(savingFileGenome);
+        }
+        auto nn = HyperNeat(SubstrateInfo(2,1,3,1),*ge,HyperNeat::SubstrateConfiguration::GRID);
+        nn.getSubstrate().writeToFile("HyperNEAT-XOR-NN.json");
+        testXOR(nn.getSubstrate());
+    }
+}
 void usage() noexcept{
     std::cout << "Usage: XOR <mode>" << std::endl;
-    std::cout << "\t\t-e, --evolution\t\t\t\tTries to solve XOR evolving a population to solve the XOR." << std::endl;
+    std::cout << "\t\t-e, --evolution <hn>\t\t\t\tTries to solve XOR evolving a population to solve the XOR." << std::endl;
     std::cout << "\t\t-t, --training\t\t\t\tTrains a neural network to solve the XOR." << std::endl;
     std::cout << "\t\t-c, --check <g|n> <filename> \t\tcheck a genome or a neural network." << std::endl;
     std::cout << "\t\t-s, --save-nn <filename>\t\tSaves the neural network." << std::endl;
