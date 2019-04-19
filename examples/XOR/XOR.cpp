@@ -184,7 +184,7 @@ void evolveNEAT(bool saveGen, const std::string& savingFileGenome) noexcept{
 }
 void evolveHyperNeat(bool saveGen, const std::string& savingFileGenome) noexcept{
     std::cout << "Evolving HyperNEAT Neural Networks..." << std::endl;
-    Population p(500,5,2,false, true); // important for the population to be cppn for HyperNEAT
+    Population p(500,3,2,false, true); // important for the population to be cppn for HyperNEAT
     std::vector<double> x = {0.0,0.0,1.0,1.0};
     std::vector<double> y = {0.0,1.0,0.0,1.0};
     std::vector<double> truth = {0.0,1.0,1.0,0.0};
