@@ -134,8 +134,8 @@ sf::Image createImage(EvoAI::Genome* g, int width, int height, bool bw) noexcept
             auto norm_y = (2*(y/height))-1;
             auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
             std::vector<double> inputs;
-            inputs.emplace_back(EvoAI::normalize<double>(x, -1.0, 1.0, 0, width));
-            inputs.emplace_back(EvoAI::normalize<double>(y, -1.0, 1.0, 0, height));
+            inputs.emplace_back(EvoAI::normalize<double>(x, 0.0, 1.0, 0, width));
+            inputs.emplace_back(EvoAI::normalize<double>(y, 0.0, 1.0, 0, height));
             inputs.emplace_back(static_cast<double>(d));
             nn->setInputs(std::move(inputs));
             auto color = nn->run();
