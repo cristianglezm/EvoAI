@@ -1,5 +1,5 @@
-#ifndef EVOAI_SOUND_UTILS_HPP
-#define EVOAI_SOUND_UTILS_HPP
+#ifndef EVOAI_RAW_AUDIO_HPP
+#define EVOAI_RAW_AUDIO_HPP
 
 #include <memory>
 #include <utility>
@@ -51,4 +51,4 @@ namespace EvoAI{
      */
     void generateSoundFromColorAndCoordinates(sf::Image& imageInput, NeuralNetwork* nn, const std::string& soundOutput);
 }
-#endif // EVOAI_SOUND_UTILS_HPP
+#endif // EVOAI_RAW_AUDIO_HPP

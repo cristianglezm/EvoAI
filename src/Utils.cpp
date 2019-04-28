@@ -105,12 +105,13 @@ namespace EvoAI{
         std::uniform_int_distribution<int> dice(0,Neuron::ActivationType::LAST_CPPN_ACTIVATION_TYPE-1);
         std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>(numInputs,numHidden,numNeuronsPerHiddenLayer,numOutputs,bias);
         std::uniform_int_distribution<int> hiddenLayerDice(1,numHidden);
+        // numHidden = 0 = inputs->outputs | hidden->outputs
         std::uniform_int_distribution<int> outputLayerDice(numHidden,numHidden+1);
         std::uniform_int_distribution<int> inputNeuronDice(0,numInputs-1);
         std::uniform_int_distribution<int> hiddenNeuronDice(0,numNeuronsPerHiddenLayer-1);
         std::uniform_int_distribution<int> outputNeuronDice(0,numOutputs-1);
-        std::bernoulli_distribution bernoulli(0.5);
-        for(auto i=0u;i<nn->size();++i){
+        std::bernoulli_distribution bernoulli(0.5); //recurrent connections
+        for(auto i=0u;i<2;++i){
             nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
             nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
             nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
@@ -127,8 +128,8 @@ namespace EvoAI{
                 nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(outputLayerDice(g),outputNeuronDice(g)),random(-1.0,1.0)));
                 nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(outputLayerDice(g),outputNeuronDice(g)),random(-1.0,1.0)));
                 
-                nn->addConnection(Connection(Link(outputLayerDice(g),outputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
-                nn->addConnection(Connection(Link(outputLayerDice(g),outputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));                
+                //nn->addConnection(Connection(Link(outputLayerDice(g),outputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
+                //nn->addConnection(Connection(Link(outputLayerDice(g),outputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));                
             }
         }
         for(auto i=0u;i<nn->size();++i){

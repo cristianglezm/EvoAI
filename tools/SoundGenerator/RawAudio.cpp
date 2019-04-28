@@ -1,4 +1,4 @@
-#include "soundUtils.hpp"
+#include "RawAudio.hpp"
 
 namespace EvoAI{
     void generateSoundFromCoordinates(const int& width, const int& height, NeuralNetwork* nn, const std::string& soundOutput){
@@ -19,8 +19,8 @@ namespace EvoAI{
                 auto norm_y = (2*(y/height))-1;
                 auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
                 std::vector<double> inputs;
-                inputs.emplace_back(normalize<double>(x, -1.0, 1.0, 0, width));
-                inputs.emplace_back(normalize<double>(y, -1.0, 1.0, 0, height));
+                inputs.emplace_back(normalize<double>(x, 0.0, 1.0, 0, width));
+                inputs.emplace_back(normalize<double>(y, 0.0, 1.0, 0, height));
                 inputs.emplace_back(static_cast<double>(d));
                 nn->setInputs(std::move(inputs));
                 auto audio = nn->run();
@@ -68,9 +68,9 @@ namespace EvoAI{
                 auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
                 std::vector<double> inputs;
                 auto imgColor = imageInput.getPixel(x,y);
-                inputs.emplace_back(normalize<double>(imgColor.r,-1.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(imgColor.g,-1.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(imgColor.b,-1.0,1.0,0.0,255.0));
+                inputs.emplace_back(normalize<double>(imgColor.r,0.0,1.0,0.0,255.0));
+                inputs.emplace_back(normalize<double>(imgColor.g,0.0,1.0,0.0,255.0));
+                inputs.emplace_back(normalize<double>(imgColor.b,0.0,1.0,0.0,255.0));
                 nn->setInputs(std::move(inputs));
                 auto audio = nn->run();
                 nn->reset();
@@ -116,17 +116,17 @@ namespace EvoAI{
                 auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
                 std::vector<double> inputs;
                 auto imgColor = imageInput.getPixel(x,y);
-                inputs.emplace_back(normalize<double>(imgColor.r,-1.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(imgColor.g,-1.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(imgColor.b,-1.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(x, -1.0, 1.0, 0, width));
-                inputs.emplace_back(normalize<double>(y, -1.0, 1.0, 0, height));
+                inputs.emplace_back(normalize<double>(imgColor.r,0.0,1.0,0.0,255.0));
+                inputs.emplace_back(normalize<double>(imgColor.g,0.0,1.0,0.0,255.0));
+                inputs.emplace_back(normalize<double>(imgColor.b,0.0,1.0,0.0,255.0));
+                inputs.emplace_back(normalize<double>(x, 0.0, 1.0, 0, width));
+                inputs.emplace_back(normalize<double>(y, 0.0, 1.0, 0, height));
                 inputs.emplace_back(static_cast<double>(d));
                 nn->setInputs(std::move(inputs));
                 auto audio = nn->run();
                 nn->reset();
                 const int Amplitude = 30000;
-                /// TODO
+                /// TODO @todo
                 samplesBuffer[y] = static_cast<sf::Int16>(Amplitude * std::tanh((audio[0] + audio[1] + audio[2]) * (2 * 3.141516)));
                 //samplesBuffer[y] = static_cast<sf::Int16>(Amplitude * sf::Color(audio[0] * 255, audio[1] * 255, audio[2] * 255).toInteger());
             }
