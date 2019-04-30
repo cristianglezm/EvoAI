@@ -21,6 +21,12 @@ namespace EvoAI{
          */
         EvoAI_API double sigmoid(const double& v);
         /**
+         * @brief a steepened Sigmoid function
+         * @param v
+         * @return 
+         */
+        EvoAI_API double steepenedSigmoid(const double& v);
+        /**
          * @brief 
          * @param v
          * @return 
@@ -113,6 +119,12 @@ namespace EvoAI{
          * @return 
          */
         EvoAI_API double sigmoid(const double& v);
+        /**
+         * @brief a steepened Sigmoid function
+         * @param v
+         * @return 
+         */
+        EvoAI_API double steepenedSigmoid(const double& v);
         /**
          * @brief 
          * @param v

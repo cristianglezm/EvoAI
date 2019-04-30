@@ -8,13 +8,16 @@ namespace EvoAI{
         return v;
     }
     double Activations::sigmoid(const double& v){
-        return (1.0/(1.0+std::exp(-v)));
+        return (1.0/(1.0+std::exp(-1.0 * v)));
+    }
+    double Activations::steepenedSigmoid(const double& v){
+        return (1.0/(1.0+std::exp(-4.9 * v)));
     }
     double Activations::tanh(const double& v){
-        return ((std::tanh(v) + 1)/2);
+        return std::tanh(v);
     }
     double Activations::sinusoid(const double& v){
-        return std::sin(v);
+        return std::sin(2.0*v);
     }
     double Activations::cosine(const double& v){
         return std::cos(v);
@@ -39,18 +42,6 @@ namespace EvoAI{
         return std::exp(v);
     }
     double Activations::softmax(const double& v, NeuralNetwork& nn){
-/*
-        int index = nn.size()-1;
-        auto& outputs = nn[index];
-        auto sum = 0.0;
-        for(auto& n:outputs.getNeurons()){
-            if(v != n.getSum()){
-                sum += std::exp(n.getOutput());
-            }
-        }
-        sum += std::exp(v);
-        return (std::exp(v) / (sum));
-*///
         int index = nn.size()-1;
         auto& outputs = nn[index];
         Neuron* n = nullptr;
@@ -71,7 +62,11 @@ namespace EvoAI{
             });
         std::transform(std::begin(outputs.getNeurons()),std::end(outputs.getNeurons()),std::begin(outputs.getNeurons()),
             [&](Neuron& ne){
-                ne.setOutput(ne.getSum() / sum);
+                if(std::isnan(sum) || sum < std::numeric_limits<double>::min()){
+                    ne.setOutput(1.0/sum);
+                }else{
+                    ne.setOutput(ne.getSum() / sum);
+                }
                 return ne;
             });
         if(n!=nullptr){
@@ -81,10 +76,7 @@ namespace EvoAI{
         }
     }
     double Activations::gaussian(const double& v){
-        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-        static std::mt19937 rEngine(seed);
-        static std::normal_distribution<double> d(v,2);
-        return d(rEngine);
+        return std::exp(-std::pow(2.5*v,2));
     }
     double Activations::modulus(const double& v){
         return std::fmod(v,1.0);
@@ -100,14 +92,18 @@ namespace EvoAI{
         return 1;
     }
     double Derivatives::sigmoid(const double& v){
-        auto y = Activations::sigmoid(v);
-        return (y*(1-y));
+        //auto y = Activations::sigmoid(v);
+        return (v*(1-v));
+    }
+    double Derivatives::steepenedSigmoid(const double& v){
+        double y = std::exp(-4.9*v);
+        return std::pow(y*4.9/(1+y),2);
     }
     double Derivatives::tanh(const double& v){
-        return ((1-std::pow(std::tanh(v),2))/2);
+        return (1.0 - v * v);
     }
     double Derivatives::sinusoid(const double& v){
-        return std::cos(v);
+        return std::cos(2.0*v);
     }
     double Derivatives::cosine(const double& v){
         return std::sinh(v);
@@ -120,16 +116,10 @@ namespace EvoAI{
         return (v > 0.0 ? 1.0:0.0);
     }
     double Derivatives::softmax(const double& v, NeuralNetwork& nn){
-        int index = nn.size()-1; /// @todo FIX softmax derivative
-        auto& outputs = nn[index];
-        auto sum = 0.0;
-        for(auto& n:outputs.getNeurons()){
-            sum += v*((-v*n.getOutput()) - n.getOutput());
-        }
-        return sum;
+        return 1;
     }
     double Derivatives::gaussian(const double& v){
-        return (std::sqrt(2/3.14159265359)*(-std::exp(std::pow(-v,2))));
+        return std::exp(std::pow(2.5*v,2.0) * 12.5 * v);
     }
     double Derivatives::square(const double& v){
         return (2*v);

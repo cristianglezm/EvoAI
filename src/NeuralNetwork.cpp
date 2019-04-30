@@ -410,33 +410,33 @@ namespace EvoAI{
     const double NeuralNetwork::derivate(Neuron::ActivationType at,const Neuron& n){
         switch(at){
             case Neuron::ActivationType::IDENTITY:
-                return Derivatives::identity(n.getSum());
+                return Derivatives::identity(n.getOutput());
             case Neuron::ActivationType::SIGMOID:
-                return Derivatives::sigmoid(n.getSum());
+                return Derivatives::sigmoid(n.getOutput());
             case Neuron::ActivationType::SINUSOID:
-                return Derivatives::sinusoid(n.getSum());
+                return Derivatives::sinusoid(n.getOutput());
             case Neuron::ActivationType::RELU:
-                return Derivatives::relu(n.getSum());
+                return Derivatives::relu(n.getOutput());
             case Neuron::ActivationType::EXPONENTIAL:
-                return Activations::exponential(n.getSum());
+                return Activations::exponential(n.getOutput());
             case Neuron::ActivationType::SOFTMAX:
-                return Derivatives::softmax(n.getSum(),*this);
+                return Derivatives::softmax(n.getOutput(),*this);
             case Neuron::ActivationType::TANH:
-                return Derivatives::tanh(n.getSum());
+                return Derivatives::tanh(n.getOutput());
             case Neuron::ActivationType::COSINE:
-                return Derivatives::cosine(n.getSum());
+                return Derivatives::cosine(n.getOutput());
             case Neuron::ActivationType::TAN:
-                return Derivatives::tan(n.getSum());
+                return Derivatives::tan(n.getOutput());
             case Neuron::ActivationType::GAUSSIAN:
-                return Derivatives::gaussian(n.getSum());
+                return Derivatives::gaussian(n.getOutput());
             case Neuron::ActivationType::STEPPED_SIGMOID:
-                return Derivatives::sigmoid(n.getSum()-0.5);
+                return Derivatives::steepenedSigmoid(n.getOutput());
             case Neuron::ActivationType::SQUARE:
-                return Derivatives::square(n.getSum());
+                return Derivatives::square(n.getOutput());
             case Neuron::ActivationType::CUBE:
-                return Derivatives::cube(n.getSum());
+                return Derivatives::cube(n.getOutput());
         }
-        return Derivatives::sigmoid(n.getSum()-0.5);
+        return Derivatives::steepenedSigmoid(n.getOutput());
     }
     const double NeuralNetwork::activate(Neuron::ActivationType at, const Neuron& n){
         switch(at){
@@ -467,13 +467,13 @@ namespace EvoAI{
             case Neuron::ActivationType::GAUSSIAN:
                 return Activations::gaussian(n.getSum());
             case Neuron::ActivationType::STEPPED_SIGMOID:
-                return Activations::sigmoid(n.getSum()-0.5);
+                return Activations::steepenedSigmoid(n.getSum());
             case Neuron::ActivationType::SQUARE:
                 return Activations::square(n.getSum());
             case Neuron::ActivationType::CUBE:
                 return Activations::cube(n.getSum());
         }
-        return Activations::sigmoid(n.getSum()-0.5);
+        return Activations::steepenedSigmoid(n.getSum());
     }
     void NeuralNetwork::resetConnections(){
         for(auto& c:getConnections()){
