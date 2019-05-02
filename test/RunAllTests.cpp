@@ -11,6 +11,8 @@
 #include "PopulationTest/PopulationTest.hpp"
 #include "SpeciesTest/SpeciesTest.hpp"
 #include "HyperNeatTest/HyperNeatTest.hpp"
+#include "UtilsTest/UtilsTest.hpp"
+#include "ActivationsTest/ActivationsTest.hpp"
 
 int main(int argc, char** argv){
     std::cout << "Initializing Tests...." << std::endl;

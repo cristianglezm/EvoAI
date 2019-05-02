@@ -198,8 +198,8 @@ namespace EvoAI{
                         std::size_t half = (size / 2);
                         if(numOffsprings > 0){
                             for(auto i=0u;i<numOffsprings;++i){
-                                auto selectedFather = random(0,half);
-                                auto selectedMother = random(0,half);
+                                auto selectedFather = randomGen.random(0,half);
+                                auto selectedMother = randomGen.random(0,half);
                                 auto child = Genome::reproduce(*genomes[selectedFather],*genomes[selectedMother]);
                                 if(cppn){
                                     child->setCppn(true);
@@ -210,8 +210,8 @@ namespace EvoAI{
                         }
                         std::vector<Genome*> genomesToRemove;
                         for(auto i=half;i<size;++i){
-                            auto selectedFather = random(0,half);
-                            auto selectedMother = random(0,half);
+                            auto selectedFather = randomGen.random(0,half);
+                            auto selectedMother = randomGen.random(0,half);
                             auto child = Genome::reproduce(*genomes[selectedFather],*genomes[selectedMother]);
                             if(cppn){
                                 child->setCppn(true);
@@ -237,7 +237,7 @@ namespace EvoAI{
                             int champ = -1;
                             int looser = -1;
                             for(auto i=0u;i<rounds;++i){
-                                auto contender = random(0,genomes.size()-1);
+                                auto contender = randomGen.random(0,genomes.size()-1);
                                 if(champ == -1){
                                     champ = contender;
                                     looser = contender;
@@ -298,7 +298,7 @@ namespace EvoAI{
                             totalFitness += g->getFitness();
                         }
                         auto fpSelection = [&](double totalFitness) -> Genome*{
-                            auto r = random(0.0,1.0);
+                            auto r = randomGen.random(0.0,1.0);
                             auto covered = 0.0;
                             for(auto& g:genomes){
                                 covered += (g->getFitness()/totalFitness);
@@ -364,8 +364,8 @@ namespace EvoAI{
                             std::size_t half = size / 2;
                             if(numOffsprings > 0){
                                 for(auto i=0u;i<numOffsprings;++i){
-                                    auto selectedFather = random(0,half);
-                                    auto selectedMother = random(0,half);
+                                    auto selectedFather = randomGen.random(0,half);
+                                    auto selectedMother = randomGen.random(0,half);
                                     auto child = Genome::reproduce(*spGenomes[selectedFather],*spGenomes[selectedMother]);
                                     if(cppn){
                                         child->setCppn(true);
@@ -376,8 +376,8 @@ namespace EvoAI{
                             }
                             std::vector<Genome*> genomesToRemove;
                             for(auto i=half;i<size;++i){
-                                auto selectedFather = random(0,half);
-                                auto selectedMother = random(0,half);
+                                auto selectedFather = randomGen.random(0,half);
+                                auto selectedMother = randomGen.random(0,half);
                                 auto child = Genome::reproduce(*spGenomes[selectedFather],*spGenomes[selectedMother]);
                                 if(cppn){
                                     child->setCppn(true);
@@ -403,7 +403,7 @@ namespace EvoAI{
                                 int champ = -1;
                                 int looser = -1;
                                 for(auto i=0u;i<rounds;++i){
-                                    auto contender = random(0,spGenomes.size()-1);
+                                    auto contender = randomGen.random(0,spGenomes.size()-1);
                                     if(champ == -1){
                                         champ = contender;
                                         looser = contender;
@@ -464,7 +464,7 @@ namespace EvoAI{
                                 totalFitness += g->getFitness();
                             }
                             auto fpSelection = [&](double totalFitness) -> Genome*{
-                                auto r = random(0.0,1.0);
+                                auto r = randomGen.random(0.0,1.0);
                                 auto covered = 0.0;
                                 for(auto& g:spGenomes){
                                     covered += (g->getFitness()/totalFitness);

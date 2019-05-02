@@ -145,18 +145,18 @@ sf::Image createImageFromImages(EvoAI::Genome* g, EvoAI::NeuralNetwork* nn, std:
             for(auto i=0u;i<imgs.size();++i){
                 if(x <= imgs[i].getSize().x && y <= imgs[i].getSize().y){
                     auto imgColor = imgs[i].getPixel(x,y);
-                    inputs.emplace_back(EvoAI::normalize<double>(imgColor.r,-1.0,1.0,0.0,255.0));
-                    inputs.emplace_back(EvoAI::normalize<double>(imgColor.g,-1.0,1.0,0.0,255.0));
-                    inputs.emplace_back(EvoAI::normalize<double>(imgColor.b,-1.0,1.0,0.0,255.0));
+                    inputs.emplace_back(imgColor.r);
+                    inputs.emplace_back(imgColor.g);
+                    inputs.emplace_back(imgColor.b);
                 }
             }
             nn->setInputs(std::move(inputs));
             auto color = nn->run();
             nn->reset();
             if(bw){
-                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[0] * 255,color[0] * 255));
+                imgOutput.setPixel(x,y,sf::Color(color[0]*128+128,color[0]*128+128,color[0]*128+128));
             }else{
-                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[1] * 255,color[2] * 255));
+                imgOutput.setPixel(x,y,sf::Color(color[0]*128+128,color[1]*128+128,color[2]*128+128));
             }
         }
     }

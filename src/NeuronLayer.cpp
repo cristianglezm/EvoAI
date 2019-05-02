@@ -16,7 +16,7 @@ namespace EvoAI{
     , cyclesLimit(3){
         for(auto i=0u; i<numNeurons;++i){
             neurons.emplace_back(Neuron(t));
-            neurons[i].setBiasWeight(random(-1.0,1.0));
+            neurons[i].setBiasWeight(randomGen.random(-1.0,1.0));
         }
     }
     NeuronLayer::NeuronLayer(JsonBox::Object o)

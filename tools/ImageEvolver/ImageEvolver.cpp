@@ -32,7 +32,7 @@ int main(int argc, char **argv){
     }
     std::vector<sf::Texture> textures(size);
     std::vector<sf::Sprite> sprites(size);
-    EvoAI::Population p(size,3,2,3,true,true);
+    EvoAI::Population p(size,3,2,3,false,true);
     updateImages(p,textures,sprites,size,bw);
     sf::RenderWindow App(sf::VideoMode(1270, 720), "ImageEvolver");
     while (running){
@@ -130,20 +130,18 @@ sf::Image createImage(EvoAI::Genome* g, int width, int height, bool bw) noexcept
     imgOutput.create(width, height);
     for(auto x=0;x<width;++x){
         for(auto y=0;y<height;++y){
-            auto norm_x = (2*(x/width))-1;
-            auto norm_y = (2*(y/height))-1;
-            auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
+            auto d = EvoAI::distanceCenter<int>(x,y,width,height);
             std::vector<double> inputs;
-            inputs.emplace_back(EvoAI::normalize<double>(x, 0.0, 1.0, 0, width));
-            inputs.emplace_back(EvoAI::normalize<double>(y, 0.0, 1.0, 0, height));
-            inputs.emplace_back(static_cast<double>(d));
+            inputs.emplace_back(x);
+            inputs.emplace_back(y);
+            inputs.emplace_back(d);
             nn->setInputs(std::move(inputs));
             auto color = nn->run();
             nn->reset();
             if(bw){
-                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[0] * 255,color[0] * 255));
+                imgOutput.setPixel(x,y,sf::Color(color[0]*128+128,color[0]*128+128,color[0]*128+128));
             }else{
-                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[1] * 255,color[2] * 255));
+                imgOutput.setPixel(x,y,sf::Color(color[0]*128+128,color[1]*128+128,color[2]*128+128));
             }
         }
     }

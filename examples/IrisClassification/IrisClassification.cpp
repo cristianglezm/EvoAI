@@ -34,9 +34,10 @@ int main(int argc,char **argv){
         }
         if(filename.empty() && (opt!="-e" || opt!="--evolve")){
             std::cout << "creating neural network..." << std::endl;
-            nn = EvoAI::createFeedForwardNN(4,1,8,3,1.0);
+            nn = EvoAI::createFeedForwardNN(4,2,10,3,0.8);
             (*nn)[1].setActivationType(EvoAI::Neuron::ActivationType::RELU);
-            (*nn)[2].setActivationType(EvoAI::Neuron::ActivationType::SOFTMAX);
+            (*nn)[2].setActivationType(EvoAI::Neuron::ActivationType::RELU);
+            (*nn)[3].setActivationType(EvoAI::Neuron::ActivationType::SOFTMAX);
         }else{
             if(opt == "-e" || opt == "--evolve"){
                 errorThreehold = std::stof(std::string(argv[3]));
@@ -57,11 +58,11 @@ int main(int argc,char **argv){
             do{
                 auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
                 normalizeData(trainingSets.first);
-                nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.1,0.02,5);
+                nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.2,0.02,150);
                 std::cout << "\rMSE: " << nn->getMSE() << " ";
                 std::flush(std::cout);
                 nn->writeToFile("IrisClassification.json");
-            }while(nn->getMSE() > 0.09);
+            }while(nn->getMSE() > 0.02);
             std::cout << std::endl;
         }else if(opt == "-c" || opt == "--classify"){
             std::cout << "Creating Test dataSets..." << std::endl;
@@ -195,10 +196,10 @@ void normalizeData(EvoAI::NeuralNetwork::trainingFormat& data){
     auto petalWidthMax = *std::max_element(std::begin(petalWidth),std::end(petalWidth));
     auto petalWidthMin = *std::min_element(std::begin(petalWidth),std::end(petalWidth));
     for(auto i=0u;i<data.size();++i){
-        *sepalLength[i] = EvoAI::normalize(*sepalLength[i],0.0,1.0,*sepalLengthMin,*sepalLengthMax);
-        *sepalWidth[i] = EvoAI::normalize(*sepalWidth[i],0.0,1.0,*sepalWidthMin,*sepalWidthMax);
-        *petalLength[i] = EvoAI::normalize(*petalLength[i],0.0,1.0,*petalLengthMin,*petalLengthMax);
-        *petalWidth[i] = EvoAI::normalize(*petalWidth[i],0.0,1.0,*petalWidthMin,*petalWidthMax);
+        *sepalLength[i] = EvoAI::stableNormalize(*sepalLength[i],*sepalLengthMin,*sepalLengthMax);
+        *sepalWidth[i] = EvoAI::stableNormalize(*sepalWidth[i],*sepalWidthMin,*sepalWidthMax);
+        *petalLength[i] = EvoAI::stableNormalize(*petalLength[i],*petalLengthMin,*petalLengthMax);
+        *petalWidth[i] = EvoAI::stableNormalize(*petalWidth[i],*petalWidthMin,*petalWidthMax);
     }
 }
 

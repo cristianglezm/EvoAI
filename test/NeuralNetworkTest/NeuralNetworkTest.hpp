@@ -102,7 +102,7 @@ namespace EvoAI{
             nn.train(std::move(tInput),std::move(tOut),0.1,0.02,1000);
             nn.reset();
             for(auto i=1;i<=10;++i){
-                nn.setInputs({i});
+                nn.setInputs({static_cast<double>(i)});
                 auto out = nn.run();
                 nn.reset();
                 std::cout << "Output: " << out[0] << " Expected: 0" << std::endl;

@@ -17,17 +17,12 @@ namespace EvoAI{
     int selectNote(int trackNum, int channel,std::vector<double>* outputs,smf::MidiFile* mf, int& actionTime) noexcept{
         auto index = 0;
         double max = 0.0;
-        int vel = 1;
+        int vel = 64;
         for(int i=Limits::NOTES_START;i<Limits::NOTES_END;++i){
             if((*outputs)[i] > max){
                 max = (*outputs)[i];
                 index = i;
-                vel = (*outputs)[Limits::VELOCITY] * 127;
-                if(vel > 127){
-                    vel = 127;
-                }else if(vel <= 0){
-                    vel = 0;
-                }
+                vel = std::clamp<int>((*outputs)[Limits::VELOCITY] * 127, 0, 127);
             }
         }
         // calculate note 0-127
@@ -42,12 +37,7 @@ namespace EvoAI{
         auto note = 0;
         for(int i=Limits::NOTES_START;i<Limits::NOTES_END;++i){
             if((*outputs)[i] >= 0.5){
-                int vel = (*outputs)[Limits::VELOCITY] * 127;
-                if(vel > 127){
-                    vel = 127;
-                }else if(vel <= 0){
-                    vel = 0;
-                }
+                int vel = std::clamp<int>((*outputs)[Limits::VELOCITY] * 127, 0, 127);
                 mf->addNoteOn(trackNum,actionTime,channel,note,vel);
             }else{
                 mf->addNoteOff(trackNum,actionTime,channel,note);
@@ -78,11 +68,11 @@ namespace EvoAI{
         auto mf = std::make_unique<smf::MidiFile>();
         mf->absoluteTicks();
         mf->addTrack(tracks-1);
-        auto tpq = 120;
+        auto tpq = 64;
         mf->setTicksPerQuarterNote(tpq);
-        auto note1 = random(0,127);
-        auto note2 = random(0,127);
-        auto note3 = random(0,127);
+        auto note1 = randomGen.random(0,127);
+        auto note2 = randomGen.random(0,127);
+        auto note3 = randomGen.random(0,127);
         for(auto x=0;x<tracks;++x){
             auto actionTime = 0;
             for(auto y=0;y<notes;++y){
@@ -101,13 +91,8 @@ namespace EvoAI{
                     mf->addPitchBend(x,actionTime,channel,outputs[Limits::PITCH_BEND]);
                 }
                 if(outputs[Limits::TIMBRE] >= 0.5){
-                    auto timbre = outputs[Limits::TIMBRE];
-                    if(timbre > 127){
-                        timbre = 127;
-                    }else if(timbre < 0){
-                        timbre = 0;
-                    }
-                    mf->addTimbre(x,actionTime,channel,static_cast<int>(timbre));
+                    auto timbre = std::clamp<int>(outputs[Limits::TIMBRE],0,127);
+                    mf->addTimbre(x,actionTime,channel,timbre);
                 }
                 if(outputs[Limits::SUSTAIN_PEDAL] >= 0.5){
                     mf->addSustainPedalOn(x,actionTime,channel);
@@ -142,7 +127,7 @@ namespace EvoAI{
         auto Default = 64;
         for(auto trackNum=0u;trackNum<m.size();++trackNum){
             actionTime = 0;
-            auto channel = random(0,15);
+            auto channel = randomGen.random(0,15);
             for(auto mel=0u;mel<m[trackNum].size();++mel){
                 actionTime += tpq * r[trackNum][mel];
                 if(comm[trackNum][mel] == 0x90){ ///@todo add range 0x90 to 0x9F?
@@ -170,12 +155,12 @@ namespace EvoAI{
             std::vector<int> commands;
 
             commands.emplace_back(0xC0); // patch command
-            melody.emplace_back(random(0,127)); // random instrument
-            rhythm.emplace_back(random(1,5)); // speed
+            melody.emplace_back(randomGen.random(0,127)); // random instrument
+            rhythm.emplace_back(randomGen.random(1,5)); // speed
             for(auto j=0u;j<notes;++j){
                 commands.emplace_back(0x90); //note on
-                melody.emplace_back(random(0,127)); // notes
-                rhythm.emplace_back(random(1,5));
+                melody.emplace_back(randomGen.random(0,127)); // notes
+                rhythm.emplace_back(randomGen.random(1,5));
             }
             m.emplace_back(melody);
             r.emplace_back(rhythm);

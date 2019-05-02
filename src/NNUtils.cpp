@@ -1,24 +1,6 @@
-#include <EvoAI/Utils.hpp>
+#include <EvoAI/Utils/NNUtils.hpp>
 
 namespace EvoAI{
-    double random(const double& min, const double& max){
-        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-        static std::mt19937 rEngine(seed);
-        std::uniform_real_distribution<double> dice(min, max);
-        return dice(rEngine);
-    }
-    int random(const int& min, const int& max){
-        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-        static std::mt19937 rEngine(seed);
-        std::uniform_int_distribution<int> dice(min, max);
-        return dice(rEngine);
-    }
-    bool doAction(float rate) noexcept{
-        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-        static std::mt19937 rEngine(seed);
-        std::bernoulli_distribution dice(rate);
-        return dice(rEngine);
-    }
     std::unique_ptr<NeuralNetwork> createFeedForwardNN(const size_t& numInputs, const size_t& numHidden,
                                                          const size_t& numNeuronsPerHidden, const std::size_t& numOutputs,
                                                          const double& bias){
@@ -26,14 +8,14 @@ namespace EvoAI{
         // input to hidden layer
         for(auto i=0u;i<numInputs;++i){
             for(auto j=0u;j<numNeuronsPerHidden;++j){
-                nn->addConnection(Connection({0,i},{1,j}, random(-1.0,1.0)));
+                nn->addConnection(Connection({0,i},{1,j}, randomGen.random(-1.0,1.0,numInputs)));
             }
         }
         //hidden layers to next hidden layer
         for(auto i=1u;i<numHidden;++i){
             for(auto j=0u;j<numNeuronsPerHidden;++j){
                 for(auto z=0u;z<numNeuronsPerHidden;++z){
-                    nn->addConnection(Connection({i,j},{i+1,z}, random(-1.0,1.0)));
+                    nn->addConnection(Connection({i,j},{i+1,z}, randomGen.random(-1.0,1.0,numNeuronsPerHidden)));
                 }
             }
         }
@@ -41,7 +23,7 @@ namespace EvoAI{
         auto numLayers = nn->size();
         for(auto i=0u;i<numNeuronsPerHidden;++i){
             for(auto j=0u;j<numOutputs;++j){
-                nn->addConnection(Connection({numLayers-2,i},{numLayers-1,j}, random(-1.0,1.0)));
+                nn->addConnection(Connection({numLayers-2,i},{numLayers-1,j}, randomGen.random(-1.0,1.0,numOutputs)));
             }
         }
         return nn;
@@ -57,7 +39,7 @@ namespace EvoAI{
         nn->addLayer(NeuronLayer(numOutputs,Neuron::Type::OUTPUT,bias));
         for(auto i=0u;i<numInputs;++i){
             for(auto j=0u;j<numNeuronsPerHiddenLayer;++j){
-                nn->addConnection(Connection(Link(0,i),Link(2,j), random(-1.0,1.0)));
+                nn->addConnection(Connection(Link(0,i),Link(2,j), randomGen.random(-1.0,1.0,numNeuronsPerHiddenLayer)));
             }
         }
         auto numContext = numHidden * 2;
@@ -67,9 +49,9 @@ namespace EvoAI{
                 nn->addConnection(Connection(Link(i,j),Link(i-1,j),1.0));
                 for(auto k=0u;k<numNeuronsPerHiddenLayer;++k){
                     // connect forward
-                    nn->addConnection(Connection(Link(i,j),Link(i+2,k), random(-1.0,1.0)));
+                    nn->addConnection(Connection(Link(i,j),Link(i+2,k), randomGen.random(-1.0,1.0,numNeuronsPerHiddenLayer)));
                     // pass Values from Context backwards
-                    nn->addConnection(Connection(Link(i-1,j),Link(i,k), random(-1.0,1.0)));
+                    nn->addConnection(Connection(Link(i-1,j),Link(i,k), randomGen.random(-1.0,1.0,numNeuronsPerHiddenLayer)));
                 }
             }
         }
@@ -77,11 +59,11 @@ namespace EvoAI{
             // save values to Context
             nn->addConnection(Connection(Link(numContext,j), Link(numContext-1,j),1.0));
             for(auto k=0u;k<numOutputs;++k){
-                nn->addConnection(Connection(Link(numContext,j), Link(numContext+1,k), random(-1.0,1.0)));
+                nn->addConnection(Connection(Link(numContext,j), Link(numContext+1,k), randomGen.random(-1.0,1.0,numOutputs)));
             }
             for(auto i=0u;i<numNeuronsPerHiddenLayer;++i){
                 // pass Values from Context
-                nn->addConnection(Connection(Link(numContext-1,j),Link(numContext,i), random(-1.0,1.0)));
+                nn->addConnection(Connection(Link(numContext-1,j),Link(numContext,i), randomGen.random(-1.0,1.0,numNeuronsPerHiddenLayer)));
             }
         }
         return nn;
@@ -90,7 +72,7 @@ namespace EvoAI{
                                                             const std::size_t& numNeuronsPerHiddenLayer, const std::size_t& numOutputs, const double& bias){
         unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
         static std::default_random_engine g(seed);
-        static std::uniform_int_distribution<int> dice(0,Neuron::ActivationType::LAST_CPPN_ACTIVATION_TYPE-1);
+        std::uniform_int_distribution<int> dice(0,Neuron::ActivationType::LAST_CPPN_ACTIVATION_TYPE-1);
         std::unique_ptr<NeuralNetwork> nn = createFeedForwardNN(numInputs,numHidden,numNeuronsPerHiddenLayer,numOutputs,bias);
         for(auto i=0u;i<nn->size();++i){
             for(auto j=0u;j<(*nn)[i].size();++j){
@@ -112,24 +94,24 @@ namespace EvoAI{
         std::uniform_int_distribution<int> outputNeuronDice(0,numOutputs-1);
         std::bernoulli_distribution bernoulli(0.5); //recurrent connections
         for(auto i=0u;i<2;++i){
-            nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
-            nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
-            nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
-            nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
+            nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),randomGen.random(-1.0,1.0,numInputs)));
+            nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),randomGen.random(-1.0,1.0,numInputs)));
+            nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),randomGen.random(-1.0,1.0,numInputs)));
+            nn->addConnection(Connection(Link(0,inputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),randomGen.random(-1.0,1.0,numInputs)));
             
-            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
-            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
-            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
-            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
+            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),randomGen.random(-1.0,1.0,numNeuronsPerHiddenLayer)));
+            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),randomGen.random(-1.0,1.0,numNeuronsPerHiddenLayer)));
+            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),randomGen.random(-1.0,1.0,numNeuronsPerHiddenLayer)));
+            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),randomGen.random(-1.0,1.0,numNeuronsPerHiddenLayer)));
             
-            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(numHidden+1,outputNeuronDice(g)),random(-1.0,1.0)));
-            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(numHidden+1,outputNeuronDice(g)),random(-1.0,1.0)));
+            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(numHidden+1,outputNeuronDice(g)),randomGen.random(-1.0,1.0,numOutputs)));
+            nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(numHidden+1,outputNeuronDice(g)),randomGen.random(-1.0,1.0,numOutputs)));
             if(bernoulli(g)){
-                nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(outputLayerDice(g),outputNeuronDice(g)),random(-1.0,1.0)));
-                nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(outputLayerDice(g),outputNeuronDice(g)),random(-1.0,1.0)));
-                
-                //nn->addConnection(Connection(Link(outputLayerDice(g),outputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));
-                //nn->addConnection(Connection(Link(outputLayerDice(g),outputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),random(-1.0,1.0)));                
+                nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(outputLayerDice(g),outputNeuronDice(g)),randomGen.random(-1.0,1.0,numOutputs)));
+                nn->addConnection(Connection(Link(hiddenLayerDice(g),hiddenNeuronDice(g)),Link(outputLayerDice(g),outputNeuronDice(g)),randomGen.random(-1.0,1.0,numOutputs)));
+                /// @todo seg error below
+                //nn->addConnection(Connection(Link(outputLayerDice(g),outputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),randomGen.random(-1.0,1.0,numOutputs)));
+                //nn->addConnection(Connection(Link(outputLayerDice(g),outputNeuronDice(g)),Link(hiddenLayerDice(g),hiddenNeuronDice(g)),randomGen.random(-1.0,1.0,numOutputs)));                
             }
         }
         for(auto i=0u;i<nn->size();++i){

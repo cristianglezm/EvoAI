@@ -51,7 +51,7 @@ namespace EvoAI{
             for(auto i=0u;i<4;++i){
                 fathers.push_back(std::make_unique<Genome>(6,3,true,true));
                 mothers.push_back(std::make_unique<Genome>(6,3,true,true));
-                if(doAction(0.2)){
+                if(randomGen.random(0.2)){
                     fathers.back()->mutate();
                     mothers.back()->mutate();
                 }
@@ -62,13 +62,13 @@ namespace EvoAI{
             std::array<std::unique_ptr<Genome>,2> grandSons;
             grandSons[0] = Genome::reproduce(*children[0],*children[1]);
             grandSons[1] = Genome::reproduce(*children[2],*children[3]);
-            if(doAction(0.4)){
+            if(randomGen.random(0.4)){
                 grandSons[0]->mutate();
                 grandSons[1]->mutate();
             }
             auto greatGrandSon1 = Genome::reproduce(*grandSons[0],*grandSons[1]);
             auto greatGrandSon2 = Genome::reproduce(*grandSons[0],*grandSons[1]);
-            if(doAction(0.8)){
+            if(randomGen.random(0.8)){
                 greatGrandSon1->mutate();
             }
             std::cout << "Distance grandSons: " << Genome::distance(*grandSons[0],*grandSons[1]) << std::endl;

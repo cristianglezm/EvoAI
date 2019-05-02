@@ -21,17 +21,15 @@ namespace EvoAI{
         imgOutput.create(width, height);
         for(auto x=0;x<width;++x){
             for(auto y=0;y<height;++y){
-                auto norm_x = (2*(x/width))-1;
-                auto norm_y = (2*(y/height))-1;
-                auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
+                auto d = EvoAI::distanceCenter<int>(x,y,width,height);
                 std::vector<double> inputs;
-                inputs.emplace_back(normalize<double>(x, 0.0, 1.0, 0, width));
-                inputs.emplace_back(normalize<double>(y, 0.0, 1.0, 0, height));
-                inputs.emplace_back(static_cast<double>(d));
+                inputs.emplace_back(x);
+                inputs.emplace_back(y);
+                inputs.emplace_back(d);
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
-                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[1] * 255,color[2] * 255));
+                imgOutput.setPixel(x,y,sf::Color(color[0]*128+128,color[1]*128+128,color[2]*128+128));
             }
         }
         imgOutput.saveToFile(imageOutput);
@@ -58,13 +56,13 @@ namespace EvoAI{
             for(auto y=0;y<height;++y){
                 std::vector<double> inputs;
                 auto imgColor = imageInput.getPixel(x,y);
-                inputs.emplace_back(normalize<double>(imgColor.r,0.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(imgColor.g,0.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(imgColor.b,0.0,1.0,0.0,255.0));
+                inputs.emplace_back(imgColor.r);
+                inputs.emplace_back(imgColor.g);
+                inputs.emplace_back(imgColor.b);
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
-                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[1] * 255,color[2] * 255));
+                imgOutput.setPixel(x,y,sf::Color(color[0]*128+128,color[1]*128+128,color[2]*128+128));
             }
         }
         imgOutput.saveToFile(imageOutput);
@@ -91,13 +89,13 @@ namespace EvoAI{
             for(auto y=0;y<height;++y){
                 std::vector<double> inputs;
                 auto imgColor = imageInput.getPixel(x,y);
-                inputs.emplace_back(normalize<double>(imgColor.r,0.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(imgColor.g,0.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(imgColor.b,0.0,1.0,0.0,255.0));
+                inputs.emplace_back(imgColor.r);
+                inputs.emplace_back(imgColor.g);
+                inputs.emplace_back(imgColor.b);
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
-                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[0] * 255,color[0] * 255));
+                imgOutput.setPixel(x,y,sf::Color(color[0]*128+128,color[0]*128+128,color[0]*128+128));
             }
         }
         imgOutput.saveToFile(imageOutput);
@@ -122,17 +120,15 @@ namespace EvoAI{
         imgOutput.create(width, height);
         for(auto x=0;x<width;++x){
             for(auto y=0;y<height;++y){
-                auto norm_x = (2*(x/width))-1;
-                auto norm_y = (2*(y/height))-1;
-                auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
+                auto d = EvoAI::distanceCenter<int>(x,y,width,height);
                 std::vector<double> inputs;
-                inputs.emplace_back(normalize<double>(x, 0.0, 1.0, 0, width));
-                inputs.emplace_back(normalize<double>(y, 0.0, 1.0, 0, height));
-                inputs.emplace_back(static_cast<double>(d));
+                inputs.emplace_back(x);
+                inputs.emplace_back(y);
+                inputs.emplace_back(d);
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
-                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[0] * 255,color[0] * 255));
+                imgOutput.setPixel(x,y,sf::Color(color[0]*128+128,color[0]*128+128,color[0]*128+128));
             }
         }
         imgOutput.saveToFile(imageOutput);
@@ -157,21 +153,19 @@ namespace EvoAI{
         imgOutput.create(width, height);
         for(auto x=0;x<width;++x){
             for(auto y=0;y<height;++y){
-                auto norm_x = (2*(x/width))-1;
-                auto norm_y = (2*(y/height))-1;
-                auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
+                auto d = EvoAI::distanceCenter<int>(x,y,width,height);
                 std::vector<double> inputs;
                 auto imgColor = imageInput.getPixel(x,y);
-                inputs.emplace_back(normalize<double>(imgColor.r,0.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(imgColor.g,0.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(imgColor.b,0.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(x, 0.0, 1.0, 0, width));
-                inputs.emplace_back(normalize<double>(y, 0.0, 1.0, 0, height));
-                inputs.emplace_back(static_cast<double>(d));
+                inputs.emplace_back(imgColor.r);
+                inputs.emplace_back(imgColor.g);
+                inputs.emplace_back(imgColor.b);
+                inputs.emplace_back(x);
+                inputs.emplace_back(y);
+                inputs.emplace_back(d);
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
-                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[0] * 255,color[0] * 255));
+                imgOutput.setPixel(x,y,sf::Color(color[0]*128+128,color[0]*128+128,color[0]*128+128));
             }
         }
         imgOutput.saveToFile(imageOutput);
@@ -196,21 +190,19 @@ namespace EvoAI{
         imgOutput.create(width, height);
         for(auto x=0;x<width;++x){
             for(auto y=0;y<height;++y){
-                auto norm_x = (2*(x/width))-1;
-                auto norm_y = (2*(y/height))-1;
-                auto d = std::sqrt(((norm_x/2)^2) + ((norm_y /2)^2));
+                auto d = EvoAI::distanceCenter<int>(x,y,width,height);
                 std::vector<double> inputs;
                 auto imgColor = imageInput.getPixel(x,y);
-                inputs.emplace_back(normalize<double>(imgColor.r,0.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(imgColor.g,0.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(imgColor.b,0.0,1.0,0.0,255.0));
-                inputs.emplace_back(normalize<double>(x, 0.0, 1.0, 0, width));
-                inputs.emplace_back(normalize<double>(y, 0.0, 1.0, 0, height));
-                inputs.emplace_back(static_cast<double>(d));
+                inputs.emplace_back(imgColor.r);
+                inputs.emplace_back(imgColor.g);
+                inputs.emplace_back(imgColor.b);
+                inputs.emplace_back(x);
+                inputs.emplace_back(y);
+                inputs.emplace_back(d);
                 nn->setInputs(std::move(inputs));
                 auto color = nn->run();
                 nn->reset();
-                imgOutput.setPixel(x,y,sf::Color(color[0] * 255,color[1] * 255,color[2] * 255));
+                imgOutput.setPixel(x,y,sf::Color(color[0]*128+128,color[1]*128+128,color[2]*128+128));
             }
         }
         imgOutput.saveToFile(imageOutput);
