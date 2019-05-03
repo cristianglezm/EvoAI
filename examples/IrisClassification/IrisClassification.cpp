@@ -58,7 +58,7 @@ int main(int argc,char **argv){
             do{
                 auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
                 normalizeData(trainingSets.first);
-                nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.2,0.02,150);
+                nn->train(std::move(trainingSets.first),std::move(trainingSets.second),0.4,0.05,25);
                 std::cout << "\rMSE: " << nn->getMSE() << " ";
                 std::flush(std::cout);
                 nn->writeToFile("IrisClassification.json");

@@ -18,13 +18,13 @@ namespace EvoAI{
             RandomGenerator();
             RandomGenerator(const unsigned& seed);
             /**
-             * @brief returns a random number between min and max and multiplies for sqrt of 2/layerSize
+             * @brief returns a random number between min and max and multiplies for sqrt of 2.0/layerSize
              * @param min const double&
              * @param max const double&
-             * @param layerSize
+             * @param layerSize const double&
              * @return double
              */
-            double random(const double& min, const double& max, const std::size_t& layerSize) noexcept;
+            double random(const double& min, const double& max, const double& layerSize) noexcept;
             /**
              * @brief returns a random number between min and max.
              * @param min const double&

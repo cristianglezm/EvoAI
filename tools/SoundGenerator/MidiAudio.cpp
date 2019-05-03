@@ -22,13 +22,13 @@ namespace EvoAI{
             if((*outputs)[i] > max){
                 max = (*outputs)[i];
                 index = i;
-                vel = std::clamp<int>((*outputs)[Limits::VELOCITY] * 127, 0, 127);
+                vel = std::clamp<int>((*outputs)[Limits::VELOCITY] * 127, 5, 127);
             }
         }
         // calculate note 0-127
         int note = (index-128);
         mf->addNoteOn(trackNum,actionTime,channel,note,vel);
-        actionTime += 120;
+        actionTime += (*outputs)[Limits::VELOCITY];
         mf->addNoteOff(trackNum,actionTime,channel,note);
         return note;
     }
@@ -37,7 +37,7 @@ namespace EvoAI{
         auto note = 0;
         for(int i=Limits::NOTES_START;i<Limits::NOTES_END;++i){
             if((*outputs)[i] >= 0.5){
-                int vel = std::clamp<int>((*outputs)[Limits::VELOCITY] * 127, 0, 127);
+                int vel = std::clamp<int>((*outputs)[Limits::VELOCITY] * 127, 5, 127);
                 mf->addNoteOn(trackNum,actionTime,channel,note,vel);
             }else{
                 mf->addNoteOff(trackNum,actionTime,channel,note);
@@ -76,10 +76,15 @@ namespace EvoAI{
         for(auto x=0;x<tracks;++x){
             auto actionTime = 0;
             for(auto y=0;y<notes;++y){
+                if(note1 == note2 && note2 == note3){
+                    note1 = randomGen.random(0,127);
+                    note2 = randomGen.random(0,127);
+                    note3 = randomGen.random(0,127);
+                }
                 std::vector<double> inputs;
-                inputs.emplace_back(note1);
-                inputs.emplace_back(note2);
-                inputs.emplace_back(note3);
+                inputs.emplace_back(EvoAI::stableNormalize<double>(note1,0,127));
+                inputs.emplace_back(EvoAI::stableNormalize<double>(note2,0,127));
+                inputs.emplace_back(EvoAI::stableNormalize<double>(note3,0,127));
                 nn->setInputs(std::move(inputs));
                 auto outputs = nn->run();
                 nn->reset();

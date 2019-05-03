@@ -118,8 +118,8 @@ namespace EvoAI{
     }
     template<typename T>
     inline T distanceCenter(const T& x, const T& y, const T& width, const T& height) noexcept{
-        auto normX = (2*(x/width))-1;
-        auto normY = (2*(y/height))-1;
+        auto normX = (2.0*(x/width))-1;
+        auto normY = (2.0*(y/height))-1;
         return std::sqrt((static_cast<int>(normX/2)^2) + (static_cast<int>(normY/2)^2));
     }
     template <class T>

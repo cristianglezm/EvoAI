@@ -32,7 +32,7 @@ namespace EvoAI{
         }
         for(auto i=0u;i<numInputs;++i){
             for(auto j=0u;j<numOutputs;++j){
-                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(2,j), randomGen.random(-1.0,1.0,numOutputs));
+                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(2,j), randomGen.random(-1.0,1.0,numInputs + numOutputs));
             }
         }
     }
@@ -63,12 +63,12 @@ namespace EvoAI{
         }
         for(auto i=0u;i<numInputs;++i){
             for(auto j=0u;j<numHidden;++j){
-                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(1,j), randomGen.random(-1.0,1.0,numOutputs));
+                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(1,j), randomGen.random(-1.0,1.0,numInputs + numHidden));
             }
         }
         for(auto i=0u;i<numHidden;++i){
             for(auto j=0u;j<numOutputs;++j){
-                connectionChromosomes.emplace_back(NodeGene(1,i), NodeGene(2,j), randomGen.random(-1.0,1.0,numOutputs));
+                connectionChromosomes.emplace_back(NodeGene(1,i), NodeGene(2,j), randomGen.random(-1.0,1.0,numHidden + numOutputs));
             }
         }
     }
@@ -230,12 +230,12 @@ namespace EvoAI{
             auto selectedNode2 = randomGen.random(0,nodeChromosomes.size()-1);
             if(!rnnAllowed){
                 if(nodeChromosomes[selectedNode1].getLayerID() < nodeChromosomes[selectedNode2].getLayerID()){
-                    connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], randomGen.random(-1.0,1.0));
+                    connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], randomGen.random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
                 }else{
-                    connectionChromosomes.emplace_back(nodeChromosomes[selectedNode2], nodeChromosomes[selectedNode1], randomGen.random(-1.0,1.0));
+                    connectionChromosomes.emplace_back(nodeChromosomes[selectedNode2], nodeChromosomes[selectedNode1], randomGen.random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
                 }
             }else{
-                connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], randomGen.random(-1.0,1.0));
+                connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], randomGen.random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
             }
         }
     }
@@ -261,7 +261,7 @@ namespace EvoAI{
             if(isOld){
                 power += (power * power) * 0.8;
             }
-            auto weight = power * randomGen.random(-1.0,1.0);
+            auto weight = power * randomGen.random(-1.0,1.0,static_cast<double>(nodeChromosomes.size()));
             if(isNegative){
                 weight = -weight;
             }
@@ -282,7 +282,7 @@ namespace EvoAI{
             if(isOld){
                 power += (power*power) * 0.8;
             }
-            auto weight = power * randomGen.random(-1.0,1.0);
+            auto weight = power * randomGen.random(-1.0,1.0,static_cast<double>(connectionChromosomes.size()));
             if(isNegative){
                 weight = -weight;
             }

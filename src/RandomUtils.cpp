@@ -1,4 +1,5 @@
 #include <EvoAI/Utils/RandomUtils.hpp>
+#include <EvoAI/Utils.hpp>
 
 namespace EvoAI{
     RandomGenerator::RandomGenerator()
@@ -9,10 +10,9 @@ namespace EvoAI{
     : seed(seed)
     , mtEngine(seed){}
 
-    double RandomGenerator::random(const double& min, const double& max, const std::size_t& layerSize) noexcept{
-        if(layerSize == 0) return random(min,max);
-        std::uniform_real_distribution<double> dice(min, max);
-        return dice(mtEngine) * std::sqrt(2/layerSize);
+    double RandomGenerator::random(const double& min, const double& max, const double& layerSize) noexcept{
+        if(layerSize == 0.0) return random(min,max) * std::sqrt(2);
+        return random(min,max) * std::sqrt(2.0/layerSize);
     }
 
     double RandomGenerator::random(const double& min, const double& max) noexcept{
