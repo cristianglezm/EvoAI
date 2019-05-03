@@ -179,7 +179,7 @@ endif(EvoAI_BUILD_DOCS)
 
 install(TARGETS EvoAI LIBRARY DESTINATION lib RUNTIME DESTINATION bin
                         ARCHIVE DESTINATION lib)
-install(FILES LICENSE.txt DESTINATION share/EvoAI)
+install(FILES LICENSE.md DESTINATION share/EvoAI)
 install(FILES README.md DESTINATION share/EvoAI)
 if(EvoAI_BUILD_DOCS)
     install(DIRECTORY docs DESTINATION share/EvoAI)

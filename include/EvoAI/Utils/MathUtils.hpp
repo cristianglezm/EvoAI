@@ -18,7 +18,7 @@ namespace EvoAI{
      * @return std::size_t
      */
     template <class T>
-    EvoAI_API inline std::size_t hashCombine(std::size_t seed, const T& v) noexcept;
+    inline std::size_t hashCombine(std::size_t seed, const T& v) noexcept;
     /**
      * @brief normalize values from one range to another
      * @code
@@ -33,7 +33,7 @@ namespace EvoAI{
      * @return T
      */
     template<typename T = float>
-    EvoAI_API inline T normalize(const T& val, const T& normMin, const T& normMax, const T& min, const T& max) noexcept;
+    inline T normalize(const T& val, const T& normMin, const T& normMax, const T& min, const T& max) noexcept;
     /**
      * @brief normalize values from one range to another 
      * @code
@@ -46,7 +46,7 @@ namespace EvoAI{
      * @return T
      */
     template<typename T = float>
-    EvoAI_API inline T stableNormalize(const T& val, const T& min, const T& max) noexcept;
+    inline T stableNormalize(const T& val, const T& min, const T& max) noexcept;
     /**
      * @brief Calculates the distance using Manhattan between x1,y1 and x2, y2
      * @param const T& x1
@@ -56,7 +56,7 @@ namespace EvoAI{
      * @return T 
      */
     template<typename T>
-    EvoAI_API inline T distanceManhattan(const T& x1, const T& y1, const T& x2, const T& y2) noexcept;
+    inline T distanceManhattan(const T& x1, const T& y1, const T& x2, const T& y2) noexcept;
     /**
      * @brief Calculates the distance using Chebyshev between x1,y1 and x2, y2
      * @param const T& x1
@@ -66,7 +66,7 @@ namespace EvoAI{
      * @return T 
      */
     template<typename T>
-    EvoAI_API inline T distanceChebyshev(const T& x1, const T& y1, const T& x2, const T& y2) noexcept;
+    inline T distanceChebyshev(const T& x1, const T& y1, const T& x2, const T& y2) noexcept;
     /**
      * @brief Calculates the distance using Euclidean between x1,y1 and x2, y2
      * @param const T& x1
@@ -76,7 +76,7 @@ namespace EvoAI{
      * @return T 
      */
     template<typename T>
-    EvoAI_API inline T distanceEuclidean(const T& x1, const T& y1, const T& x2, const T& y2) noexcept;
+    inline T distanceEuclidean(const T& x1, const T& y1, const T& x2, const T& y2) noexcept;
     /**
      * @brief Calculates the distance to Center
      * @param const T& x
@@ -86,7 +86,7 @@ namespace EvoAI{
      * @return T 
      */
     template<typename T>
-    EvoAI_API inline T distanceCenter(const T& x, const T& y, const T& width, const T& height) noexcept;
+    inline T distanceCenter(const T& x, const T& y, const T& width, const T& height) noexcept;
 //////////
 ///// implementation inlined functions.
 //////////
