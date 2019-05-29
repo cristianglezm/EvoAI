@@ -8,7 +8,7 @@
 #include <string>
 
 #include <EvoAI/NeuralNetwork.hpp>
-#include <EvoAI/UTils/RandomUtils.hpp>
+#include <EvoAI/Utils/RandomUtils.hpp>
 #include <EvoAI/Export.hpp>
 
 namespace EvoAI{

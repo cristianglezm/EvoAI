@@ -209,7 +209,7 @@ namespace EvoAI{
     }
     void Genome::mutateAddNode() noexcept{
         if(!connectionChromosomes.empty()){
-            auto selectedConnection = randomGen.random(0,connectionChromosomes.size()-1);
+            auto selectedConnection = randomGen.random(0u,connectionChromosomes.size()-1);
             auto& selConn = connectionChromosomes[selectedConnection];
             auto at = Neuron::ActivationType::SIGMOID;
             if(cppn){
@@ -226,8 +226,8 @@ namespace EvoAI{
     }
     void Genome::mutateAddConnection() noexcept{
         if(!nodeChromosomes.empty()){
-            auto selectedNode1 = randomGen.random(0,nodeChromosomes.size()-1);
-            auto selectedNode2 = randomGen.random(0,nodeChromosomes.size()-1);
+            auto selectedNode1 = randomGen.random(0u,nodeChromosomes.size()-1);
+            auto selectedNode2 = randomGen.random(0u,nodeChromosomes.size()-1);
             if(!rnnAllowed){
                 if(nodeChromosomes[selectedNode1].getLayerID() < nodeChromosomes[selectedNode2].getLayerID()){
                     connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], randomGen.random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
@@ -241,7 +241,7 @@ namespace EvoAI{
     }
     void Genome::mutateRemoveConnection() noexcept{
         if(!connectionChromosomes.empty()){
-            auto selectedConn = randomGen.random(0,connectionChromosomes.size()-1);
+            auto selectedConn = randomGen.random(0u,connectionChromosomes.size()-1);
             connectionChromosomes.erase(std::remove(std::begin(connectionChromosomes),
                                                 std::end(connectionChromosomes),
                                                 connectionChromosomes[selectedConn]),
@@ -256,7 +256,7 @@ namespace EvoAI{
             if(nodeChromosomes.empty()){
                 return;
             }
-            auto selectedNode = randomGen.random(0,nodeChromosomes.size() - 1);
+            auto selectedNode = randomGen.random(0u,nodeChromosomes.size() - 1);
             auto isOld = ((static_cast<std::size_t>(selectedNode)) < (nodeChromosomes.size() / 2));
             if(isOld){
                 power += (power * power) * 0.8;
@@ -274,7 +274,7 @@ namespace EvoAI{
             if(connectionChromosomes.empty()){
                 return;
             }
-            auto selectedConnection = randomGen.random(0,connectionChromosomes.size() - 1);
+            auto selectedConnection = randomGen.random(0u,connectionChromosomes.size() - 1);
             if(connectionChromosomes[selectedConnection].isFrozen()){
                 return;
             }
@@ -301,7 +301,7 @@ namespace EvoAI{
             }
         }
         if(!cgs.empty()){
-            cgs[randomGen.random(0,cgs.size()-1)]->setEnabled(false);
+            cgs[randomGen.random(0u,cgs.size()-1)]->setEnabled(false);
         }
     }
     void Genome::mutateEnable() noexcept{
@@ -312,12 +312,12 @@ namespace EvoAI{
             }
         }
         if(!cgs.empty()){
-            cgs[randomGen.random(0,cgs.size()-1)]->setEnabled(true);
+            cgs[randomGen.random(0u,cgs.size()-1)]->setEnabled(true);
         }
     }
     void Genome::mutateActivationType() noexcept{
         if(!nodeChromosomes.empty()){
-            auto selectedNode = randomGen.random(0,nodeChromosomes.size()-1);
+            auto selectedNode = randomGen.random(0u,nodeChromosomes.size()-1);
             nodeChromosomes[selectedNode].setActType(getRandomActivationType());
         }
     }

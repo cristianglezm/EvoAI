@@ -12,7 +12,7 @@
 #include <EvoAI/NeuralNetwork.hpp>
 #include <EvoAI/Utils.hpp>
 
-#include "midifile/midifile.h"
+#include "midifile/MidiFile.h"
 
 namespace EvoAI{
 
