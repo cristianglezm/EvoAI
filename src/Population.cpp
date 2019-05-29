@@ -110,7 +110,7 @@ namespace EvoAI{
                                     }),std::end(species));
         genomesCached = false;
     }
-    std::vector<Genome*>& Population::getGenomes() noexcept{
+    std::vector<Genome*>& Population::getGenomes() noexcept{///@todo add function void Eval(lambda) make this private?
         if(genomesCached){
             return genomes;
         }
@@ -183,7 +183,7 @@ namespace EvoAI{
                                 return sp->isKillable();
                             }), std::end(species));
     }
-    void Population::reproduce(bool interSpecies, Population::SelectionType st) noexcept{
+    void Population::reproduce(bool interSpecies, Population::SelectionType st) noexcept{ ///@todo split method
         auto numOffsprings = 0u;
         if(species.size() > 1){
             removeOldSpecies();
@@ -201,9 +201,7 @@ namespace EvoAI{
                                 auto selectedFather = randomGen.random(0u,half);
                                 auto selectedMother = randomGen.random(0u,half);
                                 auto child = Genome::reproduce(*genomes[selectedFather],*genomes[selectedMother]);
-                                if(cppn){
-                                    child->setCppn(true);
-                                }
+                                child->setCppn(cppn);
                                 child->setGenomeID(Population::getNewID());
                                 genomesToAdd.push_back(std::move(child));
                             }
@@ -213,9 +211,7 @@ namespace EvoAI{
                             auto selectedFather = randomGen.random(0u,half);
                             auto selectedMother = randomGen.random(0u,half);
                             auto child = Genome::reproduce(*genomes[selectedFather],*genomes[selectedMother]);
-                            if(cppn){
-                                child->setCppn(true);
-                            }
+                            child->setCppn(cppn);
                             auto oldID = genomes[i]->getGenomeID();
                             child->setGenomeID(oldID);
                             genomesToAdd.push_back(std::move(child));
@@ -253,9 +249,7 @@ namespace EvoAI{
                                 auto father = tournamentSelection(3);
                                 auto mother = tournamentSelection(3);
                                 auto child = Genome::reproduce(*genomes[father.first],*genomes[mother.first]);
-                                if(cppn){
-                                    child->setCppn(true);
-                                }
+                                child->setCppn(cppn);
                                 child->setGenomeID(Population::getNewID());
                                 genomesToAdd.push_back(std::move(child));
                             }
@@ -271,9 +265,7 @@ namespace EvoAI{
                                 continue;
                             }
                             auto child = Genome::reproduce(*genomes[father.first],*genomes[mother.first]);
-                            if(cppn){
-                                child->setCppn(true);
-                            }
+                            child->setCppn(cppn);
                             auto oldID = genomes[newChild]->getGenomeID();
                             child->setGenomeID(oldID);
                             genomesToAdd.push_back(std::move(child));
@@ -314,9 +306,7 @@ namespace EvoAI{
                                 auto mother = fpSelection(totalFitness);
                                 if(father && mother){
                                     auto child = Genome::reproduce(*father,*mother);
-                                    if(cppn){
-                                        child->setCppn(true);
-                                    }
+                                    child->setCppn(cppn);
                                     child->setGenomeID(Population::getNewID());
                                     genomesToAdd.push_back(std::move(child));
                                 }
@@ -333,9 +323,7 @@ namespace EvoAI{
                             }
                             if(father && mother){
                                 auto child = Genome::reproduce(*father,*mother);
-                                if(cppn){
-                                    child->setCppn(true);
-                                }
+                                child->setCppn(cppn);
                                 auto oldID = genomes[i]->getGenomeID();
                                 child->setGenomeID(oldID);
                                 genomesToAdd.push_back(std::move(child));
@@ -367,9 +355,7 @@ namespace EvoAI{
                                     auto selectedFather = randomGen.random(0u,half);
                                     auto selectedMother = randomGen.random(0u,half);
                                     auto child = Genome::reproduce(*spGenomes[selectedFather],*spGenomes[selectedMother]);
-                                    if(cppn){
-                                        child->setCppn(true);
-                                    }
+                                    child->setCppn(cppn);
                                     child->setGenomeID(Population::getNewID());
                                     genomesToAdd.push_back(std::move(child));
                                 }
@@ -379,9 +365,7 @@ namespace EvoAI{
                                 auto selectedFather = randomGen.random(0u,half);
                                 auto selectedMother = randomGen.random(0u,half);
                                 auto child = Genome::reproduce(*spGenomes[selectedFather],*spGenomes[selectedMother]);
-                                if(cppn){
-                                    child->setCppn(true);
-                                }
+                                child->setCppn(cppn);
                                 auto oldID = spGenomes[i]->getGenomeID();
                                 child->setGenomeID(oldID);
                                 genomesToAdd.push_back(std::move(child));
@@ -419,9 +403,7 @@ namespace EvoAI{
                                     auto father = tournamentSelection(3);
                                     auto mother = tournamentSelection(3);
                                     auto child = Genome::reproduce(*spGenomes[father.first],*spGenomes[mother.first]);
-                                    if(cppn){
-                                        child->setCppn(true);
-                                    }
+                                    child->setCppn(cppn);
                                     child->setGenomeID(Population::getNewID());
                                     genomesToAdd.push_back(std::move(child));
                                 }
@@ -437,9 +419,7 @@ namespace EvoAI{
                                     continue;
                                 }
                                 auto child = Genome::reproduce(*spGenomes[father.first],*spGenomes[mother.first]);
-                                if(cppn){
-                                    child->setCppn(true);
-                                }
+                                child->setCppn(cppn);
                                 auto oldID = spGenomes[newChild]->getGenomeID();
                                 child->setGenomeID(oldID);
                                 genomesToAdd.push_back(std::move(child));
@@ -480,9 +460,7 @@ namespace EvoAI{
                                     auto mother = fpSelection(totalFitness);
                                     if(father && mother){
                                         auto child = Genome::reproduce(*father,*mother);
-                                        if(cppn){
-                                            child->setCppn(true);
-                                        }
+                                        child->setCppn(cppn);
                                         child->setGenomeID(Population::getNewID());
                                         genomesToAdd.push_back(std::move(child));
                                     }
@@ -499,9 +477,7 @@ namespace EvoAI{
                                 }
                                 if(father && mother){
                                     auto child = Genome::reproduce(*father,*mother);
-                                    if(cppn){
-                                        child->setCppn(true);
-                                    }
+                                    child->setCppn(cppn);
                                     auto oldID = spGenomes[i]->getGenomeID();
                                     child->setGenomeID(oldID);
                                     genomesToAdd.push_back(std::move(child));
