@@ -201,16 +201,16 @@ namespace EvoAI{
              * @brief Applies the neuron activation
              * @param at Neuron::ActivationType
              * @param n const Neuron&
-             * @return const double
+             * @return double
              */
-            const double activate(Neuron::ActivationType at, const Neuron& n);
+            double activate(Neuron::ActivationType at, const Neuron& n);
             /**
              * @brief Applies the neuron derivative
              * @param at Neuron::ActivationType
              * @param n const Neuron&
-             * @return const double
+             * @return double
              */
-            const double derivate(Neuron::ActivationType at,const Neuron& n);
+            double derivate(Neuron::ActivationType at,const Neuron& n);
             /**
              * @brief resets the gradients of the connections
              */

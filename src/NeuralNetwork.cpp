@@ -407,7 +407,7 @@ namespace EvoAI{
         return std::equal(std::begin(layers),std::end(layers),std::begin(rhs.layers));
     }
 //private member functions
-    const double NeuralNetwork::derivate(Neuron::ActivationType at,const Neuron& n){
+    double NeuralNetwork::derivate(Neuron::ActivationType at,const Neuron& n){
         switch(at){
             case Neuron::ActivationType::IDENTITY:
                 return Derivatives::identity(n.getOutput());
@@ -438,7 +438,7 @@ namespace EvoAI{
         }
         return Derivatives::steepenedSigmoid(n.getOutput());
     }
-    const double NeuralNetwork::activate(Neuron::ActivationType at, const Neuron& n){
+    double NeuralNetwork::activate(Neuron::ActivationType at, const Neuron& n){
         switch(at){
             case Neuron::ActivationType::IDENTITY:
                 return Activations::identity(n.getSum());

@@ -8,7 +8,7 @@
 #include <EvoAI/Population.hpp>
 #include <EvoAI/Utils.hpp>
 
-sf::Image createImageFromImages(EvoAI::Genome* g, EvoAI::NeuralNetwork* nn, std::vector<sf::Image>& imgs, bool bw) noexcept;
+sf::Image createImageFromImages(EvoAI::NeuralNetwork* nn, std::vector<sf::Image>& imgs, bool bw) noexcept;
 void usage();
 
 int main(int argc, char **argv){
@@ -126,12 +126,12 @@ int main(int argc, char **argv){
         g->writeToFile(saveFileGenome);
     }
     std::cout << "Creating Image..." << std::endl;
-    auto imgOutput = createImageFromImages(g.get(),nn.get(),imagesInputs,optBW);
+    auto imgOutput = createImageFromImages(nn.get(),imagesInputs,optBW);
     std::cout << "saving Image to " << fileOutput << std::endl;
     imgOutput.saveToFile(fileOutput);
 }
 
-sf::Image createImageFromImages(EvoAI::Genome* g, EvoAI::NeuralNetwork* nn, std::vector<sf::Image>& imgs, bool bw) noexcept{
+sf::Image createImageFromImages(EvoAI::NeuralNetwork* nn, std::vector<sf::Image>& imgs, bool bw) noexcept{
     sf::Image imgOutput;
     if(imgs.empty()){
         return imgOutput;

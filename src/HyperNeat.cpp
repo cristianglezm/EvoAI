@@ -154,7 +154,7 @@ namespace EvoAI{
                                 for(auto y2=0u;y2<substrate[x2].size();++y2){
                                     auto d = EvoAI::distanceCenter<int>(x1,y1,substrate.size(),substrate[x1].size()) +
                                         EvoAI::distanceCenter<int>(x2,y2,substrate.size(),substrate[x2].size());
-                                    nn->setInputs({x1, y1, x2, y2, d});
+                                    nn->setInputs({static_cast<double>(x1), static_cast<double>(y1), static_cast<double>(x2), static_cast<double>(y2), static_cast<double>(d)});
                                     auto out = nn->run();
                                     nn->reset();
                                     if(std::fabs(out[1]) > 0.0){
@@ -184,7 +184,7 @@ namespace EvoAI{
                     for(auto i=0u;i<size;++i){
                         for(auto j=0u;j<size;++j){
                             auto d = EvoAI::distanceCenter<int>(i,j,size,size);
-                            nn->setInputs({i, j, d});
+                            nn->setInputs({static_cast<double>(i), static_cast<double>(j), static_cast<double>(d)});
                             auto out = nn->run();
                             nn->reset();
                             if(std::fabs(out[1]) > 0.0){

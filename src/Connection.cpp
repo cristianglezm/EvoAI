@@ -1,4 +1,6 @@
 #include <EvoAI/Connection.hpp>
+#include <EvoAI/Utils/MathUtils.hpp>
+#include <EvoAI/Utils/RandomUtils.hpp>
 
 namespace EvoAI{
     Link::Link(const std::size_t& layer,const std::size_t& neuron)

@@ -204,7 +204,7 @@ namespace EvoAI{
     void Genome::setCppn(bool isCppn) noexcept{
         cppn = isCppn;
     }
-    const bool Genome::isCppn() const noexcept{
+    bool Genome::isCppn() const noexcept{
         return cppn;
     }
     void Genome::mutateAddNode() noexcept{
@@ -342,18 +342,15 @@ namespace EvoAI{
     }
     bool Genome::isValid() noexcept{
         for(auto& n:nodeChromosomes){
-            if(((n.getLayerID() < 0) || (n.getLayerID() > 3)) 
-                    || (n.getNeuronID() >= getNumOfNodes(n.getLayerID()))){
+            if((n.getLayerID() > 3) || (n.getNeuronID() >= getNumOfNodes(n.getLayerID()))){
                 return false;
             }
         }
         for(auto& c:connectionChromosomes){
             auto& src = c.getSrc();
             auto& dest = c.getDest();
-            if((src.layer > 3) || (src.layer < 0)
-                || (src.neuron >= getNumOfNodes(src.layer))
-                || (dest.layer > 3) || (dest.layer < 0)
-                || (dest.neuron >= getNumOfNodes(dest.layer))){
+            if((src.layer > 3) || (src.neuron >= getNumOfNodes(src.layer)) ||
+                (dest.layer > 3) || (dest.neuron >= getNumOfNodes(dest.layer))){
                 return false;
             }
         }

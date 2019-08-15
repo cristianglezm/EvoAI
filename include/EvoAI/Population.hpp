@@ -184,9 +184,9 @@ namespace EvoAI{
             void setCppn(bool isCppn) noexcept;
             /**
              * @brief checks if the children will have cppn activated.
-             * @return const bool
+             * @return bool
              */
-            const bool isCppn() const noexcept;
+            bool isCppn() const noexcept;
             /**
              * @brief returns a JsonBox::Value with the current info.
              * @return JsonBox::Value

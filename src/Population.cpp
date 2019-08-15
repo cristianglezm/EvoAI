@@ -539,7 +539,7 @@ namespace EvoAI{
     void Population::setCppn(bool isCppn) noexcept{
         cppn = isCppn;
     }
-    const bool Population::isCppn() const noexcept{
+    bool Population::isCppn() const noexcept{
         return cppn;
     }
     void Population::setCompatibilityThreshold(const double& compThreshold) noexcept{

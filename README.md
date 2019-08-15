@@ -59,7 +59,7 @@ You should replace <android_ndk> with the actual folder.
 
 ## Tests ##
 
-* Make tests to check everything.
+* Make tests to check everything is working.
 
 ## Contributions ##
 
