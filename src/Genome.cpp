@@ -44,6 +44,7 @@ namespace EvoAI{
     , cppn(cppn)
     , nodeChromosomes()
     , connectionChromosomes(){
+        nodeChromosomes.reserve(numInputs + numHidden + numOutputs);
         for(auto i=0u;i<numInputs;++i){
             nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,Neuron::ActivationType::SIGMOID);
         }
@@ -61,6 +62,7 @@ namespace EvoAI{
             }
             nodeChromosomes.emplace_back(2,i,Neuron::Type::OUTPUT,at);
         }
+        connectionChromosomes.reserve((numInputs * numHidden) + (numHidden * numOutputs));
         for(auto i=0u;i<numInputs;++i){
             for(auto j=0u;j<numHidden;++j){
                 connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(1,j), randomGen.random(-1.0,1.0,numInputs + numHidden));
@@ -81,10 +83,12 @@ namespace EvoAI{
     , nodeChromosomes()
     , connectionChromosomes(){
         auto& ngs = o["nodeChromosomes"].getArray();
+        nodeChromosomes.reserve(ngs.size());
         for(auto& ng:ngs){
             nodeChromosomes.emplace_back(ng.getObject());
         }
         auto& cgs = o["ConnectionChromosomes"].getArray();
+        connectionChromosomes.reserve(cgs.size());
         for(auto& cg:cgs){
             connectionChromosomes.emplace_back(cg.getObject());
         }
@@ -106,19 +110,21 @@ namespace EvoAI{
         speciesID = std::stoull(v["SpeciesID"].getString());
         fitness = v["fitness"].getDouble();
         auto& ngs = v["nodeChromosomes"].getArray();
+        nodeChromosomes.reserve(ngs.size());
         for(auto& ng:ngs){
             nodeChromosomes.emplace_back(ng.getObject());
         }
         auto& cgs = v["ConnectionChromosomes"].getArray();
+        connectionChromosomes.reserve(cgs.size());
         for(auto& cg:cgs){
             connectionChromosomes.emplace_back(cg.getObject());
         }
     }
     void Genome::addGene(const NodeGene& ng) noexcept{
-        nodeChromosomes.push_back(ng);
+        nodeChromosomes.emplace_back(ng);
     }
     void Genome::addGene(const ConnectionGene& cg) noexcept{
-        connectionChromosomes.push_back(cg);
+        connectionChromosomes.emplace_back(cg);
     }
     void Genome::setNodeChromosomes(std::vector<NodeGene>&& ngenes) noexcept{
         nodeChromosomes = std::move(ngenes);
@@ -155,12 +161,14 @@ namespace EvoAI{
         o["cppn"] = JsonBox::Value(cppn);
         o["rnnAllowed"] = JsonBox::Value(rnnAllowed);
         JsonBox::Array nChromo;
+        nChromo.reserve(nodeChromosomes.size());
         for(auto& n:nodeChromosomes){
-            nChromo.push_back(n.toJson());
+            nChromo.emplace_back(n.toJson());
         }
         JsonBox::Array cChromo;
+        cChromo.reserve(connectionChromosomes.size());
         for(auto& c:connectionChromosomes){
-            cChromo.push_back(c.toJson());
+            cChromo.emplace_back(c.toJson());
         }
         o["nodeChromosomes"] = JsonBox::Value(nChromo);
         o["ConnectionChromosomes"] = JsonBox::Value(cChromo);
@@ -216,12 +224,12 @@ namespace EvoAI{
                 at = getRandomActivationType();
             }
             NodeGene ng(1,getNumOfNodes(1),Neuron::Type::HIDDEN,at);
-            nodeChromosomes.push_back(ng);
+            nodeChromosomes.emplace_back(ng);
             selConn.setEnabled(false);
             ConnectionGene cg1(NodeGene(selConn.getSrc().layer,selConn.getSrc().neuron), ng, 1.0);
             ConnectionGene cg2(ng,NodeGene(selConn.getDest().layer,selConn.getDest().neuron), selConn.getWeight());
-            connectionChromosomes.push_back(cg1);
-            connectionChromosomes.push_back(cg2);
+            connectionChromosomes.emplace_back(cg1);
+            connectionChromosomes.emplace_back(cg2);
         }
     }
     void Genome::mutateAddConnection() noexcept{
@@ -295,9 +303,10 @@ namespace EvoAI{
     }
     void Genome::mutateDisable() noexcept{
         std::vector<ConnectionGene*> cgs;
+        cgs.reserve(connectionChromosomes.size());
         for(auto& c:connectionChromosomes){
             if(c.isEnabled()){
-                cgs.push_back(&c);
+                cgs.emplace_back(&c);
             }
         }
         if(!cgs.empty()){
@@ -306,6 +315,7 @@ namespace EvoAI{
     }
     void Genome::mutateEnable() noexcept{
         std::vector<ConnectionGene*> cgs;
+        cgs.reserve(connectionChromosomes.size());
         for(auto& c:connectionChromosomes){
             if(!c.isEnabled()){
                 cgs.push_back(&c);
@@ -334,10 +344,8 @@ namespace EvoAI{
             mutateEnable();
         }else if(randomGen.random(disableRate)){
             mutateDisable();
-        }else if(randomGen.random(actTypeRate)){
-            if(cppn){
-                mutateActivationType();
-            }
+        }else if(randomGen.random(actTypeRate) && cppn){
+            mutateActivationType();
         }
     }
     bool Genome::isValid() noexcept{

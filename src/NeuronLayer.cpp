@@ -14,6 +14,7 @@ namespace EvoAI{
     , activationType(Neuron::ActivationType::SIGMOID)
     , bias(bias)
     , cyclesLimit(3){
+        neurons.reserve(numNeurons);
         for(auto i=0u; i<numNeurons;++i){
             neurons.emplace_back(Neuron(t));
             neurons[i].setBiasWeight(randomGen.random(-1.0,1.0));
@@ -26,6 +27,7 @@ namespace EvoAI{
     , bias(o["bias"].getDouble())
     , cyclesLimit(o["cyclesLimit"].getInteger()){
         auto& nrns = o["neurons"].getArray();
+        neurons.reserve(nrns.size());
         for(auto& n:nrns){
             neurons.emplace_back(n.getObject());
         }
@@ -100,8 +102,9 @@ namespace EvoAI{
         o["neuronType"] = JsonBox::Value(Neuron::typeToString(type));
         o["activationType"] = JsonBox::Value(Neuron::activationTypeToString(activationType));
         JsonBox::Array a;
+        a.reserve(neurons.size());
         for(auto& n:neurons){
-            a.push_back(n.toJson());
+            a.emplace_back(n.toJson());
         }
         o["neurons"] = JsonBox::Value(a);
         return JsonBox::Value(o);

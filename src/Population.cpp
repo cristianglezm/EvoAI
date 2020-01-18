@@ -45,9 +45,10 @@ namespace EvoAI{
     , compatibilityThreshold(o["compatibilityThreshold"].getDouble())
     , maxAge(std::stoull(o["maxAge"].getString()))
     , cppn(o["cppn"].getBoolean()){
-        auto specs = o["species"].getArray();
+        auto& specs = o["species"].getArray();
+        species.reserve(specs.size());
         for(auto& sp:specs){
-            species.push_back(std::make_unique<Species>(sp.getObject()));
+            species.emplace_back(std::make_unique<Species>(sp.getObject()));
         }
     }
     Population::Population(const std::string& filename)
@@ -62,8 +63,9 @@ namespace EvoAI{
         json.loadFromFile(filename);
         auto v = json["Population"];
         auto specs = v["species"].getArray();
+        species.reserve(specs.size());
         for(auto& sp:specs){
-            species.push_back(std::make_unique<Species>(sp.getObject()));
+            species.emplace_back(std::make_unique<Species>(sp.getObject()));
         }
         PopulationSize = std::stoull(v["PopulationSize"].getString());
         compatibilityThreshold = v["compatibilityThreshold"].getDouble();

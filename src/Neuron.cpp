@@ -19,6 +19,7 @@ namespace EvoAI{
     , activationType(Neuron::activationTypeToEnum(o["activationType"].getString()))
     , connections(){
         auto& conns = o["connections"].getArray();
+        connections.reserve(conns.size());
         for(auto& c:conns){
             connections.emplace_back(c.getObject());
         }
@@ -70,11 +71,12 @@ namespace EvoAI{
         o["biasWeight"] = JsonBox::Value(biasWeight);
         o["type"] = JsonBox::Value(typeToString(type));
         o["activationType"] = JsonBox::Value(activationTypeToString(activationType));
-        JsonBox::Array a;
+        JsonBox::Array conns;
+        conns.reserve(connections.size());
         for(auto& c:connections){
-            a.push_back(c.toJson());
+            conns.emplace_back(c.toJson());
         }
-        o["connections"] = JsonBox::Value(a);
+        o["connections"] = JsonBox::Value(conns);
         return JsonBox::Value(o);
     }
     std::string Neuron::toString(const std::string& delimiter) const noexcept{

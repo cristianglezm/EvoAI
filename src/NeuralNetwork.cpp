@@ -17,6 +17,7 @@ namespace EvoAI{
     , connectionsCached(false)
     , neuronsCached(false)
     , mse(0.0){
+        layers.reserve(numHiddenLayers + 2);
         layers.emplace_back(NeuronLayer(numInputs,Neuron::Type::INPUT,bias));
         for(auto i=0u;i<numHiddenLayers;++i){
             layers.emplace_back(NeuronLayer(numNeuronsPerHiddenLayer,Neuron::Type::HIDDEN,bias));
@@ -31,6 +32,7 @@ namespace EvoAI{
     , neuronsCached(false)
     , mse(0.0){
         auto& lyrs = o["layers"].getArray();
+        layers.reserve(lyrs.size());
         for(auto& l:lyrs){
             layers.emplace_back(l.getObject());
         }
@@ -45,6 +47,7 @@ namespace EvoAI{
         JsonBox::Value v;
         v.loadFromFile(filename);
         auto& layersArray = v["NeuralNetwork"]["layers"].getArray();
+        layers.reserve(layersArray.size());
         for(auto& la:layersArray){
             layers.emplace_back(la.getObject());
         }

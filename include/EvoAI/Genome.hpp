@@ -240,6 +240,7 @@ namespace EvoAI{
              */
             bool isValid() noexcept;
             ~Genome() = default;
+        public:
             /**
              * @brief returns a random ActivationType.
              * @return Neuron::ActivationType

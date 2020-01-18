@@ -23,7 +23,7 @@ project(EvoAI)
 
 SET(CMAKE_INCLUDE_PATH ${CMAKE_SOURCE_DIR})
 include_directories("${CMAKE_SOURCE_DIR}/include")
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 FILE(GLOB_RECURSE EvoAI_SOURCES "src/*.cpp")
 FILE(GLOB_RECURSE EvoAI_INCLUDES "include/*.hpp")
@@ -37,7 +37,7 @@ if(NOT EvoAI_BUILD_STATIC)
 	set_target_properties(EvoAI PROPERTIES DEBUG_POSTFIX -d)
 else()
 	add_library(EvoAI STATIC ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
-    set_target_properties(EvoAI PROPERTIES DEBUG_POSTFIX -s-d)
+        set_target_properties(EvoAI PROPERTIES DEBUG_POSTFIX -s-d)
 	set_target_properties(EvoAI PROPERTIES RELEASE_POSTFIX -s)
 	set_target_properties(EvoAI PROPERTIES MINSIZEREL_POSTFIX -s)
 endif(NOT EvoAI_BUILD_STATIC)
@@ -57,7 +57,7 @@ set_target_properties(EvoAI PROPERTIES OUTPUT_NAME "EvoAI-${EvoAI_VERSION_MAJOR}
 ################################################################################
 
 #jsonbox
-find_package(JSONBOX REQUIRED)
+find_package(JsonBox REQUIRED)
 if(JSONBOX_FOUND)
 	include_directories(${JSONBOX_INCLUDE_DIR})
 	target_link_libraries(EvoAI ${JSONBOX_LIBRARIES})

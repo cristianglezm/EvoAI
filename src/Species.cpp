@@ -31,8 +31,9 @@ namespace EvoAI{
     , oldAvgFitness(o["oldAvgFitness"].getDouble())
     , genomes(){
         auto gnms = o["genomes"].getArray();
+        genomes.reserve(gnms.size());
         for(auto& g:gnms){
-            genomes.push_back(std::make_unique<Genome>(g.getObject()));
+            genomes.emplace_back(std::make_unique<Genome>(g.getObject()));
         }
     }
     Species::Species(const std::string& filename)
@@ -55,8 +56,9 @@ namespace EvoAI{
         maxFitness = v["maxFitness"].getDouble();
         oldAvgFitness = v["oldAvgFitness"].getDouble();
         auto gnms = v["genomes"].getArray();
+        genomes.reserve(gnms.size());
         for(auto& g:gnms){
-            genomes.push_back(std::make_unique<Genome>(g.getObject()));
+            genomes.emplace_back(std::make_unique<Genome>(g.getObject()));
         }
     }
     void Species::adjustFitness() noexcept{
@@ -159,8 +161,9 @@ namespace EvoAI{
         o["maxFitness"] = maxFitness;
         o["oldAvgFitness"] = oldAvgFitness;
         JsonBox::Array gnms;
+        gnms.reserve(genomes.size());
         for(auto& g:genomes){
-            gnms.push_back(g->toJson());
+            gnms.emplace_back(g->toJson());
         }
         o["genomes"] = JsonBox::Value(gnms);
         return JsonBox::Value(o);
