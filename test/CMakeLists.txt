@@ -9,9 +9,9 @@ set(RunAllTests_SRC ${RUNALLTESTS_SOURCES} ${RUNALLTESTS_INCLUDES})
 add_executable(RunAllTests ${RunAllTests_SRC})
 
 include_directories(${GTEST_INCLUDE_DIR})
-include_directories(${GMOCK_INCLUDE_DIR})
+include_directories(${GMock_INCLUDE_DIR})
 
-target_link_libraries(RunAllTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
+target_link_libraries(RunAllTests ${GTEST_LIBRARIES} ${GMock_LIBRARIES})
 target_link_libraries(RunAllTests EvoAI)
 
 if(NOT EvoAI_BUILD_STATIC)

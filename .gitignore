@@ -31,8 +31,8 @@ local.properties
 ## Code::Blocks
 #################
 
-*Build/*
-*build/*
+*Build*/*
+*build*/*
 *.depend
 *.layout
 *.cbn

@@ -58,10 +58,10 @@ set_target_properties(EvoAI PROPERTIES OUTPUT_NAME "EvoAI-${EvoAI_VERSION_MAJOR}
 
 #jsonbox
 find_package(JsonBox REQUIRED)
-if(JSONBOX_FOUND)
-	include_directories(${JSONBOX_INCLUDE_DIR})
-	target_link_libraries(EvoAI ${JSONBOX_LIBRARIES})
-endif(JSONBOX_FOUND)
+if(JsonBox_FOUND)
+	include_directories(${JsonBox_INCLUDE_DIR})
+	target_link_libraries(EvoAI ${JsonBox_LIBRARIES})
+endif(JsonBox_FOUND)
 
 if(EvoAI_BUILD_TESTS)
 	find_package(GTest REQUIRED)

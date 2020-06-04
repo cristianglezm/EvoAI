@@ -13,13 +13,14 @@ set(FIND_EvoAI_PATHS
     ${EvoAI_ROOT}
     $ENV{EvoAI_ROOT}
     /usr/local
+    /usr/local/include
     /usr
     /sw
     /opt/local
     /opt/csw
     /opt)
 
-find_path(EvoAI_INCLUDE_DIR EvoAi.hpp
+find_path(EvoAI_INCLUDE_DIR EvoAI.hpp
           PATH_SUFFIXES include
           PATHS ${FIND_EvoAI_PATHS})
 if(NOT EvoAI_FIND_VERSION_MAJOR)
@@ -40,9 +41,9 @@ if(EvoAI_FIND_VERSION AND EvoAI_INCLUDE_DIR)
     # extract the major and minor version numbers from EvoAI/Config.hpp
     set(EvoAI_CONFIG_HPP_INPUT "${EvoAI_INCLUDE_DIR}/EvoAI/Config.hpp")
     FILE(READ "${EvoAI_CONFIG_HPP_INPUT}" EvoAI_CONFIG_HPP_CONTENTS)
-    STRING(REGEX REPLACE "^.*#define EVOAI_VERSION_MAJOR ([0-9]+).*$" "\\1" EvoAI_VERSION_MAJOR "${EvoAI_CONFIG_HPP_CONTENTS}")
-    STRING(REGEX REPLACE "^.*#define EVOAI_VERSION_MINOR ([0-9]+).*$" "\\1" EvoAI_VERSION_MINOR "${EvoAI_CONFIG_HPP_CONTENTS}")
-    STRING(REGEX REPLACE "^.*#define EVOAI_VERSION_PATCH ([0-9]+).*$" "\\1" EvoAI_VERSION_PATCH "${EvoAI_CONFIG_HPP_CONTENTS}")
+    STRING(REGEX REPLACE "^.*#define EVOAI_VERSION_MAJOR ([0-9]+).*$" "\\1" EVOAI_VERSION_MAJOR "${EVOAI_CONFIG_HPP_CONTENTS}")
+    STRING(REGEX REPLACE "^.*#define EVOAI_VERSION_MINOR ([0-9]+).*$" "\\1" EVOAI_VERSION_MINOR "${EVOAI_CONFIG_HPP_CONTENTS}")
+    STRING(REGEX REPLACE "^.*#define EVOAI_VERSION_PATCH ([0-9]+).*$" "\\1" EVOAI_VERSION_PATCH "${EVOAI_CONFIG_HPP_CONTENTS}")
     if(NOT "${EvoAI_VERSION_PATCH}" MATCHES "^[0-9]+$")
         set(EvoAI_VERSION_PATCH 0)
     endif()
