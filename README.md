@@ -22,8 +22,8 @@ Use CMake to build the project.
 
 ```
 mkdir build && cd build
-cmake -G"MinGW Makefiles" -DSFML_ROOT=<baseDir> -DJSONBOX_ROOT=<baseDir> \ 
--DGMOCK_ROOT=<baseDir> -DGTEST_ROOT=<baseDir> \ 
+cmake -G"MinGW Makefiles" -DSFML_ROOT=<baseDir> -DJsonBox_ROOT=<baseDir> \ 
+-DGMock_ROOT=<baseDir> -DGTEST_ROOT=<baseDir> \ 
 -DEvoAI_BUILD_TESTS=TRUE -DEvoAI_BUILD_EXAMPLES=TRUE -DEvoAI_BUILD_DOCS=TRUE -DEvoAI_BUILD_TOOLS=TRUE ..
 make -j3 install
 ```
@@ -63,6 +63,7 @@ You should replace <android_ndk> with the actual folder.
 
 ## Contributions ##
 
+Contributions are welcome, go to TODO.md and check out things to add or improve.
 
 ## Documentation ##
 
