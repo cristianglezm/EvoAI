@@ -8,8 +8,8 @@ namespace EvoAI{
     namespace Test{
         TEST(NodeGeneTest,Constructor){
             NodeGene ng(0,1,Neuron::Type::INPUT,Neuron::ActivationType::GAUSSIAN);
-            ng.setInnovationID(20);
-            EXPECT_EQ(20u,ng.getInnovationID());
+            auto innovationID = std::hash<NodeGene>{}(ng);
+            EXPECT_EQ(innovationID,ng.getInnovationID());
             EXPECT_EQ(Neuron::ActivationType::GAUSSIAN, ng.getActType());
             EXPECT_EQ(0u,ng.getLayerID());
             EXPECT_EQ(1u,ng.getNeuronID());

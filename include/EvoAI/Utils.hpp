@@ -14,6 +14,16 @@
 #include <EvoAI/Utils/NNUtils.hpp>
 #include <EvoAI/Utils/RandomUtils.hpp>
 
+namespace EvoAI{
+    template<typename Fn, typename...Args>
+    auto TimeThis(Fn&& fn, Args&...args) noexcept{
+        auto start = std::chrono::high_resolution_clock::now();
+        fn(args...);
+        auto end = std::chrono::high_resolution_clock::now();
+        return std::chrono::duration<double>(end-start).count();
+    }
+}
+
 #if defined ANDROID && USE_MAKE_UNIQUE
     namespace std{
         /**

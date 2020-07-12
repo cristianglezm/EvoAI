@@ -26,7 +26,7 @@ namespace EvoAI{
         TEST(HyperNeatTest,ConstructorWithGenome){
             Genome g(5,2,false,true);
             g.mutate();
-            HyperNeat hn(SubstrateInfo(2,3,2,4),g,HyperNeat::SubstrateConfiguration::SANDWICH);
+            HyperNeat hn(SubstrateInfo(2,3,2,4), g, HyperNeat::SubstrateConfiguration::SANDWICH);
             hn.setInputs({2.3,2.5});
             auto out = hn.run();
         }
@@ -41,7 +41,7 @@ namespace EvoAI{
             EXPECT_EQ(3u,hn.getNumHiddenLayers());
             EXPECT_EQ(2u,hn.getNumHiddenNeurons());
             EXPECT_EQ(2u,hn.getNumOutputs());
-            auto g = hn.getGenome();
+            auto& g = hn.getGenome();
             EXPECT_TRUE(g.isRecurrentAllowed());
             EXPECT_TRUE(g.isCppn());
         }

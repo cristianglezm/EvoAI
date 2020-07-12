@@ -35,6 +35,24 @@ namespace EvoAI{
              */
             ConnectionGene(const Link& src, const Link& dest, double w);
             /**
+             *  @brief copy constructor
+             *  
+             *  @param [in] rhs const ConnectionGene&
+             *  @return bool
+             */
+            ConnectionGene(const ConnectionGene& rhs) noexcept;
+            /**
+             *  @brief move constructor
+             *  
+             *  @param [in] rhs ConnectionGene&&
+             *  @return bool
+             */
+            ConnectionGene(ConnectionGene&& rhs) noexcept;
+            void operator=(const ConnectionGene& rhs) noexcept;
+            void operator=(ConnectionGene&& rhs) noexcept;
+            constexpr bool operator<(const ConnectionGene& rhs) const noexcept;
+            constexpr bool operator>(const ConnectionGene& rhs) const noexcept;
+            /**
              * @brief Constructor with json object
              * @param o JsonBox::Object&
              */
@@ -100,11 +118,6 @@ namespace EvoAI{
              * @return bool
              */
             bool isFrozen() const noexcept;
-            /**
-             * @brief setter for innovationID
-             * @param id std::size_t
-             */
-            void setInnovationID(const std::size_t& id) noexcept;
             /**
              * @brief getter for innovationID
              * @return std::size_t

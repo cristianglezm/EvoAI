@@ -11,8 +11,8 @@ namespace EvoAI{
             EXPECT_TRUE(cg.isEnabled());
             EXPECT_FALSE(cg.isFrozen());
             EXPECT_EQ(0.2,cg.getWeight());
-            cg.setInnovationID(20u);
-            EXPECT_EQ(20u,cg.getInnovationID());
+            auto innovationID = std::hash<ConnectionGene>{}(cg);
+            EXPECT_EQ(innovationID, cg.getInnovationID());
             EXPECT_EQ(2u,cg.getDest().layer);
             EXPECT_EQ(1u,cg.getDest().neuron);
         }

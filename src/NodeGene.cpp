@@ -21,6 +21,20 @@ namespace EvoAI{
     , innovationID(0){
         innovationID = std::hash<NodeGene>{}(*this);
     }
+    NodeGene::NodeGene(const NodeGene& rhs) noexcept
+    : layerID(rhs.layerID)
+    , neuronID(rhs.neuronID)
+    , biasWeight(rhs.biasWeight)
+    , nrnType(rhs.nrnType)
+    , actType(rhs.actType)
+    , innovationID(rhs.innovationID){}
+    NodeGene::NodeGene(NodeGene&& rhs) noexcept
+    : layerID(rhs.layerID)
+    , neuronID(rhs.neuronID)
+    , biasWeight(rhs.biasWeight)
+    , nrnType(rhs.nrnType)
+    , actType(rhs.actType)
+    , innovationID(rhs.innovationID){}
     NodeGene::NodeGene(JsonBox::Object o)
     : layerID(std::stoull(o["layerID"].getString()))
     , neuronID(std::stoull(o["neuronID"].getString()))
@@ -56,9 +70,6 @@ namespace EvoAI{
     Neuron::ActivationType NodeGene::getActType() const noexcept{
         return actType;
     }
-    void NodeGene::setInnovationID(const std::size_t& id) noexcept{
-        innovationID = id;
-    }
     const std::size_t& NodeGene::getInnovationID() const noexcept{
         return innovationID;
     }
@@ -72,11 +83,31 @@ namespace EvoAI{
         return biasWeight;
     }
     bool NodeGene::operator==(const NodeGene& rhs) const{
-        return (layerID == rhs.layerID
-                && neuronID == rhs.neuronID
-                && innovationID == rhs.innovationID);
+        return innovationID == rhs.innovationID;
     }
     bool NodeGene::operator!=(const NodeGene& rhs) const{
         return !((*this)==rhs);
+    }
+    void NodeGene::operator=(const NodeGene& rhs) noexcept{
+        layerID = rhs.layerID;
+        neuronID = rhs.neuronID;
+        biasWeight = rhs.biasWeight;
+        nrnType = rhs.nrnType;
+        actType = rhs.actType;
+        innovationID = rhs.innovationID;
+    }
+    void NodeGene::operator=(NodeGene&& rhs) noexcept{
+        layerID = rhs.layerID;
+        neuronID = rhs.neuronID;
+        biasWeight = rhs.biasWeight;
+        nrnType = rhs.nrnType;
+        actType = rhs.actType;
+        innovationID = rhs.innovationID;
+    }
+    constexpr bool NodeGene::operator<(const NodeGene& rhs) const noexcept{
+        return innovationID < rhs.innovationID;
+    }
+    constexpr bool NodeGene::operator>(const NodeGene& rhs) const noexcept{
+        return !((*this)<rhs);
     }
 }

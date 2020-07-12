@@ -12,6 +12,22 @@ namespace EvoAI{
     , cppn(false)
     , nodeChromosomes()
     , connectionChromosomes(){}
+    Genome::Genome(const Genome& rhs) noexcept
+    : genomeID(rhs.genomeID)
+    , speciesID(rhs.speciesID)
+    , fitness(rhs.fitness)
+    , rnnAllowed(rhs.rnnAllowed)
+    , cppn(rhs.cppn)
+    , nodeChromosomes(rhs.nodeChromosomes)
+    , connectionChromosomes(rhs.connectionChromosomes){}
+    Genome::Genome(Genome&& rhs) noexcept
+    : genomeID(rhs.genomeID)
+    , speciesID(rhs.speciesID)
+    , fitness(rhs.fitness)
+    , rnnAllowed(rhs.rnnAllowed)
+    , cppn(rhs.cppn)
+    , nodeChromosomes(std::move(rhs.nodeChromosomes))
+    , connectionChromosomes(std::move(rhs.connectionChromosomes)){}
     Genome::Genome(const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecursive, bool cppn)
     : genomeID(0)
     , speciesID(0)
@@ -363,6 +379,30 @@ namespace EvoAI{
             }
         }
         return true;
+    }
+    void Genome::operator=(const Genome& rhs) noexcept{
+        genomeID = rhs.genomeID;
+        speciesID = rhs.speciesID;
+        fitness = rhs.fitness;
+        rnnAllowed = rhs.rnnAllowed;
+        cppn = rhs.cppn;
+        nodeChromosomes = rhs.nodeChromosomes;
+        connectionChromosomes = rhs.connectionChromosomes;
+    }
+    void Genome::operator=(Genome&& rhs) noexcept{
+        genomeID = rhs.genomeID;
+        speciesID = rhs.speciesID;
+        fitness = rhs.fitness;
+        rnnAllowed = rhs.rnnAllowed;
+        cppn = rhs.cppn;
+        nodeChromosomes = std::move(rhs.nodeChromosomes);
+        connectionChromosomes = std::move(rhs.connectionChromosomes);
+    }
+    constexpr bool Genome::operator<(const Genome& rhs) const noexcept{
+        return genomeID < rhs.genomeID;
+    }
+    constexpr bool Genome::operator>(const Genome& rhs) const noexcept{
+        return genomeID > rhs.genomeID;
     }
 //////////
 //// Static Functions

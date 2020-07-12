@@ -36,6 +36,18 @@ namespace EvoAI{
              */
             NodeGene(const std::size_t& lyrID, const std::size_t& nrnID, Neuron::Type nt, Neuron::ActivationType nat);
             /**
+             *  @brief copy constructor
+             *  
+             *  @param [in] rhs NodeGene
+             */
+            NodeGene(const NodeGene& rhs) noexcept;
+            /**
+             *  @brief move constructor
+             *  
+             *  @param [in] rhs NodeGene
+             */
+            NodeGene(NodeGene&& rhs) noexcept;
+            /**
              * @brief Constructor with a json object
              * @param o JsonBox::Object&
              */ 
@@ -76,11 +88,6 @@ namespace EvoAI{
              */
             Neuron::ActivationType getActType() const noexcept;
             /**
-             * @brief setter for innovationID
-             * @param id std::size_t
-             */
-            void setInnovationID(const std::size_t& id) noexcept;
-            /**
              * @brief getter for InnovationID
              * @return std::size_t
              */
@@ -102,6 +109,10 @@ namespace EvoAI{
             const double& getBias() const noexcept;
             bool operator==(const NodeGene& rhs) const;
             bool operator!=(const NodeGene& rhs) const;
+            void operator=(const NodeGene& rhs) noexcept;
+            void operator=(NodeGene&& rhs) noexcept;
+            constexpr bool operator<(const NodeGene& rhs) const noexcept;
+            constexpr bool operator>(const NodeGene& rhs) const noexcept;
             ~NodeGene() = default;
         private:
             std::size_t layerID;

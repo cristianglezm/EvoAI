@@ -15,6 +15,16 @@ namespace EvoAI{
     , innovationID(0){
         innovationID = std::hash<ConnectionGene>{}(*this);
     }
+    ConnectionGene::ConnectionGene(const ConnectionGene& rhs) noexcept
+    : enabled(rhs.enabled)
+    , frozen(rhs.frozen)
+    , c(rhs.c)
+    , innovationID(rhs.innovationID){}
+    ConnectionGene::ConnectionGene(ConnectionGene&& rhs) noexcept
+    : enabled(rhs.enabled)
+    , frozen(rhs.frozen)
+    , c(rhs.c)
+    , innovationID(rhs.innovationID){}
     ConnectionGene::ConnectionGene(JsonBox::Object o)
     : enabled(o["enabled"].getBoolean())
     , frozen(o["frozen"].getBoolean())
@@ -28,6 +38,7 @@ namespace EvoAI{
     }
     std::string ConnectionGene::toString(const std::string& delimiter) const noexcept{
         std::string str;
+        ///@todo use format?
         str += "ID: " + std::to_string(innovationID) + delimiter + "conn: [" + std::to_string(getSrc().layer) + ", " + std::to_string(getSrc().neuron)
             + "] -> [" + std::to_string(getDest().layer) + ", " + std::to_string(getDest().neuron) + "]" + delimiter + "w: " + std::to_string(getWeight())
             + delimiter + "enabled: " + (enabled ? "true":"false");
@@ -65,18 +76,31 @@ namespace EvoAI{
     bool ConnectionGene::isFrozen() const noexcept{
         return frozen;
     }
-    void ConnectionGene::setInnovationID(const std::size_t& id) noexcept{
-        innovationID = id;
-    }
     const std::size_t& ConnectionGene::getInnovationID() const noexcept{
         return innovationID;
     }
     bool ConnectionGene::operator==(const ConnectionGene& rhs) const{
-        return (c.getSrc() == rhs.c.getSrc()
-                && c.getDest() == rhs.c.getDest()
-                && innovationID == rhs.innovationID);
+        return innovationID == rhs.innovationID;
     }
     bool ConnectionGene::operator!=(const ConnectionGene& rhs) const{
         return !((*this)==rhs);
+    }
+    void ConnectionGene::operator=(const ConnectionGene& rhs) noexcept{
+        enabled = rhs.enabled;
+        frozen = rhs.frozen;
+        c = rhs.c;
+        innovationID= rhs.innovationID;
+    }
+    void ConnectionGene::operator=(ConnectionGene&& rhs) noexcept{
+        enabled = rhs.enabled;
+        frozen = rhs.frozen;
+        c = rhs.c;
+        innovationID= rhs.innovationID;
+    }
+    constexpr bool ConnectionGene::operator<(const ConnectionGene& rhs) const noexcept{
+        return innovationID < rhs.innovationID;
+    }
+    constexpr bool ConnectionGene::operator>(const ConnectionGene& rhs) const noexcept{
+        return !((*this) < rhs);
     }
 }

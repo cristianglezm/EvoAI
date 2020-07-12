@@ -35,6 +35,18 @@ namespace EvoAI{
              */ 
             Genome();
             /**
+             *  @brief copy constructor
+             *  
+             *  @param [in] rhs const Genome&
+             */
+            Genome(const Genome& rhs) noexcept;
+            /**
+             *  @brief move constructor
+             *  
+             *  @param [in] rhs Genome&&
+             */
+            Genome(Genome&& rhs) noexcept;
+            /**
              * @brief builds a Genome that is feedforward connected from inputs to outputs.
              * @param numInputs
              * @param numOutputs
@@ -240,6 +252,11 @@ namespace EvoAI{
              */
             bool isValid() noexcept;
             ~Genome() = default;
+        public:
+            void operator=(const Genome& rhs) noexcept;
+            void operator=(Genome&& rhs) noexcept;
+            constexpr bool operator<(const Genome& rhs) const noexcept;
+            constexpr bool operator>(const Genome& rhs) const noexcept;
         public:
             /**
              * @brief returns a random ActivationType.
