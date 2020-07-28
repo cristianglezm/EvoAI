@@ -29,7 +29,7 @@ namespace EvoAI{
     : enabled(o["enabled"].getBoolean())
     , frozen(o["frozen"].getBoolean())
     , c(o["Connection"].getObject())
-    , innovationID(std::stoull(o["innovationID"].getString())){}
+    , innovationID(std::hash<ConnectionGene>{}(*this)){}
     bool ConnectionGene::isEnabled() const noexcept{
         return enabled;
     }
@@ -49,7 +49,6 @@ namespace EvoAI{
         o["enabled"] = JsonBox::Value(enabled);
         o["frozen"] = JsonBox::Value(frozen);
         o["Connection"] = c.toJson();
-        o["innovationID"] = JsonBox::Value(std::to_string(innovationID));
         return JsonBox::Value(o);
     }
     void ConnectionGene::addWeight(const double& amount) noexcept{
@@ -89,18 +88,12 @@ namespace EvoAI{
         enabled = rhs.enabled;
         frozen = rhs.frozen;
         c = rhs.c;
-        innovationID= rhs.innovationID;
+        innovationID = rhs.innovationID;
     }
     void ConnectionGene::operator=(ConnectionGene&& rhs) noexcept{
         enabled = rhs.enabled;
         frozen = rhs.frozen;
         c = rhs.c;
         innovationID= rhs.innovationID;
-    }
-    constexpr bool ConnectionGene::operator<(const ConnectionGene& rhs) const noexcept{
-        return innovationID < rhs.innovationID;
-    }
-    constexpr bool ConnectionGene::operator>(const ConnectionGene& rhs) const noexcept{
-        return !((*this) < rhs);
     }
 }

@@ -13,12 +13,24 @@
 namespace EvoAI{
     /**
      * @brief Combines two hashes
-     * @param seed std::size_t
+     * @tparam T number type
+     * @param seed std::size_t&
      * @param v const T& hasheable Object
-     * @return std::size_t
      */
-    template <class T>
-    inline std::size_t hashCombine(std::size_t seed, const T& v) noexcept;
+    template<class T>
+    inline void hashCombine(std::size_t& seed, const T& v) noexcept;
+    /** @TODO
+     *  @brief joins hashes 
+     *  @code
+     *      auto hash = EvoAI::joinHashes(0u, 1,2,3,4,5);
+     *  @endcode
+     *  @tparam ...Args seq of numbers(same type)
+     *  @param [in] seed to use
+     *  @param [in] args number seq
+     *  @return std::size_t hash
+     */
+    template<typename...Args>
+    inline constexpr std::size_t joinHashes(std::size_t seed, const Args&...args) noexcept;
     /**
      * @brief normalize values from one range to another
      * @code
@@ -90,6 +102,18 @@ namespace EvoAI{
 //////////
 ///// implementation inlined functions.
 //////////
+    template <class T>
+    inline void hashCombine(std::size_t& seed, const T& v) noexcept{
+        std::hash<T> hasher;
+        seed ^= hasher(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+    }
+    template<typename...Args>
+    inline constexpr std::size_t joinHashes(std::size_t seed, const Args&...args) noexcept{
+        for(auto& n:{args...}){
+            hashCombine(seed, n);
+        }
+        return seed;
+    }
     template<typename T>
     inline constexpr T normalize(const T& val,const T& normMin, const T& normMax, const T& min, const T& max) noexcept{
         if(min<max){
@@ -121,12 +145,6 @@ namespace EvoAI{
         auto normX = (2.0*(x/width))-1;
         auto normY = (2.0*(y/height))-1;
         return std::sqrt((static_cast<int>(normX/2)^2) + (static_cast<int>(normY/2)^2));
-    }
-    template <class T>
-    inline std::size_t hashCombine(std::size_t seed, const T& v) noexcept{
-        std::hash<T> hasher;
-        seed ^= hasher(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
-        return seed;
     }
 }
 

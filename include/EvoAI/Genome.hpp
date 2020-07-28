@@ -20,14 +20,49 @@ namespace EvoAI{
      */
     class EvoAI_API Genome final{
         public:
-            using matchingNodeGenes = std::pair<std::vector<NodeGene>, std::vector<NodeGene>>;
-            using matchingConnectionGenes = std::pair<std::vector<ConnectionGene>, std::vector<ConnectionGene>>;
+            /**
+             *  @brief helper struct for reproduce, getDisjointGenes, getExcessGenes, getMatching*
+             */
+            template<class T, class InputIt = typename std::vector<T>::const_iterator>
+            struct Range{
+                Range(InputIt begin, InputIt end)
+                : begin(begin)
+                , end(end){}
+                std::size_t size() const{
+                    return std::distance(begin, end);
+                }
+                const T& operator[](const std::size_t& index) const noexcept{
+                    return *(begin + index);
+                }
+                using iterator = typename std::vector<T>::iterator;
+                using const_iterator = typename std::vector<T>::const_iterator;
+                InputIt begin;
+                InputIt end;
+            };
+            template<class T>
+            typename Range<T>::const_iterator cbegin(const Range<T>& range){
+                return range.begin;
+            }
+            template<class T>
+            typename Range<T>::const_iterator cend(const Range<T>& range){
+                return range.end;
+            }
+            template<class T>
+            typename Range<T>::iterator begin(const Range<T>& range){
+                return range.begin;
+            }
+            template<class T>
+            typename Range<T>::iterator end(const Range<T>& range){
+                return range.end;
+            }
+            using matchingNodeGenes = std::pair<Range<NodeGene>, Range<NodeGene>>;
+            using matchingConnectionGenes = std::pair<Range<ConnectionGene>, Range<ConnectionGene>>;
             using matchingChromosomes = std::pair<matchingNodeGenes, matchingConnectionGenes>;
-            using excessNodeGenes = std::vector<NodeGene>;
-            using excessConnectionGenes = std::vector<ConnectionGene>;
+            using excessNodeGenes = std::pair<Range<NodeGene>, Range<NodeGene>>;
+            using excessConnectionGenes = std::pair<Range<ConnectionGene>, Range<ConnectionGene>>;
             using excessGenes = std::pair<excessNodeGenes, excessConnectionGenes>;
-            using disjointNodeGenes = std::vector<NodeGene>;
-            using disjointConnectionGenes = std::vector<ConnectionGene>;
+            using disjointNodeGenes = std::pair<Range<NodeGene>, Range<NodeGene>>;
+            using disjointConnectionGenes = std::pair<Range<ConnectionGene>, Range<ConnectionGene>>;
             using disjointGenes = std::pair<disjointNodeGenes, disjointConnectionGenes>;
         public:
             /**
@@ -255,6 +290,7 @@ namespace EvoAI{
         public:
             void operator=(const Genome& rhs) noexcept;
             void operator=(Genome&& rhs) noexcept;
+            constexpr bool operator==(const Genome& rhs) const noexcept;
             constexpr bool operator<(const Genome& rhs) const noexcept;
             constexpr bool operator>(const Genome& rhs) const noexcept;
         public:
@@ -277,40 +313,42 @@ namespace EvoAI{
                                     const double& c2 = 2.0, 
                                     const double& c3 = 1.0) noexcept;
             /**
-             * @brief returns the matching NodeGenes between two genomes.
+             * @brief It returns a matchingNodeGenes of matching NodeGenes between g1 and g2.
              * @param g1 Genome
              * @param g2 Genome
              * @return matchingNodeGenes
              */
             static matchingNodeGenes getMatchingNodeGenes(const Genome& g1, const Genome& g2) noexcept;
             /**
-             * @brief returns the matching ConnectionGenes between two genomes.
+             * @brief It returns a MatchingConnectionGenes of matching ConnectionGenes between g1 and g2.
              * @param g1 Genome
              * @param g2 Genome
              * @return matchingConnectionGenes
              */
             static matchingConnectionGenes getMatchingConnectionGenes(const Genome& g1, const Genome& g2) noexcept;
             /**
-             * @brief returns the matching matchingChromosomes between two genomes
+             * @brief It returns a matchingChromosomes of matching NodeGene, ConnectionGene between g1 and g2.
              * @param g1 Genome
              * @param g2 Genome
              * @return matchingChromosomes
              */
             static matchingChromosomes getMatchingChromosomes(const Genome& g1, const Genome& g2) noexcept;
             /**
-             * @brief returns Excess genes of g1
+             * @brief It returns a excessGenes of g1 and g2
              * @param g1 const Genome&
              * @param g2 const Genome&
+             * @param hint disjointGenes*
              * @return excessGenes
              */
-            static excessGenes getExcessGenes(const Genome& g1, const Genome& g2) noexcept;
+            static excessGenes getExcessGenes(const Genome& g1, const Genome& g2, disjointGenes* hint = nullptr) noexcept;
             /**
-             * @brief returns Disjoint genes of g1
+             * @brief It returns a disjointGenes of g1 and g2
              * @param g1 const Genome&
              * @param g2 const Genome&
+             * @param hint matchingChromosomes*
              * @return disjointGenes
              */
-            static disjointGenes getDisjointGenes(const Genome& g1, const Genome& g2) noexcept;
+            static disjointGenes getDisjointGenes(const Genome& g1, const Genome& g2, matchingChromosomes* hint = nullptr) noexcept;
             /**
              * @brief Creates a new Genome from two parents.
              * if g1 and g2 are equal it will copy g1.
@@ -340,6 +378,21 @@ namespace EvoAI{
             std::vector<NodeGene> nodeChromosomes;
             std::vector<ConnectionGene> connectionChromosomes;
     };
+    constexpr bool Genome::operator==(const Genome& rhs) const noexcept{
+        return (genomeID == rhs.genomeID &&
+                speciesID == rhs.speciesID &&
+                fitness == rhs.fitness &&
+                rnnAllowed == rhs.rnnAllowed &&
+                cppn == rhs.cppn &&
+                nodeChromosomes == rhs.nodeChromosomes &&
+                connectionChromosomes == rhs.connectionChromosomes);
+    }
+    constexpr bool Genome::operator<(const Genome& rhs) const noexcept{
+        return genomeID < rhs.genomeID;
+    }
+    constexpr bool Genome::operator>(const Genome& rhs) const noexcept{
+        return genomeID > rhs.genomeID;
+    }
 }
 
 #endif // EVOAI_GENOME_HPP

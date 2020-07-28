@@ -6,6 +6,7 @@
 #include <random>
 #include <chrono>
 #include <string>
+#include <functional>
 
 #include <EvoAI/NeuralNetwork.hpp>
 #include <EvoAI/Export.hpp>
@@ -15,12 +16,19 @@
 #include <EvoAI/Utils/RandomUtils.hpp>
 
 namespace EvoAI{
+    /**
+     *  @brief calculates time it takes Fn in milliseconds
+     *  
+     *  @param [in] fn   function
+     *  @param [in] args args for function
+     *  @return double
+     */
     template<typename Fn, typename...Args>
-    auto TimeThis(Fn&& fn, Args&...args) noexcept{
+    auto TimeThis(Fn&& fn, const Args&...args) noexcept{
         auto start = std::chrono::high_resolution_clock::now();
-        fn(args...);
+        std::invoke(fn, args...);
         auto end = std::chrono::high_resolution_clock::now();
-        return std::chrono::duration<double>(end-start).count();
+        return std::chrono::duration<double, std::milli>(end-start).count();
     }
 }
 

@@ -1,6 +1,8 @@
 #ifndef EVOAI_NODE_GENE_TEST_HPP
 #define EVOAI_NODE_GENE_TEST_HPP
 
+#include <limits>
+
 #include <gtest/gtest.h>
 #include <EvoAI.hpp>
 

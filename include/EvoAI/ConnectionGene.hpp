@@ -8,6 +8,7 @@
 #include <EvoAI/Utils.hpp>
 
 #include <string>
+#include <cassert>
 
 namespace EvoAI{
     /**
@@ -70,6 +71,7 @@ namespace EvoAI{
             /**
              * @brief returns a std::string
              * @return std::string
+             * @todo remove and use operator<<
              */
             std::string toString(const std::string& delimiter = " ") const noexcept;
             /**
@@ -132,6 +134,12 @@ namespace EvoAI{
             Connection c;
             std::size_t innovationID;
     };
+    constexpr bool ConnectionGene::operator<(const ConnectionGene& rhs) const noexcept{
+        return innovationID < rhs.innovationID;
+    }
+    constexpr bool ConnectionGene::operator>(const ConnectionGene& rhs) const noexcept{
+        return !((*this) < rhs);
+    }
 }
 namespace std{
     /**
@@ -141,12 +149,19 @@ namespace std{
     struct hash<EvoAI::ConnectionGene>{
         using argument_type = EvoAI::ConnectionGene;
         using result_type = std::size_t;
-        result_type operator()(argument_type const& cg) const{
-            result_type const h1(std::hash<std::size_t>{}(cg.getSrc().layer));
-            auto srcHash = EvoAI::hashCombine(h1,cg.getSrc().neuron);
-            result_type const h2(std::hash<std::size_t>{}(cg.getDest().layer));
-            auto destHash = EvoAI::hashCombine<std::size_t>(h2,cg.getDest().neuron);
-            return EvoAI::hashCombine<std::size_t>(srcHash, destHash);
+        result_type operator()(const argument_type& cg) const{
+            result_type seed = 0u;
+            // better way of checking if x32 or x64 system?
+            if constexpr(sizeof(result_type) == 8){
+                assert(cg.getSrc().neuron <= 1073741823 || cg.getDest().neuron <= 1073741823);//assert Failed because Neuron is over 30 bits
+                seed = ((cg.getSrc().layer << 62ll) | (cg.getSrc().neuron << 32ll)) | ((cg.getDest().layer << 30ll) | cg.getDest().neuron);
+            }else if constexpr(sizeof(result_type) == 4){
+                assert(cg.getSrc().neuron <= 16383 || cg.getDest().neuron <= 16383);//assert Failed because Neuron is over 14 bits
+                seed = ((cg.getSrc().layer << 30ll) | (cg.getSrc().neuron << 16ll)) | ((cg.getDest().layer << 14ll) | cg.getDest().neuron);
+            }else{
+                static_assert(sizeof(result_type) == 4 || sizeof(result_type) == 8, "ConnectionGene.hpp std::hash<ConnectionGene> : System must to be x86 or x64");
+            }
+            return seed;
         }
     };
 }

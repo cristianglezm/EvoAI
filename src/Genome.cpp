@@ -1,6 +1,10 @@
 #include <EvoAI/Genome.hpp>
 
 #include <random>
+#include <algorithm>
+//#include <execution>
+#include <cassert>
+#include <future>
 #include <EvoAI/NeuronLayer.hpp>
 
 namespace EvoAI{
@@ -19,7 +23,10 @@ namespace EvoAI{
     , rnnAllowed(rhs.rnnAllowed)
     , cppn(rhs.cppn)
     , nodeChromosomes(rhs.nodeChromosomes)
-    , connectionChromosomes(rhs.connectionChromosomes){}
+    , connectionChromosomes(rhs.connectionChromosomes){
+        std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
+        std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
+    }
     Genome::Genome(Genome&& rhs) noexcept
     : genomeID(rhs.genomeID)
     , speciesID(rhs.speciesID)
@@ -27,7 +34,10 @@ namespace EvoAI{
     , rnnAllowed(rhs.rnnAllowed)
     , cppn(rhs.cppn)
     , nodeChromosomes(std::move(rhs.nodeChromosomes))
-    , connectionChromosomes(std::move(rhs.connectionChromosomes)){}
+    , connectionChromosomes(std::move(rhs.connectionChromosomes)){
+        std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
+        std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
+    }
     Genome::Genome(const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecursive, bool cppn)
     : genomeID(0)
     , speciesID(0)
@@ -36,6 +46,7 @@ namespace EvoAI{
     , cppn(cppn)
     , nodeChromosomes()
     , connectionChromosomes(){
+        nodeChromosomes.reserve(numInputs + numOutputs);
         for(auto i=0u;i<numInputs;++i){
             nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,Neuron::ActivationType::SIGMOID);
         }
@@ -46,11 +57,14 @@ namespace EvoAI{
             }
             nodeChromosomes.emplace_back(2,i,Neuron::Type::OUTPUT,at);
         }
+        connectionChromosomes.reserve(numInputs * numOutputs);
         for(auto i=0u;i<numInputs;++i){
             for(auto j=0u;j<numOutputs;++j){
-                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(2,j), randomGen.random(-1.0,1.0,numInputs + numOutputs));
+                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(2,j), randomGen.random(-1.0,1.0, numInputs + numOutputs));
             }
         }
+        std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
+        std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
     Genome::Genome(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numOutputs, bool canBeRecursive, bool cppn)
     : genomeID(0)
@@ -89,6 +103,8 @@ namespace EvoAI{
                 connectionChromosomes.emplace_back(NodeGene(1,i), NodeGene(2,j), randomGen.random(-1.0,1.0,numHidden + numOutputs));
             }
         }
+        std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
+        std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
     Genome::Genome(JsonBox::Object o)
     : genomeID(std::stoull(o["GenomeID"].getString()))
@@ -108,6 +124,8 @@ namespace EvoAI{
         for(auto& cg:cgs){
             connectionChromosomes.emplace_back(cg.getObject());
         }
+        std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
+        std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
     Genome::Genome(const std::string& jsonfile)
     : genomeID(0)
@@ -135,15 +153,20 @@ namespace EvoAI{
         for(auto& cg:cgs){
             connectionChromosomes.emplace_back(cg.getObject());
         }
+        std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
+        std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
     void Genome::addGene(const NodeGene& ng) noexcept{
         nodeChromosomes.emplace_back(ng);
+        std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
     }
     void Genome::addGene(const ConnectionGene& cg) noexcept{
         connectionChromosomes.emplace_back(cg);
+        std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
     void Genome::setNodeChromosomes(std::vector<NodeGene>&& ngenes) noexcept{
         nodeChromosomes = std::move(ngenes);
+        std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
     }
     std::vector<NodeGene>& Genome::getNodeChromosomes() noexcept{
         return nodeChromosomes;
@@ -153,6 +176,7 @@ namespace EvoAI{
     }
     void Genome::setConnectionChromosomes(std::vector<ConnectionGene>&& cgenes) noexcept{
         connectionChromosomes = std::move(cgenes);
+        std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
     std::vector<ConnectionGene>& Genome::getConnectionChromosomes() noexcept{
         return connectionChromosomes;
@@ -161,13 +185,10 @@ namespace EvoAI{
         return connectionChromosomes;
     }
     std::size_t Genome::getNumOfNodes(const std::size_t& layerID) const noexcept{
-        std::size_t num = 0;
-        for(auto& n:nodeChromosomes){
-            if(n.getLayerID() == layerID){
-                ++num;
-            }
-        }
-        return num;
+        return std::count_if(std::begin(nodeChromosomes), std::end(nodeChromosomes), 
+            [&layerID](const auto& n){
+               return n.getLayerID() == layerID;
+        });
     }
     JsonBox::Value Genome::toJson() const noexcept{
         JsonBox::Object o;
@@ -206,12 +227,10 @@ namespace EvoAI{
         return fitness;
     }
     bool Genome::hasNodeGene(const NodeGene& ng) const noexcept{
-        auto found = std::find(std::begin(nodeChromosomes),std::end(nodeChromosomes),ng);
-        return (found != std::end(nodeChromosomes));
+        return std::binary_search(std::begin(nodeChromosomes), std::end(nodeChromosomes), ng);
     }
     bool Genome::hasConnectionGene(const ConnectionGene& cg) const noexcept{
-        auto found = std::find(std::begin(connectionChromosomes),std::end(connectionChromosomes),cg);
-        return (found != std::end(connectionChromosomes));
+        return std::binary_search(std::begin(connectionChromosomes), std::end(connectionChromosomes), cg);
     }
     void Genome::setGenomeID(const std::size_t& gnmID) noexcept{
         genomeID = gnmID;
@@ -247,6 +266,8 @@ namespace EvoAI{
             connectionChromosomes.emplace_back(cg1);
             connectionChromosomes.emplace_back(cg2);
         }
+        std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
+        std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
     void Genome::mutateAddConnection() noexcept{
         if(!nodeChromosomes.empty()){
@@ -261,6 +282,7 @@ namespace EvoAI{
             }else{
                 connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], randomGen.random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
             }
+            std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
         }
     }
     void Genome::mutateRemoveConnection() noexcept{
@@ -270,6 +292,7 @@ namespace EvoAI{
                                                 std::end(connectionChromosomes),
                                                 connectionChromosomes[selectedConn]),
                                                 std::end(connectionChromosomes));
+            std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
         }
     }
     void Genome::mutateWeights(double power) noexcept{
@@ -334,7 +357,7 @@ namespace EvoAI{
         cgs.reserve(connectionChromosomes.size());
         for(auto& c:connectionChromosomes){
             if(!c.isEnabled()){
-                cgs.push_back(&c);
+                cgs.emplace_back(&c);
             }
         }
         if(!cgs.empty()){
@@ -366,15 +389,15 @@ namespace EvoAI{
     }
     bool Genome::isValid() noexcept{
         for(auto& n:nodeChromosomes){
-            if((n.getLayerID() > 3) || (n.getNeuronID() >= getNumOfNodes(n.getLayerID()))){
+            if((n.getLayerID() > 2) || (n.getNeuronID() > getNumOfNodes(n.getLayerID()))){
                 return false;
             }
         }
         for(auto& c:connectionChromosomes){
             auto& src = c.getSrc();
             auto& dest = c.getDest();
-            if((src.layer > 3) || (src.neuron >= getNumOfNodes(src.layer)) ||
-                (dest.layer > 3) || (dest.neuron >= getNumOfNodes(dest.layer))){
+            if((src.layer > 2) || (src.neuron > getNumOfNodes(src.layer)) ||
+                (dest.layer > 2) || (dest.neuron > getNumOfNodes(dest.layer))){
                 return false;
             }
         }
@@ -398,207 +421,220 @@ namespace EvoAI{
         nodeChromosomes = std::move(rhs.nodeChromosomes);
         connectionChromosomes = std::move(rhs.connectionChromosomes);
     }
-    constexpr bool Genome::operator<(const Genome& rhs) const noexcept{
-        return genomeID < rhs.genomeID;
-    }
-    constexpr bool Genome::operator>(const Genome& rhs) const noexcept{
-        return genomeID > rhs.genomeID;
-    }
 //////////
 //// Static Functions
 //////////
     double Genome::distance(const Genome& g1, const Genome& g2, const double& c1, const double& c2, const double& c3) noexcept{
-        auto E = getExcessGenes(g1,g2).second.size();
-        auto D = getDisjointGenes(g1,g2).second.size();
-        auto matchingGenes = getMatchingChromosomes(g1, g2);
-        auto N = matchingGenes.second.first.size();
-        auto weightAvgs = 0.0;
-        for(auto& c1:matchingGenes.second.first){
-            for(auto& c2:matchingGenes.second.second){
-                weightAvgs += c1.getWeight() - c2.getWeight();
-            }
+        auto mChromo = getMatchingChromosomes(g1, g2);
+        auto disGen = getDisjointGenes(g1,g2, &mChromo);
+        const auto D = disGen.first.first.size() + disGen.first.second.size() + disGen.second.first.size() + disGen.second.second.size();
+        auto exGen = getExcessGenes(g1,g2, &disGen);
+        const auto E = exGen.first.first.size() + exGen.first.second.size() + exGen.second.first.size() + exGen.second.second.size();
+
+        auto& cGenes1 = mChromo.second.first;
+        auto& cGenes2 = mChromo.second.second;
+        const auto N = std::max(g1.nodeChromosomes.size() + g1.connectionChromosomes.size(),
+                                g2.nodeChromosomes.size() + g2.connectionChromosomes.size());
+
+        auto weightAbsDiff = 0.0d;
+
+        assert(cGenes1.size() == cGenes2.size());
+
+        for(auto i=0u;i<cGenes1.size();++i){
+            weightAbsDiff += std::abs(cGenes1[i].getWeight() - cGenes2[i].getWeight());
         }
-        weightAvgs /= matchingGenes.second.first.size();
-        return ((c1*E)/N) + ((c2*D)/N) + c3 * weightAvgs;
+        return ((c1 * E) / N) + ((c2 * D) / N) + c3 * weightAbsDiff;
     }
     Neuron::ActivationType Genome::getRandomActivationType() noexcept{
         return static_cast<Neuron::ActivationType>(randomGen.random(0, Neuron::ActivationType::LAST_CPPN_ACTIVATION_TYPE-1));
     }
     Genome::matchingNodeGenes Genome::getMatchingNodeGenes(const Genome& g1, const Genome& g2) noexcept{
-        std::vector<NodeGene> matchingNodes1;
-        std::vector<NodeGene> matchingNodes2;
-        for(auto& n1:g1.nodeChromosomes){
-            for(auto& n2:g2.nodeChromosomes){
-                if(n1 == n2){
-                    matchingNodes1.push_back(n1);
-                    matchingNodes2.push_back(n2);
-                }
-            }
-        }
-        return std::make_pair(matchingNodes1, matchingNodes2);
+        auto mNodeGenes = std::mismatch(std::begin(g1.nodeChromosomes), std::end(g1.nodeChromosomes)
+                                                ,std::begin(g2.nodeChromosomes), std::end(g2.nodeChromosomes));
+        return std::make_pair(Range<NodeGene>(std::begin(g1.nodeChromosomes), mNodeGenes.first), 
+                                Range<NodeGene>(std::begin(g2.nodeChromosomes), mNodeGenes.second));
     }
     Genome::matchingConnectionGenes Genome::getMatchingConnectionGenes(const Genome& g1, const Genome& g2) noexcept{
-        std::vector<ConnectionGene> matchingConnections1;
-        std::vector<ConnectionGene> matchingConnections2;
-        for(auto& c1:g1.connectionChromosomes){
-            for(auto& c2:g2.connectionChromosomes){
-                if(c1 == c2){
-                    matchingConnections1.push_back(c1);
-                    matchingConnections2.push_back(c2);
-                }
-            }
-        }
-        return std::make_pair(matchingConnections1, matchingConnections2);
+        auto matchingConnGenes = std::mismatch(std::begin(g1.connectionChromosomes), std::end(g1.connectionChromosomes)
+                                                ,std::begin(g2.connectionChromosomes), std::end(g2.connectionChromosomes));
+        return std::make_pair(Range<ConnectionGene>(std::begin(g1.connectionChromosomes), matchingConnGenes.first), 
+                                Range<ConnectionGene>(std::begin(g2.connectionChromosomes), matchingConnGenes.second));
     }
     Genome::matchingChromosomes Genome::getMatchingChromosomes(const Genome& g1, const Genome& g2) noexcept{
-        return std::make_pair(getMatchingNodeGenes(g1, g2), getMatchingConnectionGenes(g1, g2));
+        return std::make_pair(getMatchingNodeGenes(g1, g2), getMatchingConnectionGenes(g1,g2));
     }
-    Genome::excessGenes Genome::getExcessGenes(const Genome& g1, const Genome& g2) noexcept{
-        excessNodeGenes eng;
-        excessConnectionGenes ecg;
-        auto end1 = g2.nodeChromosomes.end() - 1;
-        auto end2 = g2.connectionChromosomes.end() - 1;
-        for(auto& n1:g1.nodeChromosomes){
-            if(!g2.hasNodeGene(n1) 
-                && n1.getInnovationID() > (*end1).getInnovationID()){
-                eng.push_back(n1);
+    Genome::excessGenes Genome::getExcessGenes(const Genome& g1, const Genome& g2, Genome::disjointGenes* hint) noexcept{
+        auto disjointsGen = [&](){
+            if(hint){
+                return *hint;
+            }else{
+                return getDisjointGenes(g1, g2);
             }
+        }();
+
+        return std::make_pair(std::make_pair(Range<NodeGene>(disjointsGen.first.first.end, std::end(g1.nodeChromosomes)), 
+                                                Range<NodeGene>(disjointsGen.first.second.end, std::end(g2.nodeChromosomes))), 
+                                std::make_pair(Range<ConnectionGene>(disjointsGen.second.first.end, std::end(g1.connectionChromosomes)), 
+                                                Range<ConnectionGene>(disjointsGen.second.second.end, std::end(g2.connectionChromosomes))));
+    }
+    Genome::disjointGenes Genome::getDisjointGenes(const Genome& g1, const Genome& g2, Genome::matchingChromosomes* hint) noexcept{
+        const Genome* g1Ptr = &g1;
+        const Genome* g2Ptr = &g2;
+
+        auto mChromo = [&](){
+            if(hint){
+                return *hint;
+            }else{
+                return getMatchingChromosomes(g1, g2);
+            }
+        }();
+
+        auto begNodes1 = mChromo.first.first.end;
+        auto endNodes1 = mChromo.first.first.end;
+
+        auto begNodes2 = mChromo.first.second.end;
+        auto endNodes2 = mChromo.first.second.end;
+
+        auto swapped = false;
+
+        auto begConn1 = mChromo.second.first.end;
+        auto endConn1 = mChromo.second.first.end;
+
+        auto begConn2 = mChromo.second.second.end;
+        auto endConn2 = mChromo.second.second.end;
+
+        if(endNodes1 == std::end(g1.nodeChromosomes) && endNodes2 == std::end(g2.nodeChromosomes) &&
+            endConn1 == std::end(g1.connectionChromosomes) && endConn2 == std::end(g2.connectionChromosomes)){
+            return std::make_pair(std::make_pair(Range<NodeGene>(begNodes1, endNodes1), Range<NodeGene>(begNodes2, endNodes2)), 
+                                    std::make_pair(Range<ConnectionGene>(begConn1, endConn1), Range<ConnectionGene>(begConn2, endConn2)));
         }
-        if(!g2.connectionChromosomes.empty()){
-            for(auto& c1:g1.connectionChromosomes){
-                if(!g2.hasConnectionGene(c1)
-                    && c1.getInnovationID() > (*end2).getInnovationID()){
-                    ecg.push_back(c1);
+        auto next = [](auto iter){
+            return ++iter;
+        };
+        if(endNodes1 != std::end(g1.nodeChromosomes) && endNodes2 != std::end(g2.nodeChromosomes)){
+            if(*begNodes1 < *begNodes2){
+                std::swap(begNodes1, begNodes2);
+                std::swap(endNodes1, endNodes2);
+                std::swap(g1Ptr, g2Ptr);
+                swapped = true;
+            }
+            while(endNodes1 != std::end(g1Ptr->nodeChromosomes) || endNodes2 != std::end(g2Ptr->nodeChromosomes)){
+                if(*endNodes2 < *endNodes1 && next(endNodes2) <= std::end(g2Ptr->nodeChromosomes)){
+                    ++endNodes2;
+                }else if(next(endNodes1) <= std::end(g1Ptr->nodeChromosomes)){
+                    ++endNodes1;
+                    break;
+                }else{
+                    break;
                 }
             }
-        }else{
-            for(auto& c1:g1.connectionChromosomes){
-                ecg.push_back(c1);
+            if(swapped){
+                std::swap(begNodes1, begNodes2);
+                std::swap(endNodes1, endNodes2);
+                std::swap(g1Ptr, g2Ptr);
+                swapped = false;
             }
         }
-        return std::make_pair(eng,ecg);
-    }
-    Genome::disjointGenes Genome::getDisjointGenes(const Genome& g1, const Genome& g2) noexcept{
-        disjointNodeGenes dng;
-        disjointConnectionGenes dcg;
-        auto end1 = g2.nodeChromosomes.end() - 1;
-        auto end2 = g2.connectionChromosomes.end() - 1;
-        for(auto& n1:g1.nodeChromosomes){
-            if(!g2.hasNodeGene(n1) 
-                && n1.getInnovationID() < (*end1).getInnovationID()){
-                dng.push_back(n1);
+        if(endConn1 != std::end(g1.connectionChromosomes) && endConn2 != std::end(g2.connectionChromosomes)){
+            if(*begConn1 < *begConn2){
+                std::swap(begConn1, begConn2);
+                std::swap(endConn1, endConn2);
+                std::swap(g1Ptr, g2Ptr);
+                swapped = true;
             }
-        }
-        if(!g2.connectionChromosomes.empty()){
-            for(auto& c1:g1.connectionChromosomes){
-                if(!g2.hasConnectionGene(c1)
-                    && c1.getInnovationID() < (*end2).getInnovationID()){
-                    dcg.push_back(c1);
+            while(endConn1 != std::end(g1Ptr->connectionChromosomes) || endConn2 != std::end(g2Ptr->connectionChromosomes)){
+                if(*endConn2 < *endConn1 && next(endConn2) <= std::end(g2Ptr->connectionChromosomes)){
+                    ++endConn2;
+                }else if(next(endConn1) <= std::end(g1Ptr->connectionChromosomes)){
+                    ++endConn1;
+                    break;
+                }else{
+                    break;
                 }
             }
-        }else{
-            for(auto& c1:g1.connectionChromosomes){
-                dcg.push_back(c1);
+            if(swapped){
+                std::swap(begConn1, begConn2);
+                std::swap(endConn1, endConn2);
+                std::swap(g1Ptr, g2Ptr);
+                swapped = false;
             }
         }
-        return std::make_pair(dng,dcg);
+        return std::make_pair(std::make_pair(Range<NodeGene>(begNodes1, endNodes1), Range<NodeGene>(begNodes2, endNodes2)), 
+                                std::make_pair(Range<ConnectionGene>(begConn1, endConn1), Range<ConnectionGene>(begConn2, endConn2)));
     }
     std::unique_ptr<Genome> Genome::reproduce(const Genome& g1, const Genome& g2) noexcept{
+        if(&g1 == &g2){
+            auto child = std::make_unique<Genome>(g1);
+            return child;
+        }
         auto child = std::make_unique<Genome>();
         std::vector<NodeGene> nGenes;
         std::vector<ConnectionGene> cGenes;
-        if(&g1 == &g2){
-            child = std::make_unique<Genome>(g1);
-            return child;
-        }
         matchingChromosomes mChromo = getMatchingChromosomes(g1,g2);
+
+        auto dGenes = getDisjointGenes(g1,g2, &mChromo);
+        auto eGenes = getExcessGenes(g1,g2, &dGenes);
         auto matchingNodeSize = mChromo.first.first.size();
-        for(auto i=0u;i<matchingNodeSize;++i){
-            auto selectFromFirstParent = randomGen.random(0.5);
-            if(selectFromFirstParent){
-                nGenes.push_back(mChromo.first.first[i]);
-            }else{
-                nGenes.push_back(mChromo.first.second[i]);
-            }
-        }
+        nGenes.reserve(matchingNodeSize);
+        std::transform(mChromo.first.first.begin, mChromo.first.first.end, 
+                        mChromo.first.second.begin, std::back_inserter(nGenes),
+                            [](const auto& ng1, const auto& ng2){
+                                auto selectFromFirstParent = randomGen.random(0.5);
+                                if(selectFromFirstParent){
+                                    return ng1;
+                                }
+                                return ng2;
+                            }
+        );
         auto matchingConnectionSize = mChromo.second.first.size();
+        cGenes.reserve(matchingConnectionSize);
         for(auto i=0u;i<matchingConnectionSize;++i){
             auto selectFromFirstParent = randomGen.random(0.5);
             auto isDisabled = randomGen.random(0.5);
             if(selectFromFirstParent){
-                if(!mChromo.second.first[i].isEnabled()
-                    || !mChromo.second.second[i].isEnabled()){
-                        mChromo.second.first[i].setEnabled(isDisabled);
+                cGenes.emplace_back(mChromo.second.first[i]);
+                if(!mChromo.second.first[i].isEnabled()){
+                    cGenes.back().setEnabled(isDisabled);
                 }
-                cGenes.push_back(mChromo.second.first[i]);
             }else{
-                if(!mChromo.second.first[i].isEnabled()
-                    || !mChromo.second.second[i].isEnabled()){
-                        mChromo.second.second[i].setEnabled(isDisabled);
+                cGenes.emplace_back(mChromo.second.second[i]);
+                if(!mChromo.second.second[i].isEnabled()){
+                    cGenes.back().setEnabled(isDisabled);
                 }
-                cGenes.push_back(mChromo.second.second[i]);
             }
         }
         if(g1.getFitness() > g2.getFitness()){
-            auto eGenes = getExcessGenes(g1,g2);
-            for(auto& g:eGenes.first){
-                nGenes.push_back(g);
-            }
-            for(auto& g:eGenes.second){
-                cGenes.push_back(g);
-            }
-            auto dGenes = getDisjointGenes(g1,g2);
-            for(auto& g:dGenes.first){
-                nGenes.push_back(g);
-            }
-            for(auto& g:dGenes.second){
-                cGenes.push_back(g);
-            }
+            // copy g1 disjointGenes(nodeGenes and connectionGenes)
+            std::copy(dGenes.first.first.begin, dGenes.first.first.end, std::back_inserter(nGenes));
+            std::copy(dGenes.second.first.begin, dGenes.second.first.end, std::back_inserter(cGenes));
+            // copy g1 excessGenes(nodeGenes and connectionGenes)
+            std::copy(eGenes.first.first.begin, eGenes.first.first.end, std::back_inserter(nGenes));
+            std::copy(eGenes.second.first.begin, eGenes.second.first.end, std::back_inserter(cGenes));
         }else if(g2.getFitness() > g1.getFitness()){
-            auto eGenes = getExcessGenes(g2,g1);
-            for(auto& g:eGenes.first){
-                nGenes.push_back(g);
-            }
-            for(auto& g:eGenes.second){
-                cGenes.push_back(g);
-            }
-            auto dGenes = getDisjointGenes(g2,g1);
-            for(auto& g:dGenes.first){
-                nGenes.push_back(g);
-            }
-            for(auto& g:dGenes.second){
-                cGenes.push_back(g);
-            }
+            // copy g2 disjointGenes(nodeGenes and connectionGenes)
+            std::copy(dGenes.first.second.begin, dGenes.first.second.end, std::back_inserter(nGenes));
+            std::copy(dGenes.second.second.begin, dGenes.second.second.end, std::back_inserter(cGenes));
+            // copy g2 excessGenes(nodeGenes and connectionGenes)
+            std::copy(eGenes.first.second.begin, eGenes.first.second.end, std::back_inserter(nGenes));
+            std::copy(eGenes.second.second.begin, eGenes.second.second.end, std::back_inserter(cGenes));
         }else{
-            for(auto& n1:g1.nodeChromosomes){
-                if(!g2.hasNodeGene(n1)){
-                    nGenes.push_back(n1);
-                }
-            }
-            for(auto& c1:g1.connectionChromosomes){
-                if(!g2.hasConnectionGene(c1)){
-                    cGenes.push_back(c1);
-                }
-            }
-            for(auto& n2:g2.nodeChromosomes){
-                if(!g1.hasNodeGene(n2)){
-                    nGenes.push_back(n2);
-                }
-            }
-            for(auto& c2:g2.connectionChromosomes){
-                if(!g1.hasConnectionGene(c2)){
-                    cGenes.push_back(c2);
-                }
-            }
+            // copy all disjointGenes(nodeGenes and connectionGenes)
+            std::copy(dGenes.first.first.begin, dGenes.first.first.end, std::back_inserter(nGenes));
+            std::copy(dGenes.first.second.begin, dGenes.first.second.end, std::back_inserter(nGenes));
+
+            std::copy(dGenes.second.first.begin, dGenes.second.first.end, std::back_inserter(cGenes));
+            std::copy(dGenes.second.second.begin, dGenes.second.second.end, std::back_inserter(cGenes));
+            // copy all excessGenes(nodeGenes and connectionGenes)
+            std::copy(eGenes.first.first.begin, eGenes.first.first.end, std::back_inserter(nGenes));
+            std::copy(eGenes.first.second.begin, eGenes.first.second.end, std::back_inserter(nGenes));
+            
+            std::copy(eGenes.second.first.begin, eGenes.second.first.end, std::back_inserter(cGenes));
+            std::copy(eGenes.second.second.begin, eGenes.second.second.end, std::back_inserter(cGenes));
         }
-        nGenes.erase(std::unique(std::begin(nGenes), std::end(nGenes),
-                                        [](NodeGene& ng1,NodeGene& ng2){
-                                            return (ng1.getInnovationID() == ng2.getInnovationID());
-                                        }), std::end(nGenes));
-        cGenes.erase(std::unique(std::begin(cGenes), std::end(cGenes),
-                                    [](ConnectionGene& cg1,ConnectionGene& cg2){
-                                        return (cg1.getInnovationID() == cg2.getInnovationID());
-                                    }), std::end(cGenes));
+        std::sort(std::begin(nGenes), std::end(nGenes));
+        std::sort(std::begin(cGenes), std::end(cGenes));
+        nGenes.erase(std::unique(std::begin(nGenes), std::end(nGenes)), std::end(nGenes));
+        cGenes.erase(std::unique(std::begin(cGenes), std::end(cGenes)), std::end(cGenes));
         child->setNodeChromosomes(std::move(nGenes));
         child->setConnectionChromosomes(std::move(cGenes));
         return child;

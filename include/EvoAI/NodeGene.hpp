@@ -8,6 +8,7 @@
 #include <EvoAI/Utils.hpp>
 
 #include <string>
+#include <cassert>
 
 namespace EvoAI{
     /**
@@ -122,6 +123,12 @@ namespace EvoAI{
             Neuron::ActivationType actType;
             std::size_t innovationID;
     };
+    constexpr bool NodeGene::operator<(const NodeGene& rhs) const noexcept{
+        return innovationID < rhs.innovationID;
+    }
+    constexpr bool NodeGene::operator>(const NodeGene& rhs) const noexcept{
+        return !((*this)<rhs);
+    }
 }
 
 namespace std{
@@ -132,9 +139,19 @@ namespace std{
     struct hash<EvoAI::NodeGene>{
         using argument_type = EvoAI::NodeGene;
         using result_type = std::size_t;
-        result_type operator()(argument_type const& ng) const{
-            result_type const h1(std::hash<std::size_t>{}(ng.getLayerID()));
-            return EvoAI::hashCombine<std::size_t>(h1,ng.getNeuronID());
+        result_type operator()(const argument_type& ng) const{
+            result_type seed = 0u;
+            // better way of checking if x32 or x64 system?
+            if constexpr(sizeof(std::size_t) == 8){
+                assert(ng.getNeuronID() <= 1152921504606846975);//assert failed because Neuron is over 60 bits
+                seed = (ng.getLayerID() << 62ll) | ng.getNeuronID();
+            }else if constexpr(sizeof(std::size_t) == 4){
+                assert(ng.getNeuronID() <= 1073741823); //assert failed because Neuron is over 30 bits
+                seed = (ng.getLayerID() << 30ll) | ng.getNeuronID();
+            }else{
+                static_assert(sizeof(result_type) == 4 || sizeof(result_type) == 8, "NodeGene.hpp std::hash<NodeGene> : System must to be x86 or x64");
+            }
+            return seed;
         }
     };
 }

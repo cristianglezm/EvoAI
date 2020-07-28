@@ -15,6 +15,8 @@ namespace EvoAI{
             EXPECT_EQ(innovationID, cg.getInnovationID());
             EXPECT_EQ(2u,cg.getDest().layer);
             EXPECT_EQ(1u,cg.getDest().neuron);
+            ConnectionGene cg1(cg);
+            EXPECT_EQ(cg1, cg);
         }
     }
 }

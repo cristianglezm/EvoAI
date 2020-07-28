@@ -41,7 +41,7 @@ namespace EvoAI{
     , biasWeight(o["biasWeight"].getDouble())
     , nrnType(Neuron::typeToEnum(o["nrnType"].getString()))
     , actType(Neuron::activationTypeToEnum(o["actType"].getString()))
-    , innovationID(std::stoull(o["innovationID"].getString())){}
+    , innovationID(std::hash<NodeGene>{}(*this)){}
     JsonBox::Value NodeGene::toJson() const noexcept{
         JsonBox::Object o;
         o["layerID"] = JsonBox::Value(std::to_string(layerID));
@@ -49,7 +49,6 @@ namespace EvoAI{
         o["biasWeight"] = JsonBox::Value(biasWeight);
         o["nrnType"] = JsonBox::Value(Neuron::typeToString(nrnType));
         o["actType"] = JsonBox::Value(Neuron::activationTypeToString(actType));
-        o["innovationID"] = JsonBox::Value(std::to_string(innovationID));
         return JsonBox::Value(o);
     }
     std::size_t NodeGene::getLayerID() const noexcept{
@@ -103,11 +102,5 @@ namespace EvoAI{
         nrnType = rhs.nrnType;
         actType = rhs.actType;
         innovationID = rhs.innovationID;
-    }
-    constexpr bool NodeGene::operator<(const NodeGene& rhs) const noexcept{
-        return innovationID < rhs.innovationID;
-    }
-    constexpr bool NodeGene::operator>(const NodeGene& rhs) const noexcept{
-        return !((*this)<rhs);
     }
 }
