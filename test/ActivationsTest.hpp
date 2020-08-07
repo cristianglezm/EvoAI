@@ -6,7 +6,10 @@
 
 namespace EvoAI{
     namespace Test{
-        TEST(ActivationssTest, Identity){
+        TEST(ActivationsTest, Identity){
+            ///@todo
+        }
+        TEST(DerivativesTest, Identity){
             ///@todo
         }
     }
