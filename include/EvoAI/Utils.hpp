@@ -14,6 +14,7 @@
 #include <EvoAI/Utils/MathUtils.hpp>
 #include <EvoAI/Utils/NNUtils.hpp>
 #include <EvoAI/Utils/RandomUtils.hpp>
+#include <EvoAI/Utils/TypeUtils.hpp>
 
 namespace EvoAI{
     /**

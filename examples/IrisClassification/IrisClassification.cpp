@@ -62,13 +62,13 @@ int main(int argc,char **argv){
                 std::cout << "\rMSE: " << nn->getMSE() << " ";
                 std::flush(std::cout);
                 nn->writeToFile("IrisClassification.json");
-            }while(nn->getMSE() > 0.02);
+            }while(nn->getMSE() > 0.02d);
             std::cout << std::endl;
         }else if(opt == "-c" || opt == "--classify"){
             std::cout << "Creating Test dataSets..." << std::endl;
             auto testSets = createTrainingSets(irisData,irisData.size()/2,irisData.size());
             std::cout << "Processing Test Classification..." << std::endl;
-            auto error = 0.0;
+            auto error = 0.0d;
             for(auto i=0u;i<testSets.first.size();++i){
                 nn->setInputs(std::move(testSets.first[i]));
                 auto outputs = nn->run();
@@ -88,7 +88,7 @@ int main(int argc,char **argv){
                     expectedOut = "Iris-virginica";
                 }
                 if(nnOut != expectedOut){
-                    error += 1;
+                    error += 1.0d;
                 }
                 std::cout << nnOut << " : "<< expectedOut << std::endl;
                 std::cout << "\tIris-setosa" << ":" << " - " << (outputs[0] * 100) << "%" << std::endl;
@@ -204,43 +204,46 @@ void normalizeData(EvoAI::NeuralNetwork::trainingFormat& data){
 }
 
 void evolveHyperneat(float errorThreehold, std::vector<std::vector<std::string>>& irisData){
-    EvoAI::Population p(500,3,2,false, true);
-    auto errorSum = 999.0;
+    EvoAI::Population<EvoAI::Genome> p(500,3,2,false, true);
+    p.setCompatibilityThreshold(10.0d);
+    auto errorSum = 999.0d;
     unsigned int gen = 0;
-    while(errorSum > errorThreehold){
-        p.orderGenomesByFitness();
-        for(auto& g:p.getGenomes()){
-            g->mutate();
-            auto nn = std::make_unique<EvoAI::HyperNeat>(EvoAI::SubstrateInfo(4,1,8,3),*g,
-                                                        EvoAI::HyperNeat::SubstrateConfiguration::GRID);
-            auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
-            normalizeData(trainingSets.first);
-            std::vector<std::vector<double>> results;
-            for(auto i=0u;i<trainingSets.first.size();++i){
-                nn->setInputs(std::move(trainingSets.first[i]));
-                auto outputs = nn->run();
-                results.push_back(std::move(outputs));
-                nn->reset();
-            }
-            auto error = 0.0;
-            for(auto i=0u;i<results.size();++i){
-                error += std::fabs(trainingSets.second[i][0] - results[i][0]) +
-                            std::fabs(trainingSets.second[i][1] - results[i][1]) +
-                            std::fabs(trainingSets.second[i][2] - results[i][2]);
-            }
-            errorSum = error;
-            g->setFitness(std::pow((results.size() * 3) - errorSum,2));
+    auto eval = [&](auto& g){
+        g.mutate();
+        auto nn = std::make_unique<EvoAI::HyperNeat>(EvoAI::SubstrateInfo(4,1,8,3),g,
+                                                    EvoAI::HyperNeat::SubstrateConfiguration::GRID);
+        auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
+        normalizeData(trainingSets.first);
+        std::vector<std::vector<double>> results;
+        for(auto i=0u;i<trainingSets.first.size();++i){
+            nn->setInputs(std::move(trainingSets.first[i]));
+            auto outputs = nn->run();
+            results.push_back(std::move(outputs));
+            nn->reset();
         }
+        auto error = 0.0;
+        for(auto i=0u;i<results.size();++i){
+            error += std::fabs(trainingSets.second[i][0] - results[i][0]) +
+                        std::fabs(trainingSets.second[i][1] - results[i][1]) +
+                        std::fabs(trainingSets.second[i][2] - results[i][2]);
+        }
+        errorSum = error;
+        g.setFitness(std::pow((results.size() * 3) - errorSum,2));
+    };
+    while(errorSum >= errorThreehold){
+        p.eval(eval);
         std::cout << "\rGeneration: " << gen << " avg: " << p.computeAvgFitness() << " Error: " << errorSum << " NumSpecies: " << p.getSpeciesSize() << "       ";
         std::flush(std::cout);
-        if(errorSum > errorThreehold){
-            p.reproduce(true,EvoAI::Population::SelectionType::TOURNAMENT);
+        if(errorSum >= errorThreehold){
+            p.reproduce(EvoAI::SelectionAlgorithms::Tournament<EvoAI::Genome>{p.getPopulationMaxSize(), 5}, true);
+            p.increaseAgeAndRemoveOldSpecies();
+            p.regrowPopulation(3, 2);
         }else{
             std::cout << std::endl;
         }
         ++gen;
     }
-    auto g = p.getBestGenome();
+    auto g = p.getBestMember();
     g->writeToFile("irisClassGen.json");
     auto nn = std::make_unique<EvoAI::HyperNeat>(EvoAI::SubstrateInfo(4,1,8,3),*g,
                                                 EvoAI::HyperNeat::SubstrateConfiguration::GRID);
@@ -248,107 +251,110 @@ void evolveHyperneat(float errorThreehold, std::vector<std::vector<std::string>>
     std::cout << "Creating Test dataSets..." << std::endl;
     auto testSets = createTrainingSets(irisData,irisData.size()/2,irisData.size());
     std::cout << "Processing Test Classification..." << std::endl;
-    auto error = 0.0;
+    auto error = 0.0d;
     for(auto i=0u;i<testSets.first.size();++i){
         nn->setInputs(std::move(testSets.first[i]));
         auto outputs = nn->run();
         std::string nnOut = "", expectedOut = "";
-        if(outputs[0] >= 0.5){
+        if(outputs[0] >= 0.5d){
             nnOut = "Iris-setosa";
-        }else if(outputs[1] >= 0.5){
+        }else if(outputs[1] >= 0.5d){
             nnOut = "Iris-versicolor";
-        }else if(outputs[2] >= 0.5){
+        }else if(outputs[2] >= 0.5d){
             nnOut = "Iris-virginica";
         }
-        if(testSets.second[i][0] >= 0.5){
+        if(testSets.second[i][0] >= 0.5d){
             expectedOut = "Iris-setosa";
-        }else if(testSets.second[i][1] >= 0.5){
+        }else if(testSets.second[i][1] >= 0.5d){
             expectedOut = "Iris-versicolor";
-        }else if(testSets.second[i][2] >= 0.5){
+        }else if(testSets.second[i][2] >= 0.5d){
             expectedOut = "Iris-virginica";
         }
         if(nnOut != expectedOut){
-            error += 1;
+            error += 1.0d;
         }
-        std::cout << nnOut << " : "<< expectedOut << std::endl;
-        std::cout << "\tIris-setosa" << ":" << " - " << (outputs[0] * 100) << "%" << std::endl;
-        std::cout << "\tIris-versicolor" << ":" << " - " << (outputs[1] * 100) << "%" << std::endl;
-        std::cout << "\tIris-virginica" << ":" << " - " << (outputs[2] * 100) << "%" << std::endl;
+        std::cout << nnOut << " : "<< expectedOut << "\n";
+        std::cout << "\tIris-setosa" << ":" << " - " << (outputs[0] * 100) << "%\n";
+        std::cout << "\tIris-versicolor" << ":" << " - " << (outputs[1] * 100) << "%\n";
+        std::cout << "\tIris-virginica" << ":" << " - " << (outputs[2] * 100) << "%\n";
         error /= testSets.second.size();
         error *= 100;
-        auto accuracy = 100 - error;
+        int accuracy = 100 - error;
         std::cout << "Error: " << error << "%" << " Accuracy: " << accuracy << "%" << std::endl;
     }
 }
 void evolveNeat(float errorThreehold, std::vector<std::vector<std::string>>& irisData){
-    EvoAI::Population p(500,4,3);
-    auto errorSum = 999.0;
+    EvoAI::Population<EvoAI::Genome> p(500,4,3);
+    p.setCompatibilityThreshold(10.0d);
+    auto errorSum = 999.0d;
     unsigned int gen = 0;
-    while(errorSum > errorThreehold){
-        p.orderGenomesByFitness();
-        for(auto& g:p.getGenomes()){
-            g->mutate();
-            auto nn = EvoAI::Genome::makePhenotype(*g);
-            auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
-            normalizeData(trainingSets.first);
-            std::vector<std::vector<double>> results;
-            for(auto i=0u;i<trainingSets.first.size();++i){
-                nn->setInputs(std::move(trainingSets.first[i]));
-                auto outputs = nn->run();
-                results.push_back(std::move(outputs));
-                nn->reset();
-            }
-            auto error = 0.0;
-            for(auto i=0u;i<results.size();++i){
-                error += std::fabs(trainingSets.second[i][0] - results[i][0]) +
-                            std::fabs(trainingSets.second[i][1] - results[i][1]) +
-                            std::fabs(trainingSets.second[i][2] - results[i][2]);
-            }
-            errorSum = error;
-            g->setFitness(std::pow((results.size() * 3) - errorSum,2));
+    auto eval = [&](auto& g){
+        g.mutate();
+        auto nn = EvoAI::Genome::makePhenotype(g);
+        auto trainingSets = createTrainingSets(irisData,0,irisData.size()/2);
+        normalizeData(trainingSets.first);
+        std::vector<std::vector<double>> results;
+        for(auto i=0u;i<trainingSets.first.size();++i){
+            nn.setInputs(std::move(trainingSets.first[i]));
+            auto outputs = nn.run();
+            results.push_back(std::move(outputs));
+            nn.reset();
         }
-        std::cout << "\rGeneration: " << gen << " avg: " << p.computeAvgFitness() << " Error: " << errorSum << " NumSpecies: " << p.getSpeciesSize() << "       ";
+        auto error = 0.0d;
+        for(auto i=0u;i<results.size();++i){
+            error += std::fabs(trainingSets.second[i][0] - results[i][0]) +
+                        std::fabs(trainingSets.second[i][1] - results[i][1]) +
+                        std::fabs(trainingSets.second[i][2] - results[i][2]);
+        }
+        errorSum = error;
+        g.setFitness(std::pow((results.size() * 3) - errorSum,2));
+    };
+    while(errorSum > errorThreehold){
+        p.eval(eval);
+        std::cout << "\rGeneration: " << gen << " avg: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " Error: " << errorSum << "       ";
         std::flush(std::cout);
         if(errorSum > errorThreehold){
-            p.reproduce(true,EvoAI::Population::SelectionType::TOURNAMENT);
+            p.reproduce(EvoAI::SelectionAlgorithms::Tournament<EvoAI::Genome>{p.getPopulationMaxSize(), 5}, true);
+            p.increaseAgeAndRemoveOldSpecies();
+            p.regrowPopulation(4, 3);
         }else{
             std::cout << std::endl;
         }
         ++gen;
     }
-    auto g = p.getBestGenome();
+    auto g = p.getBestMember();
     g->writeToFile("irisClassGen.json");
     auto nn = EvoAI::Genome::makePhenotype(*g);
-    nn->writeToFile("irisClassNN.json");
+    nn.writeToFile("irisClassNN.json");
     std::cout << "Creating Test dataSets..." << std::endl;
     auto testSets = createTrainingSets(irisData,irisData.size()/2,irisData.size());
     std::cout << "Processing Test Classification..." << std::endl;
-    auto error = 0.0;
+    auto error = 0.0d;
     for(auto i=0u;i<testSets.first.size();++i){
-        nn->setInputs(std::move(testSets.first[i]));
-        auto outputs = nn->run();
+        nn.setInputs(std::move(testSets.first[i]));
+        auto outputs = nn.run();
         std::string nnOut = "", expectedOut = "";
-        if(outputs[0] >= 0.5){
+        if(outputs[0] >= 0.5d){
             nnOut = "Iris-setosa";
-        }else if(outputs[1] >= 0.5){
+        }else if(outputs[1] >= 0.5d){
             nnOut = "Iris-versicolor";
-        }else if(outputs[2] >= 0.5){
+        }else if(outputs[2] >= 0.5d){
             nnOut = "Iris-virginica";
         }
-        if(testSets.second[i][0] >= 0.5){
+        if(testSets.second[i][0] >= 0.5d){
             expectedOut = "Iris-setosa";
-        }else if(testSets.second[i][1] >= 0.5){
+        }else if(testSets.second[i][1] >= 0.5d){
             expectedOut = "Iris-versicolor";
-        }else if(testSets.second[i][2] >= 0.5){
+        }else if(testSets.second[i][2] >= 0.5d){
             expectedOut = "Iris-virginica";
         }
         if(nnOut != expectedOut){
-            error += 1;
+            error += 1.0d;
         }
-        std::cout << nnOut << " : "<< expectedOut << std::endl;
-        std::cout << "\tIris-setosa" << ":" << " - " << (outputs[0] * 100) << "%" << std::endl;
-        std::cout << "\tIris-versicolor" << ":" << " - " << (outputs[1] * 100) << "%" << std::endl;
-        std::cout << "\tIris-virginica" << ":" << " - " << (outputs[2] * 100) << "%" << std::endl;
+        std::cout << nnOut << " : "<< expectedOut << "\n";
+        std::cout << "\tIris-setosa" << ":" << " - " << (outputs[0] * 100) << "%\n";
+        std::cout << "\tIris-versicolor" << ":" << " - " << (outputs[1] * 100) << "%\n";
+        std::cout << "\tIris-virginica" << ":" << " - " << (outputs[2] * 100) << "%\n";
         error /= testSets.second.size();
         error *= 100;
         auto accuracy = 100 - error;

@@ -94,13 +94,13 @@ int main(int argc, char **argv){
             auto g1 = std::make_unique<EvoAI::Genome>(genomeFile1);
             auto g2 = std::make_unique<EvoAI::Genome>(genomeFile2);
             std::cout << "Reproducing genomes " << genomeFile1 << " And " << genomeFile2 << std::endl;
-            g = EvoAI::Genome::reproduce(*g1,*g2);
+            g = std::make_unique<EvoAI::Genome>(EvoAI::Genome::reproduce(*g1,*g2));
             g->setCppn(true);
         }else{
             std::cout << "Loading genome " << genomeFile1 << std::endl;
             g = std::make_unique<EvoAI::Genome>(genomeFile1);
         }
-        nn = EvoAI::Genome::makePhenotype(*g);
+        nn = std::make_unique<EvoAI::NeuralNetwork>(EvoAI::Genome::makePhenotype(*g));
     }else if(optGenomeType){
         if(genomeType == "0"){
             if(optBW){
@@ -115,7 +115,7 @@ int main(int argc, char **argv){
                 g = std::make_unique<EvoAI::Genome>(3 * 20 * imagesInputs.size(),numHidden,3,true,true);
             }
         }
-        nn = EvoAI::Genome::makePhenotype(*g);
+        nn = std::make_unique<EvoAI::NeuralNetwork>(EvoAI::Genome::makePhenotype(*g));
     }
     if(optSaveNN){
         std::cout << "Saving Neural Network to " << saveFileNN << " ..." << std::endl;

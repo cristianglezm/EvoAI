@@ -38,7 +38,6 @@ namespace EvoAI{
     }
     std::string ConnectionGene::toString(const std::string& delimiter) const noexcept{
         std::string str;
-        ///@todo use format?
         str += "ID: " + std::to_string(innovationID) + delimiter + "conn: [" + std::to_string(getSrc().layer) + ", " + std::to_string(getSrc().neuron)
             + "] -> [" + std::to_string(getDest().layer) + ", " + std::to_string(getDest().neuron) + "]" + delimiter + "w: " + std::to_string(getWeight())
             + delimiter + "enabled: " + (enabled ? "true":"false");

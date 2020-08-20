@@ -9,47 +9,81 @@
 
 #include <EvoAI/Export.hpp>
 #include <EvoAI/NeuralNetwork.hpp>
-#include <EvoAI/Genome.hpp>
+#include <EvoAI/Utils/TypeUtils.hpp>
 #include <JsonBox.h>
 
 namespace EvoAI{
     /**
      * @class Species
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
-     * @brief Class that represents a species
+     * @brief Class that represents a Species
+     * @details
+     *   T needs to fulfill these conditions:
+     *      T has a member function JsonBox::Value toJson() const noexcept
+     *      T has a constructor T::T(JsonBox::Object)
+     *      T has a member function const double& getFitness() const noexcept
+     *      T has a member function void setFitness(const double&) noexcept
+     *   If Species<T*> it will act as an observer what does this means:
+     *      Species<T*>::add(T* t) will accept a T* by value
+     *      Species<T*>::remove(T* t) will accept a T* by value
+     *      Species<T*>::has(T* t) will accept a T* by value
+     *   If Species<T> it will act as an owner what does this means:
+     *      Species<T>::add(T&& t) will take a T&&
+     *      Species<T>::remove(std::size_t id) will take an id by value
+     *      Species<T>::has(std::size_t id) will take an id by value
+     *  @warning You can't use Species<T*>(JsonBox::Object) or Species<T*>(const std::string& filename) to load a Species.json
      */
+    template<typename T>
     class EvoAI_API Species{
+            static_assert(is_speciable<typename std::remove_pointer_t<T>>::value, "T needs to be Speciable, more info at Species.hpp");
+        public:
+            using value_type = T;
+            using reference = std::remove_reference_t<std::remove_pointer_t<T>>&;
+            using rvalue_reference = std::remove_reference_t<std::remove_pointer_t<T>>&&;
+            using const_reference = const std::remove_reference_t<std::remove_pointer_t<T>>&;
+            using pointer = std::remove_pointer_t<T>*;
+            using const_pointer = const std::remove_pointer_t<T>*;
         public:
             /**
              * @brief basic Constructor
-             * @return Species
+             * @return Species<T>
              */
-            Species();
+            Species() noexcept;
+            /**
+             * @brief copy Constructor
+             * @return Species<T>
+             */
+            Species(const Species<T>& rhs) noexcept = default;
+            /**
+             * @brief move Constructor
+             * @return Species<T>
+             */
+            Species(Species<T>&& rhs) noexcept = default;
             /**
              * @brief Creates a Species With the id and novel.
              * @param id std::size_T
              * @param novel bool if the species is a new one.
-             * @return Species
+             * @return Species<T>
              */
-            Species(const std::size_t& id, bool novel);
+            Species(const std::size_t& id, bool novel) noexcept;
             /**
-             * @brief loads a Species from a JsonBox::Object
+             * @brief loads a Species from a JsonBox::Object, cannot be used with Species<T*>
              * @param o JsonBox::Object
-             * @return Species
+             * @return Species<T>
              */
-            Species(JsonBox::Object o);
+            Species(JsonBox::Object o) noexcept;
             /**
-             * @brief Loads the species from a jsonfile saved with Species::writeToFile
+             * @brief It loads the species from a json file saved with Species::writeToFile, cannot be used with Species<T*>
              * @param filename const std::string&
-             * @return Species
+             * @return Species<T>
              */
             Species(const std::string& filename);
             /**
-             * @brief Adjust the fitness of the species
+             * @brief Adjust the fitness of the species dividing the fitness with the size of the species.
              */
             void adjustFitness() noexcept;
             /**
-             * @brief computes the avg fitness
+             * @brief computes the Average fitness
              */
             void computeAvgFitness() noexcept;
             /**
@@ -57,19 +91,19 @@ namespace EvoAI{
              */
             void computeMaxFitness() noexcept;
             /**
-             * @brief orders the genomes.
+             * @brief orders by fitness.
              */
             void rank() noexcept;
             /**
              * @brief returns the first member of this species
-             * @return Genome*
+             * @return const T*
              */
-            Genome* getRepresentative() const noexcept;
+            Species<T>::const_pointer getRepresentative() const noexcept;
             /**
-             * @brief returns the best performing genome of the species.
-             * @return Genome*
+             * @brief returns the best performing member of the species.
+             * @return T*
              */
-            Genome* getChampion() noexcept;
+            Species<T>::pointer getChampion() noexcept;
             /**
              * @brief returns if is novel.
              * @return bool
@@ -97,6 +131,7 @@ namespace EvoAI{
             void setID(const std::size_t& speciesID) noexcept;
             /**
              * @brief returns Species ID.
+             * @return const std::size_t&
              */
             const std::size_t& getID() const noexcept;
             /**
@@ -114,48 +149,58 @@ namespace EvoAI{
              */
             const std::size_t& getAge() const noexcept;
             /**
-             * @brief setter for genomes.
+             * @brief setter for members.
              */
-            void setGenomes(std::vector<std::unique_ptr<Genome>>&& gs) noexcept;
+            void setMembers(std::vector<T>&& ms) noexcept;
             /**
-             * @brief adds a genome to the species.
-             * @param g std::unique_ptr<Genome>&&
+             * @brief returns the members from this species.
+             * @return std::vector<T>&
              */
-            void addGenome(std::unique_ptr<Genome>&& g) noexcept;
+            std::vector<T>& getMembers() noexcept;
             /**
-             * @brief removes a genome from the species.
-             * @param g Genome*
+             * @brief adds a member to the species and sets its SpeciesID to Species::getID().
+             * @param m T&& if T is not a pointer T* otherwise.
              */
-            void removeGenome(Genome* g) noexcept;
+            void add(std::conditional_t<std::is_pointer_v<value_type>,pointer,rvalue_reference> m) noexcept;
             /**
-             * @brief checks if this genome is in this species.
-             * @param g Genome*
+             * @brief removes a member from the species.
+             * @param id std::size_t if T is not a pointer T* otherwise.
+             */
+            void remove(std::conditional_t<std::is_pointer_v<value_type>, pointer, std::size_t> id) noexcept;
+            /**
+             * @brief checks if this T is in this species.
+             * @param id std::size_t if T is not a pointer T* otherwise.
              * @return bool
              */
-            bool has(Genome* g) noexcept;
+            bool has(std::conditional_t<std::is_pointer_v<value_type>, pointer, std::size_t> id) noexcept;
             /**
-             * @brief returns the genomes from this species.
-             * @return std::vector<std::unique_ptr<Genome>&
+             * @brief orders the members from the species by ID.
              */
-            std::vector<std::unique_ptr<Genome>>& getGenomes() noexcept;
+            void orderMembersByID() noexcept;
             /**
-             * @brief returns the avg fitness of the species.
-             * @return const double&
+             * @brief Call Species<T>::computeAvgFitness first, returns the average fitness of the species.
+             * @return double
              */
-            const double& getAvgFitness() const noexcept;
+            double getAvgFitness() const noexcept;
             /**
-             * @brief returns the max fitness that it has.
-             * @return const double&
+             * @brief Call Species<T>::computeMaxFitness first, returns the max fitness that it has.
+             * @return double
              */
-            const double& getMaxFitness() const noexcept;
+            double getMaxFitness() const noexcept;
             /**
-             * @brief returns the number of genomes.
+             * @brief returns the number of members in the species.
              * @return std::size_t
              */
             std::size_t getSize() const noexcept;
             /**
+             *  @brief checks if is empty.
+             *  
+             *  @return bool
+             */
+            bool empty() const noexcept;
+            /**
              * @brief checks if has stopped getting better
-             * needs to have Species::computeAvgFitness run first.
+             * it needs to have Species<T>::computeAvgFitness run first.
              * @return bool
              */
             bool isStagnant() const noexcept;
@@ -170,16 +215,21 @@ namespace EvoAI{
              */
             void writeToFile(const std::string& filename) const noexcept;
             ~Species() = default;
+        public:
+            Species<T>& operator=(const Species<T>& rhs) noexcept = default;
+            Species<T>& operator=(Species<T>&& rhs) noexcept = default;
         private:
+            std::vector<T> members;
             std::size_t id;
             std::size_t age;
-            bool novel;
-            bool killable;
             double avgFitness;
             double maxFitness;
             double oldAvgFitness;
-            std::vector<std::unique_ptr<Genome>> genomes;
+            bool novel;
+            bool killable;
     };
 }
+
+#include "Species.inl"
 
 #endif // EVOAI_SPECIES_HPP
