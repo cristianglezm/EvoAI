@@ -8,44 +8,44 @@
 #include <EvoAI/NeuronLayer.hpp>
 
 namespace EvoAI{
-    Genome::Genome()
-    : genomeID(0)
+    Genome::Genome() noexcept
+    : nodeChromosomes()
+    , connectionChromosomes()
+    , genomeID(0)
     , speciesID(0)
     , fitness(0.0)
     , rnnAllowed(false)
-    , cppn(false)
-    , nodeChromosomes()
-    , connectionChromosomes(){}
+    , cppn(false){}
     Genome::Genome(const Genome& rhs) noexcept
-    : genomeID(rhs.genomeID)
+    : nodeChromosomes(rhs.nodeChromosomes)
+    , connectionChromosomes(rhs.connectionChromosomes)
+    , genomeID(rhs.genomeID)
     , speciesID(rhs.speciesID)
     , fitness(rhs.fitness)
     , rnnAllowed(rhs.rnnAllowed)
-    , cppn(rhs.cppn)
-    , nodeChromosomes(rhs.nodeChromosomes)
-    , connectionChromosomes(rhs.connectionChromosomes){
+    , cppn(rhs.cppn){
         std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
         std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
     Genome::Genome(Genome&& rhs) noexcept
-    : genomeID(rhs.genomeID)
+    : nodeChromosomes(std::move(rhs.nodeChromosomes))
+    , connectionChromosomes(std::move(rhs.connectionChromosomes))
+    , genomeID(rhs.genomeID)
     , speciesID(rhs.speciesID)
     , fitness(rhs.fitness)
     , rnnAllowed(rhs.rnnAllowed)
-    , cppn(rhs.cppn)
-    , nodeChromosomes(std::move(rhs.nodeChromosomes))
-    , connectionChromosomes(std::move(rhs.connectionChromosomes)){
+    , cppn(rhs.cppn){
         std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
         std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
-    Genome::Genome(const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecursive, bool cppn)
-    : genomeID(0)
+    Genome::Genome(const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecursive, bool cppn) noexcept
+    : nodeChromosomes()
+    , connectionChromosomes()
+    , genomeID(0)
     , speciesID(0)
     , fitness(0.0)
     , rnnAllowed(canBeRecursive)
-    , cppn(cppn)
-    , nodeChromosomes()
-    , connectionChromosomes(){
+    , cppn(cppn){
         nodeChromosomes.reserve(numInputs + numOutputs);
         for(auto i=0u;i<numInputs;++i){
             nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,Neuron::ActivationType::SIGMOID);
@@ -66,14 +66,14 @@ namespace EvoAI{
         std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
         std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
-    Genome::Genome(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numOutputs, bool canBeRecursive, bool cppn)
-    : genomeID(0)
+    Genome::Genome(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numOutputs, bool canBeRecursive, bool cppn) noexcept
+    : nodeChromosomes()
+    , connectionChromosomes()
+    , genomeID(0)
     , speciesID(0)
     , fitness(0.0)
     , rnnAllowed(canBeRecursive)
-    , cppn(cppn)
-    , nodeChromosomes()
-    , connectionChromosomes(){
+    , cppn(cppn){
         nodeChromosomes.reserve(numInputs + numHidden + numOutputs);
         for(auto i=0u;i<numInputs;++i){
             nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,Neuron::ActivationType::SIGMOID);
@@ -107,13 +107,13 @@ namespace EvoAI{
         std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
     Genome::Genome(JsonBox::Object o)
-    : genomeID(std::stoull(o["GenomeID"].getString()))
+    : nodeChromosomes()
+    , connectionChromosomes()
+    , genomeID(std::stoull(o["GenomeID"].getString()))
     , speciesID(std::stoull(o["SpeciesID"].getString()))
     , fitness(o["fitness"].getDouble())
     , rnnAllowed(o["rnnAllowed"].getBoolean())
-    , cppn(o["cppn"].getBoolean())
-    , nodeChromosomes()
-    , connectionChromosomes(){
+    , cppn(o["cppn"].getBoolean()){
         auto& ngs = o["nodeChromosomes"].getArray();
         nodeChromosomes.reserve(ngs.size());
         for(auto& ng:ngs){
@@ -128,13 +128,13 @@ namespace EvoAI{
         std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
     Genome::Genome(const std::string& jsonfile)
-    : genomeID(0)
+    : nodeChromosomes()
+    , connectionChromosomes()
+    , genomeID(0)
     , speciesID(0)
     , fitness(0.0)
     , rnnAllowed(false)
-    , cppn(false)
-    , nodeChromosomes()
-    , connectionChromosomes(){
+    , cppn(false){
         JsonBox::Value json;
         json.loadFromFile(jsonfile);
         auto& v = json["Genome"];
@@ -215,7 +215,11 @@ namespace EvoAI{
         JsonBox::Value v;
         v["version"] = JsonBox::Value("1.0");
         v["Genome"] = toJson();
-        v.writeToFile(filename);
+#if defined NDEBUG
+        v.writeToFile(filename, false, false);
+#else
+        v.writeToFile(filename, true, false);
+#endif
     }
     void Genome::setFitness(const double& fit) noexcept{
         fitness = fit;
@@ -232,10 +236,10 @@ namespace EvoAI{
     bool Genome::hasConnectionGene(const ConnectionGene& cg) const noexcept{
         return std::binary_search(std::begin(connectionChromosomes), std::end(connectionChromosomes), cg);
     }
-    void Genome::setGenomeID(const std::size_t& gnmID) noexcept{
+    void Genome::setID(const std::size_t& gnmID) noexcept{
         genomeID = gnmID;
     }
-    const std::size_t& Genome::getGenomeID() const noexcept{
+    const std::size_t& Genome::getID() const noexcept{
         return genomeID;
     }
     void Genome::setSpeciesID(const std::size_t& spcID) noexcept{
@@ -403,7 +407,7 @@ namespace EvoAI{
         }
         return true;
     }
-    void Genome::operator=(const Genome& rhs) noexcept{
+    Genome& Genome::operator=(const Genome& rhs) noexcept{
         genomeID = rhs.genomeID;
         speciesID = rhs.speciesID;
         fitness = rhs.fitness;
@@ -411,8 +415,9 @@ namespace EvoAI{
         cppn = rhs.cppn;
         nodeChromosomes = rhs.nodeChromosomes;
         connectionChromosomes = rhs.connectionChromosomes;
+        return *this;
     }
-    void Genome::operator=(Genome&& rhs) noexcept{
+    Genome& Genome::operator=(Genome&& rhs) noexcept{
         genomeID = rhs.genomeID;
         speciesID = rhs.speciesID;
         fitness = rhs.fitness;
@@ -420,6 +425,7 @@ namespace EvoAI{
         cppn = rhs.cppn;
         nodeChromosomes = std::move(rhs.nodeChromosomes);
         connectionChromosomes = std::move(rhs.connectionChromosomes);
+        return *this;
     }
 //////////
 //// Static Functions
@@ -437,9 +443,9 @@ namespace EvoAI{
                                 g2.nodeChromosomes.size() + g2.connectionChromosomes.size());
 
         auto weightAbsDiff = 0.0d;
-
+#ifndef NDEBUG
         assert(cGenes1.size() == cGenes2.size());
-
+#endif
         for(auto i=0u;i<cGenes1.size();++i){
             weightAbsDiff += std::abs(cGenes1[i].getWeight() - cGenes2[i].getWeight());
         }
@@ -562,16 +568,16 @@ namespace EvoAI{
         return std::make_pair(std::make_pair(Range<NodeGene>(begNodes1, endNodes1), Range<NodeGene>(begNodes2, endNodes2)), 
                                 std::make_pair(Range<ConnectionGene>(begConn1, endConn1), Range<ConnectionGene>(begConn2, endConn2)));
     }
-    std::unique_ptr<Genome> Genome::reproduce(const Genome& g1, const Genome& g2) noexcept{
+    Genome Genome::reproduce(const Genome& g1, const Genome& g2) noexcept{
         if(&g1 == &g2){
-            auto child = std::make_unique<Genome>(g1);
-            return child;
+            return g1;
         }
-        auto child = std::make_unique<Genome>();
+        auto child = Genome();
+        child.setCppn(g1.isCppn() || g2.isCppn());
+        child.setRecurrentAllowed(g1.isRecurrentAllowed() || g2.isRecurrentAllowed());
         std::vector<NodeGene> nGenes;
         std::vector<ConnectionGene> cGenes;
         matchingChromosomes mChromo = getMatchingChromosomes(g1,g2);
-
         auto dGenes = getDisjointGenes(g1,g2, &mChromo);
         auto eGenes = getExcessGenes(g1,g2, &dGenes);
         auto matchingNodeSize = mChromo.first.first.size();
@@ -635,12 +641,12 @@ namespace EvoAI{
         std::sort(std::begin(cGenes), std::end(cGenes));
         nGenes.erase(std::unique(std::begin(nGenes), std::end(nGenes)), std::end(nGenes));
         cGenes.erase(std::unique(std::begin(cGenes), std::end(cGenes)), std::end(cGenes));
-        child->setNodeChromosomes(std::move(nGenes));
-        child->setConnectionChromosomes(std::move(cGenes));
+        child.setNodeChromosomes(std::move(nGenes));
+        child.setConnectionChromosomes(std::move(cGenes));
         return child;
     }
-    std::unique_ptr<NeuralNetwork> Genome::makePhenotype(const Genome& g) noexcept{
-        auto nn = std::make_unique<NeuralNetwork>();
+    NeuralNetwork Genome::makePhenotype(const Genome& g) noexcept{
+        auto nn = NeuralNetwork();
         NeuronLayer inputLayer;
         inputLayer.setType(Neuron::Type::INPUT);
         inputLayer.setBias(1.0);
@@ -667,18 +673,18 @@ namespace EvoAI{
                     break;
             }
         }
-        nn->addLayer(inputLayer);
-        nn->addLayer(hiddenLayer);
-        nn->addLayer(outputLayer);
+        nn.addLayer(inputLayer);
+        nn.addLayer(hiddenLayer);
+        nn.addLayer(outputLayer);
         for(auto& c:g.getConnectionChromosomes()){
             if(c.isEnabled()){
-                nn->addConnection(c.getConnection());
+                nn.addConnection(c.getConnection());
             }
         }
         return nn;
     }
-    std::unique_ptr<Genome> Genome::makeGenome(NeuralNetwork& nn) noexcept{
-        auto g = std::make_unique<Genome>();
+    Genome Genome::makeGenome(NeuralNetwork& nn) noexcept{
+        auto g = Genome();
         std::vector<NodeGene> nGenes;
         std::vector<ConnectionGene> cGenes;
         // add inputs
@@ -704,7 +710,7 @@ namespace EvoAI{
         for(auto i=1u;i<lastHiddenLayer;++i){
             auto& hidden = nn[i].getNeurons();
             for(auto j=0u;j<hidden.size();++j){
-                auto ng = NodeGene(1,id++); // get id and increment
+                auto ng = NodeGene(1,id++);
                 ng.setActType(hidden[j].getActivationType());
                 ng.setNeuronType(hidden[j].getType());
                 nGenes.push_back(ng);
@@ -738,8 +744,8 @@ namespace EvoAI{
             auto cg = ConnectionGene(Link(srcLayer,srcID), Link(destLayer,destID), c->getWeight());
             cGenes.push_back(cg);
         }
-        g->setNodeChromosomes(std::move(nGenes));
-        g->setConnectionChromosomes(std::move(cGenes));
+        g.setNodeChromosomes(std::move(nGenes));
+        g.setConnectionChromosomes(std::move(cGenes));
         return g;
     }
 }

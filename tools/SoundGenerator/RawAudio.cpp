@@ -120,9 +120,7 @@ namespace EvoAI{
                 auto audio = nn->run();
                 nn->reset();
                 const int Amplitude = 30000;
-                /// TODO @todo complex sounds?
                 samplesBuffer[y] = static_cast<sf::Int16>(Amplitude * std::tanh((audio[0] + audio[1] + audio[2]) * (2 * 3.141516)));
-                //samplesBuffer[y] = static_cast<sf::Int16>(Amplitude * sf::Color(audio[0] * 255, audio[1] * 255, audio[2] * 255).toInteger());
             }
             osf.write(samplesBuffer,count);
         }

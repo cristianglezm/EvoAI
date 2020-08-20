@@ -19,7 +19,7 @@ namespace EvoAI{
      */
     template<class T>
     inline void hashCombine(std::size_t& seed, const T& v) noexcept;
-    /** @TODO
+    /**
      *  @brief joins hashes 
      *  @code
      *      auto hash = EvoAI::joinHashes(0u, 1,2,3,4,5);

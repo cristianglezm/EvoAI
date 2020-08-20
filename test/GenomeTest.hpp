@@ -11,7 +11,7 @@ namespace EvoAI{
         TEST(GenomeTest,ConstructorWithInputs){
             Genome cppn(3,2,true,true);
             EXPECT_EQ(5u,cppn.getNodeChromosomes().size());
-            EXPECT_EQ(0u,cppn.getGenomeID());
+            EXPECT_EQ(0u,cppn.getID());
             EXPECT_EQ(0u,cppn.getSpeciesID());
         }
         TEST(GenomeTest, WritingAndLoading){
@@ -142,7 +142,7 @@ namespace EvoAI{
         }
         TEST(GenomeTest, Mutation){
             Genome g(3,2,true,true);
-            EXPECT_EQ(0u,g.getGenomeID());
+            EXPECT_EQ(0u,g.getID());
             EXPECT_EQ(0u,g.getSpeciesID());
             EXPECT_EQ(5u,g.getNodeChromosomes().size());
             EXPECT_EQ(6u,g.getConnectionChromosomes().size());
@@ -155,35 +155,45 @@ namespace EvoAI{
             EXPECT_TRUE(g.isValid());
         }
         TEST(GenomeTest, Reproduce){
-            std::vector<std::unique_ptr<Genome>> fathers;
-            std::vector<std::unique_ptr<Genome>> mothers;
-            std::vector<std::unique_ptr<Genome>> children;
+            std::vector<Genome> fathers;
+            std::vector<Genome> mothers;
+            std::vector<Genome> children;
             fathers.reserve(4);
             mothers.reserve(4);
             children.reserve(4);
+            //equal fitness
+            fathers.emplace_back(6,3,true,true);
+            mothers.emplace_back(6,3,true,true);
+            // g1 > g2 fitness
+            fathers.emplace_back(6,3,true,true).setFitness(10);
+            mothers.emplace_back(6,3,true,true);
+            // g1 < g2 fitness
+            fathers.emplace_back(6,3,true,true);
+            mothers.emplace_back(6,3,true,true).setFitness(10);
+            // equal fitness
+            fathers.emplace_back(6,3,true,true).setFitness(10);
+            mothers.emplace_back(6,3,true,true).setFitness(10);
             for(auto i=0u;i<4;++i){
-                fathers.emplace_back(std::make_unique<Genome>(6,3,true,true));
-                mothers.emplace_back(std::make_unique<Genome>(6,3,true,true));
+                children.emplace_back(Genome::reproduce(fathers[i],mothers[i]));
             }
-            for(auto i=0u;i<4;++i){
-                children.emplace_back(Genome::reproduce(*fathers[i],*mothers[i]));
-            }
-            std::array<std::unique_ptr<Genome>,2> grandkids;
-            grandkids[0] = Genome::reproduce(*children[0],*children[1]);
-            grandkids[1] = Genome::reproduce(*children[2],*children[3]);
+            std::array<Genome,2> grandkids;
+            grandkids[0] = Genome::reproduce(children[0], children[1]);
+            grandkids[1] = Genome::reproduce(children[2], children[3]);
 
-            auto greatGrandkids1 = Genome::reproduce(*grandkids[0],*grandkids[1]);
-            auto greatGrandkids2 = Genome::reproduce(*grandkids[0],*grandkids[1]);
+            auto greatGrandkids1 = Genome::reproduce(grandkids[0], grandkids[1]);
+            auto greatGrandkids2 = Genome::reproduce(grandkids[0], grandkids[1]);
             // check that there is no speciation
-            EXPECT_TRUE(Genome::distance(*grandkids[0],*grandkids[1]) < 10);
-            EXPECT_TRUE(Genome::distance(*greatGrandkids1,*fathers[0]) < 10);
-            EXPECT_TRUE(Genome::distance(*greatGrandkids2,*fathers[0]) < 10);
-            EXPECT_TRUE(greatGrandkids1->isValid());
+            auto speciesThreshold = 10;
+            EXPECT_TRUE(Genome::distance(grandkids[0], grandkids[1]) < speciesThreshold);
+            EXPECT_TRUE(Genome::distance(greatGrandkids1, fathers[0]) < speciesThreshold);
+            EXPECT_TRUE(Genome::distance(greatGrandkids2, fathers[0]) < speciesThreshold);
+            EXPECT_TRUE(greatGrandkids1.isValid());
         }
         TEST(GenomeTest, Distance){
             Genome g1(1,2,true,true);
             Genome g2(1,2,true,true);
-            EXPECT_TRUE(Genome::distance(g1,g2) < 10.0);
+            auto speciesThreshold = 10.0d;
+            EXPECT_TRUE(Genome::distance(g1,g2) < speciesThreshold);
         }
     }
 }

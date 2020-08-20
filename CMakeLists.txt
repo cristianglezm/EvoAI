@@ -82,7 +82,7 @@ if(NOT CMAKE_SYSTEM_NAME MATCHES "Android")
     SET(CMAKE_CXX_EXTENSIONS OFF)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Wextra")
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fexpensive-optimizations")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fexpensive-optimizations -DNDEBUG")
     endif()
 endif(NOT CMAKE_SYSTEM_NAME MATCHES "Android")
 

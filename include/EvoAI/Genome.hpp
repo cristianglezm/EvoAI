@@ -39,22 +39,6 @@ namespace EvoAI{
                 InputIt begin;
                 InputIt end;
             };
-            template<class T>
-            typename Range<T>::const_iterator cbegin(const Range<T>& range){
-                return range.begin;
-            }
-            template<class T>
-            typename Range<T>::const_iterator cend(const Range<T>& range){
-                return range.end;
-            }
-            template<class T>
-            typename Range<T>::iterator begin(const Range<T>& range){
-                return range.begin;
-            }
-            template<class T>
-            typename Range<T>::iterator end(const Range<T>& range){
-                return range.end;
-            }
             using matchingNodeGenes = std::pair<Range<NodeGene>, Range<NodeGene>>;
             using matchingConnectionGenes = std::pair<Range<ConnectionGene>, Range<ConnectionGene>>;
             using matchingChromosomes = std::pair<matchingNodeGenes, matchingConnectionGenes>;
@@ -68,7 +52,7 @@ namespace EvoAI{
             /**
              * @brief default constructor builds an empty Genome.
              */ 
-            Genome();
+            Genome() noexcept;
             /**
              *  @brief copy constructor
              *  
@@ -89,7 +73,7 @@ namespace EvoAI{
              * @param cppn with this true the genome will have random activation functions and will be able to change activations with Genome::mutate
              * @return Genome
              */
-            Genome(const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecursive = false, bool cppn = false);
+            Genome(const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecursive = false, bool cppn = false) noexcept;
             /**
              * @brief builds a Genome that is feedforward connected from inputs to hidden to outputs.
              * @param numInputs
@@ -99,9 +83,9 @@ namespace EvoAI{
              * @param cppn with this true the genome will have random activation functions and will be able to change activations with Genome::mutate
              * @return Genome
              */
-            Genome(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numOutputs, bool canBeRecursive = false, bool cppn = false);
+            Genome(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numOutputs, bool canBeRecursive = false, bool cppn = false) noexcept;
             /**
-             * @brief loads a Genome previously saved with Genome::toJson
+             * @brief loads a Genome JsonBox::Object
              * @param o JsonBox::Object
              * @return Genome
              */
@@ -165,9 +149,9 @@ namespace EvoAI{
             JsonBox::Value toJson() const noexcept;
             /**
              * @brief writes the genome to a json file.
-             * it can be loaded again with the constructor
+             *      it can be loaded again with the constructor.
              * @code
-             * EvoAI::Genome g(jsonfile);
+             *      EvoAI::Genome g(jsonfile);
              * @endcode
              * @param filename std::string file to write
              */
@@ -203,12 +187,12 @@ namespace EvoAI{
              * @brief sets the genome id
              * @param gnmID std::size_t
              */
-            void setGenomeID(const std::size_t& gnmID) noexcept;
+            void setID(const std::size_t& gnmID) noexcept;
             /**
              * @brief gets the genome id
              * @return std::size_t
              */
-            const std::size_t& getGenomeID() const noexcept;
+            const std::size_t& getID() const noexcept;
             /**
              * @brief setter for species ID
              * @param spcID species id
@@ -233,7 +217,7 @@ namespace EvoAI{
              * @brief setter to change RecurrentAllowed
              * @param isRecurrentAllowed
              */
-            void setRecurrentAllowed(bool isRecurrentAllowed) noexcept{ rnnAllowed = isRecurrentAllowed; }
+            inline void setRecurrentAllowed(bool isRecurrentAllowed) noexcept{ rnnAllowed = isRecurrentAllowed; }
             /**
              * @brief returns true if it allows to have recurrent connections.
              * @return bool 
@@ -269,7 +253,8 @@ namespace EvoAI{
              */
             void mutateActivationType() noexcept;
             /**
-             * @brief mutates the genome
+             * @brief mutates the genome only once depending on rates, 
+             *          the first activated is the only thing mutating.
              * Rates 0.0-1.0
              * @param nodeRate float
              * @param connectionRate float
@@ -288,8 +273,8 @@ namespace EvoAI{
             bool isValid() noexcept;
             ~Genome() = default;
         public:
-            void operator=(const Genome& rhs) noexcept;
-            void operator=(Genome&& rhs) noexcept;
+            Genome& operator=(const Genome& rhs) noexcept;
+            Genome& operator=(Genome&& rhs) noexcept;
             constexpr bool operator==(const Genome& rhs) const noexcept;
             constexpr bool operator<(const Genome& rhs) const noexcept;
             constexpr bool operator>(const Genome& rhs) const noexcept;
@@ -350,33 +335,33 @@ namespace EvoAI{
              */
             static disjointGenes getDisjointGenes(const Genome& g1, const Genome& g2, matchingChromosomes* hint = nullptr) noexcept;
             /**
-             * @brief Creates a new Genome from two parents.
+             * @brief Creates a new Genome from two parents, inheriting CPPN and RecurrentAllowed from any of the parents that is true.
              * if g1 and g2 are equal it will copy g1.
              * @param g1 const Genome&
              * @param g2 const Genome&
-             * @return std::unique_ptr<Genome>
+             * @return Genome
              */
-            static std::unique_ptr<Genome> reproduce(const Genome& g1, const Genome& g2) noexcept;
+            static Genome reproduce(const Genome& g1, const Genome& g2) noexcept;
             /**
              * @brief Creates a NeuralNetwork from a Genome.
              * @param g Genome
-             * @return std::unique_ptr<NeuralNetwork>
+             * @return NeuralNetwork
              */
-            static std::unique_ptr<NeuralNetwork> makePhenotype(const Genome& g) noexcept;
+            static NeuralNetwork makePhenotype(const Genome& g) noexcept;
             /**
              * @brief Creates a genome from a neural network, it will not be exactly the same if the network wasn't made from a genome.
              * @param nn NeuralNetwork
-             * @return std::unique_ptr<Genome>
+             * @return Genome
              */
-            static std::unique_ptr<Genome> makeGenome(NeuralNetwork& nn) noexcept;
+            static Genome makeGenome(NeuralNetwork& nn) noexcept;
         private:
+            std::vector<NodeGene> nodeChromosomes;
+            std::vector<ConnectionGene> connectionChromosomes;
             std::size_t genomeID;
             std::size_t speciesID;
             double fitness;
             bool rnnAllowed;
             bool cppn;
-            std::vector<NodeGene> nodeChromosomes;
-            std::vector<ConnectionGene> connectionChromosomes;
     };
     constexpr bool Genome::operator==(const Genome& rhs) const noexcept{
         return (genomeID == rhs.genomeID &&

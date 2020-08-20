@@ -149,7 +149,7 @@ namespace std{
                 assert(ng.getNeuronID() <= 1073741823); //assert failed because Neuron is over 30 bits
                 seed = (ng.getLayerID() << 30ll) | ng.getNeuronID();
             }else{
-                static_assert(sizeof(result_type) == 4 || sizeof(result_type) == 8, "NodeGene.hpp std::hash<NodeGene> : System must to be x86 or x64");
+                static_assert(sizeof(result_type) == 4 || sizeof(result_type) == 8, "NodeGene.hpp std::hash<NodeGene> : System must be x86 or x64");
             }
             return seed;
         }

@@ -159,7 +159,7 @@ namespace std{
                 assert(cg.getSrc().neuron <= 16383 || cg.getDest().neuron <= 16383);//assert Failed because Neuron is over 14 bits
                 seed = ((cg.getSrc().layer << 30ll) | (cg.getSrc().neuron << 16ll)) | ((cg.getDest().layer << 14ll) | cg.getDest().neuron);
             }else{
-                static_assert(sizeof(result_type) == 4 || sizeof(result_type) == 8, "ConnectionGene.hpp std::hash<ConnectionGene> : System must to be x86 or x64");
+                static_assert(sizeof(result_type) == 4 || sizeof(result_type) == 8, "ConnectionGene.hpp std::hash<ConnectionGene> : System must be x86 or x64");
             }
             return seed;
         }

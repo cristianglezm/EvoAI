@@ -6,9 +6,9 @@ A library for Evolving Neural Networks(NEAT and HyperNEAT).
 
 Requires CMake 3.7 and one of the following compilers:
 
-* GCC 5.0 or newer;
-* Clang 3.6 or newer (Xcode 5.0 or newer on OS X);
-* Visual Studio 2010 or newer;
+* GCC 8.1 or newer; (C++17 support)
+* Clang 7.1 or newer (Xcode 5.0 or newer on OS X);
+* Visual Studio 2019 or newer;
 
 EvoAI requires the following dependencies:
 

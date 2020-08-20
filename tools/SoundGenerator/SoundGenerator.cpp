@@ -31,7 +31,7 @@ void usage(){
     std::cout << "-res, --resolution <width height>\tIt will create a sound using the coordinates(ignored if --image is specified).\n";
     std::cout << "--image <filename>\t\t\tload a image and generate a sound fromt it.\n";
     std::cout << "-r, --repeat <n>\t\t\tIt will generate the sound again.(use it for recurrent nn)\n";
-    std::cout << "-h, --help\t\t\t\thelp menu (This)\n";
+    std::cout << "-h, --help\t\t\t\thelp menu (This)" << std::endl;
 }
 
 int main(int argc, char **argv){
@@ -151,7 +151,7 @@ int main(int argc, char **argv){
         std::cout << "Loading File " << neuralFile << std::endl;
         nn = std::make_unique<EvoAI::NeuralNetwork>(neuralFile);
         if(optMakeGenome){
-            g = EvoAI::Genome::makeGenome(*nn);
+            g = std::make_unique<EvoAI::Genome>(EvoAI::Genome::makeGenome(*nn));
         }
     }else if(optNeuralType){
         if(NeuralType == "0"){
@@ -189,12 +189,12 @@ int main(int argc, char **argv){
         }else if(optReproduce){
             auto g1 = std::make_unique<EvoAI::Genome>(genomeFile1);
             auto g2 = std::make_unique<EvoAI::Genome>(genomeFile2);
-            g = EvoAI::Genome::reproduce(*g1,*g2);
+            g = std::make_unique<EvoAI::Genome>(EvoAI::Genome::reproduce(*g1,*g2));
             g->setCppn(true);
         }else{
             g = std::make_unique<EvoAI::Genome>(genomeFile1);
         }
-        nn = EvoAI::Genome::makePhenotype(*g);
+        nn = std::make_unique<EvoAI::NeuralNetwork>(EvoAI::Genome::makePhenotype(*g));
     }else if(optGenomeType){
         if(genomeType == "0"){
             if(optColor && optCoords){
@@ -213,7 +213,7 @@ int main(int argc, char **argv){
                 g = std::make_unique<EvoAI::Genome>(3,numHidden,3,true,true);
             }
         }
-        nn = EvoAI::Genome::makePhenotype(*g);
+        nn = std::make_unique<EvoAI::NeuralNetwork>(EvoAI::Genome::makePhenotype(*g));
     }
     if(optSave){
         std::cout << "Saving Neural Network to " << saveFile << " ..." << std::endl;
