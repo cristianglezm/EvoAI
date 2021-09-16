@@ -18,19 +18,19 @@ namespace EvoAI{
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
      * @brief Class that represents a Species
      * @details
-     *   T needs to fulfill these conditions:
-     *      T has a member function JsonBox::Value toJson() const noexcept
-     *      T has a constructor T::T(JsonBox::Object)
-     *      T has a member function const double& getFitness() const noexcept
-     *      T has a member function void setFitness(const double&) noexcept
-     *   If Species<T*> it will act as an observer what does this means:
-     *      Species<T*>::add(T* t) will accept a T* by value
-     *      Species<T*>::remove(T* t) will accept a T* by value
-     *      Species<T*>::has(T* t) will accept a T* by value
-     *   If Species<T> it will act as an owner what does this means:
-     *      Species<T>::add(T&& t) will take a T&&
-     *      Species<T>::remove(std::size_t id) will take an id by value
-     *      Species<T>::has(std::size_t id) will take an id by value
+     *   T needs to fulfill these conditions: <br />
+     *      T has a member function JsonBox::Value toJson() const noexcept <br />
+     *      T has a constructor T::T(JsonBox::Object) <br />
+     *      T has a member function const double& getFitness() const noexcept <br />
+     *      T has a member function void setFitness(const double&) noexcept <br />
+     *   If Species<T*> it will act as an observer what does this means: <br />
+     *      Species<T*>::add(T* t) will accept a T* by value <br />
+     *      Species<T*>::remove(T* t) will accept a T* by value <br />
+     *      Species<T*>::has(T* t) will accept a T* by value <br />
+     *   If Species<T> it will act as an owner what does this means: <br />
+     *      Species<T>::add(T&& t) will take a T&& <br />
+     *      Species<T>::remove(std::size_t id) will take an id by value <br />
+     *      Species<T>::has(std::size_t id) will take an id by value <br />
      *  @warning You can't use Species<T*>(JsonBox::Object) or Species<T*>(const std::string& filename) to load a Species.json
      */
     template<typename T>

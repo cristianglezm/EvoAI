@@ -23,17 +23,17 @@ namespace EvoAI{
      *          also you can't use Population<T*>(std::size_t size, Args...args)
      * @brief Population<T> is an utility class that allows to evolve a population easily.
      * @details
-     *   T needs to fulfill these conditions:
-     *      T has a member function JsonBox::Value toJson() const noexcept
-     *      T has a constructor T::T(JsonBox::Object)
-     *      T has a member function const double& getFitness() const noexcept
-     *      T has a member function void setFitness(const double&) noexcept
-     *      T has a static member function static double T::distance(const T&, const T&, double, double, double) noexcept
-     *      T has a static member function static T T::reproduce(const T&, const T&) noexcept
-     *   If Population<T*> it will act as an observer, what does this means:
-     *      Population<T*>::addMember will take a T*
-     *   If Population<T> it will act as an owner, what does this means:
-     *      Population<T>::addMember will take a T&&
+     *   T needs to fulfill these conditions: <br />
+     *      T has a member function JsonBox::Value toJson() const noexcept <br />
+     *      T has a constructor T::T(JsonBox::Object) <br />
+     *      T has a member function const double& getFitness() const noexcept <br />
+     *      T has a member function void setFitness(const double&) noexcept <br />
+     *      T has a static member function static double T::distance(const T&, const T&, double, double, double) noexcept <br />
+     *      T has a static member function static T T::reproduce(const T&, const T&) noexcept <br />
+     *   If Population<T*> it will act as an observer, what does this means: <br />
+     *      Population<T*>::addMember will take a T* <br />
+     *   If Population<T> it will act as an owner, what does this means: <br />
+     *      Population<T>::addMember will take a T&& <br />
      * @author Cristian Glez <Cristian.glez.m@gmail.com>
      */
     template<typename T>

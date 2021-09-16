@@ -217,10 +217,10 @@ namespace EvoAI{
             void resetConnections();
         private:
             std::vector<NeuronLayer> layers;
-            std::vector<Connection*> connections;
-            std::vector<Neuron*> neurons;
-            bool connectionsCached;
-            bool neuronsCached;
+            mutable std::vector<Connection*> connections;
+            mutable std::vector<Neuron*> neurons;
+            mutable bool connectionsCached;
+            mutable bool neuronsCached;
             double mse;
     };
 }
