@@ -1,27 +1,50 @@
 #include <EvoAI/HyperNeat.hpp>
+#include <EvoAI/Genome.hpp>
 
 namespace EvoAI{
     SubstrateInfo::SubstrateInfo()
     : numInputs(0)
     , numHiddenLayers(0)
     , numHiddenNeurons(0)
-    , numOutputs(0){}
-    SubstrateInfo::SubstrateInfo(const std::size_t& numInputs, const std::size_t& numHiddenLayers, const std::size_t& numHiddenNeurons, const std::size_t& numOutputs)
-    : numInputs(numInputs)
-    , numHiddenLayers(numHiddenLayers)
-    , numHiddenNeurons(numHiddenNeurons)
-    , numOutputs(numOutputs){}
+    , numOutputs(0)
+    , leo(0.5)
+    , minmaxWeight(8.0)
+    , bias(1.0){}
+    SubstrateInfo::SubstrateInfo(std::size_t nInputs, std::size_t nHiddenLayers, 
+					const std::vector<std::size_t>& nHiddenNeurons, std::size_t nOutputs, double LEO, double minMaxWeight, double Bias)
+    : numInputs(nInputs)
+    , numHiddenLayers(nHiddenLayers)
+    , numHiddenNeurons(nHiddenNeurons)
+    , numOutputs(nOutputs)
+    , leo(LEO)
+    , minmaxWeight(minMaxWeight)
+    , bias(Bias){}
     SubstrateInfo::SubstrateInfo(JsonBox::Object o)
     : numInputs(std::stoull(o["numInputs"].getString()))
     , numHiddenLayers(std::stoull(o["numHiddenLayers"].getString()))
-    , numHiddenNeurons(std::stoull(o["numHiddenNeurons"].getString()))
-    , numOutputs(std::stoull(o["numOutputs"].getString())){}
+    , numHiddenNeurons()
+    , numOutputs(std::stoull(o["numOutputs"].getString()))
+    , leo(o["leo"].tryGetDouble(0.5))
+    , minmaxWeight(o["minmaxWeight"].tryGetDouble(8.0))
+    , bias(o["bias"].tryGetDouble(1.0)){
+        for(auto& nhn:o["numHiddenNeurons"].getArray()){
+            numHiddenNeurons.emplace_back(std::stoull(nhn.getString()));
+        }
+    }
     JsonBox::Value SubstrateInfo::toJson() const noexcept{
         JsonBox::Object o;
         o["numInputs"] = std::to_string(numInputs);
         o["numHiddenLayers"] = std::to_string(numHiddenLayers);
-        o["numHiddenNeurons"] = std::to_string(numHiddenNeurons);
+        JsonBox::Array a;
+        a.reserve(numHiddenLayers);
+        for(auto& nhn:numHiddenNeurons){
+                a.emplace_back(std::to_string(nhn));
+        }
+        o["numHiddenNeurons"] = a;
         o["numOutputs"] = std::to_string(numOutputs);
+        o["leo"] = leo;
+        o["minmaxWeight"] = minmaxWeight;
+        o["bias"] = bias;
         return JsonBox::Value(o);
     }
 /////////////////
@@ -89,41 +112,41 @@ namespace EvoAI{
             }   break;
             case SubstrateConfiguration::GRID:
             default:{
-                    genome = Genome(3,2,true,true);
+                    genome = Genome(3,2,false,true);
             }    break;
         }
         makeSubstrate();
     }
-    void HyperNeat::setNumInputs(const std::size_t& num) noexcept{
+    void HyperNeat::setNumInputs(std::size_t num) noexcept{
         isSubstrateReady = false;
         isSubstrateValid = false;
         substrateInfo.numInputs = num;
     }
-    const std::size_t& HyperNeat::getNumInputs() const noexcept{
+    std::size_t HyperNeat::getNumInputs() const noexcept{
         return substrateInfo.numInputs;
     }
-    void HyperNeat::setNumHiddenLayers(const std::size_t& num) noexcept{
+    void HyperNeat::setNumHiddenLayers(std::size_t num) noexcept{
         isSubstrateReady = false;
         isSubstrateValid = false;
         substrateInfo.numHiddenLayers = num;
     }
-    const std::size_t& HyperNeat::getNumHiddenLayers() const noexcept{
+    std::size_t HyperNeat::getNumHiddenLayers() const noexcept{
         return substrateInfo.numHiddenLayers;
     }
-    void HyperNeat::setNumHiddenNeurons(const std::size_t& num) noexcept{
+    void HyperNeat::setNumHiddenNeurons(const std::vector<std::size_t>& num) noexcept{
         isSubstrateReady = false;
         isSubstrateValid = false;
         substrateInfo.numHiddenNeurons = num;
     }
-    const std::size_t& HyperNeat::getNumHiddenNeurons() const noexcept{
+    const std::vector<std::size_t>& HyperNeat::getNumHiddenNeurons() const noexcept{
         return substrateInfo.numHiddenNeurons;
     }
-    void HyperNeat::setNumOutputs(const std::size_t& num) noexcept{
+    void HyperNeat::setNumOutputs(std::size_t num) noexcept{
         isSubstrateReady = false;
         isSubstrateValid = false;
         substrateInfo.numOutputs = num;
     }
-    const std::size_t& HyperNeat::getNumOutputs() const noexcept{
+    std::size_t HyperNeat::getNumOutputs() const noexcept{
         return substrateInfo.numOutputs;
     }
     void HyperNeat::setGenome(Genome& g){
@@ -133,6 +156,11 @@ namespace EvoAI{
     const Genome& HyperNeat::getGenome() const noexcept{
         return genome;
     }
+    void HyperNeat::setSubstrate(NeuralNetwork&& subst) noexcept{
+        isSubstrateReady = true;
+        isSubstrateValid = true;
+        substrate = std::move(subst);
+    }
     NeuralNetwork& HyperNeat::getSubstrate() noexcept{
         return substrate;
     }
@@ -140,7 +168,7 @@ namespace EvoAI{
         if(!isSubstrateValid){
             isSubstrateValid = true;
             if(!isSubstrateReady){
-                substrate = NeuralNetwork(substrateInfo.numInputs, substrateInfo.numHiddenLayers,substrateInfo.numHiddenNeurons,substrateInfo.numOutputs, 1.0);
+                substrate = NeuralNetwork(substrateInfo.numInputs, substrateInfo.numHiddenLayers,substrateInfo.numHiddenNeurons,substrateInfo.numOutputs, substrateInfo.bias);
                 isSubstrateReady = true;
             }
             switch(substrateConf){
@@ -152,16 +180,13 @@ namespace EvoAI{
                         for(auto y1=0u;y1<substrate[x1].size();++y1){
                             for(auto x2=0u;x2<substrate.size();++x2){
                                 for(auto y2=0u;y2<substrate[x2].size();++y2){
-                                    auto d = EvoAI::distanceCenter<int>(x1,y1,substrate.size(),substrate[x1].size()) +
-                                        EvoAI::distanceCenter<int>(x2,y2,substrate.size(),substrate[x2].size());
-                                    nn.setInputs({static_cast<double>(x1), static_cast<double>(y1), static_cast<double>(x2), static_cast<double>(y2), static_cast<double>(d)});
-                                    auto out = nn.run();
+                                    auto sized = static_cast<double>(substrate.size());
+                                    auto d = EvoAI::distanceCenter<double>(static_cast<double>(x1),static_cast<double>(y1), sized, static_cast<double>(substrate[x1].size())) +
+                                        EvoAI::distanceCenter<double>(static_cast<double>(x2),static_cast<double>(y2), sized, static_cast<double>(substrate[x2].size()));
+                                    auto out = nn.forward({static_cast<double>(x1), static_cast<double>(y1), static_cast<double>(x2), static_cast<double>(y2), static_cast<double>(d)});
                                     nn.reset();
-                                    if(std::fabs(out[1]) > 0.0){
-                                        auto weight = out[0];
-                                        if(weight < -8.0 || weight > 8.0 || weight == 0.0){
-                                            weight = randomGen.random(-1.0,1.0);
-                                        }
+                                    if(out[1] >= substrateInfo.leo){
+                                        auto weight = std::clamp(out[0], -substrateInfo.minmaxWeight, substrateInfo.minmaxWeight);
                                         auto c = Connection(Link(x1, y1), Link(x2, y2), weight);
                                         if(genome.isRecurrentAllowed()){
                                             substrate.addConnection(c);
@@ -183,15 +208,11 @@ namespace EvoAI{
                     auto nn = Genome::makePhenotype(genome);
                     for(auto i=0u;i<size;++i){
                         for(auto j=0u;j<size;++j){
-                            auto d = EvoAI::distanceCenter<int>(i,j,size,size);
-                            nn.setInputs({static_cast<double>(i), static_cast<double>(j), static_cast<double>(d)});
-                            auto out = nn.run();
+                            auto d = EvoAI::distanceCenter<double>(static_cast<double>(i), static_cast<double>(j), static_cast<double>(size), static_cast<double>(size));
+                            auto out = nn.forward({static_cast<double>(i), static_cast<double>(j), d});
                             nn.reset();
-                            if(std::fabs(out[1]) > 0.0){
-                                auto weight = out[0];
-                                if(weight < -8.0 || weight > 8.0 || weight == 0.0){
-                                    weight = randomGen.random(-1.0,1.0);
-                                }
+                            if(out[1] >= substrateInfo.leo){
+                                auto weight = std::clamp(out[0], -substrateInfo.minmaxWeight, substrateInfo.minmaxWeight);
                                 auto c = Connection(substrate.getIndex(neurons[i]),substrate.getIndex(neurons[j]), weight);
                                 if(genome.isRecurrentAllowed()){
                                     substrate.addConnection(c);
@@ -209,13 +230,33 @@ namespace EvoAI{
         if(!isSubstrateValid){
             makeSubstrate();
         }
-        substrate.setInputs(std::move(inputs));
+        substrate.setInputs(std::forward<std::vector<double>>(inputs));
+    }
+    void HyperNeat::setInputs(const std::vector<double>& ins) noexcept{
+        if(!isSubstrateValid){
+            makeSubstrate();
+        }
+        substrate.setInputs(ins);
     }
     std::vector<double> HyperNeat::run() noexcept{
         if(!isSubstrateValid){
             makeSubstrate();
         }
         return substrate.run();
+    }
+    std::vector<double> HyperNeat::forward(const std::vector<double>& input) noexcept{
+        setInputs(input);
+        return run();
+    }
+    std::vector<double> HyperNeat::forward(std::vector<double>&& input) noexcept{
+        setInputs(std::forward<std::vector<double>>(input));
+        return run();
+    }
+    void HyperNeat::backward(std::vector<double>&& gradientLoss) noexcept{
+        if(!isSubstrateValid){
+            makeSubstrate();
+        }
+        substrate.backward(std::forward<std::vector<double>>(gradientLoss));
     }
     void HyperNeat::reset() noexcept{
         if(!isSubstrateValid){
@@ -227,13 +268,13 @@ namespace EvoAI{
         isSubstrateValid = false;
         genome.mutate(nodeRate,addConnRate,removeConnRate, perturbWeightsRate,enableRate, disableRate, actTypeRate);
     }
-    void HyperNeat::setFitness(const double& fitness) noexcept{
+    void HyperNeat::setFitness(double fitness) noexcept{
         genome.setFitness(fitness);
     }
-    const double& HyperNeat::getFitness() const noexcept{
+    double HyperNeat::getFitness() const noexcept{
         return genome.getFitness();
     }
-    void HyperNeat::setActivationType(const std::size_t& layer, Neuron::ActivationType at) noexcept{
+    void HyperNeat::setActivationType(std::size_t layer, Neuron::ActivationType at) noexcept{
         if(!isSubstrateValid){
             makeSubstrate();
         }
@@ -256,5 +297,8 @@ namespace EvoAI{
 #else
         v.writeToFile(filename, true, false);
 #endif
+    }
+    bool HyperNeat::writeDotFile(const std::string& filename) noexcept{
+        return getSubstrate().writeDotFile(filename);
     }
 }

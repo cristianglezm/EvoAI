@@ -3,7 +3,7 @@
 namespace EvoAI{
     /**
      * @brief helper functions
-     * @todo move to typeUtils?
+     * @todo move to typeUtils? better way?
      */
     namespace priv{
         template<typename T>
@@ -62,14 +62,14 @@ namespace EvoAI{
     , novel(true)
     , killable(true){}
     template<typename T>
-    Species<T>::Species(const std::size_t& id, bool novel) noexcept
+    Species<T>::Species(std::size_t Id, bool Novel) noexcept
     : members()
-    , id(id)
+    , id(Id)
     , age(0)
     , avgFitness(0.0)
     , maxFitness(0.0)
     , oldAvgFitness(0.0)
-    , novel(novel)
+    , novel(Novel)
     , killable(true){}
     template<typename T>
     Species<T>::Species(JsonBox::Object o) noexcept
@@ -82,7 +82,7 @@ namespace EvoAI{
     , novel(o["novel"].getBoolean())
     , killable(o["killable"].getBoolean()){
         static_assert(!std::is_pointer_v<value_type>, "Error you can't call Species<T*>(JsonBox::Object) with T*");
-        auto mmbs = o["members"].getArray();
+        auto& mmbs = o["members"].getArray();
         members.reserve(mmbs.size());
         for(auto& g:mmbs){
             members.emplace_back(g.getObject());
@@ -101,7 +101,7 @@ namespace EvoAI{
         static_assert(!std::is_pointer_v<value_type>, "Error you can't call Species<T*>(filename) with T*");
         JsonBox::Value json;
         json.loadFromFile(filename);
-        auto v = json["Species"];
+        auto& v = json["Species"];
         id = std::stoull(v["id"].getString());
         age = std::stoull(v["age"].getString());
         novel = v["novel"].getBoolean();
@@ -109,7 +109,7 @@ namespace EvoAI{
         avgFitness = v["avgFitness"].getDouble();
         maxFitness = v["maxFitness"].getDouble();
         oldAvgFitness = v["oldAvgFitness"].getDouble();
-        auto mmbs = v["members"].getArray();
+        auto& mmbs = v["members"].getArray();
         members.reserve(mmbs.size());
         for(auto& g:mmbs){
             members.emplace_back(g.getObject());
@@ -134,6 +134,11 @@ namespace EvoAI{
                         auto m2Ptr = priv::to_pointer<T>(m2);
                         return (m1Ptr->getFitness() > m2Ptr->getFitness());
                     });
+    }
+    template<typename T>
+    template<typename Fn>
+    void Species<T>::rank(Fn&& fn) noexcept{
+        std::sort(std::begin(members),std::end(members), fn);
     }
     template<typename T>
     typename Species<T>::const_pointer Species<T>::getRepresentative() const noexcept{
@@ -175,23 +180,23 @@ namespace EvoAI{
         killable = k;
     }
     template<typename T>
-    void Species<T>::setID(const std::size_t& speciesID) noexcept{
+    void Species<T>::setID(std::size_t speciesID) noexcept{
         id = speciesID;
     }
     template<typename T>
-    const std::size_t& Species<T>::getID() const noexcept{
+    std::size_t Species<T>::getID() const noexcept{
         return id;
     }
     template<typename T>
-    void Species<T>::setAge(const std::size_t& speciesAge) noexcept{
+    void Species<T>::setAge(std::size_t speciesAge) noexcept{
         age = speciesAge;
     }
     template<typename T>
-    void Species<T>::addAge(const std::size_t& amount) noexcept{
+    void Species<T>::addAge(std::size_t amount) noexcept{
         age += amount;
     }
     template<typename T>
-    const std::size_t& Species<T>::getAge() const noexcept{
+    std::size_t Species<T>::getAge() const noexcept{
         return age;
     }
     template<typename T>
@@ -208,37 +213,37 @@ namespace EvoAI{
         }
     }
     template<typename T>
-    void Species<T>::remove(std::conditional_t<std::is_pointer_v<Species<T>::value_type>, Species<T>::pointer, std::size_t> id) noexcept{
+    void Species<T>::remove(std::conditional_t<std::is_pointer_v<Species<T>::value_type>, Species<T>::pointer, std::size_t> Id) noexcept{
         if constexpr(std::is_pointer_v<value_type>){
-            if(id) members.erase(std::remove(std::begin(members), std::end(members), id), std::end(members));
+            if(Id) members.erase(std::remove(std::begin(members), std::end(members), Id), std::end(members));
         }else{
             members.erase(std::remove_if(std::begin(members),std::end(members),
-                        [&id](auto& m){
-                            return (m.getID() == id);
+                        [&Id](auto& m){
+                            return (m.getID() == Id);
                         }), std::end(members));
         }
     }
     template<typename T>
-    bool Species<T>::has(std::conditional_t<std::is_pointer_v<Species<T>::value_type>, Species<T>::pointer, std::size_t> id) noexcept{
+    bool Species<T>::has(std::conditional_t<std::is_pointer_v<Species<T>::value_type>, Species<T>::pointer, std::size_t> Id) noexcept{
         orderMembersByID();
         if constexpr(std::is_pointer_v<value_type>){
-            if(id){
+            if(Id){
                 auto comp = [](const auto& a, const auto& b) -> bool{
                     return a->getID() < b->getID();
                 };
-                auto start = std::lower_bound(std::begin(members), std::end(members), id, comp);
-                return (!(start == std::end(members)) && !(comp(id, *start)));
+                auto start = std::lower_bound(std::begin(members), std::end(members), Id, comp);
+                return (!(start == std::end(members)) && !(comp(Id, *start)));
             }
             return false;
         }else{
-            auto comp1 = [](const auto& m, const auto& id) -> bool{
-                return m.getID() < id;
+            auto comp1 = [](const auto& m, const auto& m_id) -> bool{
+                return m.getID() < m_id;
             };
-            auto comp2 = [](const auto& id, const auto& m) -> bool{
-                return id < m.getID();
+            auto comp2 = [](const auto& m_id, const auto& m) -> bool{
+                return m_id < m.getID();
             };
-            auto start = std::lower_bound(std::begin(members), std::end(members), id, comp1);
-            return (!(start == std::end(members)) && !(comp2(id, *start)));
+            auto start = std::lower_bound(std::begin(members), std::end(members), Id, comp1);
+            return (!(start == std::end(members)) && !(comp2(Id, *start)));
         }
     }
     template<typename T>
@@ -312,13 +317,13 @@ namespace EvoAI{
     template<typename T>
     void Species<T>::computeAvgFitness() noexcept{
         oldAvgFitness = avgFitness;
-        auto sum = std::accumulate(std::begin(members), std::end(members), 0.0d, 
+        auto sum = std::accumulate(std::begin(members), std::end(members), 0.0, 
             [](auto& a, auto& b) -> double{
                 auto bPtr = priv::to_pointer<T>(b);
-                return a + bPtr->getFitness();
+                return a + std::abs(bPtr->getFitness());
         });
-        auto size = members.size();
-        avgFitness = sum / size ? size:1u;
+        double size = members.size();
+        avgFitness = sum / (size ? size:1.0);
     }
     template<typename T>
     void Species<T>::computeMaxFitness() noexcept{

@@ -53,6 +53,7 @@ namespace EvoAI{
                 IDENTITY,
                 MODULUS,
                 STEPPED_SIGMOID,
+                SWISH,
                 TANH,
                 TAN,
                 RELU,
@@ -61,6 +62,12 @@ namespace EvoAI{
                 EXPONENTIAL,
                 SQUARE,
                 CUBE,
+                SOFTPLUS,
+                CLAMP,
+                INV,
+                LOG,
+                ABS,
+                HAT,
                 LAST_CPPN_ACTIVATION_TYPE,
                 SOFTMAX
             };
@@ -108,41 +115,47 @@ namespace EvoAI{
              * @brief getter for output
              * @return double&
              */
-            inline const double& getOutput() const noexcept{ return output; }
+            inline double getOutput() const noexcept{ return output; }
             /**
              * @brief setter for Output
-             * @param out const double&
+             * @param out double
              * @return Neuron&
              */
-            Neuron& setOutput(const double& out) noexcept;
+            Neuron& setOutput(double out) noexcept;
             /**
              * @brief add value to Sum
-             * @param sum const double&
+             * @param val double
              * @return Neuron&
              */
-            Neuron& addSum(const double& val) noexcept;
+            Neuron& addSum(double val) noexcept;
             /**
              * @brief getter for sum
-             * @return const double&
+             * @return double
              */
-            inline const double& getSum() const noexcept{ return sum; }
+            inline double getSum() const noexcept{ return sum; }
             /**
              * @brief setter for the sum
-             * @param sum const double&
+             * @param val double
              * @return Neuron&
              */
-            Neuron& setSum(const double& sum) noexcept;
+            Neuron& setSum(double val) noexcept;
             /**
-             * @brief error getter
+             * @brief getter for gradient
              * @return double&
              */
-            inline const double& getDelta() const noexcept{ return delta; }
+            inline double getGradient() const noexcept{ return gradient; }
             /**
-             * @brief Delta value for backprop
-             * @param delta const double&
+             * @brief gradient for backprop
+             * @param gradient double
              * @return Neuron&
              */
-            Neuron& setDelta(const double& delta) noexcept;
+            Neuron& setGradient(double gradient) noexcept;
+            /**
+             * @brief add to gradient
+             * @param grad
+             * @return Neuron&
+             */
+            Neuron& addGradient(double grad) noexcept;
             /**
              * @brief resets the neuron if is not Type:CONTEXT
              * @return Neuron&
@@ -173,7 +186,7 @@ namespace EvoAI{
             Neuron& addConnection(const Connection& c) noexcept;
             /**
              * @brief Removes a Connection
-             * @param const Connection& c
+             * @param c const Connection&
              * @return bool
              */
             bool removeConnection(const Connection& c);
@@ -192,7 +205,7 @@ namespace EvoAI{
              * @param index const std::size_t index
              * @return Connection&
              */
-            Connection& operator[](const std::size_t& index);
+            Connection& operator[](std::size_t index);
             /**
              * @brief Equality Operator
              * @param rhs
@@ -200,16 +213,32 @@ namespace EvoAI{
              */
             bool operator==(const Neuron& rhs) const;
             /**
-             * @brief Getter for the Bias Weight
-             * @return const double& biasWeight
+             * @brief get a ptr to the internal connection bias(for parameters)
+             * @return Connection*
              */
-            inline const double& getBiasWeight() const noexcept{ return biasWeight; }
+            inline Connection* getBiasPtr() noexcept{ return &biasWeight; }
+            /**
+             * @brief Getter for the Bias Weight
+             * @return double biasWeight
+             */
+            inline double getBiasWeight() const noexcept{ return biasWeight.getWeight(); }
             /**
              * @brief Setter for the bias Weight.
              * @param bw biasWeight
              * @return Neuron&
              */
-            Neuron& setBiasWeight(const double& bw) noexcept;
+            Neuron& setBiasWeight(double bw) noexcept;
+            /**
+             * @brief setter for bias gradient
+             * @param grad
+             * @return double
+             */
+            Neuron& setBiasGradient(double grad) noexcept;
+            /**
+             * @brief getter for bias gradient
+             * @return double
+             */
+            inline double getBiasGradient() const noexcept{ return biasWeight.getGradient(); }
             /**
              * @brief Clears the neuron's connections.
              */
@@ -234,8 +263,8 @@ namespace EvoAI{
         private:
             double output;
             double sum;
-            double delta;
-            double biasWeight;
+            double gradient;
+            Connection biasWeight;
             Type type;
             ActivationType activationType;
             std::vector<Connection> connections;

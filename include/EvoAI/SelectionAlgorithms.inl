@@ -15,8 +15,8 @@ namespace EvoAI{
             std::size_t loserIndex = members.size() - 1;
             std::size_t half = std::floor(members.size() / 2);
             for(auto i=0u;i<numberToSelect;++i){
-                auto selectedFather = randomGen.random(0u,half);
-                auto selectedMother = randomGen.random(0u,half);
+                auto selectedFather = randomGen().random(std::size_t(0),half);
+                auto selectedMother = randomGen().random(std::size_t(0),half);
                 selected.emplace_back(members[selectedFather], members[selectedMother], members[loserIndex--]);
             }
             return selected;
@@ -33,8 +33,8 @@ namespace EvoAI{
                 double percentage = sp->getSize() / static_cast<double>(maxPopulation);
                 std::size_t numToSelectPerSpecies = std::floor(numberToSelect * percentage);
                 for(auto i=0u;i<numToSelectPerSpecies;++i){
-                    auto selectedFather = randomGen.random(0u,half);
-                    auto selectedMother = randomGen.random(0u,half);
+                    auto selectedFather = randomGen().random(std::size_t(0), half);
+                    auto selectedMother = randomGen().random(std::size_t(0), half);
                     if constexpr(std::is_pointer_v<T>){
                         selected.emplace_back(spMembers[selectedFather], spMembers[selectedMother], spMembers[loserIndex]);
                     }else{
@@ -48,9 +48,9 @@ namespace EvoAI{
         }
         // tournament algo
             template<typename T>
-            Tournament<T>::Tournament(std::size_t maxPopulation, std::size_t rounds) noexcept
+            Tournament<T>::Tournament(std::size_t maxPopulation, std::size_t rnds) noexcept
             : maxPop(maxPopulation)
-            , rounds(rounds){}
+            , rounds(rnds){}
             template<typename T>
             template<typename Members>
             std::pair<typename Tournament<T>::pointer, typename Tournament<T>::pointer> Tournament<T>::fight(Members& members) noexcept{
@@ -58,18 +58,18 @@ namespace EvoAI{
                 pointer champ = nullptr;
                 pointer loser = nullptr;
                 if constexpr(std::is_pointer_v<T> || std::is_same_v<Members, std::vector<pointer>>){
-                    champ = members[randomGen.random(0u, max)];
-                    loser = members[randomGen.random(0u, max)];
+                    champ = members[randomGen().random(std::size_t(0), max)];
+                    loser = members[randomGen().random(std::size_t(0), max)];
                 }else{
-                    champ = &members[randomGen.random(0u, max)];
-                    loser = &members[randomGen.random(0u, max)];
+                    champ = &members[randomGen().random(std::size_t(0), max)];
+                    loser = &members[randomGen().random(std::size_t(0), max)];
                 }
                 for(auto i=0u;i<rounds;++i){
                     pointer contender = nullptr;
                     if constexpr(std::is_pointer_v<T> || std::is_same_v<Members, std::vector<pointer>>){
-                        contender = members[randomGen.random(0u, max)];
+                        contender = members[randomGen().random(std::size_t(0), max)];
                     }else{
-                        contender = &members[randomGen.random(0u, max)];
+                        contender = &members[randomGen().random(std::size_t(0), max)];
                     }
                     if(contender->getFitness() > champ->getFitness()){
                         loser = champ;
@@ -134,8 +134,8 @@ namespace EvoAI{
             template<typename T>
             template<typename Members>
             typename FPS<T>::pointer FPS<T>::FPSelection(Members& members, double totalFitness) noexcept{
-                double r = randomGen.random(-1.0d, 1.0d);
-                double covered = 0.0d;
+                double r = randomGen().random(-1.0, 1.0);
+                double covered = 0.0;
                 for(auto& m:members){
                     if constexpr(std::is_pointer_v<T> || std::is_same_v<Members, std::vector<pointer>>){
                         covered += (m->getFitness() / totalFitness);
@@ -157,7 +157,7 @@ namespace EvoAI{
                 selected.reserve(numberToSelect);
                 std::unordered_map<std::size_t, pointer> alreadyALoser;
                 alreadyALoser.reserve(numberToSelect);
-                double totalFitness = std::accumulate(std::begin(members), std::end(members), 0.0d, 
+                double totalFitness = std::accumulate(std::begin(members), std::end(members), 0.0, 
                     [](auto& a, auto& b){
                         return a + b->getFitness();
                 });
@@ -184,14 +184,14 @@ namespace EvoAI{
                     std::size_t numToSelectPerSpecies = std::floor(numberToSelect * percentage);
                     alreadyALoser.reserve(numToSelectPerSpecies);
                     auto& members = sp->getMembers();
-                    double totalFitness = 0.0d;
+                    double totalFitness = 0.0;
                     if constexpr(std::is_pointer_v<T>){
-                        totalFitness = std::accumulate(std::begin(members), std::end(members),0.0d, 
+                        totalFitness = std::accumulate(std::begin(members), std::end(members),0.0, 
                             [](auto& a, auto& b){
                                 return a + b->getFitness();
                         });
                     }else{
-                        totalFitness = std::accumulate(std::begin(members), std::end(members),0.0d, 
+                        totalFitness = std::accumulate(std::begin(members), std::end(members),0.0, 
                             [](auto& a, auto& b){
                                 return a + b.getFitness();
                         });

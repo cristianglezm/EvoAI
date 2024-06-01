@@ -1,6 +1,7 @@
 ###########
 ## Docs
 ###########
+_build
 latex
 html
 *.chm

@@ -8,16 +8,16 @@ namespace EvoAI{
     , activationType(Neuron::ActivationType::SIGMOID)
     , bias(1.0)
     , cyclesLimit(3){}
-    NeuronLayer::NeuronLayer(const std::size_t& numNeurons,const Neuron::Type& t,const double& bias)
+    NeuronLayer::NeuronLayer(std::size_t numNeurons,const Neuron::Type& t,double Bias)
     : neurons()
     , type(t)
     , activationType(Neuron::ActivationType::SIGMOID)
-    , bias(bias)
+    , bias(Bias)
     , cyclesLimit(3){
         neurons.reserve(numNeurons);
         for(auto i=0u; i<numNeurons;++i){
             neurons.emplace_back(Neuron(t));
-            neurons[i].setBiasWeight(randomGen.random(-1.0,1.0));
+            neurons[i].setBiasWeight(bias);
         }
     }
     NeuronLayer::NeuronLayer(JsonBox::Object o)
@@ -53,12 +53,18 @@ namespace EvoAI{
         }
         return *this;
     }
-    NeuronLayer& NeuronLayer::setBias(const double& bias){
-        this->bias = bias;
+    NeuronLayer& NeuronLayer::setBias(double Bias){
+        this->bias = Bias;
+        for(auto& n:neurons){
+            n.setBiasWeight(bias);
+        }
         return *this;
     }
     bool NeuronLayer::removeNeuron(Neuron* n){
-        auto removed = std::remove(std::begin(neurons), std::end(neurons), *n);
+        auto removed = std::remove_if(std::begin(neurons), std::end(neurons),
+            [n](const Neuron& n2){
+                return n == &n2;
+            });
         auto isRemoved = removed != std::end(neurons);
         neurons.erase(removed, std::end(neurons));
         return isRemoved;
@@ -91,7 +97,7 @@ namespace EvoAI{
         }
         return *this;
     }
-    NeuronLayer& NeuronLayer::setCyclesLimit(const int& cycles){
+    NeuronLayer& NeuronLayer::setCyclesLimit(int cycles){
         cyclesLimit = cycles;
         return *this;
     }
@@ -109,10 +115,10 @@ namespace EvoAI{
         o["neurons"] = JsonBox::Value(a);
         return JsonBox::Value(o);
     }
-    Neuron& NeuronLayer::operator[](const std::size_t& index){
+    Neuron& NeuronLayer::operator[](std::size_t index){
         return neurons[index];
     }
-    const Neuron& NeuronLayer::operator[](const std::size_t& index) const{
+    const Neuron& NeuronLayer::operator[](std::size_t index) const{
         return neurons[index];
     }
     bool NeuronLayer::operator==(const NeuronLayer& rhs) const{
@@ -120,5 +126,13 @@ namespace EvoAI{
                 type == rhs.type &&
                 bias == rhs.bias && 
                 activationType == rhs.activationType);
+    }
+    std::vector<double> NeuronLayer::backward() const noexcept{
+        std::vector<double> grads;
+        grads.reserve(size());
+        for(const auto& n:neurons){
+            grads.emplace_back(n.getGradient());
+        }
+        return grads;
     }
 }

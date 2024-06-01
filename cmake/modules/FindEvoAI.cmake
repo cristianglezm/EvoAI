@@ -27,9 +27,23 @@ if(NOT EvoAI_FIND_VERSION_MAJOR)
     SET(EvoAI_FIND_VERSION_MAJOR 1)
 endif(NOT EvoAI_FIND_VERSION_MAJOR)
 
+SET(LIB_SUFFIX "/")
+if(CMAKE_SYSTEM_NAME MATCHES "Android")
+    SET(LIB_SUFFIX "/${CMAKE_ANDROID_ARCH_ABI}")
+endif(CMAKE_SYSTEM_NAME MATCHES "Android")
+if(EvoAI_ROOT)
+    SET(EvoAI_INCLUDE_DIR "${EvoAI_ROOT}/include")
+    if(EvoAI_BUILD_STATIC)
+        SET(EvoAI_LIBRARY "${EvoAI_ROOT}/lib${LIB_SUFFIX}/libEvoAI-${EvoAI_FIND_VERSION_MAJOR}-s.a")
+    elseif(NOT EvoAI_BUILD_STATIC)
+        SET(EvoAI_LIBRARY "${EvoAI_ROOT}/lib${LIB_SUFFIX}/libEvoAI-${EvoAI_FIND_VERSION_MAJOR}.dll.a")
+    endif(EvoAI_BUILD_STATIC)
+    SET(EvoAI_FOUND 1)
+endif(EvoAI_ROOT)
+
 find_library(EvoAI_LIBRARY
-        NAMES EvoAI EvoAI-1.dll EvoAI-1
-        PATH_SUFFIXES lib
+        NAMES EvoAI EvoAI-${EvoAI_FIND_VERSION_MAJOR}
+        PATH_SUFFIXES lib${LIB_SUFFIX}
         PATHS ${FIND_EvoAI_PATHS})
 
 include(FindPackageHandleStandardArgs)
@@ -66,16 +80,6 @@ if(EvoAI_FIND_VERSION AND EvoAI_INCLUDE_DIR)
         endif()
     endif()
 endif()
-
-if(EvoAI_ROOT)
-	SET(EvoAI_INCLUDE_DIR "${EvoAI_ROOT}/include")
-    if(BUILD_STATIC)
-        SET(EvoAI_LIBRARY "${EvoAI_ROOT}/lib/libEvoAI-${EvoAI_FIND_VERSION_MAJOR}-s.a")
-    elseif(NOT BUILD_STATIC)
-        SET(EvoAI_LIBRARY "${EvoAI_ROOT}/lib/libEvoAI-${EvoAI_FIND_VERSION_MAJOR}.dll.a")
-    endif(BUILD_STATIC)
-	SET(EvoAI_FOUND 1)
-endif(EvoAI_ROOT)
 
 set(EvoAI_INCLUDE_DIR "${EvoAI_INCLUDE_DIR}")
 set(EvoAI_LIBRARIES "${EvoAI_LIBRARY}")

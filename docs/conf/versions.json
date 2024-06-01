@@ -1,0 +1,13 @@
+[
+    {
+        "name": "latest",
+        "version": "latest",
+        "url": "https://cristianglezm.github.io/EvoAI/latest",
+        "preferred": true
+    },
+    {
+        "name": "v1.0 (stable)",
+        "version": "v1.0",
+        "url": "https://cristianglezm.github.io/EvoAI/v1.0/",
+    }
+]

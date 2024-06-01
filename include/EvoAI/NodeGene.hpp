@@ -8,6 +8,7 @@
 #include <EvoAI/Utils.hpp>
 
 #include <string>
+#include <iosfwd>
 #include <cassert>
 
 namespace EvoAI{
@@ -24,18 +25,16 @@ namespace EvoAI{
              * Default ActType = Neuron::ActivationType::SIGMOID
              * @param lyrID std::size_t
              * @param nrnID std::size_t
-             * @return NodeGene
              */
-            NodeGene(const std::size_t& lyrID, const std::size_t& nrnID);
+            NodeGene(std::size_t lyrID, std::size_t nrnID);
             /**
              * @brief Constructor
              * @param lyrID std::size_t
              * @param nrnID std::size_t
              * @param nt Neuron::Type
              * @param nat Neuron::ActivationType
-             * @return NodeGene
              */
-            NodeGene(const std::size_t& lyrID, const std::size_t& nrnID, Neuron::Type nt, Neuron::ActivationType nat);
+            NodeGene(std::size_t lyrID, std::size_t nrnID, Neuron::Type nt, Neuron::ActivationType nat);
             /**
              *  @brief copy constructor
              *  
@@ -53,6 +52,12 @@ namespace EvoAI{
              * @param o JsonBox::Object&
              */ 
             NodeGene(JsonBox::Object o);
+            /**
+             * @brief convert NodeGene to a std::string
+             * @param delimiter default " "
+             * @return std::string
+             */
+            std::string toString(std::string delimiter = " ") const noexcept;
             /**
              * @brief returns a json of the nodeGene
              * @return JsonBox::Value
@@ -92,28 +97,31 @@ namespace EvoAI{
              * @brief getter for InnovationID
              * @return std::size_t
              */
-            const std::size_t& getInnovationID() const noexcept;
+            std::size_t getInnovationID() const noexcept;
             /**
              * @brief adds the amount to current bias.
              * @param amount
              */
-            void addBias(const double& amount) noexcept;
+            void addBias(double amount) noexcept;
             /**
              * @brief setter for the node bias.
              * @param bw bias weight
              */
-            void setBias(const double& bw) noexcept;
+            void setBias(double bw) noexcept;
             /**
              * @brief getter for bias
-             * @return const double& bias
+             * @return double bias
              */
-            const double& getBias() const noexcept;
+            double getBias() const noexcept;
             bool operator==(const NodeGene& rhs) const;
             bool operator!=(const NodeGene& rhs) const;
             void operator=(const NodeGene& rhs) noexcept;
             void operator=(NodeGene&& rhs) noexcept;
             constexpr bool operator<(const NodeGene& rhs) const noexcept;
             constexpr bool operator>(const NodeGene& rhs) const noexcept;
+            friend std::ostream& operator<<(std::ostream& o, const EvoAI::NodeGene& ng) noexcept{
+                return o << ng.toString();
+            }
             ~NodeGene() = default;
         private:
             std::size_t layerID;
@@ -141,12 +149,14 @@ namespace std{
         using result_type = std::size_t;
         result_type operator()(const argument_type& ng) const{
             result_type seed = 0u;
-            // better way of checking if x32 or x64 system?
+            // better way of checking if x86 or x64 system?
             if constexpr(sizeof(std::size_t) == 8){
-                assert(ng.getNeuronID() <= 1152921504606846975);//assert failed because Neuron is over 60 bits
+                //assert failed because Neuron is over 60 bits
+                assert(ng.getNeuronID() <= 1152921504606846975);
                 seed = (ng.getLayerID() << 62ll) | ng.getNeuronID();
             }else if constexpr(sizeof(std::size_t) == 4){
-                assert(ng.getNeuronID() <= 1073741823); //assert failed because Neuron is over 30 bits
+                //assert failed because Neuron is over 30 bits
+                assert(ng.getNeuronID() <= 1073741823);
                 seed = (ng.getLayerID() << 30ll) | ng.getNeuronID();
             }else{
                 static_assert(sizeof(result_type) == 4 || sizeof(result_type) == 8, "NodeGene.hpp std::hash<NodeGene> : System must be x86 or x64");

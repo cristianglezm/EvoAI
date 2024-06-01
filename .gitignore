@@ -1,4 +1,9 @@
 #################
+## CMake
+#################
+CMakeUserPresets.json
+
+#################
 ## Eclipse
 #################
 .project
@@ -30,9 +35,8 @@ local.properties
 #################
 ## Code::Blocks
 #################
-
-*Build*/*
-*build*/*
+*Build*
+*build*
 *.depend
 *.layout
 *.cbn
@@ -41,6 +45,17 @@ local.properties
 *.pydevproject
 *.out
 *.o
+
+#################
+## CodeLite
+#################
+.cache
+compile_commands.json
+#################
+## vscode
+#################
+.vscode
+.VSCodeCounter/*
 #################
 ## Visual Studio
 #################

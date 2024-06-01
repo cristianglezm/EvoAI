@@ -1,35 +1,3 @@
-if(EvoAI_BUILD_STATIC)
-    SET(SFML_STATIC_LIBRARIES TRUE)
-    SET(SFML_USE_STATIC_STD_LIBS TRUE)
-endif(EvoAI_BUILD_STATIC)
-
-#sfml
-find_package(SFML 2.3 COMPONENTS graphics window system network audio REQUIRED)
-if(WIN32)
-    FILE(GLOB_RECURSE SFML_DEBUG_DLLS "${SFML_ROOT}/bin/sfml-*-d-2.dll")
-    FILE(GLOB_RECURSE SFML_RELEASE_DLLS "${SFML_ROOT}/bin/*-2.dll")
-    if(NOT SFML_DEBUG_DLLS STREQUAL "")
-        LIST(REMOVE_ITEM SFML_RELEASE_DLLS ${SFML_DEBUG_DLLS})
-    endif(NOT SFML_DEBUG_DLLS STREQUAL "")
-endif(WIN32)
-if(NOT BUILD_STATIC AND WIN32)
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        install(FILES ${SFML_DEBUG_DLLS} DESTINATION bin)
-    elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-        install(FILES ${SFML_RELEASE_DLLS} DESTINATION bin)
-    endif()
-endif(NOT BUILD_STATIC AND WIN32)
-
-if(NOT EvoAI_BUILD_STATIC AND WIN32)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -lpthread -static-libgcc -static-libstdc++")
-endif(NOT EvoAI_BUILD_STATIC AND WIN32)
-
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fexpensive-optimizations")
-endif()
-
 # Add Tools
 add_subdirectory(NeuralNetworkVisualizer)
 add_subdirectory(GenomeVisualizer)

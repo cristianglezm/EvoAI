@@ -1,13 +1,13 @@
 #include "NNRenderer.hpp"
 
 namespace EvoAI{
-    NNRenderer::NNRenderer(NeuralNetwork* nn)
+    NNRenderer::NNRenderer(NeuralNetwork* NN)
     : neurons()
     , connections()
-    , nn(nn){
+    , nn(NN){
         font = sf::Font();
-        if(!font.loadFromFile("data/fonts/Outwrite.ttf")){
-            throw std::runtime_error("Cannot Load Font -> data/fonts/Outwrite.ttf");
+        if(!font.loadFromFile("EvoAI/data/fonts/MonaspaceRadon-Regular.otf")){
+            throw std::runtime_error("Cannot Load Font -> EvoAI/data/fonts/MonaspaceRadon-Regular.otf");
         }
         setUp();
     }
@@ -25,10 +25,10 @@ namespace EvoAI{
             win.draw(ni.neuronShape);
         }
     }
-    void NNRenderer::setNeuralNetwork(NeuralNetwork* nn) noexcept{
+    void NNRenderer::setNeuralNetwork(NeuralNetwork* NN) noexcept{
         neurons.clear();
         connections.clear();
-        this->nn = nn;
+        this->nn = NN;
         setUp();
     }
     void NNRenderer::setFont(sf::Font f) noexcept{
@@ -67,7 +67,7 @@ namespace EvoAI{
             change = !change;
         }
     }
-    void NNRenderer::setUpConnectionInfo(Connection& c, sf::Vector2f& p, const int& space) noexcept{
+    void NNRenderer::setUpConnectionInfo(Connection& c, sf::Vector2f& p, int space) noexcept{
         const int textSize = 15;
         ConnectionInfo ci;
         sf::Color color = sf::Color::White;

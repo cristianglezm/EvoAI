@@ -25,13 +25,13 @@ namespace EvoAI{
              */
             template<class T, class InputIt = typename std::vector<T>::const_iterator>
             struct Range{
-                Range(InputIt begin, InputIt end)
-                : begin(begin)
-                , end(end){}
+                Range(InputIt first, InputIt last)
+                : begin(first)
+                , end(last){}
                 std::size_t size() const{
                     return std::distance(begin, end);
                 }
-                const T& operator[](const std::size_t& index) const noexcept{
+                const T& operator[](std::size_t index) const noexcept{
                     return *(begin + index);
                 }
                 using iterator = typename std::vector<T>::iterator;
@@ -55,14 +55,12 @@ namespace EvoAI{
             Genome() noexcept;
             /**
              *  @brief copy constructor
-             *  
-             *  @param [in] rhs const Genome&
+             *  @param rhs const Genome&
              */
             Genome(const Genome& rhs) noexcept;
             /**
              *  @brief move constructor
-             *  
-             *  @param [in] rhs Genome&&
+             *  @param rhs Genome&&
              */
             Genome(Genome&& rhs) noexcept;
             /**
@@ -70,30 +68,26 @@ namespace EvoAI{
              * @param numInputs
              * @param numOutputs
              * @param canBeRecursive
-             * @param cppn with this true the genome will have random activation functions and will be able to change activations with Genome::mutate
-             * @return Genome
+             * @param CPPN with this true the genome will have random activation functions and will be able to change activations with Genome::mutate
              */
-            Genome(const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecursive = false, bool cppn = false) noexcept;
+            Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive = false, bool CPPN = false) noexcept;
             /**
              * @brief builds a Genome that is feedforward connected from inputs to hidden to outputs.
              * @param numInputs
              * @param numHidden 
              * @param numOutputs
              * @param canBeRecursive
-             * @param cppn with this true the genome will have random activation functions and will be able to change activations with Genome::mutate
-             * @return Genome
+             * @param CPPN with this true the genome will have random activation functions and will be able to change activations with Genome::mutate
              */
-            Genome(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numOutputs, bool canBeRecursive = false, bool cppn = false) noexcept;
+            Genome(std::size_t numInputs, std::size_t numHidden, std::size_t numOutputs, bool canBeRecursive = false, bool CPPN = false) noexcept;
             /**
              * @brief loads a Genome JsonBox::Object
              * @param o JsonBox::Object
-             * @return Genome
              */
             Genome(JsonBox::Object o);
             /**
              * @brief loads a Genome from a jsonfile previously saved with Genome::writeToFile
              * @param jsonfile std::string&
-             * @return Genome
              */
             Genome(const std::string& jsonfile);
             /**
@@ -141,7 +135,7 @@ namespace EvoAI{
              * @param layerID count the nodes from that layer.
              * @return std::size_t number of nodes
              */
-            std::size_t getNumOfNodes(const std::size_t& layerID) const noexcept;
+            std::size_t getNumOfNodes(std::size_t layerID) const noexcept;
             /**
              * @brief returns a Json value with the information of the genome.
              * @return JsonBox::Value
@@ -157,20 +151,20 @@ namespace EvoAI{
              */
             void writeToFile(const std::string& filename) const noexcept;
             /**
-             * @brief gets the genome id
+             * @brief sets the genome fitness
              * @param fit double
              */
-            void setFitness(const double& fit) noexcept;
+            void setFitness(double fit) noexcept;
             /**
              * @brief adds the amount to the current fitness.
-             * @param amount const double&
+             * @param amount double
              */
-            void addFitness(const double& amount) noexcept;
+            void addFitness(double amount) noexcept;
             /**
              * @brief gets the fitness
              * @return double
              */
-            const double& getFitness() const noexcept;
+            double getFitness() const noexcept;
             /**
              * @brief Checks if it has the NodeGene.
              * @param ng NodeGene
@@ -187,25 +181,25 @@ namespace EvoAI{
              * @brief sets the genome id
              * @param gnmID std::size_t
              */
-            void setID(const std::size_t& gnmID) noexcept;
+            void setID(std::size_t gnmID) noexcept;
             /**
              * @brief gets the genome id
              * @return std::size_t
              */
-            const std::size_t& getID() const noexcept;
+            std::size_t getID() const noexcept;
             /**
              * @brief setter for species ID
              * @param spcID species id
              */
-            void setSpeciesID(const std::size_t& spcID) noexcept;
+            void setSpeciesID(std::size_t spcID) noexcept;
             /**
              * @brief returns the species id.
              * @return std::size_t&
              */
-            const std::size_t& getSpeciesID() const noexcept;
+            std::size_t getSpeciesID() const noexcept;
             /**
              * @brief setter for cppn
-             * @param bool isCppn
+             * @param isCppn bool
              */
             void setCppn(bool isCppn) noexcept;
             /**
@@ -215,7 +209,7 @@ namespace EvoAI{
             bool isCppn() const noexcept;
             /**
              * @brief setter to change RecurrentAllowed
-             * @param isRecurrentAllowed
+             * @param isRecurrentAllowed bool
              */
             inline void setRecurrentAllowed(bool isRecurrentAllowed) noexcept{ rnnAllowed = isRecurrentAllowed; }
             /**
@@ -255,9 +249,10 @@ namespace EvoAI{
             /**
              * @brief mutates the genome only once depending on rates, 
              *          the first activated is the only thing mutating.
-             * Rates 0.0-1.0
+             * Rates from 0.0 to 1.0
              * @param nodeRate float
-             * @param connectionRate float
+             * @param addConnRate float
+             * @param removeConnRate float
              * @param perturbWeightsRate float
              * @param enableRate float
              * @param disableRate float
@@ -294,9 +289,9 @@ namespace EvoAI{
              * @return double
              */
             static double distance(const Genome& g1, const Genome& g2, 
-                                    const double& c1 = 2.0, 
-                                    const double& c2 = 2.0, 
-                                    const double& c3 = 1.0) noexcept;
+                                    double c1 = 2.0, 
+                                    double c2 = 2.0, 
+                                    double c3 = 1.0) noexcept;
             /**
              * @brief It returns a matchingNodeGenes of matching NodeGenes between g1 and g2.
              * @param g1 Genome

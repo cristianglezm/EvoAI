@@ -5,16 +5,16 @@ namespace EvoAI{
     Neuron::Neuron()
     : output(0.0)
     , sum(0.0)
-    , delta(0.0)
-    , biasWeight(randomGen.random(-1.0,1.0))
+    , gradient(0.0)
+    , biasWeight(Link(0,0), Link(0,0), randomGen().random(-1.0,1.0))
     , type(Type::HIDDEN)
     , activationType(Neuron::ActivationType::SIGMOID)
     , connections(){}
     Neuron::Neuron(JsonBox::Object o)
     : output(0.0)
     , sum(0.0)
-    , delta(0.0)
-    , biasWeight(o["biasWeight"].getDouble())
+    , gradient(o["gradient"].tryGetDouble(0.0))
+    , biasWeight(Connection(o["biasWeight"].getObject()))
     , type(Neuron::typeToEnum(o["type"].getString()))
     , activationType(Neuron::activationTypeToEnum(o["activationType"].getString()))
     , connections(){
@@ -27,8 +27,8 @@ namespace EvoAI{
     Neuron::Neuron(Type t)
     : output(0.0)
     , sum(0.0)
-    , delta(0.0)
-    , biasWeight(randomGen.random(-1.0,1.0))
+    , gradient(0.0)
+    , biasWeight(Link(0,0), Link(0,0), randomGen().random(-1.0,1.0))
     , type(t)
     , activationType(Neuron::ActivationType::SIGMOID)
     , connections(){}
@@ -36,39 +36,44 @@ namespace EvoAI{
         type = t;
         return *this;
     }
-    Neuron& Neuron::setOutput(const double& out) noexcept{
+    Neuron& Neuron::setOutput(double out) noexcept{
         output = out;
         return *this;
     }
-    Neuron& Neuron::addSum(const double& val) noexcept{
+    Neuron& Neuron::addSum(double val) noexcept{
         sum += val;
         return *this;
     }
-    Neuron& Neuron::setSum(const double& sum) noexcept{
-        this->sum = sum;
+    Neuron& Neuron::setSum(double val) noexcept{
+        this->sum = val;
         return *this;
     }
-    Neuron& Neuron::setDelta(const double& delta) noexcept{
-        this->delta = delta;
+    Neuron& Neuron::setGradient(double grad) noexcept{
+        this->gradient = grad;
+        return *this;
+    }
+    Neuron& Neuron::addGradient(double grad) noexcept{
+        this->gradient += grad;
         return *this;
     }
     Neuron& Neuron::reset() noexcept{
        if(type != Type::CONTEXT){
             output = 0.0;
             sum = 0.0;
-            delta = 0.0;
+            gradient = 0.0;
        }
        return *this;
     }
     Neuron& Neuron::resetContext() noexcept{
         output = 0.0;
         sum = 0.0;
-        delta = 0.0;
+        gradient = 0.0;
         return *this;
     }
     JsonBox::Value Neuron::toJson() const noexcept{
         JsonBox::Object o;
-        o["biasWeight"] = JsonBox::Value(biasWeight);
+        o["biasWeight"] = biasWeight.toJson();
+        o["gradient"] = gradient;
         o["type"] = JsonBox::Value(typeToString(type));
         o["activationType"] = JsonBox::Value(activationTypeToString(activationType));
         JsonBox::Array conns;
@@ -82,7 +87,8 @@ namespace EvoAI{
     std::string Neuron::toString(const std::string& delimiter) const noexcept{
         std::ostringstream os;
         os << "output: " << output << delimiter << " sum: " << sum << 
-              delimiter << " delta: " << delta << delimiter << " biasWeight: " << biasWeight << delimiter << " type: " <<
+              delimiter << " gradient: " << gradient << delimiter << " biasWeight: " << biasWeight.getWeight() << delimiter << " biasGrad: " 
+              << biasWeight.getGradient() << delimiter << " type: " <<
               typeToString(type) << delimiter << " activationType: " << activationTypeToString(activationType);
         return os.str();
     }
@@ -104,19 +110,23 @@ namespace EvoAI{
     std::size_t Neuron::size(){
         return connections.size();
     }
-    Connection& Neuron::operator[](const std::size_t& index){
+    Connection& Neuron::operator[](std::size_t index){
         return connections[index];
     }
     bool Neuron::operator==(const Neuron& rhs) const{
         return (output == rhs.output
                 && sum == rhs.sum
-                && delta == rhs.delta
+                && gradient == rhs.gradient
                 && type == rhs.type
                 && biasWeight == rhs.biasWeight
                 && activationType == rhs.activationType);
     }
-    Neuron& Neuron::setBiasWeight(const double& bw) noexcept{
-        biasWeight = bw;
+    Neuron& Neuron::setBiasWeight(double bw) noexcept{
+        biasWeight.setWeight(bw);
+        return *this;
+    }
+    Neuron& Neuron::setBiasGradient(double grad) noexcept{
+        biasWeight.setGradient(grad);
         return *this;
     }
     Neuron& Neuron::setActivationType(Neuron::ActivationType atype) noexcept{
@@ -152,6 +162,7 @@ namespace EvoAI{
             case Neuron::ActivationType::MODULUS:           return "modulus";
             case Neuron::ActivationType::SIGMOID:           return "sigmoid";
             case Neuron::ActivationType::STEPPED_SIGMOID:   return "steppedSigmoid";
+            case Neuron::ActivationType::SWISH:             return "swish";
             case Neuron::ActivationType::TANH:              return "tanh";
             case Neuron::ActivationType::TAN:               return "tan";
             case Neuron::ActivationType::SINUSOID:          return "sinusoid";
@@ -164,6 +175,12 @@ namespace EvoAI{
             case Neuron::ActivationType::EXPONENTIAL:       return "exponential";
             case Neuron::ActivationType::SOFTMAX:           return "softmax";
             case Neuron::ActivationType::GAUSSIAN:          return "gaussian";
+            case Neuron::ActivationType::SOFTPLUS:          return "softplus";
+            case Neuron::ActivationType::CLAMP:             return "clamp";
+            case Neuron::ActivationType::INV:               return "inv";
+            case Neuron::ActivationType::LOG:               return "log";
+            case Neuron::ActivationType::ABS:               return "abs";
+            case Neuron::ActivationType::HAT:               return "hat";
         }
         return "undefined";
     }
@@ -190,6 +207,8 @@ namespace EvoAI{
             return Neuron::ActivationType::CUBE;
         }else if(at == "steppedSigmoid"){
             return Neuron::ActivationType::STEPPED_SIGMOID;
+        }else if(at == "swish"){
+            return Neuron::ActivationType::SWISH;
         }else if(at == "softmax"){
             return Neuron::ActivationType::SOFTMAX;
         }else if(at == "tanh"){
@@ -200,7 +219,19 @@ namespace EvoAI{
             return Neuron::ActivationType::COSINE;
         }else if(at == "tan"){
             return Neuron::ActivationType::TAN;
+        }else if(at == "softplus"){
+            return Neuron::ActivationType::SOFTPLUS;
+        }else if(at == "clamp"){
+            return Neuron::ActivationType::CLAMP;
+        }else if(at == "inv"){
+            return Neuron::ActivationType::INV;
+        }else if(at == "log"){
+            return Neuron::ActivationType::LOG;
+        }else if(at == "abs"){
+            return Neuron::ActivationType::ABS;
+        }else if(at == "hat"){
+            return Neuron::ActivationType::HAT;
         }
-        return Neuron::ActivationType::STEPPED_SIGMOID;
+        return Neuron::ActivationType::SIGMOID;
     }
 }

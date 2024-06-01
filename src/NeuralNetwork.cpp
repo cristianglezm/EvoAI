@@ -1,4 +1,5 @@
 #include <EvoAI/NeuralNetwork.hpp>
+#include <fstream>
 
 namespace EvoAI{
     NeuralNetwork::NeuralNetwork()
@@ -7,20 +8,22 @@ namespace EvoAI{
     , neurons()
     , connectionsCached(false)
     , neuronsCached(false)
-    , mse(0.0){}
-    NeuralNetwork::NeuralNetwork(const std::size_t& numInputs, const std::size_t& numHiddenLayers,
-                                 const std::size_t& numNeuronsPerHiddenLayer,
-                                 const std::size_t& numOutputs, const double& bias)
+    , globalStep(0ull)
+    , lastAvgLoss(0.0){}
+    NeuralNetwork::NeuralNetwork(std::size_t numInputs, std::size_t numHiddenLayers,
+                                 const std::vector<std::size_t>& numNeuronsPerHiddenLayer,
+                                 std::size_t numOutputs, double bias)
     : layers()
     , connections()
     , neurons()
     , connectionsCached(false)
     , neuronsCached(false)
-    , mse(0.0){
+    , globalStep(0ull)
+    , lastAvgLoss(0.0){
         layers.reserve(numHiddenLayers + 2);
         layers.emplace_back(NeuronLayer(numInputs,Neuron::Type::INPUT,bias));
         for(auto i=0u;i<numHiddenLayers;++i){
-            layers.emplace_back(NeuronLayer(numNeuronsPerHiddenLayer,Neuron::Type::HIDDEN,bias));
+            layers.emplace_back(NeuronLayer(numNeuronsPerHiddenLayer[i],Neuron::Type::HIDDEN,bias));
         }
         layers.emplace_back(NeuronLayer(numOutputs,Neuron::Type::OUTPUT,bias));
     }
@@ -30,7 +33,8 @@ namespace EvoAI{
     , neurons()
     , connectionsCached(false)
     , neuronsCached(false)
-    , mse(0.0){
+    , globalStep(std::stoull(o["globalStep"].getString()))
+    , lastAvgLoss(0.0){
         auto& lyrs = o["layers"].getArray();
         layers.reserve(lyrs.size());
         for(auto& l:lyrs){
@@ -43,9 +47,11 @@ namespace EvoAI{
     , neurons()
     , connectionsCached(false)
     , neuronsCached(false)
-    , mse(0.0){
+    , globalStep(0ull)
+    , lastAvgLoss(0.0){
         JsonBox::Value v;
         v.loadFromFile(filename);
+        globalStep = std::stoull(v["NeuralNetwork"]["globalStep"].getString());
         auto& layersArray = v["NeuralNetwork"]["layers"].getArray();
         layers.reserve(layersArray.size());
         for(auto& la:layersArray){
@@ -67,8 +73,8 @@ namespace EvoAI{
                 lyrIndex = i;
             }
         }
-        for(auto& l:layers){
-            for(auto& n:l.getNeurons()){
+        for(auto& lyr:layers){
+            for(auto& n:lyr.getNeurons()){
                 auto& conns = n.getConnections();
                 auto removed = std::remove_if(std::begin(conns),std::end(conns),
                                         [&lyrIndex](const Connection& c){
@@ -91,22 +97,23 @@ namespace EvoAI{
             auto& dest = c->getDest();
             auto& nrnSrc = layers[src.layer][src.neuron];
             auto& nrnDest = layers[dest.layer][dest.neuron];
-            auto output = 0.0;
+            double output = 0.0;
             switch(nrnSrc.getType()){
                 case Neuron::Type::INPUT:
+                        nrnSrc.setOutput(nrnSrc.getSum());
                         nrnDest.addSum(nrnSrc.getSum() * w);
                     break;
                 case Neuron::Type::CONTEXT:
                 case Neuron::Type::HIDDEN:
                         if(nrnSrc.getType() != Neuron::Type::CONTEXT){
-                            nrnSrc.addSum(layers[src.layer].getBias() * nrnSrc.getBiasWeight());
+                            nrnSrc.addSum(nrnSrc.getBiasWeight());
                         }
                         output = activate(nrnSrc.getActivationType(),nrnSrc);
                         nrnSrc.setOutput(output);
                         nrnDest.addSum(output * w);
                         if(nrnDest.getType() == Neuron::Type::CONTEXT){
                             if(c->getCycles() > layers[dest.layer].getCyclesLimit()){
-                                nrnDest.resetContext(); /// @todo review
+                                nrnDest.resetContext();
                                 c->setCycles(0);
                             }
                             nrnDest.setSum(nrnSrc.getSum());
@@ -115,12 +122,12 @@ namespace EvoAI{
                     break;
                 case Neuron::Type::OUTPUT:{
                         double oldSum = nrnSrc.getSum();
-                        nrnSrc.addSum(layers[src.layer].getBias() * nrnSrc.getBiasWeight());
+                        nrnSrc.addSum(nrnSrc.getBiasWeight());
                         if(c->getCycles() > layers[dest.layer].getCyclesLimit()){
-                            nrnDest.resetContext(); /// @todo review
+                            nrnDest.resetContext();
                             c->setCycles(0);
                         }
-                        // nrnDest should be a CONTEXT neuron.
+                        // nrnDest should be a CONTEXT neuron and nrnSrc should be Output being recorded.
                         nrnDest.setSum(nrnSrc.getSum());
                         nrnSrc.setSum(oldSum);
                         c->setCycles(c->getCycles()+1);
@@ -130,103 +137,71 @@ namespace EvoAI{
                     break;
             }
         }
-        auto numLayers = size();
-        auto& outputLayer = layers[numLayers-1];
+        auto& outputLayer = layers.back();
         auto output = 0.0;
         std::vector<double> res;
-        for(auto& n:outputLayer.getNeurons()){
-            n.addSum(outputLayer.getBias() * n.getBiasWeight()); 
-            output = activate(n.getActivationType(),n);
-            n.setOutput(output);
-            res.emplace_back(output);
+        res.reserve(outputLayer.size());
+        if(outputLayer.getActivationType() == Neuron::ActivationType::SOFTMAX){
+            for(auto& n:outputLayer.getNeurons()){
+                n.addSum(n.getBiasWeight());
+                output = activate(n.getActivationType(),n);
+                n.setOutput(output);
+            }
+            Activations::softmax(outputLayer);
+            for(auto& n:outputLayer.getNeurons()){
+                res.emplace_back(n.getOutput());
+            }
+        }else{
+            for(auto& n:outputLayer.getNeurons()){
+                n.addSum(n.getBiasWeight());
+                output = activate(n.getActivationType(),n);
+                n.setOutput(output);
+                res.emplace_back(output);
+            }
         }
         return res;
     }
-    void NeuralNetwork::train(std::vector<std::vector<double>>&& inputs,std::vector<std::vector<double>>&& expectedOutputs,
-                                                                        const double& learningRate, const double& momentum, const int& epoch){
-        if(inputs.size() != expectedOutputs.size()){
-            throw std::runtime_error("train() : inputs and expectedOutputs should have the same size.");
+    std::vector<double> NeuralNetwork::forward(const std::vector<double>& input) noexcept{
+        setInputs(input);
+        return run();
+    }
+    std::vector<double> NeuralNetwork::forward(std::vector<double>&& input) noexcept{
+        setInputs(std::forward<std::vector<double>>(input));
+        return run();
+    }
+    std::vector<double> NeuralNetwork::backward(std::vector<double>&& gradientLoss) noexcept{
+        auto& outLayer = layers.back();
+        if(outLayer.getActivationType() == Neuron::ActivationType::SOFTMAX){
+            Derivatives::softmax(outLayer);
         }
-        auto batchSize = inputs.size();
-        auto totalError = 0.0;
-        for(auto e=0;e<epoch;++e){
-            for(auto i=0u;i<batchSize;++i){
-                auto input(inputs[i]);
-                setInputs(std::move(input));
-                auto outputs = run();
-                auto& outLayer = layers[layers.size()-1];
-                for(auto j=0u;j<outLayer.size();++j){
-                    auto error = expectedOutputs[i][j] - outputs[j]; /// @todo add different cost functions
-                    totalError += std::pow(error,2);
-                    auto delta = error * derivate(outLayer[j].getActivationType(),outLayer[j]);
-                    outLayer[j].setDelta(delta);
-                }
-                #if defined ANDROID | RASPPI/// @todo check if this is correct or another work around.
-                std::for_each(std::end(getConnections()),std::begin(getConnections()),
-                #else
-                std::for_each(std::rbegin(getConnections()),std::rend(getConnections()),
-                #endif
-                    [this,&learningRate](Connection* c){
-                        auto& src = c->getDest();
-                        auto& dest = c->getSrc();
-                        auto& nrnSrc = layers[src.layer][src.neuron];
-                        auto& nrnDest = layers[dest.layer][dest.neuron];
-                        switch(nrnSrc.getType()){
-                            case Neuron::Type::OUTPUT:{
-                                    auto sum = 0.0;
-                                    for(auto& dCon:nrnDest.getConnections()){
-                                        sum += dCon.getWeight() * layers[dCon.getDest().layer][dCon.getDest().neuron].getDelta();
-                                    }
-                                    auto delta = derivate(nrnDest.getActivationType(),nrnDest) * sum;
-                                    nrnDest.setDelta(delta);
-                                    auto grad = nrnDest.getOutput() * nrnSrc.getDelta();
-                                    c->addGradient(grad);
-                            }   break;
-                            case Neuron::Type::CONTEXT:
-                            case Neuron::Type::HIDDEN:{
-                                    if(nrnDest.getType() != Neuron::Type::INPUT){
-                                        auto sum = 0.0;
-                                        for(auto& dCon:nrnDest.getConnections()){
-                                            sum += dCon.getWeight() * layers[dCon.getDest().layer][dCon.getDest().neuron].getDelta();
-                                        }
-                                        auto delta = sum * derivate(nrnDest.getActivationType(),nrnDest);
-                                        nrnDest.setDelta(delta);
-                                        auto grad = nrnDest.getOutput() * nrnSrc.getDelta();
-                                        c->addGradient(grad);
-                                    }else{
-                                        auto sum = 0.0;
-                                        for(auto& dCon:nrnDest.getConnections()){
-                                            sum += dCon.getWeight() * layers[dCon.getDest().layer][dCon.getDest().neuron].getDelta();
-                                        }
-                                        auto delta = sum * derivate(nrnDest.getActivationType(),nrnDest);
-                                        nrnDest.setDelta(delta);
-                                        auto grad = nrnDest.getSum() * nrnSrc.getDelta();
-                                        c->addGradient(grad);
-                                    }
-                            }   break;
-                            case Neuron::Type::INPUT:
-                                break;
-                        }
-                    });
-                    reset();
-            }
-            totalError /= (batchSize * expectedOutputs[0].size());
-            mse = totalError;
-            totalError = 0.0;
-            auto conSize = getConnections().size();
-            for(auto index=0u;index<conSize;++index){
-                auto c = connections[index];
-                if(!c->isRecurrent()){
-                    auto oldWDelta = 0.0;
-                    if(index > 0){
-                        oldWDelta = (*connections[index-1]).getDelta();
-                    }
-                    c->setDelta(learningRate * c->getGradient() + momentum * oldWDelta);
-                    c->setWeight(c->getWeight() + c->getDelta());
-                }
-            }
-            resetConnections();
+        for(auto j=0u;j<outLayer.size();++j){
+            outLayer[j].setGradient(derivate(outLayer[j].getActivationType(),outLayer[j]) * gradientLoss[j]);
         }
+        std::for_each(std::rbegin(getConnections()),std::rend(getConnections()),
+            [&](Connection* c){
+                auto& src = c->getDest();
+                auto& dest = c->getSrc();
+                auto& nrnSrc = layers[src.layer][src.neuron];
+                auto& nrnDest = layers[dest.layer][dest.neuron];
+                switch(nrnSrc.getType()){
+                    case Neuron::Type::OUTPUT:{
+                            auto gradient = nrnSrc.getGradient();
+                            nrnSrc.setBiasGradient(gradient);
+                            c->addGradient(gradient * nrnDest.getOutput());
+                            nrnDest.setGradient((gradient + nrnDest.getGradient()) * c->getWeight());
+                    }   break;
+                    case Neuron::Type::CONTEXT:
+                    case Neuron::Type::HIDDEN:{
+                            auto gradient = nrnSrc.getGradient() * derivate(nrnSrc.getActivationType(), nrnSrc);
+                            nrnSrc.setBiasGradient(gradient);
+                            c->addGradient(gradient * nrnDest.getOutput());
+                            nrnDest.setGradient((gradient + nrnDest.getGradient()) * c->getWeight());
+                    }   break;
+                    case Neuron::Type::INPUT:
+                        break;
+                }
+        });
+        return layers[0].backward();
     }
     NeuralNetwork& NeuralNetwork::setLayers(std::vector<NeuronLayer>&& lys){
         connectionsCached = false;
@@ -234,7 +209,7 @@ namespace EvoAI{
         layers = std::move(lys);
         return *this;
     }
-    NeuralNetwork& NeuralNetwork::addNeuron(const Neuron& n, const std::size_t& layerIndex){
+    NeuralNetwork& NeuralNetwork::addNeuron(const Neuron& n, std::size_t layerIndex){
         neuronsCached = false;
         connectionsCached = false;
         layers[layerIndex].addNeuron(n);
@@ -277,9 +252,19 @@ namespace EvoAI{
                 }
             }
         }
-        return Link(-1,-1);
+        return Link(0,0);
     }
-    bool NeuralNetwork::setInputs(std::vector<double>&& ins){
+    bool NeuralNetwork::setInputs(std::vector<double>&& ins) noexcept{
+        auto numInputs = layers[0].size();
+        if(ins.size() != numInputs){
+            return false;
+        }
+        for(auto i=0u;i<numInputs;++i){
+            layers[0][i].setSum(ins[i]);
+        }
+        return true;
+    }
+    bool NeuralNetwork::setInputs(const std::vector<double>& ins) noexcept{
         auto numInputs = layers[0].size();
         if(ins.size() != numInputs){
             return false;
@@ -292,7 +277,7 @@ namespace EvoAI{
     NeuralNetwork& NeuralNetwork::addConnection(const Connection& c){
         if(c.isRecurrent()){
             auto nType = layers[c.getDest().layer][c.getDest().neuron].getType();
-            if(nType != Neuron::Type::INPUT || nType != Neuron::Type::OUTPUT){
+            if((nType != Neuron::Type::INPUT) || (nType != Neuron::Type::OUTPUT)){
                 layers[c.getDest().layer][c.getDest().neuron].setType(Neuron::Type::CONTEXT);
             }
         }
@@ -324,9 +309,8 @@ namespace EvoAI{
     std::vector<Connection*>& NeuralNetwork::getConnections(){
         if(connectionsCached){
             return connections;
-        }else{
-            connections.clear();
         }
+        connections.clear();
         for(auto& l:layers){
             for(auto& n:l.getNeurons()){
                 for(auto& c:n.getConnections()){
@@ -336,6 +320,26 @@ namespace EvoAI{
         }
         connectionsCached = true;
         return connections;
+    }
+    std::vector<Connection*> NeuralNetwork::getParameters() noexcept{
+        auto& conn = getConnections();
+        connectionsCached = false;
+        auto size = conn.size();
+        std::vector<Connection*> params(std::move(conn));
+        params.erase(std::remove_if(std::begin(params), std::end(params), 
+            [](auto p){
+                return p->isFrozen();
+            }), std::end(params));
+        connections = std::vector<Connection*>(); // restore state to valid
+        connections.reserve(size);
+        params.reserve(size + getNeurons().size());
+        for(auto& n:getNeurons()){
+            auto p = n->getBiasPtr();
+            if(!p->isFrozen()){
+                params.emplace_back(p);
+            }
+        }
+        return params;
     }
     std::vector<Neuron*>& NeuralNetwork::getNeurons(){
         if(neuronsCached){
@@ -370,7 +374,7 @@ namespace EvoAI{
                                 return (src == cn.getSrc() &&
                                         dest == cn.getDest());
                             });
-        return (c != std::end(conns));
+        return c != std::end(conns);
     }
     void NeuralNetwork::reset(){
         for(auto& l:layers){
@@ -382,29 +386,73 @@ namespace EvoAI{
             l.resetContext();
         }
     }
+    void NeuralNetwork::resetConnections(){
+        for(auto& c:getConnections()){
+            c->reset();
+        }
+    }
     JsonBox::Value NeuralNetwork::toJson() const{
         JsonBox::Array a;
+        a.reserve(layers.size());
         for(auto& l:layers){
-            a.push_back(l.toJson());
+            a.emplace_back(l.toJson());
         }
         JsonBox::Object o;
-        o["layers"] = JsonBox::Value(a);
-        return JsonBox::Value(o);
+        o["globalStep"] = std::to_string(globalStep);
+        o["layers"] = a;
+        return o;
     }
     void NeuralNetwork::writeToFile(const std::string& filename) const{
         JsonBox::Value v;
-        v["version"] = JsonBox::Value("1.0");
+        v["version"] = "1.0";
         v["NeuralNetwork"] = toJson();
-        v.writeToFile(filename);
+#ifdef NDEBUG
+        v.writeToFile(filename, false, false);
+#else
+        v.writeToFile(filename, true, false);
+#endif
+    }
+    bool NeuralNetwork::writeDotFile(const std::string& filename) noexcept{
+        auto& nn = *this;
+        std::ofstream out(filename, std::ios_base::out);
+        out << "digraph NeuralNetwork {\nrankdir=LR;\n";
+        for(auto i=0u;i<nn.size();++i){
+            for(auto j=0u;j<nn[i].size();++j){
+                auto& n = nn[i][j];
+                auto nType = EvoAI::Neuron::typeToString(n.getType());
+                auto nAct = EvoAI::Neuron::activationTypeToString(n.getActivationType());
+                auto sum = n.getSum();
+                auto output = n.getOutput();
+                out << "n" << i << "_" << j << " [label=\"Neuron\\n" << i << " " << j << "\\n\\nType: " << nType << "\\nActivation: " 
+                    << nAct  << "\\nSum: " << sum << "\\nOutput: " << output << "\\nGrad: " << n.getGradient() << "\", shape=circle];\n";
+                out << "b" << i << "_" << j << " [label=\"Bias\\nGrad: " << n.getBiasGradient() << "\", shape=square];\n";
+                out << "n" << i << "_" << j << " -> b" << i << "_" << j << " [label=\"BiasWeight: " << n.getBiasWeight() << "\", style=dashed];\n";
+                for(auto k=0u;k<n.size();++k){
+                    auto& conn = nn[i][j][k];
+                    auto& src = conn.getSrc();
+                    auto& dest = conn.getDest();
+                    out << "n" << src.layer << "_" << src.neuron << " -> n" << dest.layer << "_" << dest.neuron << " [label=\"Weight: " << conn.getWeight() 
+                        << "\\nGrad: " << conn.getGradient() <<"\" color=\"" <<(conn.isRecurrent() ? "red":"black") << "\" , arrowhead=vee];\n";
+                }
+            }
+        }
+        out << "}\n";
+        out.close();
+        return true;
     }
     void NeuralNetwork::clear(){
         layers.clear();
         connections.clear();
         connectionsCached = false;
-        mse = 0.0;
+        lastAvgLoss = 0.0;
     }
-    NeuronLayer& NeuralNetwork::operator[](const std::size_t& index){
+    NeuronLayer& NeuralNetwork::operator[](std::size_t index){
         return layers[index];
+    }
+    std::pair<Neuron&, Neuron&> NeuralNetwork::operator[](Connection& conn) noexcept{
+        auto& linkSrc = conn.getSrc();
+        auto& linkDest = conn.getDest();
+        return std::make_pair(std::ref(layers[linkSrc.layer][linkSrc.neuron]), std::ref(layers[linkDest.layer][linkDest.neuron]));
     }
     bool NeuralNetwork::operator==(const NeuralNetwork& rhs) const{
         return std::equal(std::begin(layers),std::end(layers),std::begin(rhs.layers));
@@ -414,39 +462,59 @@ namespace EvoAI{
         switch(at){
             case Neuron::ActivationType::IDENTITY:
                 return Derivatives::identity(n.getOutput());
+            case Neuron::ActivationType::MODULUS:
+                return Derivatives::modulus(n.getSum(), 2.0);
             case Neuron::ActivationType::SIGMOID:
-                return Derivatives::sigmoid(n.getOutput());
+                return Derivatives::sigmoid(n.getSum());
             case Neuron::ActivationType::SINUSOID:
-                return Derivatives::sinusoid(n.getOutput());
+                return Derivatives::sinusoid(n.getSum());
             case Neuron::ActivationType::RELU:
                 return Derivatives::relu(n.getOutput());
+            case Neuron::ActivationType::NOISY_RELU:
+                return Derivatives::noisyRelu(n.getSum());
+            case Neuron::ActivationType::LEAKY_RELU:
+                return Derivatives::leakyRelu(n.getSum());
             case Neuron::ActivationType::EXPONENTIAL:
-                return Activations::exponential(n.getOutput());
+                return Derivatives::exponential(n.getSum());
             case Neuron::ActivationType::SOFTMAX:
-                return Derivatives::softmax(n.getOutput(),*this);
+                return n.getGradient();
             case Neuron::ActivationType::TANH:
-                return Derivatives::tanh(n.getOutput());
+                return Derivatives::tanh(n.getSum());
             case Neuron::ActivationType::COSINE:
-                return Derivatives::cosine(n.getOutput());
+                return Derivatives::cosine(n.getSum());
             case Neuron::ActivationType::TAN:
-                return Derivatives::tan(n.getOutput());
+                return Derivatives::tan(n.getSum());
             case Neuron::ActivationType::GAUSSIAN:
                 return Derivatives::gaussian(n.getOutput());
             case Neuron::ActivationType::STEPPED_SIGMOID:
                 return Derivatives::steepenedSigmoid(n.getOutput());
+            case Neuron::ActivationType::SWISH:
+                return Derivatives::swish(n.getSum(), n.getBiasWeight());
             case Neuron::ActivationType::SQUARE:
-                return Derivatives::square(n.getOutput());
+                return Derivatives::square(n.getSum());
             case Neuron::ActivationType::CUBE:
-                return Derivatives::cube(n.getOutput());
+                return Derivatives::cube(n.getSum());
+            case Neuron::ActivationType::SOFTPLUS:
+                return Derivatives::softplus(n.getSum());
+            case Neuron::ActivationType::CLAMP:
+                return Derivatives::clamp(n.getSum());
+            case Neuron::ActivationType::INV:
+                return Derivatives::inv(n.getSum());
+            case Neuron::ActivationType::LOG:
+                return Derivatives::log(n.getSum());
+            case Neuron::ActivationType::ABS:
+                return Derivatives::abs(n.getSum());
+            case Neuron::ActivationType::HAT:
+                return Derivatives::hat(n.getSum());
         }
-        return Derivatives::steepenedSigmoid(n.getOutput());
+        return Derivatives::sigmoid(n.getOutput());
     }
     double NeuralNetwork::activate(Neuron::ActivationType at, const Neuron& n){
         switch(at){
             case Neuron::ActivationType::IDENTITY:
                 return Activations::identity(n.getSum());
             case Neuron::ActivationType::MODULUS:
-                return Activations::modulus(n.getSum());
+                return Activations::modulus(n.getSum(), 2.0);
             case Neuron::ActivationType::TANH:
                 return Activations::tanh(n.getSum());
             case Neuron::ActivationType::SINUSOID:
@@ -466,21 +534,30 @@ namespace EvoAI{
             case Neuron::ActivationType::EXPONENTIAL:
                 return Activations::exponential(n.getSum());
             case Neuron::ActivationType::SOFTMAX:
-                return Activations::softmax(n.getSum(),*this);
+                return Activations::identity(n.getSum());
             case Neuron::ActivationType::GAUSSIAN:
                 return Activations::gaussian(n.getSum());
             case Neuron::ActivationType::STEPPED_SIGMOID:
                 return Activations::steepenedSigmoid(n.getSum());
+            case Neuron::ActivationType::SWISH:
+                return Activations::swish(n.getSum(), n.getBiasWeight());
             case Neuron::ActivationType::SQUARE:
                 return Activations::square(n.getSum());
             case Neuron::ActivationType::CUBE:
                 return Activations::cube(n.getSum());
+            case Neuron::ActivationType::SOFTPLUS:
+                return Activations::softplus(n.getSum());
+            case Neuron::ActivationType::CLAMP:
+                return Activations::clamp(n.getSum());
+            case Neuron::ActivationType::INV:
+                return Activations::inv(n.getSum());
+            case Neuron::ActivationType::LOG:
+                return Activations::log(n.getSum());
+            case Neuron::ActivationType::ABS:
+                return Activations::abs(n.getSum());
+            case Neuron::ActivationType::HAT:
+                return Activations::hat(n.getSum());
         }
-        return Activations::steepenedSigmoid(n.getSum());
-    }
-    void NeuralNetwork::resetConnections(){
-        for(auto& c:getConnections()){
-            c->reset();
-        }
+        return Activations::sigmoid(n.getSum());
     }
 }

@@ -1,0 +1,138 @@
+{
+    "version": 7,
+    "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 27,
+      "patch": 0
+    },
+    "configurePresets": [
+      {
+        "name": "mingw",
+        "displayName": "MinGW Config",
+        "description": "Build using MinGW",
+        "generator": "MinGW Makefiles",
+        "binaryDir": "${sourceDir}/build/mingw",
+        "cacheVariables": {
+            "EvoAI_BUILD_DOCS": "OFF",
+            "EvoAI_BUILD_TESTS": "OFF",
+            "EvoAI_BUILD_EXAMPLES": "OFF",
+            "EvoAI_BUILD_TOOLS": "OFF",
+            "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+            "SFML_ROOT": "/c/libs/SFML",
+            "JsonBox_ROOT": "/c/libs/JsonBox",
+            "GTest_ROOT": "/c/libs/googletest"
+        }
+      },
+      {
+        "name": "mingw-all",
+        "displayName": "mingw all",
+        "description": "dev build using MinGW",
+        "inherits": "mingw",
+        "binaryDir": "${sourceDir}/build/mingw-all",
+        "cacheVariables": {
+          "EvoAI_BUILD_DOCS": "ON",
+          "EvoAI_BUILD_TESTS": "ON",
+          "EvoAI_BUILD_EXAMPLES": "ON",
+          "EvoAI_BUILD_TOOLS": "ON",
+          "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        }
+      },
+      {
+        "name": "mingw-ci",
+        "displayName": "mingw ci",
+        "description": "dev build using MinGW",
+        "generator": "MinGW Makefiles",
+        "inherits": "mingw",
+        "binaryDir": "${sourceDir}/build/tests",
+        "cacheVariables": {
+            "EvoAI_BUILD_TESTS": "ON",
+            "JsonBox_ROOT": "/c/libs/JsonBox",
+            "GTest_ROOT": "/c/libs/googletest"
+        }
+      },
+      {
+        "name": "mingw-docs",
+        "displayName": "mingw docs",
+        "description": "build docs",
+        "generator": "MinGW Makefiles",
+        "inherits": "mingw",
+        "binaryDir": "${sourceDir}/build/docs",
+        "cacheVariables": {
+            "EvoAI_BUILD_DOCS": "ON"
+        }
+      }
+    ],
+    "buildPresets": [
+      {
+        "name": "mingw-release",
+        "configurePreset": "mingw-all",
+        "configuration": "Release",
+        "jobs": 4,
+        "targets": ["all"]
+      },
+      {
+        "name": "mingw-docs",
+        "configurePreset": "mingw-docs",
+        "displayName": "Build mingw-docs",
+        "configuration": "Release",
+        "jobs": 4,
+        "targets": [ "docs" ]
+      }
+    ],
+    "testPresets": [
+      {
+        "name": "test-base",
+        "hidden": true,
+        "configurePreset": "mingw-all",
+        "output": {
+          "outputOnFailure": true
+        },
+        "execution": {
+          "noTestsAction": "error",
+          "stopOnFailure": true
+        }
+      },
+      {
+        "name": "mingw-ci-debug",
+        "configuration": "Debug",
+        "inherits": "test-base"
+      },
+      {
+        "name": "mingw-ci-release",
+        "configuration": "Release",
+        "inherits": "test-base"
+      }
+    ],
+    "packagePresets": [
+      {
+        "name": "mingw-zip",
+        "configurePreset": "mingw-all",
+        "generators": [
+          "ZIP"
+        ]
+      }
+    ],
+    "workflowPresets": [
+      {
+        "name": "mingw-release",
+        "steps": [
+          {
+            "type": "configure",
+            "name": "mingw-all"
+          },
+          {
+            "type": "build",
+            "name": "mingw-release"
+          },
+          {
+            "type": "test",
+            "name": "mingw-ci-release"
+          },
+          {
+            "type": "package",
+            "name": "mingw-zip"
+          }
+        ]
+      }
+    ]
+  }

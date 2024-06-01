@@ -1,0 +1,51 @@
+
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/NumClassifier)
+
+# all source files
+set(NumClassifier_SRC ${SRCROOT}/NumClassifier.cpp)
+
+# define the NumClassifier target
+add_executable(NumClassifier ${NumClassifier_SRC})
+
+target_link_libraries(NumClassifier PRIVATE EvoAI)
+
+SET(CMAKE_CXX_STANDARD 17)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+SET(CMAKE_CXX_EXTENSIONS OFF)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    message(STATUS "NumClassifier - Compiler gcc")
+    target_compile_options(NumClassifier PRIVATE -std=c++17 -Wall -Wextra -Wshadow)
+    if(EvoAI_BUILD_STATIC)
+        target_link_options(NumClassifier PRIVATE -static -static-libgcc -static-libstdc++)
+    endif()
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        target_compile_options(NumClassifier PRIVATE -O3 -fexpensive-optimizations -DNDEBUG)
+    elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_compile_options(NumClassifier PRIVATE -g)
+    endif()
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    message(STATUS "NumClassifier - Compiler clang")
+    target_compile_options(NumClassifier PRIVATE -std=c++17 -Wall -Wextra -Wshadow)
+    if(EvoAI_BUILD_STATIC)
+        target_link_options(NumClassifier PRIVATE -static -static-libgcc -static-libstdc++)
+    endif()
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        target_compile_options(NumClassifier PRIVATE -O3 -DNDEBUG)
+    elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_compile_options(NumClassifier PRIVATE -g)
+    endif()
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    message(STATUS "NumClassifier - Compiler MSVC")
+    target_compile_options(NumClassifier PRIVATE /std:c++17 /W4)
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        target_compile_options(NumClassifier PRIVATE /O3 /DNDEBUG)
+    elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_compile_options(NumClassifier PRIVATE /g)
+    endif()
+else()
+    message(WARNING "NumClassifier - Compiler not supported.")
+endif()
+
+include(GNUInstallDirs)
+install(TARGETS NumClassifier RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

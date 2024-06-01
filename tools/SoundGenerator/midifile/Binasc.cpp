@@ -17,6 +17,31 @@
 
 namespace smf {
 
+const char* Binasc::GMinstrument[128] = {
+   	"acoustic grand piano",   "bright acoustic piano",  "electric grand piano",  "honky-tonk piano", "rhodes piano",   "chorused piano",
+   	"harpsichord",  "clavinet",  "celeste",   "glockenspiel",   "music box",  "vibraphone",
+   	"marimba",   "xylophone",  "tubular bells",  "dulcimer",    "hammond organ",   "percussive organ",
+   	"rock organ",   "church organ", "reed organ",   "accordion",   "harmonica", "tango accordion",
+   	"nylon guitar",  "steel guitar",  "jazz guitar",   "clean guitar",  "muted guitar",   "overdriven guitar",
+   	"distortion guitar",   "guitar harmonics",   "acoustic bass",    "fingered electric bass",  "picked electric bass",  "fretless bass",
+   	"slap bass 1",  "slap bass 2",  "synth bass 1",  "synth bass 2",  "violin",    "viola",
+   	"cello",     "contrabass",  "tremolo strings",   "pizzcato strings",  "orchestral harp",      "timpani",
+   	"string ensemble 1",   "string ensemble 2",   "synth strings 1",   "synth strings 1",   "choir aahs",     "voice oohs",
+   	"synth voices",    "orchestra hit",   "trumpet",   "trombone",  "tuba",      "muted trumpet",
+   	"frenc horn", "brass section",  "syn brass 1",  "synth brass 2",  "soprano sax",  "alto sax",
+   	"tenor sax",  "baritone sax",   "oboe",      "english horn",  "bassoon",   "clarinet",
+   	"piccolo",   "flute",     "recorder",  "pan flute",  "bottle blow",    "shakuhachi",
+   	"whistle",   "ocarina",   "square wave",   "saw wave",   "calliope lead",  "chiffer lead",
+   	"charang lead",   "voice lead",   "fifths lead",   "brass lead",  "newage pad",  "warm pad",
+   	"polysyn pad",   "choir pad",   "bowed pad",  "metallic pad",  "halo pad",   "sweep pad",
+   	"rain",    "soundtrack",  "crystal",   "atmosphere",  "brightness",  "goblins",
+   	"echoes",   "sci-fi",  "sitar",     "banjo",     "shamisen",  "koto",
+   	"kalimba",   "bagpipes",  "fiddle",    "shanai",   "tinkle bell",  "agogo",
+   	"steel drums", "woodblock", "taiko drum",     "melodoc tom",      "synth drum",    "reverse cymbal",
+   	"guitar fret noise",   "breath noise",   "seashore",  "bird tweet",    "telephone ring", "helicopter",
+   	"applause",  "gunshot"
+};
+
 //////////////////////////////
 //
 // Binasc::Binasc -- Constructor: set the default option values.
@@ -262,17 +287,17 @@ int Binasc::writeToBinary(std::ostream& out, const std::string& infile) {
 
 
 int Binasc::writeToBinary(std::ostream& out, std::istream& input) {
-	char inputLine[1024] = {0};    // current line being processed
+	std::string inputLine;
+	inputLine.reserve(8196);
 	int  lineNum = 0;              // current line number
-
-	input.getline(inputLine, 1024, '\n');
+	getline(input, inputLine, '\n');
 	lineNum++;
 	while (!input.eof()) {
 		int status = processLine(out, inputLine, lineNum);
 		if (!status) {
 			return 0;
 		}
-		input.getline(inputLine, 1024, '\n');
+		getline(input, inputLine, '\n');
 		lineNum++;
 	}
 	return 1;
@@ -375,7 +400,7 @@ int Binasc::outputStyleAscii(std::ostream& out, std::istream& input) {
 	int type      = 0;             // 0=space, 1=printable
 	uchar ch;                      // current input byte
 
-	ch = input.get();
+	ch = static_cast<uchar>(input.get());
 	while (!input.eof()) {
 		int lastType = type;
 		type = (isprint(ch) && !isspace(ch)) ? 1 : 0;
@@ -401,7 +426,7 @@ int Binasc::outputStyleAscii(std::ostream& out, std::istream& input) {
 		if (type == 1) {
 			outputWord[index++] = ch;
 		}
-		ch = input.get();
+		ch = static_cast<uchar>(input.get());
 	}
 
 	if (index != 0) {
@@ -423,7 +448,7 @@ int Binasc::outputStyleBinary(std::ostream& out, std::istream& input) {
 	int currentByte = 0;    // current byte output in line
 	uchar ch;               // current input byte
 
-	ch = input.get();
+	ch = static_cast<uchar>(input.get());
 	if (input.eof()) {
 		std::cerr << "End of the file right away!" << std::endl;
 		return 0;
@@ -439,7 +464,7 @@ int Binasc::outputStyleBinary(std::ostream& out, std::istream& input) {
 			out << '\n';
 			currentByte = 0;
 		}
-		ch = input.get();
+		ch = static_cast<uchar>(input.get());
 	}
 
 	if (currentByte != 0) {
@@ -463,7 +488,7 @@ int Binasc::outputStyleBoth(std::ostream& out, std::istream& input) {
 	int index = 0;                 // current character in asciiLine
 	uchar ch;                      // current input byte
 
-	ch = input.get();
+	ch = static_cast<uchar>(input.get());
 	while (!input.eof()) {
 		if (index == 0) {
 			asciiLine[index++] = ';';
@@ -490,7 +515,7 @@ int Binasc::outputStyleBoth(std::ostream& out, std::istream& input) {
 			currentByte = 0;
 			index = 0;
 		}
-		ch = input.get();
+		ch = static_cast<uchar>(input.get());
 	}
 
 	if (currentByte != 0) {
@@ -506,7 +531,7 @@ int Binasc::outputStyleBoth(std::ostream& out, std::istream& input) {
 
 ///////////////////////////////
 //
-// processLine -- read a line of input and output any specified bytes
+// Binasc::processLine -- Read a line of input and output any specified bytes.
 //
 
 int Binasc::processLine(std::ostream& out, const std::string& input,
@@ -518,7 +543,7 @@ int Binasc::processLine(std::ostream& out, const std::string& input,
 	while (i<length) {
 		if ((input[i] == ';') || (input[i] == '#') || (input[i] == '/')) {
 			// comment to end of line, so ignore
-			return 1;
+			return status;
 		} else if ((input[i] == ' ') || (input[i] == '\n')
 				|| (input[i] == '\t')) {
 			// ignore whitespace
@@ -609,7 +634,7 @@ int Binasc::getWord(std::string& word, const std::string& input,
 
 int Binasc::getVLV(std::istream& infile, int& trackbytes) {
 	int output = 0;
-	uchar ch;
+	uchar ch = 0;
 	infile.read((char*)&ch, 1);
 	trackbytes++;
 	output = (output << 7) | (0x7f & ch);
@@ -643,7 +668,7 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 	std::string comment;
 
 	int status = 1;
-	uchar ch;
+	uchar ch = 0;
 	char byte1, byte2;
 	infile.read((char*)&ch, 1);
 	trackbytes++;
@@ -717,7 +742,9 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 			output << " '" << std::dec << (int)byte1;
 			if (m_commentsQ) {
 				output << "\t";
-				comment += "patch-change";
+				comment += "patch-change (";
+				comment += GMinstrument[byte1 & 0x7f];
+				comment += ")";
 			}
 			break;
 		case 0xD0:    // channel pressure: 1 bytes
@@ -729,6 +756,22 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 		case 0xF0:    // various system bytes: variable bytes
 			switch (command) {
 				case 0xf0:
+					{
+					// A system exclusive message.   The first byte
+					// is 0xf0, then a VLV of the length of the message
+					// and then the message itself (which must end with 0xf7).
+					int length = getVLV(infile, trackbytes);
+					output << " v" << std::dec << length;
+					for (int b=0; b<length; b++) {
+						infile.read((char*)&ch, 1);
+						trackbytes++;
+						if (ch < 0x10) {
+						   output << " 0" << std::hex << (int)ch;
+						} else {
+						   output << " " << std::hex << (int)ch;
+						}
+					}
+					}
 					break;
 				case 0xf7:
 					// Read the first byte which is either 0xf0 or 0xf7.
@@ -881,6 +924,9 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 						   for (int i=0; i<length; i++) {
 						      infile.read((char*)&ch, 1);
 						      trackbytes++;
+								if (ch == '"') {
+									output << '\\';
+								}
 						      output << (char)ch;
 						   }
 						   output << "\"";
@@ -975,7 +1021,7 @@ std::string Binasc::keyToPitchName(int key) {
 //
 
 int Binasc::outputStyleMidi(std::ostream& out, std::istream& input) {
-	uchar ch;                      // current input byte
+	uchar ch = 0;                      // current input byte
 	std::stringstream tempout;
 	input.read((char*)&ch, 1);
 
@@ -1048,8 +1094,8 @@ int Binasc::outputStyleMidi(std::ostream& out, std::istream& input) {
 	// regular: top bit is 0: number of ticks per quarter note
 	// SMPTE:   top bit is 1: first byte is negative frames, second is
 	//          ticks per frame.
-	uchar byte1;
-	uchar byte2;
+	uchar byte1 = 0;
+	uchar byte2 = 0;
 	input.read((char*)&byte1, 1);
 	input.read((char*)&byte2, 1);
 	if (byte1 & 0x80) {
@@ -1429,8 +1475,6 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 			std::cerr << "invalid byte count specification for decimal number" << std::endl;
 			return 0;
 	}
-
-	return 1;
 }
 
 

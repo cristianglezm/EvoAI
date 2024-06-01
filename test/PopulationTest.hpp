@@ -8,7 +8,7 @@
 namespace EvoAI{
     namespace Test{
         TEST(PopulationTest, Constructor){
-            Population<Genome> p(10,2,1);
+            Population<Genome> p(10,2.0, 2.0, 1.0, 2, 1);
             EXPECT_EQ(p.getPopulationMaxSize(), p.getPopulationSize());
             EXPECT_EQ(2.0,p.getCompatibilityThreshold());
             EXPECT_EQ(120u,p.getMaxAge());
@@ -20,10 +20,10 @@ namespace EvoAI{
             p.setCompatibilityThreshold(2.0);
             p.setMaxAge(250u);
             EXPECT_EQ(p.getPopulationMaxSize(), p.getPopulationSize());
-            p.writeToFile("Population.json");
+            p.writeToFile("testsData/Population.json");
         }
         TEST(PopulationTest, Loading){
-            Population<Genome> p("Population.json");
+            Population<Genome> p("testsData/Population.json");
             EXPECT_EQ(250u,p.getMaxAge());
             EXPECT_EQ(2.0,p.getCompatibilityThreshold());
             EXPECT_EQ(10u,p.getPopulationSize());
@@ -40,11 +40,11 @@ namespace EvoAI{
             p.setPopulationMaxSize(20);
             p.setCompatibilityThreshold(2.0);
             p.setMaxAge(250u);
-            p.writeToFile("Population.json");
+            p.writeToFile("testsData/Population.json");
         }
         TEST(PopulationTest, PointerLoading){
-            ///compile error as expected, you cannot load data into an observing population.
-            //Population<Genome*> p("Population.json");
+            ///compile error as expected, you cannot load data into an observer population.
+            //Population<Genome*> p("testsData/Population.json");
         }
         TEST(PopulationTest, basic){
             Population<Genome> p;
@@ -154,10 +154,11 @@ namespace EvoAI{
             EXPECT_EQ(0u, p.getSpeciesSize());
         }
         TEST(PopulationTest, Reproduce){
-            auto createMember = []() -> auto{ // handle initial creation of population and regrowPopulation
+            // handle initial creation of population and regrowPopulation
+            auto createMember = [](){
                 auto g = Genome(1,1,false,false);
                 for(auto& ng:g.getNodeChromosomes()){
-                    ng.setBias(0.0d);
+                    ng.setBias(0.0);
                     if(ng.getNeuronType() == Neuron::OUTPUT){
                         ng.setActType(Neuron::ActivationType::IDENTITY);
                     }
@@ -165,21 +166,20 @@ namespace EvoAI{
                 return g;
             };
             auto calcError = [](auto& input, auto& result){
-                return std::pow((input * -1) - std::ceil(result), 2.0d);
+                return std::pow((input * -1) - std::ceil(result), 2.0) / 100.0;
             };
-            const auto maxPop = 101ull;
+            const auto maxPop = 151ull;
             Population<Genome> p(createMember, maxPop);
             std::vector<double> results;
             std::vector<double> inputs = {-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-            auto errorSum = 99.9d;
+            auto errorSum = 99.9;
             auto eval = [&](auto& g){ // evaluate the population
                 g.mutateWeights(2);
                 auto nn = Genome::makePhenotype(g);
-                errorSum = 0.0d;
+                errorSum = 0.0;
                 const auto n = inputs.size();
                 for(auto i=0u;i<n;++i){
-                    nn.setInputs({inputs[i]});
-                    auto out = nn.run();
+                    auto out = nn.forward({inputs[i]});
                     results.emplace_back(out[0]);
                     errorSum += calcError(inputs[i], results[i]);
                     nn.reset();
@@ -189,34 +189,34 @@ namespace EvoAI{
             };
             auto testBestMember = [&](auto& g){
                 auto nn = Genome::makePhenotype(g);
+                nn.writeDotFile("testsData/popReproduce.dot");
                 inputs.clear();
-                std::cout << "Genome ID: " << g.getID() << "\n";
-                auto errorSum = 0.0d;
+                std::cout << "Genome ID: " << g.getID() << " fitness: " << g.getFitness() << "\n";
+                errorSum = 0.0;
                 for(auto i=0u;i<10;++i){
-                    inputs.emplace_back(randomGen.random(-100,100));
-                    nn.setInputs({inputs[i]});
-                    auto out = nn.run();
+                    inputs.emplace_back(randomGen().random(-100,100));
+                    auto out = nn.forward({inputs[i]});
                     results.emplace_back(out[0]);
                     errorSum += calcError(inputs[i], results[i]);
                     nn.reset();
                     std::cout << "\tinput: " << inputs[i] << " result: " << std::ceil(results[i]) << "\n";
                 }
                 auto accuracy = (10 - errorSum) * 10;
-                accuracy = std::max(0.0d, accuracy);
+                accuracy = std::max(0.0, accuracy);
                 std::cout << "Accuracy: " << accuracy << "%" << std::endl;
-                errorSum = 0.0d;
+                errorSum = 0.0;
                 results.clear();
             };
             auto gen = 0u;
             auto sa = SelectionAlgorithms::Tournament<Genome>{maxPop};
-            while(errorSum >= 0.01d){
+            while(errorSum >= 0.01){
                 p.eval(eval);
                 p.reproduce(sa, true);
                 EXPECT_EQ(p.getPopulationMaxSize(), p.getPopulationSize());
                 p.increaseAgeAndRemoveOldSpecies();       // it can extinct a whole population and regrowPopulationFromElites
                 p.regrowPopulationFromElites(sa, false); //  won't be able to get a 0 pop to max pop
                 p.regrowPopulation(createMember);       //   so we call regrowPopulation in case the pop gets stuck and is killed off.
-                std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " Error: " << errorSum << "\t\t";
+                std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " Error: " << errorSum << "         ";
                 std::flush(std::cout);
                 p.eval(eval);
                 p.reproduce(sa, false);
@@ -232,18 +232,19 @@ namespace EvoAI{
         TEST(PopulationTest, PointerReproduce){
             std::vector<Genome> storage;
             std::stack<Genome*> killedGenomes;
-            const auto maxPop = 101ull;
+            const auto maxPop = 151ull;
             storage.reserve(maxPop);
             auto genID = [](){
                 static auto id = 0u;
                 return id++;
             };
-            auto createMember = [&]() -> auto{ // handle initial creation of population and regrowPopulation
+            // handle initial creation of population and regrowPopulation
+            auto createMember = [&](){
                 if(killedGenomes.empty()){
                     auto& g = storage.emplace_back(1,1,false,false);
                     g.setID(genID());
                     for(auto& ng:g.getNodeChromosomes()){
-                        ng.setBias(0.0d);
+                        ng.setBias(0.0);
                         if(ng.getNeuronType() == Neuron::OUTPUT){
                             ng.setActType(Neuron::ActivationType::IDENTITY);
                         }
@@ -255,7 +256,7 @@ namespace EvoAI{
                     *g = Genome(1,1,false,false);
                     g->setID(genID());
                     for(auto& ng:g->getNodeChromosomes()){
-                        ng.setBias(0.0d);
+                        ng.setBias(0.0);
                         if(ng.getNeuronType() == Neuron::OUTPUT){
                             ng.setActType(Neuron::ActivationType::IDENTITY);
                         }
@@ -264,20 +265,19 @@ namespace EvoAI{
                 }
             };
             auto calcError = [](auto& input, auto& result){
-                return std::pow((input * -1) - std::ceil(result), 2.0d);
+                return std::pow((input * -1) - std::ceil(result), 2.0) / 100.0;
             };
             Population<Genome*> p(createMember, maxPop);
             std::vector<double> results;
             std::vector<double> inputs = {-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-            auto errorSum = 99.9d;
+            auto errorSum = 99.9;
             auto eval = [&](auto& g){
                 g.mutateWeights(2);
                 auto nn = Genome::makePhenotype(g);
-                errorSum = 0.0d;
+                errorSum = 0.0;
                 const auto n = inputs.size();
                 for(auto i=0u;i<n;++i){
-                    nn.setInputs({inputs[i]});
-                    auto out = nn.run();
+                    auto out = nn.forward({inputs[i]});
                     results.emplace_back(out[0]);
                     errorSum += calcError(inputs[i], results[i]);
                     nn.reset();
@@ -287,11 +287,12 @@ namespace EvoAI{
             };
             auto testBestMember = [&](auto& g){
                 auto nn = Genome::makePhenotype(g);
+                nn.writeDotFile("testsData/popPointerReproduce.dot");
                 inputs.clear();
-                std::cout << "Genome ID: " << g.getID() << "\n";
-                auto errorSum = 0.0d;
+                std::cout << "Genome ID: " << g.getID() << " fitness: " << g.getFitness() << "\n";
+                errorSum = 0.0;
                 for(auto i=0u;i<10;++i){
-                    inputs.emplace_back(randomGen.random(-100,100));
+                    inputs.emplace_back(randomGen().random(-100,100));
                     nn.setInputs({inputs[i]});
                     auto out = nn.run();
                     results.emplace_back(out[0]);
@@ -300,9 +301,9 @@ namespace EvoAI{
                     std::cout << "\tinput: " << inputs[i] << " result: " << std::ceil(results[i]) << "\n";
                 }
                 auto accuracy = (10 - errorSum) * 10;
-                accuracy = std::max(0.0d, accuracy);
+                accuracy = std::max(0.0, accuracy);
                 std::cout << "Accuracy: " << accuracy << "%" << std::endl;
-                errorSum = 0.0d;
+                errorSum = 0.0;
                 results.clear();
             };
             auto removeMembersFromSpecies = [&](auto& ids){
@@ -327,7 +328,7 @@ namespace EvoAI{
                             auto& g = storage.emplace_back(std::move(add));
                             g.setID(genID());
                             for(auto& ng:g.getNodeChromosomes()){
-                                ng.setBias(0.0d);
+                                ng.setBias(0.0);
                                 if(ng.getNeuronType() == Neuron::OUTPUT){
                                     ng.setActType(Neuron::ActivationType::IDENTITY);
                                 }
@@ -346,7 +347,7 @@ namespace EvoAI{
             };
             auto sa = SelectionAlgorithms::Tournament<Genome*>{maxPop};
             auto gen = 0u;
-            while(errorSum >= 0.001d){
+            while(errorSum >= 0.001){
                 p.eval(eval);
                 auto res = p.reproduce(sa, true);
                 auto ids = p.increaseAgeAndRemoveOldSpecies();// it can extinct a whole population and regrowPopulationFromElites
@@ -356,7 +357,7 @@ namespace EvoAI{
                 replace(res.first, res.second);
                 p.regrowPopulation(createMember);            //   so we call regrowPopulation in case the pop gets stuck and is killed off.
                 EXPECT_EQ(p.getPopulationMaxSize(), p.getPopulationSize());
-                std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " Error: " << errorSum << "\t\t";
+                std::cout << "\rGeneration: " << gen << " - AVG Fitness: " << p.computeAvgFitness() << " NumSpecies: " << p.getSpeciesSize() << " Error: " << errorSum << "        ";
                 std::flush(std::cout);
                 p.eval(eval);
                 res = p.reproduce(sa, false);

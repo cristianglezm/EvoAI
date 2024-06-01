@@ -6,6 +6,7 @@
 #include <memory>
 
 #include <JsonBox.h>
+
 #include <EvoAI/Neuron.hpp>
 #include <EvoAI/Export.hpp>
 #include <EvoAI/Connection.hpp>
@@ -20,21 +21,18 @@ namespace EvoAI{
         public:
             /**
              * @brief default contructor
-             * @return NeuronLayer
              */
             NeuronLayer();
             /**
              * @brief Constructor that will build the neurons with random bias weights.
-             * @param numNeurons
-             * @param t
-             * @param bias
-             * @return NeuronLayer
+             * @param numNeurons std::size_t
+             * @param t const Neuron::Type&
+             * @param Bias double
              */
-            NeuronLayer(const std::size_t& numNeurons,const Neuron::Type& t,const double& bias);
+            NeuronLayer(std::size_t numNeurons, const Neuron::Type& t,double Bias);
             /**
              * @brief Constructor from json file
              * @param o JsonBox::Object
-             * @return NeuronLayer
              */
             NeuronLayer(JsonBox::Object o);
             /**
@@ -44,7 +42,7 @@ namespace EvoAI{
             std::vector<Neuron>& getNeurons();
             /**
              * @brief takes a neuron vector and steals it.
-             * @param ns
+             * @param ns std::vector<Neuron>&&
              * @return NeuronLayer&
              */
             NeuronLayer& setNeurons(std::vector<Neuron>&& ns);
@@ -66,15 +64,15 @@ namespace EvoAI{
             inline const Neuron::Type& getType() const{ return type; }
             /**
              * @brief setter for bias
-             * @param bias
+             * @param Bias double
              * @return NeuronLayer&
              */
-            NeuronLayer& setBias(const double& bias);
+            NeuronLayer& setBias(double Bias);
             /**
              * @brief getter for the bias
-             * @return const double&
+             * @return double
              */
-            inline const double& getBias() const{ return bias; }
+            inline double getBias() const{ return bias; }
             /**
              * @brief adds a neuron
              * @param n const Neuron&
@@ -84,10 +82,10 @@ namespace EvoAI{
             /**
              * @brief Removes a Neuron from the layer
              * This method should be called when there are no connections.
-             * DOES NOT REMOVE CONNNECTIONS IF SOME NEURON HAS A CONNECTION
-             * TO THIS NEURON IT WON'T BE REMOVED AND WILL CAUSE A SEGMENTATION FAULT.
-             * USE removeNeuron Instead.
-             * @param n
+             * @warning It does not remove connections if some other neuron has a connection 
+             * to this neuron it won't be removed and it will cause a segmentation fault,
+             * use NeuralNetwork::removeNeuron Instead.
+             * @param n Neuron*
              * @return bool 
              */
             bool removeNeuron(Neuron* n);
@@ -99,15 +97,15 @@ namespace EvoAI{
             bool hasNeuron(Neuron* n);
             /**
              * @brief adds a Connection
-             * Before adding a Connection you need to add the neurons.
-             * @param c
+             * @warning Before adding a Connection you need to add the neurons.
+             * @param c const Connection&
              * @return NeuronLayer&
              */
             NeuronLayer& addConnection(const Connection& c);
             /**
              * @brief removes a connection
-             * the connection could be invalid.
-             * @param const c& connection
+             * @warning the connection could be invalid.
+             * @param c const Connection&
              * @return bool
              */
             bool removeConnection(const Connection& c);
@@ -123,7 +121,7 @@ namespace EvoAI{
              * @brief getter for the ActivationType
              * @return Neuron::ActivationType
              */
-            inline Neuron::ActivationType getActivationType() const{ return activationType; }
+            inline Neuron::ActivationType getActivationType() const noexcept { return activationType; }
             /**
              * @brief setter for activation type
              * It will traverse each neuron and set the ActivationType to atype.
@@ -136,12 +134,12 @@ namespace EvoAI{
              * @param cycles
              * @return NeuronLayer&
              */
-            NeuronLayer& setCyclesLimit(const int& cycles);
+            NeuronLayer& setCyclesLimit(int cycles);
             /**
              * @brief getter for the cycles limit
-             * @return const int&
+             * @return int
              */
-            inline const int& getCyclesLimit() const{ return cyclesLimit; }
+            inline int getCyclesLimit() const noexcept { return cyclesLimit; }
             /**
              * @brief returns a JsonBox::Value with the current info.
              * @return JsonBox::Value
@@ -149,24 +147,38 @@ namespace EvoAI{
             JsonBox::Value toJson() const;
             /**
              * @brief Direct Access to Neurons
-             * Example:
+             * @warning Does not check if index is out of range
+             * @code
              *      NeuronLayer[2].getOutput() // gets outputs of neuron 2
-             * Does not check if index is out of range
-             * @param index const std::size_t&
+             * @endcode
+             * @param index std::size_t
              * @return Neuron&
              */
-            Neuron& operator[](const std::size_t& index);
+            Neuron& operator[](std::size_t index);
             /**
              * @brief Direct Access to Neurons
-             * @param index const std::size_t&
+             * @param index std::size_t
              * @return Neuron& const
              */
-            const Neuron& operator[](const std::size_t& index) const;
+            const Neuron& operator[](std::size_t index) const;
             /**
              * @brief compare layers
              * @param rhs
+             * @return bool
              */
             bool operator==(const NeuronLayer& rhs) const;
+            /**
+             * @brief it will return gradients from its neurons.
+             * @code
+             *      // ...
+             *      nn2.backward(lossFn.backward(...));
+             *      nn1.backward(nn2[0].backward());
+             *      // ...
+             * @endcode
+             * @warning It should be used after calling NeuralNetwork::backward to connect input layer to another NeuralNetwork.
+             * @return std::vector<double> gradients 
+             */
+            std::vector<double> backward() const noexcept;
             ~NeuronLayer() = default;
         private:
             std::vector<Neuron> neurons;
