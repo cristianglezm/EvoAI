@@ -33,10 +33,10 @@ namespace EvoAI{
                 g.setID(i);
                 sp.add(std::move(g));
             }
-            sp.writeToFile("Species.json");
+            sp.writeToFile("testsData/Species.json");
         }
         TEST(SpeciesTest, loading){
-            Species<Genome> sp("Species.json");
+            Species<Genome> sp("testsData/Species.json");
             EXPECT_EQ(24u,sp.getID());
             EXPECT_EQ(250u,sp.getAge());
             EXPECT_TRUE(sp.isNovel());
@@ -57,11 +57,11 @@ namespace EvoAI{
             EXPECT_TRUE(sp.isNovel());
             sp.setAge(250);
             EXPECT_EQ(5u,sp.getSize());
-            sp.writeToFile("Species.json");
+            sp.writeToFile("testsData/SpeciesPtr.json");
         }
         TEST(SpeciesTest, PointerLoading){
             ///compile error as expected, you can't load data into Species<T*> that act as observers.
-            //Species<Genome*> sp("Species.json");
+            //Species<Genome*> sp("testsData/SpeciesPtr.json");
         }
         TEST(SpeciesTest, MemberFunctions){
             Species<Genome> sp(1u, true);

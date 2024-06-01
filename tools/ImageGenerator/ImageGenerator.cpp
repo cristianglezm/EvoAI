@@ -11,12 +11,13 @@
 #include <EvoAI/HyperNeat.hpp>
 
 void usage(){
+    std::cout << "ImageGenerator" << " [options]\n";
     std::cout << "-g, --genome [m|r] <filename> [<filename> with r]\tload a genome json file\n";
     std::cout << "\t\t\t\t\tWith m will mutate the genome.\n\t\t\t\t\tWith r will combine two genomes, without m or r will load the genome.\n";
     std::cout << "-G, --genome-type <type> <numHidden>\twill generate a genome of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
                                                             "0. Without hidden neurons\n\t\t\t\t\t\t\t1. With hidden neurons.\n";
     std::cout << "-n, --neuralnetwork [g] <filename>\t\tload a neural network json file.\n\t\t\t\t\t\t\tif g is specified will make a genome from this network.\n";
-    std::cout << "-N, --neuralnetwork-type <type> <numLayers> <numNLayers> will generate a random neural network of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
+    std::cout << "-N, --neuralnetwork-type <type> <numLayers> <numNLayers, ...> will generate a random neural network of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
                                                             "0. CPPN\n\t\t\t\t\t\t\t1. FeedForward\n\t\t\t\t\t\t\t2. Elman Network\n";
     std::cout << "-c, --color\t\t\t\twill use color as input for the neural network (can be used with -C)\n";
     std::cout << "-C, --coords\t\t\t\twill use coordinates as input for the neural network (can be used with -c)\n";
@@ -31,6 +32,7 @@ void usage(){
 }
 
 int main(int argc, char **argv){
+    EvoAI::randomGen().setSeed(std::random_device{}());
     bool optGenome = false;
     bool optGenomeType = false;
     bool optMutate = false;
@@ -55,12 +57,11 @@ int main(int argc, char **argv){
     int resWidth = 150;
     int resHeight = 150;
     int numLayers = 3;
-    int numNLayers = 5;
+    std::vector<std::size_t> numNLayers;
     bool optImage = false;
     std::string imageInput = "image.png";
     int repeat = 1;
     if(argc < 3){
-        std::cout << std::string(argv[0]) << " [options]\n";
         usage();
         return EXIT_FAILURE;
     }
@@ -102,7 +103,11 @@ int main(int argc, char **argv){
             optNeuralType = true;
             NeuralType = std::string(argv[i+1]);
             numLayers = std::stoi(std::string(argv[i+2]));
-            numNLayers = std::stoi(std::string(argv[i+3]));
+            auto start = i+3;
+            auto end = start + numLayers;
+            for(auto j=start;j<end;++j){
+                numNLayers.emplace_back(std::stoi(std::string(argv[j])));
+            }
         }
         if(val == "-c" || val == "--color"){
             optColor = true;
@@ -136,9 +141,8 @@ int main(int argc, char **argv){
             repeat = std::stoi(std::string(argv[i+1]));
         }
         if(val == "--help" || val == "-h"){
-            std::cout << std::string(argv[0]) << " <options>\n";
             usage();
-            return EXIT_FAILURE;
+            return EXIT_SUCCESS;
         }
     }
     std::unique_ptr<EvoAI::NeuralNetwork> nn = nullptr;
@@ -151,7 +155,12 @@ int main(int argc, char **argv){
         }
     }else if(optNeuralType){
         if(NeuralType == "0"){
-            std::cout << "Creating a CPPN with " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;
+            std::cout << "Creating a CPPN with " << std::to_string(numLayers) << " layers and { ";
+            for(auto i=0;i<numLayers;++i){
+                auto commaOrSpace = ((i+1)==numLayers) ? " ":", ";
+                std::cout << std::to_string(numNLayers[i]) << commaOrSpace;
+            }
+            std::cout << "} Neurons for each hidden layer.." << std::endl;
             if(optColor && optCoords && !optBW){
                 nn = EvoAI::createCPPN(6,numLayers,numNLayers,3,1.0);
             }else if(optColor && optCoords && optBW){
@@ -162,7 +171,12 @@ int main(int argc, char **argv){
                 nn = EvoAI::createCPPN(3,numLayers,numNLayers,1,1.0);
             }
         }else if(NeuralType == "1"){
-            std::cout << "Creating a FeedForward Neural Network with " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;
+            std::cout << "Creating a FeedForward Neural Network with " << std::to_string(numLayers) << " layers and { ";
+            for(auto i=0;i<numLayers;++i){
+                auto commaOrSpace = ((i+1)==numLayers) ? " ":", ";
+                std::cout << std::to_string(numNLayers[i]) << commaOrSpace;
+            }
+            std::cout << "} Neurons for each hidden layer.." << std::endl;
             if(optColor && optCoords && !optBW){
                 nn = EvoAI::createFeedForwardNN(6,numLayers,numNLayers,3,1.0);
             }else if(optColor && optCoords && optBW){
@@ -173,7 +187,12 @@ int main(int argc, char **argv){
                 nn = EvoAI::createFeedForwardNN(3,numLayers,numNLayers,1,1.0);
             }
         }else if(NeuralType == "2"){
-            std::cout << "Creating a Elman Neural Network with " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;
+            std::cout << "Creating a Elman Neural Network with " << std::to_string(numLayers) << " layers and { ";
+            for(auto i=0;i<numLayers;++i){
+                auto commaOrSpace = ((i+1)==numLayers) ? " ":", ";
+                std::cout << std::to_string(numNLayers[i]) << commaOrSpace;
+            }
+            std::cout << "} Neurons for each hidden layer.." << std::endl;
             if(optColor && optCoords && !optBW){
                 nn = EvoAI::createElmanNeuralNetwork(6,numLayers,numNLayers,3,1.0);
             }else if(optColor && optCoords && optBW){

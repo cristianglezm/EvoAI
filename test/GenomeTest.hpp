@@ -16,8 +16,8 @@ namespace EvoAI{
         }
         TEST(GenomeTest, WritingAndLoading){
             Genome gL(3,2,1,true,true);
-            gL.writeToFile("gL.json");
-            Genome gL2("gL.json");
+            gL.writeToFile("testsData/gL.json");
+            Genome gL2("testsData/gL.json");
             EXPECT_EQ(gL, gL2);
         }
         TEST(GenomeTest, isSorted){
@@ -192,7 +192,7 @@ namespace EvoAI{
         TEST(GenomeTest, Distance){
             Genome g1(1,2,true,true);
             Genome g2(1,2,true,true);
-            auto speciesThreshold = 10.0d;
+            auto speciesThreshold = 10.0;
             EXPECT_TRUE(Genome::distance(g1,g2) < speciesThreshold);
         }
     }

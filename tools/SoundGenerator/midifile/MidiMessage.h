@@ -14,8 +14,10 @@
 #ifndef _MIDIMESSAGE_H_INCLUDED
 #define _MIDIMESSAGE_H_INCLUDED
 
-#include <vector>
+#include <iostream>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace smf {
 
@@ -44,6 +46,9 @@ class MidiMessage : public std::vector<uchar> {
 
 		void           sortTrack            (void);
 		void           sortTrackWithSequence(void);
+
+		static std::vector<uchar> intToVlv  (int value);
+		static double  frequencyToSemitones (double frequency, double a4frequency = 440.0);
 
 		// data access convenience functions (returns -1 if not present):
 		int            getP0                (void) const;
@@ -92,17 +97,23 @@ class MidiMessage : public std::vector<uchar> {
 
 		// message-type convenience functions:
 		bool           isMetaMessage        (void) const;
-		bool           isMeta               (void) const;
-		bool           isNoteOff            (void) const;
-		bool           isNoteOn             (void) const;
+		bool             isMeta             (void) const;
 		bool           isNote               (void) const;
+		bool             isNoteOff          (void) const;
+		bool             isNoteOn           (void) const;
 		bool           isAftertouch         (void) const;
 		bool           isController         (void) const;
-		bool           isTimbre             (void) const;
+		bool             isSustain          (void) const;  // controller 64
+		bool             isSustainOn        (void) const;
+		bool             isSustainOff       (void) const;
+		bool             isSoft             (void) const;  // controller 67
+		bool             isSoftOn           (void) const;
+		bool             isSoftOff          (void) const;
 		bool           isPatchChange        (void) const;
+		bool             isTimbre           (void) const;
 		bool           isPressure           (void) const;
 		bool           isPitchbend          (void) const;
-		bool           isEmpty              (void) const;
+		bool           isEmpty              (void) const;  // see MidiFile::removeEmpties()
 
 		// helper functions to create various MidiMessages:
 		void           makeNoteOn           (int channel, int key, int velocity);
@@ -160,9 +171,39 @@ class MidiMessage : public std::vector<uchar> {
 		void           setTempoMicroseconds (int microseconds);
 		void           setMetaTempo         (double tempo);
 
+
+		void           makeSysExMessage     (const std::vector<uchar>& data);
+
+		// helper functions to create MTS tunings by key (real-time sysex)
+
+		// MTS type 2: Real-time frequency assignment to a arbitrary list of MIDI key numbers.
+		// See page 2 of: https://docs.google.com/viewer?url=https://www.midi.org/component/edocman/midi-tuning-updated/fdocument?Itemid=9999
+		void           makeMts2_KeyTuningByFrequency  (int key, double frequency, int program = 0);
+		void           makeMts2_KeyTuningsByFrequency (int key, double frequency, int program = 0);
+		void           makeMts2_KeyTuningsByFrequency (std::vector<std::pair<int, double>>& mapping, int program = 0);
+		void           makeMts2_KeyTuningBySemitone   (int key, double semitone, int program = 0);
+		void           makeMts2_KeyTuningsBySemitone  (int key, double semitone, int program = 0);
+		void           makeMts2_KeyTuningsBySemitone  (std::vector<std::pair<int, double>>& mapping, int program = 0);
+
+		// MTS type 9: Real-time octave temperaments by +/- 100 cents deviation from ET
+		// See page 7 of: https://docs.google.com/viewer?url=https://www.midi.org/component/edocman/midi-tuning-updated/fdocument?Itemid=9999
+		void           makeMts9_TemperamentByCentsDeviationFromET (std::vector<double>& mapping, int referencePitchClass = 0, int channelMask = 0b1111111111111111);
+		void           makeTemperamentEqual(int referencePitchClass = 0, int channelMask = 0b1111111111111111);
+		void           makeTemperamentBad(double maxDeviationCents = 100.0, int referencePitchClass = 0, int channelMask = 0b1111111111111111);
+		void           makeTemperamentPythagorean(int referencePitchClass = 2, int channelMask = 0b1111111111111111);
+		void           makeTemperamentMeantone(double fraction = 0.25, int referencePitchClass = 2, int channelMask = 0b1111111111111111);
+		void           makeTemperamentMeantoneCommaQuarter(int referencePitchClass = 2, int channelMask = 0b1111111111111111);
+		void           makeTemperamentMeantoneCommaThird(int referencePitchClass = 2, int channelMask = 0b1111111111111111);
+		void           makeTemperamentMeantoneCommaHalf(int referencePitchClass = 2, int channelMask = 0b1111111111111111);
+
 };
 
+
+std::ostream& operator<<(std::ostream& out, MidiMessage& event);
+
+
 } // end of namespace smf
+
 
 #endif /* _MIDIMESSAGE_H_INCLUDED */
 

@@ -58,7 +58,7 @@ namespace EvoAI{
         return channel;
     }
 
-    void generateMidifile(const int& tracks, const int& notes, NeuralNetwork* nn, const std::string& soundOutput){
+    void generateMidifile(int tracks, int notes, NeuralNetwork* nn, const std::string& soundOutput){
         if((*nn)[0].size() != 3){
             throw std::runtime_error("The neural Network needs to have 3 inputs");
         }
@@ -70,16 +70,16 @@ namespace EvoAI{
         mf->addTrack(tracks-1);
         auto tpq = 64;
         mf->setTicksPerQuarterNote(tpq);
-        auto note1 = randomGen.random(0,127);
-        auto note2 = randomGen.random(0,127);
-        auto note3 = randomGen.random(0,127);
+        auto note1 = randomGen().random(0,127);
+        auto note2 = randomGen().random(0,127);
+        auto note3 = randomGen().random(0,127);
         for(auto x=0;x<tracks;++x){
             auto actionTime = 0;
             for(auto y=0;y<notes;++y){
                 if(note1 == note2 && note2 == note3){
-                    note1 = randomGen.random(0,127);
-                    note2 = randomGen.random(0,127);
-                    note3 = randomGen.random(0,127);
+                    note1 = randomGen().random(0,127);
+                    note2 = randomGen().random(0,127);
+                    note3 = randomGen().random(0,127);
                 }
                 std::vector<double> inputs;
                 inputs.emplace_back(EvoAI::stableNormalize<double>(note1,0,127));
@@ -120,7 +120,7 @@ namespace EvoAI{
         mf->write(soundOutput);
     }
 
-    std::unique_ptr<smf::MidiFile> processSong(Commands&& comm, Melodies&& m, Rhythms&& r, const int& tpq){
+    std::unique_ptr<smf::MidiFile> processSong(Commands&& comm, Melodies&& m, Rhythms&& r, int tpq){
         if(m.size() != r.size() || r.size() != comm.size() || m.size() != comm.size()){
             throw std::runtime_error("The Melodies, Rhythms and Commands should be the same size.");
         }
@@ -132,7 +132,7 @@ namespace EvoAI{
         auto Default = 64;
         for(auto trackNum=0u;trackNum<m.size();++trackNum){
             actionTime = 0;
-            auto channel = randomGen.random(0,15);
+            auto channel = randomGen().random(0,15);
             for(auto mel=0u;mel<m[trackNum].size();++mel){
                 actionTime += tpq * r[trackNum][mel];
                 if(comm[trackNum][mel] == 0x90){ ///@todo add range 0x90 to 0x9F?
@@ -150,22 +150,25 @@ namespace EvoAI{
         return midi;
     }
 
-    std::unique_ptr<smf::MidiFile> makeRandomSong(const std::size_t& channels = 2u, const std::size_t& notes = 150u) noexcept{
+    std::unique_ptr<smf::MidiFile> makeRandomSong(std::size_t channels = 2u, std::size_t notes = 150u) noexcept{
         Melodies m; // instruments and notes 
         Rhythms r; // good named var
         Commands comms; //commands
+        m.reserve(channels);
+        r.reserve(channels);
+        comms.reserve(channels);
         for(auto i=0u;i<channels;++i){
             std::vector<int> melody;
             std::vector<int> rhythm;
             std::vector<int> commands;
 
             commands.emplace_back(0xC0); // patch command
-            melody.emplace_back(randomGen.random(0,127)); // random instrument
-            rhythm.emplace_back(randomGen.random(1,5)); // speed
+            melody.emplace_back(randomGen().random(0,127)); // random instrument
+            rhythm.emplace_back(randomGen().random(1,5)); // speed
             for(auto j=0u;j<notes;++j){
                 commands.emplace_back(0x90); //note on
-                melody.emplace_back(randomGen.random(0,127)); // notes
-                rhythm.emplace_back(randomGen.random(1,5));
+                melody.emplace_back(randomGen().random(0,127)); // notes
+                rhythm.emplace_back(randomGen().random(1,5));
             }
             m.emplace_back(melody);
             r.emplace_back(rhythm);

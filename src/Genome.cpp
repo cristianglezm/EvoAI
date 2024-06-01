@@ -1,11 +1,11 @@
 #include <EvoAI/Genome.hpp>
+#include <EvoAI/NeuronLayer.hpp>
 
 #include <random>
 #include <algorithm>
 //#include <execution>
 #include <cassert>
 #include <future>
-#include <EvoAI/NeuronLayer.hpp>
 
 namespace EvoAI{
     Genome::Genome() noexcept
@@ -38,14 +38,14 @@ namespace EvoAI{
         std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
         std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
-    Genome::Genome(const std::size_t& numInputs, const std::size_t& numOutputs, bool canBeRecursive, bool cppn) noexcept
+    Genome::Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive, bool CPPN) noexcept
     : nodeChromosomes()
     , connectionChromosomes()
     , genomeID(0)
     , speciesID(0)
     , fitness(0.0)
     , rnnAllowed(canBeRecursive)
-    , cppn(cppn){
+    , cppn(CPPN){
         nodeChromosomes.reserve(numInputs + numOutputs);
         for(auto i=0u;i<numInputs;++i){
             nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,Neuron::ActivationType::SIGMOID);
@@ -60,20 +60,20 @@ namespace EvoAI{
         connectionChromosomes.reserve(numInputs * numOutputs);
         for(auto i=0u;i<numInputs;++i){
             for(auto j=0u;j<numOutputs;++j){
-                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(2,j), randomGen.random(-1.0,1.0, numInputs + numOutputs));
+                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(2,j), randomGen().random(-1.0,1.0, numInputs + numOutputs));
             }
         }
         std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
         std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
     }
-    Genome::Genome(const std::size_t& numInputs, const std::size_t& numHidden, const std::size_t& numOutputs, bool canBeRecursive, bool cppn) noexcept
+    Genome::Genome(std::size_t numInputs, std::size_t numHidden, std::size_t numOutputs, bool canBeRecursive, bool CPPN) noexcept
     : nodeChromosomes()
     , connectionChromosomes()
     , genomeID(0)
     , speciesID(0)
     , fitness(0.0)
     , rnnAllowed(canBeRecursive)
-    , cppn(cppn){
+    , cppn(CPPN){
         nodeChromosomes.reserve(numInputs + numHidden + numOutputs);
         for(auto i=0u;i<numInputs;++i){
             nodeChromosomes.emplace_back(0,i,Neuron::Type::INPUT,Neuron::ActivationType::SIGMOID);
@@ -95,12 +95,12 @@ namespace EvoAI{
         connectionChromosomes.reserve((numInputs * numHidden) + (numHidden * numOutputs));
         for(auto i=0u;i<numInputs;++i){
             for(auto j=0u;j<numHidden;++j){
-                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(1,j), randomGen.random(-1.0,1.0,numInputs + numHidden));
+                connectionChromosomes.emplace_back(NodeGene(0,i), NodeGene(1,j), randomGen().random(-1.0,1.0,numInputs + numHidden));
             }
         }
         for(auto i=0u;i<numHidden;++i){
             for(auto j=0u;j<numOutputs;++j){
-                connectionChromosomes.emplace_back(NodeGene(1,i), NodeGene(2,j), randomGen.random(-1.0,1.0,numHidden + numOutputs));
+                connectionChromosomes.emplace_back(NodeGene(1,i), NodeGene(2,j), randomGen().random(-1.0,1.0,numHidden + numOutputs));
             }
         }
         std::sort(std::begin(nodeChromosomes), std::end(nodeChromosomes));
@@ -109,11 +109,11 @@ namespace EvoAI{
     Genome::Genome(JsonBox::Object o)
     : nodeChromosomes()
     , connectionChromosomes()
-    , genomeID(std::stoull(o["GenomeID"].getString()))
-    , speciesID(std::stoull(o["SpeciesID"].getString()))
-    , fitness(o["fitness"].getDouble())
-    , rnnAllowed(o["rnnAllowed"].getBoolean())
-    , cppn(o["cppn"].getBoolean()){
+    , genomeID(std::stoull(o["GenomeID"].tryGetString("0")))
+    , speciesID(std::stoull(o["SpeciesID"].tryGetString("0")))
+    , fitness(o["fitness"].tryGetDouble(0.0))
+    , rnnAllowed(o["rnnAllowed"].tryGetBoolean(false))
+    , cppn(o["cppn"].tryGetBoolean(false)){
         auto& ngs = o["nodeChromosomes"].getArray();
         nodeChromosomes.reserve(ngs.size());
         for(auto& ng:ngs){
@@ -184,7 +184,7 @@ namespace EvoAI{
     const std::vector<ConnectionGene>& Genome::getConnectionChromosomes() const noexcept{
         return connectionChromosomes;
     }
-    std::size_t Genome::getNumOfNodes(const std::size_t& layerID) const noexcept{
+    std::size_t Genome::getNumOfNodes(std::size_t layerID) const noexcept{
         return std::count_if(std::begin(nodeChromosomes), std::end(nodeChromosomes), 
             [&layerID](const auto& n){
                return n.getLayerID() == layerID;
@@ -221,13 +221,13 @@ namespace EvoAI{
         v.writeToFile(filename, true, false);
 #endif
     }
-    void Genome::setFitness(const double& fit) noexcept{
+    void Genome::setFitness(double fit) noexcept{
         fitness = fit;
     }
-    void Genome::addFitness(const double& amount) noexcept{
+    void Genome::addFitness(double amount) noexcept{
         fitness += amount;
     }
-    const double& Genome::getFitness() const noexcept{
+    double Genome::getFitness() const noexcept{
         return fitness;
     }
     bool Genome::hasNodeGene(const NodeGene& ng) const noexcept{
@@ -236,16 +236,16 @@ namespace EvoAI{
     bool Genome::hasConnectionGene(const ConnectionGene& cg) const noexcept{
         return std::binary_search(std::begin(connectionChromosomes), std::end(connectionChromosomes), cg);
     }
-    void Genome::setID(const std::size_t& gnmID) noexcept{
+    void Genome::setID(std::size_t gnmID) noexcept{
         genomeID = gnmID;
     }
-    const std::size_t& Genome::getID() const noexcept{
+    std::size_t Genome::getID() const noexcept{
         return genomeID;
     }
-    void Genome::setSpeciesID(const std::size_t& spcID) noexcept{
+    void Genome::setSpeciesID(std::size_t spcID) noexcept{
         speciesID = spcID;
     }
-    const std::size_t& Genome::getSpeciesID() const noexcept{
+    std::size_t Genome::getSpeciesID() const noexcept{
         return speciesID;
     }
     void Genome::setCppn(bool isCppn) noexcept{
@@ -256,7 +256,7 @@ namespace EvoAI{
     }
     void Genome::mutateAddNode() noexcept{
         if(!connectionChromosomes.empty()){
-            auto selectedConnection = randomGen.random(0u,connectionChromosomes.size()-1);
+            auto selectedConnection = randomGen().random(std::size_t(0),connectionChromosomes.size()-1);
             auto& selConn = connectionChromosomes[selectedConnection];
             auto at = Neuron::ActivationType::SIGMOID;
             if(cppn){
@@ -275,23 +275,29 @@ namespace EvoAI{
     }
     void Genome::mutateAddConnection() noexcept{
         if(!nodeChromosomes.empty()){
-            auto selectedNode1 = randomGen.random(0u,nodeChromosomes.size()-1);
-            auto selectedNode2 = randomGen.random(0u,nodeChromosomes.size()-1);
+            auto selectedNode1 = randomGen().random(std::size_t(0),nodeChromosomes.size()-1);
+            auto selectedNode2 = randomGen().random(std::size_t(0),nodeChromosomes.size()-1);
             if(!rnnAllowed){
                 if(nodeChromosomes[selectedNode1].getLayerID() < nodeChromosomes[selectedNode2].getLayerID()){
-                    connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], randomGen.random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
+                    connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], 
+                                                        nodeChromosomes[selectedNode2], 
+                                                        randomGen().random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
                 }else{
-                    connectionChromosomes.emplace_back(nodeChromosomes[selectedNode2], nodeChromosomes[selectedNode1], randomGen.random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
+                    connectionChromosomes.emplace_back(nodeChromosomes[selectedNode2], 
+                                                        nodeChromosomes[selectedNode1], 
+                                                        randomGen().random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
                 }
             }else{
-                connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], nodeChromosomes[selectedNode2], randomGen.random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
+                connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], 
+                                                    nodeChromosomes[selectedNode2], 
+                                                    randomGen().random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
             }
             std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
         }
     }
     void Genome::mutateRemoveConnection() noexcept{
         if(!connectionChromosomes.empty()){
-            auto selectedConn = randomGen.random(0u,connectionChromosomes.size()-1);
+            auto selectedConn = randomGen().random(std::size_t(0),connectionChromosomes.size()-1);
             connectionChromosomes.erase(std::remove(std::begin(connectionChromosomes),
                                                 std::end(connectionChromosomes),
                                                 connectionChromosomes[selectedConn]),
@@ -300,19 +306,19 @@ namespace EvoAI{
         }
     }
     void Genome::mutateWeights(double power) noexcept{
-        auto nodeOrConn = randomGen.random(0.5);
-        auto shakeThingsUp = randomGen.random(0.5);
-        auto isNegative = randomGen.random(0.5);
+        auto nodeOrConn = randomGen().random(0.5);
+        auto shakeThingsUp = randomGen().random(0.5);
+        auto isNegative = randomGen().random(0.5);
         if(nodeOrConn){
             if(nodeChromosomes.empty()){
                 return;
             }
-            auto selectedNode = randomGen.random(0u,nodeChromosomes.size() - 1);
+            auto selectedNode = randomGen().random(std::size_t(0),nodeChromosomes.size() - 1);
             auto isOld = ((static_cast<std::size_t>(selectedNode)) < (nodeChromosomes.size() / 2));
             if(isOld){
                 power += (power * power) * 0.8;
             }
-            auto weight = power * randomGen.random(-1.0,1.0,static_cast<double>(nodeChromosomes.size()));
+            auto weight = power * randomGen().random(-1.0,1.0,static_cast<double>(nodeChromosomes.size()));
             if(isNegative){
                 weight = -weight;
             }
@@ -325,7 +331,7 @@ namespace EvoAI{
             if(connectionChromosomes.empty()){
                 return;
             }
-            auto selectedConnection = randomGen.random(0u,connectionChromosomes.size() - 1);
+            auto selectedConnection = randomGen().random(std::size_t(0),connectionChromosomes.size() - 1);
             if(connectionChromosomes[selectedConnection].isFrozen()){
                 return;
             }
@@ -333,7 +339,7 @@ namespace EvoAI{
             if(isOld){
                 power += (power*power) * 0.8;
             }
-            auto weight = power * randomGen.random(-1.0,1.0,static_cast<double>(connectionChromosomes.size()));
+            auto weight = power * randomGen().random(-1.0,1.0,static_cast<double>(connectionChromosomes.size()));
             if(isNegative){
                 weight = -weight;
             }
@@ -353,7 +359,7 @@ namespace EvoAI{
             }
         }
         if(!cgs.empty()){
-            cgs[randomGen.random(0u,cgs.size()-1)]->setEnabled(false);
+            cgs[randomGen().random(std::size_t(0),cgs.size()-1)]->setEnabled(false);
         }
     }
     void Genome::mutateEnable() noexcept{
@@ -365,29 +371,30 @@ namespace EvoAI{
             }
         }
         if(!cgs.empty()){
-            cgs[randomGen.random(0u,cgs.size()-1)]->setEnabled(true);
+            cgs[randomGen().random(std::size_t(0),cgs.size()-1)]->setEnabled(true);
         }
     }
     void Genome::mutateActivationType() noexcept{
-        if(!nodeChromosomes.empty()){
-            auto selectedNode = randomGen.random(0u,nodeChromosomes.size()-1);
+        if(!nodeChromosomes.empty()  && cppn){
+            auto selectedNode = randomGen().random(std::size_t(0),nodeChromosomes.size()-1);
             nodeChromosomes[selectedNode].setActType(getRandomActivationType());
         }
     }
-    void Genome::mutate(float nodeRate, float addConnRate, float removeConnRate, float perturbWeightsRate, float enableRate, float disableRate, float actTypeRate) noexcept{
-        if(randomGen.random(nodeRate)){
+    void Genome::mutate(float nodeRate, float addConnRate, float removeConnRate, float perturbWeightsRate, 
+                            float enableRate, float disableRate, float actTypeRate) noexcept{
+        if(randomGen().random(nodeRate)){
             mutateAddNode();
-        }else if(randomGen.random(addConnRate)){
+        }else if(randomGen().random(addConnRate)){
             mutateAddConnection();
-        }else if(randomGen.random(removeConnRate)){
+        }else if(randomGen().random(removeConnRate)){
             mutateRemoveConnection();
-        }else if(randomGen.random(perturbWeightsRate)){
+        }else if(randomGen().random(perturbWeightsRate)){
             mutateWeights(2);
-        }else if(randomGen.random(enableRate)){
+        }else if(randomGen().random(enableRate)){
             mutateEnable();
-        }else if(randomGen.random(disableRate)){
+        }else if(randomGen().random(disableRate)){
             mutateDisable();
-        }else if(randomGen.random(actTypeRate) && cppn){
+        }else if(randomGen().random(actTypeRate)){
             mutateActivationType();
         }
     }
@@ -430,7 +437,7 @@ namespace EvoAI{
 //////////
 //// Static Functions
 //////////
-    double Genome::distance(const Genome& g1, const Genome& g2, const double& c1, const double& c2, const double& c3) noexcept{
+    double Genome::distance(const Genome& g1, const Genome& g2, double c1, double c2, double c3) noexcept{
         auto mChromo = getMatchingChromosomes(g1, g2);
         auto disGen = getDisjointGenes(g1,g2, &mChromo);
         const auto D = disGen.first.first.size() + disGen.first.second.size() + disGen.second.first.size() + disGen.second.second.size();
@@ -442,7 +449,7 @@ namespace EvoAI{
         const auto N = std::max(g1.nodeChromosomes.size() + g1.connectionChromosomes.size(),
                                 g2.nodeChromosomes.size() + g2.connectionChromosomes.size());
 
-        auto weightAbsDiff = 0.0d;
+        auto weightAbsDiff = 0.0;
 #ifndef NDEBUG
         assert(cGenes1.size() == cGenes2.size());
 #endif
@@ -452,7 +459,7 @@ namespace EvoAI{
         return ((c1 * E) / N) + ((c2 * D) / N) + c3 * weightAbsDiff;
     }
     Neuron::ActivationType Genome::getRandomActivationType() noexcept{
-        return static_cast<Neuron::ActivationType>(randomGen.random(0, Neuron::ActivationType::LAST_CPPN_ACTIVATION_TYPE-1));
+        return static_cast<Neuron::ActivationType>(randomGen().random(0, Neuron::ActivationType::LAST_CPPN_ACTIVATION_TYPE-1));
     }
     Genome::matchingNodeGenes Genome::getMatchingNodeGenes(const Genome& g1, const Genome& g2) noexcept{
         auto mNodeGenes = std::mismatch(std::begin(g1.nodeChromosomes), std::end(g1.nodeChromosomes)
@@ -514,9 +521,6 @@ namespace EvoAI{
             return std::make_pair(std::make_pair(Range<NodeGene>(begNodes1, endNodes1), Range<NodeGene>(begNodes2, endNodes2)), 
                                     std::make_pair(Range<ConnectionGene>(begConn1, endConn1), Range<ConnectionGene>(begConn2, endConn2)));
         }
-        auto next = [](auto iter){
-            return ++iter;
-        };
         if(endNodes1 != std::end(g1.nodeChromosomes) && endNodes2 != std::end(g2.nodeChromosomes)){
             if(*begNodes1 < *begNodes2){
                 std::swap(begNodes1, begNodes2);
@@ -525,9 +529,9 @@ namespace EvoAI{
                 swapped = true;
             }
             while(endNodes1 != std::end(g1Ptr->nodeChromosomes) || endNodes2 != std::end(g2Ptr->nodeChromosomes)){
-                if(*endNodes2 < *endNodes1 && next(endNodes2) <= std::end(g2Ptr->nodeChromosomes)){
+                if(*endNodes2 < *endNodes1 && std::next(endNodes2) <= std::end(g2Ptr->nodeChromosomes)){
                     ++endNodes2;
-                }else if(next(endNodes1) <= std::end(g1Ptr->nodeChromosomes)){
+                }else if(std::next(endNodes1) <= std::end(g1Ptr->nodeChromosomes)){
                     ++endNodes1;
                     break;
                 }else{
@@ -549,9 +553,9 @@ namespace EvoAI{
                 swapped = true;
             }
             while(endConn1 != std::end(g1Ptr->connectionChromosomes) || endConn2 != std::end(g2Ptr->connectionChromosomes)){
-                if(*endConn2 < *endConn1 && next(endConn2) <= std::end(g2Ptr->connectionChromosomes)){
+                if(*endConn2 < *endConn1 && std::next(endConn2) <= std::end(g2Ptr->connectionChromosomes)){
                     ++endConn2;
-                }else if(next(endConn1) <= std::end(g1Ptr->connectionChromosomes)){
+                }else if(std::next(endConn1) <= std::end(g1Ptr->connectionChromosomes)){
                     ++endConn1;
                     break;
                 }else{
@@ -585,7 +589,7 @@ namespace EvoAI{
         std::transform(mChromo.first.first.begin, mChromo.first.first.end, 
                         mChromo.first.second.begin, std::back_inserter(nGenes),
                             [](const auto& ng1, const auto& ng2){
-                                auto selectFromFirstParent = randomGen.random(0.5);
+                                auto selectFromFirstParent = randomGen().random(0.5);
                                 if(selectFromFirstParent){
                                     return ng1;
                                 }
@@ -595,8 +599,8 @@ namespace EvoAI{
         auto matchingConnectionSize = mChromo.second.first.size();
         cGenes.reserve(matchingConnectionSize);
         for(auto i=0u;i<matchingConnectionSize;++i){
-            auto selectFromFirstParent = randomGen.random(0.5);
-            auto isDisabled = randomGen.random(0.5);
+            auto selectFromFirstParent = randomGen().random(0.5);
+            auto isDisabled = randomGen().random(0.5);
             if(selectFromFirstParent){
                 cGenes.emplace_back(mChromo.second.first[i]);
                 if(!mChromo.second.first[i].isEnabled()){
@@ -676,9 +680,38 @@ namespace EvoAI{
         nn.addLayer(inputLayer);
         nn.addLayer(hiddenLayer);
         nn.addLayer(outputLayer);
-        for(auto& c:g.getConnectionChromosomes()){
-            if(c.isEnabled()){
-                nn.addConnection(c.getConnection());
+        auto actType = nn[2][0].getActivationType();
+        auto& neurons = nn[2].getNeurons();
+        auto checkActType = [actType](auto& n){
+                return n.getActivationType() == actType;
+        };
+        if(std::all_of(std::begin(neurons), std::end(neurons), checkActType)){
+            nn[2].setActivationType(actType);
+        }
+        auto hasValidConn = [](NeuralNetwork& net, const ConnectionGene& cg){
+            const auto& src = cg.getSrc();
+            const auto& dest = cg.getDest();
+            if(src.layer <=2u){
+                auto numNrns = net[src.layer].size();
+                if(!(src.neuron < numNrns)){
+                    return false;
+                }
+            }else{
+                return false;
+            }
+            if(dest.layer <=2u){
+                auto numNrns = net[dest.layer].size();
+                if(!(dest.neuron < numNrns)){
+                    return false;
+                }
+            }else{
+                return false;
+            }
+            return true;
+        };
+        for(auto& cg:g.getConnectionChromosomes()){
+            if(cg.isEnabled() && hasValidConn(nn, cg)){
+                nn.addConnection(cg.getConnection());
             }
         }
         return nn;

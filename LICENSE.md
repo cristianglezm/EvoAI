@@ -186,7 +186,7 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright 2015-2020 Cristian Glez cristian.glez.m@gmail.com
+   Copyright 2015-2024 Cristian Gonzalez cristian.glez.m@gmail.com
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

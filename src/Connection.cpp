@@ -3,12 +3,19 @@
 #include <EvoAI/Utils/RandomUtils.hpp>
 
 namespace EvoAI{
-    Link::Link(const std::size_t& layer,const std::size_t& neuron)
-    : layer(layer)
-    , neuron(neuron){}
+    Link::Link(std::size_t lyr, std::size_t nrn)
+    : layer(lyr)
+    , neuron(nrn){}
     Link::Link(JsonBox::Object o)
-    : layer(std::stoull(o["layer"].getString()))
-    , neuron(std::stoull(o["neuron"].getString())){}
+    : layer(std::stoull(o["layer"].tryGetString("0")))
+    , neuron(std::stoull(o["neuron"].tryGetString("0"))){
+        if(layer == std::numeric_limits<std::size_t>::max()){
+            layer = 0;
+        }
+        if(neuron == std::numeric_limits<std::size_t>::max()){
+            neuron = 0;
+        }
+    }
     JsonBox::Value Link::toJson() const noexcept{
         JsonBox::Object o;
         o["layer"] = JsonBox::Value(std::to_string(layer));
@@ -26,38 +33,34 @@ namespace EvoAI{
     : src(Link(0,0))
     , dest(Link(0,0))
     , weight(0.0)
+    , gradient(0.0)
     , cycles(0)
     , visited(false)
-    , gradient(0.0)
-    , delta(0.0)
-    , oldDelta(0.0){}
-    Connection::Connection(const Link& src, const Link& dest)
-    : src(src)
-    , dest(dest)
+    , frozen(false){}
+    Connection::Connection(const Link& source, const Link& destination)
+    : src(source)
+    , dest(destination)
     , weight(0.0)
+    , gradient(0.0)
     , cycles(0)
     , visited(false)
-    , gradient(0.0)
-    , delta(0.0)
-    , oldDelta(0.0){}
-    Connection::Connection(const Link& src, const Link& dest, const double& w)
-    : src(src)
-    , dest(dest)
+    , frozen(false){}
+    Connection::Connection(const Link& source, const Link& destination, double w)
+    : src(source)
+    , dest(destination)
     , weight(w)
+    , gradient(0.0)
     , cycles(0)
     , visited(false)
-    , gradient(0.0)
-    , delta(0.0)
-    , oldDelta(0.0){}
+    , frozen(false){}
     Connection::Connection(JsonBox::Object o)
     : src(o["src"].getObject())
     , dest(o["dest"].getObject())
-    , weight(o["weight"].getDouble())
+    , weight(o["weight"].tryGetDouble(0.0))
+    , gradient(o["gradient"].tryGetDouble(0.0))
     , cycles(0)
     , visited(false)
-    , gradient(0.0)
-    , delta(0.0)
-    , oldDelta(0.0){}
+    , frozen(o["frozen"].tryGetBoolean(false)){}
     Connection& Connection::setSrc(const Link& l){
         src = l;
         return *this;
@@ -70,19 +73,21 @@ namespace EvoAI{
         visited = b;
         return *this;
     }
-    Connection& Connection::setWeight(const double& w){
-        weight = w;
+    Connection& Connection::setWeight(double w){
+        if(!frozen){
+            weight = w;
+        }
         return *this;
     }
-    Connection& Connection::setCycles(const int& c){
+    Connection& Connection::setCycles(int c){
         cycles = c;
         return *this;
     }
     std::string Connection::toString() const noexcept{
         std::ostringstream ss;
         ss << "Recurrent: " << (isRecurrent() ? "True ":"False ")
-        << "[" << src.layer << "," << src.neuron << "] --> ["
-        << dest.layer << "," << dest.neuron << "]" << " - " << weight << ", grad: " << gradient << ", delta: " << delta;
+            << "[" << src.layer << "," << src.neuron << "] --> ["
+            << dest.layer << "," << dest.neuron << "]" << " - weight: " << weight << ", grad: " << gradient << ", frozen: " << frozen;
         return ss.str();
     }
     JsonBox::Value Connection::toJson() const noexcept{
@@ -90,6 +95,8 @@ namespace EvoAI{
         o["src"] = src.toJson();
         o["dest"] = dest.toJson();
         o["weight"] = weight;
+        o["gradient"] = gradient;
+        o["frozen"] = frozen;
         return JsonBox::Value(o);
     }
     bool Connection::operator==(const Connection& rhs) const{
@@ -100,22 +107,20 @@ namespace EvoAI{
                 && visited == rhs.visited
                 && gradient == rhs.gradient);
     }
-    Connection& Connection::setGradient(const double& grad) noexcept{
+    Connection& Connection::setGradient(double grad) noexcept{
         gradient = grad;
         return *this;
     }
-    Connection& Connection::addGradient(const double& val) noexcept{
+    Connection& Connection::addGradient(double val) noexcept{
         gradient += val;
-        return *this;
-    }
-    Connection& Connection::setDelta(const double& val) noexcept{
-        oldDelta = delta;
-        delta = val;
         return *this;
     }
     void Connection::reset(){
         visited = false;
         gradient = 0.0;
-        delta = 0.0;
+    }
+    Connection& Connection::setFrozen(bool frzen) noexcept{
+        frozen = frzen;
+        return *this;
     }
 }

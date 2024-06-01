@@ -18,16 +18,17 @@
 
 namespace EvoAI{
     /**
-     * @class Population<T>
+     * @class Population
      * @warning You can't use Population<T*>(JsonBox::Object) or Population<T*>(const std::string& filename) to load a Population.json
      *          also you can't use Population<T*>(std::size_t size, Args...args)
      * @brief Population<T> is an utility class that allows to evolve a population easily.
+     * @tparam T
      * @details
      *   T needs to fulfill these conditions: <br />
      *      T has a member function JsonBox::Value toJson() const noexcept <br />
      *      T has a constructor T::T(JsonBox::Object) <br />
-     *      T has a member function const double& getFitness() const noexcept <br />
-     *      T has a member function void setFitness(const double&) noexcept <br />
+     *      T has a member function double getFitness() const noexcept <br />
+     *      T has a member function void setFitness(double) noexcept <br />
      *      T has a static member function static double T::distance(const T&, const T&, double, double, double) noexcept <br />
      *      T has a static member function static T T::reproduce(const T&, const T&) noexcept <br />
      *   If Population<T*> it will act as an observer, what does this means: <br />
@@ -38,7 +39,7 @@ namespace EvoAI{
      */
     template<typename T>
     class EvoAI_API Population{
-            static_assert(is_populable_v<typename std::remove_pointer_t<T>>, "T needs to be Populable, more info at Population.hpp");
+            static_assert(meta::is_populable_v<typename std::remove_pointer_t<T>>, "T needs to be Populable, more info at Population.hpp");
         public:
             using value_type = T;
             using reference = std::remove_reference_t<std::remove_pointer_t<T>>&;
@@ -65,44 +66,48 @@ namespace EvoAI{
         public:
             /**
              * @brief basic constructor
-             * @return Population<T>
              */
             Population();
             /**
              * @brief creates a population of size with provided function, if using T* remember to avoid memory re-allocations.
              * @param fn std::function<T()>&& generator function
              * @param size std::size_t number of members
-             * @return Population<T>
+             * @param c1 double coefficient for importance
+             * @param c2 double coefficient for importance
+             * @param c3 double coefficient for importance
              */
-            Population(std::function<T()>&& fn, std::size_t size);
+            Population(std::function<T()>&& fn, std::size_t size, double c1 = 2.0, double c2 = 2.0, double c3 = 1.0);
             /**
              * @brief creates a population of specified size with the args provided.
              * @param size std::size_t number of members.
-             * @tparam args Args...
-             * @return Population<T>
+             * @param c1 double coefficient for importance
+             * @param c2 double coefficient for importance
+             * @param c3 double coefficient for importance
+             * @tparam Args arguments for T constructor.
+             * @param args Args&&...
              * @warning It cannot be used with T* use "Population(std::function<T()>&& fn, std::size_t size)" instead.
              */
             template<typename...Args>
-            Population(std::size_t size, Args...args);
+            Population(std::size_t size, double c1, double c2, double c3, Args&&...args);
             /**
              * @brief Constructor for JsonBox::Object
              * @param o JsonBox::Object
-             * @return Population<T>
+             * @warning It cannot be used with T*
              */
             Population(JsonBox::Object o);
             /**
              * @brief Constructor to load a Population from a json file.
              * @param filename loads a json file written with Population::writeTofile
-             * @return Population<T>
+             * @warning It cannot be used with T*
              */
             Population(const std::string& filename);
             /**
              * @brief Adds a T, It will set T ID if owning it and it will check species, if it is not compatible with any other it will make a new species.
              * @param m T&&     if Population<T> otherwise T* if Population<T*>
-             * @param c1 double coefficient for disjoints nodes and connections importance
-             * @param c2 double coefficient for excess nodes and connections importance
-             * @param c3 double coefficient for avg weight differences importance
-             * @warning Invalidates iterators.
+             * @param c1 double coefficient for importance
+             * @param c2 double coefficient for importance
+             * @param c3 double coefficient for importance
+             * @warning Invalidates iterators of Population::getMembers().
              */
             void addMember(std::conditional_t<std::is_pointer_v<value_type>, pointer, rvalue_reference> m, double c1 = 2.0, double c2 = 2.0, double c3 = 1.0) noexcept;
             /**
@@ -114,7 +119,7 @@ namespace EvoAI{
             /**
              * @brief removes a list of T and his species if its left empty, use this if you need to remove many T* without invalidating them.
              *  
-             * @param [in] membrs std::vector<T*> members to remove
+             * @param membrs std::vector<T*> members to remove
              * @warning Invalidates iterators.
              */
             void removeMembers(std::vector<Population<T>::pointer>&& membrs) noexcept;
@@ -126,7 +131,7 @@ namespace EvoAI{
             /**
              * @brief removes a Species<T>
              * @param sp const Species&
-             * @warning Invalidates iterators.
+             * @warning Invalidates iterators of Population::getMembers() and Population::getSpecies().
              */
             void removeSpecies(const Species<value_type>& sp) noexcept;
             /**
@@ -201,24 +206,31 @@ namespace EvoAI{
             species_ids_or_void_t increaseAgeAndRemoveOldSpecies() noexcept;
             /**
              *  @brief Add new members to the population.
-             *  @param [in] args arguments for constructor of T
+             *  @param c1 double coefficient for importance
+             *  @param c2 double coefficient for importance
+             *  @param c3 double coefficient for importance
+             *  @param args arguments for constructor of T
              *  @warning It cannot be used if using T* use "Population<T*>::regrowPopulation(Fn&& fn)".
              */
             template<typename...Args>
-            void regrowPopulation(Args...args) noexcept;
+            void regrowPopulation(double c1, double c2, double c3, Args&&...args) noexcept;
             /**
              *  @brief Add new members to the population, remember to assign an id to T when using Population<T*>.
              *  @code
              *      std::vector<T> storage;
              *      storage.reserve(maxPop);
-             *      Population<T*> pop(createMembers, maxPop); // createMembers possible implementation at PopulationTest.hpp
+             *      Population<T*> pop(createMembers, maxPop); // createMembers possible implementation at tests/PopulationTest.hpp
              *      // more code
              *      pop.regrowPopulation(createMembers);
              *  @endcode
-             *  @param [in] Fn fn function returning a T or T*
+             *  @tparam Fn function
+             *  @param fn fn function returning a T or T*
+             *  @param c1 double coefficient for importance
+             *  @param c2 double coefficient for importance
+             *  @param c3 double coefficient for importance
              */
             template<typename Fn>
-            void regrowPopulation(Fn&& fn) noexcept;
+            void regrowPopulation(Fn&& fn, double c1 = 2.0, double c2 = 2.0, double c3 = 1.0) noexcept;
             /**
              *  @brief regrow the population from the best members, the returned pair.first is always empty, 
              *         in case we are using removeOldSpecies or increaseAgeAndRemoveOldSpecies we also need to 
@@ -232,12 +244,16 @@ namespace EvoAI{
              *      replace(res.first, res.second); // replace possible implementation at PopulationTest.hpp
              *      // more code
              *  @endcode
-             *  @param [in] SelectionAlgo     Selection algorithm to use.
-             *  @param [in] interSpecies      if is permitted to reproduce between other species. 
+             *  @tparam SelectionAlgo 
+             *  @param sa     Selection algorithm to use.
+             *  @param interSpecies      if is permitted to reproduce between other species.
+             *  @param c1 double coefficient for importance
+             *  @param c2 double coefficient for importance
+             *  @param c3 double coefficient for importance
              *  @return result_or_void_t      void if Population is the owner result_t otherwise.
              */
             template<typename SelectionAlgo>
-            result_or_void_t regrowPopulationFromElites(SelectionAlgo&& sa, bool interSpecies) noexcept;
+            result_or_void_t regrowPopulationFromElites(SelectionAlgo&& sa, bool interSpecies, double c1 = 2.0, double c2 = 2.0, double c3 = 1.0) noexcept;
             /**
              *  @brief Replaces the members with less fitness of the Population with the children of the selected couples.
              *  @details In case you want your own selection algorithm you will need to implement a functor overloading operator()
@@ -305,17 +321,17 @@ namespace EvoAI{
             void setMaxAge(std::size_t age) noexcept;
             /**
              * @brief returns maxAge
-             * @param const std::size_t&
+             * @param std::size_t
              */
-            const std::size_t& getMaxAge() const noexcept;
+            std::size_t getMaxAge() const noexcept;
             /**
              * @brief setter for the comparability Threshold
-             * @param compThreshold const double&
+             * @param compThreshold double
              */
             void setCompatibilityThreshold(double compThreshold) noexcept;
             /**
              * @brief getter for the comparability Threshold
-             * @return const double&
+             * @return double
              */
             double getCompatibilityThreshold() const noexcept;
             /**

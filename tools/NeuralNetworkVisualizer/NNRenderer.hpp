@@ -16,20 +16,20 @@ namespace EvoAI{
         public:
             /**
              * @brief default Constructor
-             * @param nn NeuralNetwork*
+             * @param NN NeuralNetwork*
              */
-            NNRenderer(NeuralNetwork* nn);
+            NNRenderer(NeuralNetwork* NN);
             /**
              * @brief it will renderize the neural network
              * @param win window
              * @param renderTexts to render info or not
              */
-            void Render(sf::RenderWindow& win,bool renderTexts = false) noexcept;
+            void Render(sf::RenderWindow& win, bool renderTexts = false) noexcept;
             /**
              * @brief Changes the neural network, is the same as building a new NNRenderer.
              * @param nn NeuralNetwork*
              */
-            void setNeuralNetwork(NeuralNetwork* nn) noexcept;
+            void setNeuralNetwork(NeuralNetwork* NN) noexcept;
             /**
              * @brief sets the Font to use
              * The font is copied so you can throw it away.
@@ -73,7 +73,7 @@ namespace EvoAI{
              * @param p Position
              * @param space space for the weights
              */
-            void setUpConnectionInfo(Connection& c, sf::Vector2f& p, const int& space) noexcept;
+            void setUpConnectionInfo(Connection& c, sf::Vector2f& p, int space) noexcept;
         private:
             std::vector<NeuronInfo> neurons;
             std::vector<ConnectionInfo> connections;

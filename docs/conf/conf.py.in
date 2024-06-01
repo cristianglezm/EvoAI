@@ -1,0 +1,89 @@
+# Configuration file for the Sphinx documentation builder.
+#
+# For the full list of built-in configuration values, see the documentation:
+# https://www.sphinx-doc.org/en/master/usage/configuration.html
+
+# -- Project information -----------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+
+from sphinx.builders.html import StandaloneHTMLBuilder
+import datetime
+import sys, os
+
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
+
+autosummary_generate = True
+master_doc = 'index'
+todo_include_todos = True
+
+project = 'EvoAI'
+copyright = f'2015-{datetime.datetime.now().year}, EvoAI'
+author = 'Cristian Gonzalez'
+release = '@EvoAI_VERSION_MAJOR@.@EvoAI_VERSION_MINOR@'
+
+sys.path.append(os.path.abspath('sphinxext'))
+sys.path.append(os.path.abspath('@CMAKE_CURRENT_BINARY_DIR@/sphinx'))
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.todo',
+    'sphinx.ext.coverage',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.ifconfig',
+    'sphinx.ext.viewcode',
+    'sphinx_sitemap',
+    'sphinx.ext.inheritance_diagram',
+    'breathe',
+    'sphinx.ext.graphviz',
+    'myst_parser',
+    'sphinx_design',
+]
+
+templates_path = ['_templates']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+
+highlight_language = 'cpp'
+
+html_theme = '@SPHINX_THEME@'
+html_theme_path = ['@SPHINX_THEME_DIR@']
+html_theme_options = {
+    "logo": {
+        "alt": "EvoAI - Home",
+        "image_light": "_static/EvoAILogo.png",
+        "image_dark": "_static/EvoAILogo.png",
+    },
+    "use_edit_page_button": False,
+    "header_links_before_dropdown": 3,
+    "header_dropdown_text": "more",
+    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/cristianglezm/EvoAI",
+            "icon": "fa-brands fa-square-github",
+        },
+    ],
+    "show_version_warning_banner": True,
+    "switcher": {
+        "json_url": "_static/versions.json",
+        "version_match": "@EvoAI_VERSION_MAJOR@.@EvoAI_VERSION_MINOR@",
+    },
+    "show_toc_level": 4,
+    "show_nav_level": 4,
+    "collapse_navigation": False,
+    "navigation_depth": 4,
+}
+
+html_baseurl = 'https://cristianglezm.github.io/EvoAI'
+html_logo = '@CMAKE_CURRENT_SOURCE_DIR@/logo/EvoAILogo.png'
+github_url = 'https://github.com/cristianglezm/EvoAI'
+
+# -- Breathe configuration -------------------------------------------------
+
+breathe_projects = { 'EvoAI': "@CMAKE_CURRENT_BINARY_DIR@/doxygen/xml/" }
+breathe_default_project = "EvoAI"
+
+breathe_default_members = ('members','undoc-members')

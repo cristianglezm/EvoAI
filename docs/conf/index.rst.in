@@ -1,0 +1,29 @@
+.. default-domain:: cpp
+.. highlight:: cpp
+
+.. image:: _static/EvoAILogo.png
+   :alt: "EvoAI Logo"
+   :class: "dark-light"
+
+EvoAI is a C++17 library to evolve and / or train **small** Neural Networks.
+
+Features
+--------
+
+- A :class:`Genome<EvoAI::Genome>` to use NEAT and HyperNEAT algorithms to evolve :class:`Neural Networks<EvoAI::NeuralNetwork>` .
+- A Population(with speciation) to evolve your own :class:`Genomes<EvoAI::Genome>` , it only needs to fulfill :func:`meta::is_populable_v\<MyClass\><EvoAI::meta::is_populable_v>`
+- Common :class:`Selection Algorithms<EvoAI::SelectionAlgorithms>` and optimizers (:class:`SGD<EvoAI::SGD>` and :class:`Adam<EvoAI::Adam>`).
+- Train neural networks using backpropagation, enabling them to learn from labeled datasets.
+
+.. toctree::
+   :maxdepth: 1
+
+   Getting Started <source/getting_started>
+   Examples <source/examples>
+   Tools <source/tools>
+   API Reference <source/api>
+
+Indices and tables
+------------------
+
+* :ref:`genindex`

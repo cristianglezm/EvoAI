@@ -16,11 +16,10 @@ namespace EvoAI{
     struct EvoAI_API Link{
         /**
          * @brief default constructor
-         * @param layer const std::size_t&
-         * @param neuron const std::size_t&
-         * @return Link
+         * @param lyr std::size_t
+         * @param nrn std::size_t
          */
-        Link(const std::size_t& layer, const std::size_t& neuron);
+        Link(std::size_t lyr, std::size_t nrn);
         Link(JsonBox::Object o);
         JsonBox::Value toJson() const noexcept;
         bool operator<(const Link& rhs) const;
@@ -43,17 +42,15 @@ namespace EvoAI{
              * @brief Constructor with src and dest
              * @param src Link&
              * @param dest Link&
-             * @return Connection
              */
             Connection(const Link& src, const Link& dest);
             /**
              * @brief Constructor with src, dest and weight
              * @param src Link&
              * @param dest Link&
-             * @param w const double& Weight of the connection
-             * @return Connection
+             * @param w double Weight of the connection
              */
-            Connection(const Link& src, const Link& dest, const double& w);
+            Connection(const Link& src, const Link& dest, double w);
             /**
              * @brief Constructor json object
              * @param o JsonBox::Object&
@@ -101,31 +98,31 @@ namespace EvoAI{
              * @brief getter for weight
              * @return double&
              */
-            inline const double& getWeight() const noexcept;
+            inline double getWeight() const noexcept;
             /**
              * @brief setter for Weight
              * @param w Weight
              * @return Connection&
              */
-            Connection& setWeight(const double& w);
+            Connection& setWeight(double w);
             /**
              * @brief setter for cycles
              * @param c cycles
              * @return Connection&
              */
-            Connection& setCycles(const int& c);
+            Connection& setCycles(int c);
             /**
              * @brief getter for cycles
              * @return int&
              */
-            inline const int& getCycles() const noexcept;
+            inline int getCycles() const noexcept;
             /**
              * @brief returns a string with the info of the connection.
              * @return std::string
              */
             std::string toString() const noexcept;
             /**
-             * @brief passes the Connection to json
+             * @brief converts the Connection to JsonBox::Value
              * @return JsonBox::Value
              */
             JsonBox::Value toJson() const noexcept;
@@ -139,47 +136,41 @@ namespace EvoAI{
              * @param grad
              * @return Connection
              */
-            Connection& setGradient(const double& grad) noexcept;
+            Connection& setGradient(double grad) noexcept;
             /**
              * @brief adds the val to gradients
              * @param val
              * @return Connection
              */
-            Connection& addGradient(const double& val) noexcept;
+            Connection& addGradient(double val) noexcept;
             /**
              * @brief getter for gradients
              * @return double&
              */
-            inline const double& getGradient() const noexcept;
-            /**
-             * @brief setter for delta
-             * @param val
-             * @return Connection&
-             */
-            Connection& setDelta(const double& val) noexcept;
-            /**
-             * @brief getter for delta
-             * @return const double&
-             */
-            inline const double& getDelta() const noexcept;
-            /**
-             * @brief getter for old delta
-             * @return const double&
-             */
-            inline const double& getOldDelta() const noexcept;
+            inline double getGradient() const noexcept;
             /**
              * @brief resets the connection, visited, and gradient.
              */
             void reset();
+            /**
+             * @brief setter for frozen, set true to not change the weight
+             * @param frzen bool
+             * @return Connection&
+             */
+            Connection& setFrozen(bool frzen) noexcept;
+            /**
+             * @brief getter for frozen
+             * @return bool
+             */
+            inline bool isFrozen() const noexcept;
         private:
             Link src;
             Link dest;
             double weight;
+            double gradient;
             int cycles;
             bool visited;
-            double gradient;
-            double delta;
-            double oldDelta;
+            bool frozen;
     };
     bool Connection::isRecurrent() const noexcept{
         return (dest<src);
@@ -193,20 +184,17 @@ namespace EvoAI{
     const bool& Connection::isVisited() const noexcept{
         return visited;
     }
-    const double& Connection::getWeight() const noexcept{
+    double Connection::getWeight() const noexcept{
         return weight;
     }
-    const int& Connection::getCycles() const noexcept{
+    int Connection::getCycles() const noexcept{
         return cycles;
     }
-    const double& Connection::getGradient() const noexcept{
+    double Connection::getGradient() const noexcept{
         return gradient;
     }
-    const double& Connection::getDelta() const noexcept{
-        return delta;
-    }
-    const double& Connection::getOldDelta() const noexcept{
-        return oldDelta;
+    bool Connection::isFrozen() const noexcept{
+        return frozen;
     }
 }
 #endif // EVOAI_CONNECTION_HPP

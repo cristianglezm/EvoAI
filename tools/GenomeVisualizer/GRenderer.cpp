@@ -6,14 +6,14 @@ namespace EvoAI{
     , gRect()
     , font()
     , gInfos(){
-        if(!font.loadFromFile("data/fonts/Times_New_Roman_Normal.ttf")){
-            throw std::runtime_error("Cannot Load Font -> data/fonts/Times_New_Roman_Normal.ttf");
+        if(!font.loadFromFile("EvoAI/data/fonts/MonaspaceRadon-Regular.otf")){
+            throw std::runtime_error("Cannot Load Font -> EvoAI/data/fonts/MonaspaceRadon-Regular.otf");
         }
         gRect.setPosition(position);
         gRect.setFillColor(sf::Color::Transparent);
         gRect.setOutlineThickness(5);
         gRect.setOutlineColor(sf::Color::White);
-        gRect.setSize(sf::Vector2f(110 * (g->getConnectionChromosomes().size()+1),110));
+        gRect.setSize(sf::Vector2f(200 * (g->getConnectionChromosomes().size()),110));
         setUpInfo();
     }
     void GRenderer::Render(sf::RenderWindow& win) noexcept{
@@ -24,15 +24,15 @@ namespace EvoAI{
         win.draw(gRect);
     }
     void GRenderer::setUpInfo(){
-        sf::Vector2f space(112.0,0.0);
+        sf::Vector2f space(200.0,0.0);
         auto currentPos = gRect.getPosition() + sf::Vector2f(1,1);
         for(auto& cg:genome->getConnectionChromosomes()){
             GenomeInfo gi;
             gi.info.setFont(font);
             gi.info.setCharacterSize(13u);
-            gi.info.setString(cg.toString("\n\n"));
+            gi.info.setString(cg.toString("\n"));
             gi.info.setPosition(currentPos + sf::Vector2f(5,5));
-            gi.rect.setSize(sf::Vector2f(112,110));
+            gi.rect.setSize(sf::Vector2f(200,110));
             gi.rect.setPosition(currentPos);
             gi.rect.setFillColor(sf::Color::Transparent);
             gi.rect.setOutlineThickness(2);

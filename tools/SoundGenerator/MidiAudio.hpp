@@ -73,12 +73,12 @@ namespace EvoAI{
     int selectChannel(std::vector<double>* outputs) noexcept;
     /**
      * @brief add notes on / notes off and changes of timbre, pitch bend, sustain on / off, sustainPedal on /off to a smf::MidiFile
-     * @param const int& tracks how many tracks
-     * @param const int& notes how many notes
+     * @param int tracks how many tracks
+     * @param int notes how many notes
      * @param NeuralNetwork* nn neural network of 3 inputs and 278 outputs.
      * @param const std::string& soundOutput filename to save the Midifile to.
      */
-    void generateMidifile(const int& tracks, const int& notes, NeuralNetwork* nn, const std::string& soundOutput);
+    void generateMidifile(int tracks, int notes, NeuralNetwork* nn, const std::string& soundOutput);
     /**
      * @brief processes std::vector<std::vector<int>> and makes a MidiFile
      * @param Commands&& comm commands              [data 0]
@@ -88,17 +88,17 @@ namespace EvoAI{
      *  change controller = 0xB0->0xBF
      * @param Melodies&& m notes values from 0-127  [data 2]
      * @param Rhythms&& r values from 1-5           [data 1]
-     * @param const int& tpq ticks per quarter
+     * @param int tpq ticks per quarter
      * @return std::unique_ptr<smf::MidiFile>
      */
-    std::unique_ptr<smf::MidiFile> processSong(Commands&& comm, Melodies&& m, Rhythms&& r, const int& tpq);
+    std::unique_ptr<smf::MidiFile> processSong(Commands&& comm, Melodies&& m, Rhythms&& r, int tpq);
     /**
      * @brief makes a random song.
      * @param const std::eize_t& channels how many channels
      * @param const std::size_t% notes how many notes
      * @return std::unique_ptr<smf::MidiFile>
      */
-    std::unique_ptr<smf::MidiFile> makeRandomSong(const std::size_t& channels, const std::size_t& notes) noexcept;
+    std::unique_ptr<smf::MidiFile> makeRandomSong(std::size_t channels, std::size_t notes) noexcept;
 }
 
 #endif // EVOAI_MIDI_AUDIO_HPP

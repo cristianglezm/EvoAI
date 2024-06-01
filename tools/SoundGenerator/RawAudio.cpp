@@ -1,7 +1,7 @@
 #include "RawAudio.hpp"
 
 namespace EvoAI{
-    void generateSoundFromCoordinates(const int& width, const int& height, NeuralNetwork* nn, const std::string& soundOutput){
+    void generateSoundFromCoordinates(int width, int height, NeuralNetwork* nn, const std::string& soundOutput){
         if((*nn)[0].size() != 3){
             throw std::runtime_error("The neural Network needs to have 3 inputs");
         }
@@ -17,6 +17,7 @@ namespace EvoAI{
             for(auto y=0;y<height;++y){
                 auto d = EvoAI::distanceCenter<int>(x,y,width,height);
                 std::vector<double> inputs;
+                inputs.reserve(3);
                 inputs.emplace_back(x);
                 inputs.emplace_back(y);
                 inputs.emplace_back(d);

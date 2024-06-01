@@ -21,8 +21,8 @@ namespace EvoAI{
      *   T needs to fulfill these conditions: <br />
      *      T has a member function JsonBox::Value toJson() const noexcept <br />
      *      T has a constructor T::T(JsonBox::Object) <br />
-     *      T has a member function const double& getFitness() const noexcept <br />
-     *      T has a member function void setFitness(const double&) noexcept <br />
+     *      T has a member function double getFitness() const noexcept <br />
+     *      T has a member function void setFitness(double) noexcept <br />
      *   If Species<T*> it will act as an observer what does this means: <br />
      *      Species<T*>::add(T* t) will accept a T* by value <br />
      *      Species<T*>::remove(T* t) will accept a T* by value <br />
@@ -35,7 +35,7 @@ namespace EvoAI{
      */
     template<typename T>
     class EvoAI_API Species{
-            static_assert(is_speciable<typename std::remove_pointer_t<T>>::value, "T needs to be Speciable, more info at Species.hpp");
+            static_assert(meta::is_speciable<typename std::remove_pointer_t<T>>::value, "T needs to be Speciable, more info at Species.hpp");
         public:
             using value_type = T;
             using reference = std::remove_reference_t<std::remove_pointer_t<T>>&;
@@ -46,36 +46,30 @@ namespace EvoAI{
         public:
             /**
              * @brief basic Constructor
-             * @return Species<T>
              */
             Species() noexcept;
             /**
              * @brief copy Constructor
-             * @return Species<T>
              */
             Species(const Species<T>& rhs) noexcept = default;
             /**
              * @brief move Constructor
-             * @return Species<T>
              */
             Species(Species<T>&& rhs) noexcept = default;
             /**
              * @brief Creates a Species With the id and novel.
-             * @param id std::size_T
-             * @param novel bool if the species is a new one.
-             * @return Species<T>
+             * @param Id std::size_T
+             * @param Novel bool if the species is a new one.
              */
-            Species(const std::size_t& id, bool novel) noexcept;
+            Species(std::size_t Id, bool Novel) noexcept;
             /**
              * @brief loads a Species from a JsonBox::Object, cannot be used with Species<T*>
              * @param o JsonBox::Object
-             * @return Species<T>
              */
             Species(JsonBox::Object o) noexcept;
             /**
              * @brief It loads the species from a json file saved with Species::writeToFile, cannot be used with Species<T*>
              * @param filename const std::string&
-             * @return Species<T>
              */
             Species(const std::string& filename);
             /**
@@ -94,6 +88,13 @@ namespace EvoAI{
              * @brief orders by fitness.
              */
             void rank() noexcept;
+            /**
+             * @brief orders by Fn(auto& m1, auto& m2)
+             * @tparam Fn function to pass to std::sort
+             * @param fn Fn lambda args can be pointers or references depending what type of Species you are using.
+             */
+            template<typename Fn>
+            void rank(Fn&& fn) noexcept;
             /**
              * @brief returns the first member of this species
              * @return const T*
@@ -126,28 +127,28 @@ namespace EvoAI{
             void setKillable(bool k) noexcept;
             /**
              * @brief sets the ID of the species.
-             * @param speciesID const std::size_t&
+             * @param speciesID std::size_t
              */
-            void setID(const std::size_t& speciesID) noexcept;
+            void setID(std::size_t speciesID) noexcept;
             /**
              * @brief returns Species ID.
-             * @return const std::size_t&
+             * @return std::size_t
              */
-            const std::size_t& getID() const noexcept;
+            std::size_t getID() const noexcept;
             /**
              * @brief setter for the age of the species.
-             * @param speciesAge const std::size_t&
+             * @param speciesAge std::size_t
              */
-            void setAge(const std::size_t& speciesAge) noexcept;
+            void setAge(std::size_t speciesAge) noexcept;
             /**
              * @brief adds the amount to the current age of the species.
-             * @param amount const std::size_t&
+             * @param amount std::size_t
              */
-            void addAge(const std::size_t& amount) noexcept;
+            void addAge(std::size_t amount) noexcept;
             /**
              * @brief returns the current age of the species.
              */
-            const std::size_t& getAge() const noexcept;
+            std::size_t getAge() const noexcept;
             /**
              * @brief setter for members.
              */
@@ -164,9 +165,9 @@ namespace EvoAI{
             void add(std::conditional_t<std::is_pointer_v<value_type>,pointer,rvalue_reference> m) noexcept;
             /**
              * @brief removes a member from the species.
-             * @param id std::size_t if T is not a pointer T* otherwise.
+             * @param Id std::size_t if T is not a pointer T* otherwise.
              */
-            void remove(std::conditional_t<std::is_pointer_v<value_type>, pointer, std::size_t> id) noexcept;
+            void remove(std::conditional_t<std::is_pointer_v<value_type>, pointer, std::size_t> Id) noexcept;
             /**
              * @brief checks if this T is in this species.
              * @param id std::size_t if T is not a pointer T* otherwise.

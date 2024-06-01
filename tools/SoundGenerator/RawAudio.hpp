@@ -21,7 +21,7 @@ namespace EvoAI{
      * @param nn Neural Network
      * @param soundOutput filename of the sound file to save
      */
-    void generateSoundFromCoordinates(const int& width, const int& height, NeuralNetwork* nn, const std::string& soundOutput);
+    void generateSoundFromCoordinates(int width, int height, NeuralNetwork* nn, const std::string& soundOutput);
     /**
      * @brief generates a sound from the color of a image
      * @param Imagefilename

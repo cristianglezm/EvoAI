@@ -23,7 +23,6 @@ namespace EvoAI{
              * @param src NodeGene
              * @param dest NodeGene
              * @param w double
-             * @return ConnectionGene
              */
             ConnectionGene(const NodeGene& src, const NodeGene& dest, double w);
             /**
@@ -31,22 +30,18 @@ namespace EvoAI{
              * @param src Link
              * @param dest Link
              * @param w double weight
-             * @param innv std::size_t innovationID
-             * @return ConnectionGene
              */
             ConnectionGene(const Link& src, const Link& dest, double w);
             /**
              *  @brief copy constructor
              *  
-             *  @param [in] rhs const ConnectionGene&
-             *  @return bool
+             *  @param rhs const ConnectionGene&
              */
             ConnectionGene(const ConnectionGene& rhs) noexcept;
             /**
              *  @brief move constructor
              *  
-             *  @param [in] rhs ConnectionGene&&
-             *  @return bool
+             *  @param rhs ConnectionGene&&
              */
             ConnectionGene(ConnectionGene&& rhs) noexcept;
             void operator=(const ConnectionGene& rhs) noexcept;
@@ -71,7 +66,6 @@ namespace EvoAI{
             /**
              * @brief returns a std::string
              * @return std::string
-             * @todo remove and use operator<<
              */
             std::string toString(const std::string& delimiter = " ") const noexcept;
             /**
@@ -83,17 +77,17 @@ namespace EvoAI{
              * @brief adds the amount to the current weight.
              * @param amount
              */
-            void addWeight(const double& amount) noexcept;
+            void addWeight(double amount) noexcept;
             /**
              * @brief setter for weight
              * @param w
              */
-            void setWeight(const double& w) noexcept;
+            void setWeight(double w) noexcept;
             /**
              * @brief getter for weight
              * @return double
              */
-            const double& getWeight() const noexcept;
+            double getWeight() const noexcept;
             /**
              * @brief getter for src
              * @return Link
@@ -124,9 +118,12 @@ namespace EvoAI{
              * @brief getter for innovationID
              * @return std::size_t
              */
-            const std::size_t& getInnovationID() const noexcept;
+            std::size_t getInnovationID() const noexcept;
             bool operator==(const ConnectionGene& rhs) const;
             bool operator!=(const ConnectionGene& rhs) const;
+            friend std::ostream& operator<<(std::ostream& o, const EvoAI::ConnectionGene& cg) noexcept{
+                return o << cg.toString();
+            }
             ~ConnectionGene() = default;
         private:
             bool enabled;
@@ -141,6 +138,7 @@ namespace EvoAI{
         return !((*this) < rhs);
     }
 }
+
 namespace std{
     /**
      * @brief specialization of std::hash for EvoAI::ConnectionGene
@@ -151,12 +149,14 @@ namespace std{
         using result_type = std::size_t;
         result_type operator()(const argument_type& cg) const{
             result_type seed = 0u;
-            // better way of checking if x32 or x64 system?
+            // better way of checking if x86 or x64 system?
             if constexpr(sizeof(result_type) == 8){
-                assert(cg.getSrc().neuron <= 1073741823 || cg.getDest().neuron <= 1073741823);//assert Failed because Neuron is over 30 bits
+                //assert Failed because Neuron is over 30 bits
+                assert(cg.getSrc().neuron <= 1073741823 || cg.getDest().neuron <= 1073741823);
                 seed = ((cg.getSrc().layer << 62ll) | (cg.getSrc().neuron << 32ll)) | ((cg.getDest().layer << 30ll) | cg.getDest().neuron);
             }else if constexpr(sizeof(result_type) == 4){
-                assert(cg.getSrc().neuron <= 16383 || cg.getDest().neuron <= 16383);//assert Failed because Neuron is over 14 bits
+                //assert Failed because Neuron is over 14 bits
+                assert(cg.getSrc().neuron <= 16383 || cg.getDest().neuron <= 16383);
                 seed = ((cg.getSrc().layer << 30ll) | (cg.getSrc().neuron << 16ll)) | ((cg.getDest().layer << 14ll) | cg.getDest().neuron);
             }else{
                 static_assert(sizeof(result_type) == 4 || sizeof(result_type) == 8, "ConnectionGene.hpp std::hash<ConnectionGene> : System must be x86 or x64");

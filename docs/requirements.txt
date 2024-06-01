@@ -1,0 +1,6 @@
+Sphinx==6.2
+sphinx-sitemap==2.5.0
+pydata_sphinx_theme
+sphinx_rtd_theme
+myst-parser
+sphinx_design

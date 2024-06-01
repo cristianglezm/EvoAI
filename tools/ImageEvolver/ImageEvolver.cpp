@@ -15,7 +15,8 @@
 sf::Image createImage(EvoAI::Genome* g, int width = 250, int height = 250, bool bw = false) noexcept;
 void updateImages(EvoAI::Population<EvoAI::Genome>& p, std::vector<sf::Texture>& textures, std::vector<sf::Sprite>& sprites, std::size_t count,bool bw = false);
 
-int main(int argc, char **argv){
+int main(int argc, char** argv){
+    EvoAI::randomGen().setSeed(std::random_device{}());
     bool running = true;
     std::atomic<bool> loading = false;
     bool bw = false;
@@ -35,9 +36,10 @@ int main(int argc, char **argv){
     }
     std::vector<sf::Texture> textures(size);
     std::vector<sf::Sprite> sprites(size);
-    EvoAI::Population<EvoAI::Genome> p(size,3,2,3,false,true);
+    EvoAI::Population<EvoAI::Genome> p(size, 2.0, 2.0, 1.0, 3,2,3,false,true);
     updateImages(p,textures,sprites,size,bw);
     sf::RenderWindow App(sf::VideoMode(1270, 720), "ImageEvolver");
+    auto counter = 2u;
     while(running){
         sf::Event event;
         while(App.pollEvent(event)){
@@ -46,17 +48,8 @@ int main(int argc, char **argv){
                         running = false;
                     break;
                 case sf::Event::KeyReleased:
-                    if(event.key.code == sf::Keyboard::Add){
-                        sf::View v = App.getView();
-                        v.zoom(0.5);
-                        App.setView(v);
-                    }
-                    if(event.key.code == sf::Keyboard::Subtract){
-                        sf::View v = App.getView();
-                        v.zoom(1.5);
-                        App.setView(v);
-                    }
-                    if(event.key.code == sf::Keyboard::Return){
+                    if(event.key.code == sf::Keyboard::Enter){
+                                ++counter;
                                 loading.store(true, std::memory_order_release);
                         std::thread([&](){
                                 p.reproduce(EvoAI::SelectionAlgorithms::Tournament<EvoAI::Genome>{p.getPopulationMaxSize(), 3}, true);
@@ -72,11 +65,13 @@ int main(int argc, char **argv){
                     break;
                 case sf::Event::KeyPressed:
                     if(event.key.code == sf::Keyboard::Down){
+                        ++counter;
                         auto v = App.getView();
                         v.move(0,100);
                         App.setView(v);
                     }
                     if(event.key.code == sf::Keyboard::Up){
+                        ++counter;
                         auto v = App.getView();
                         v.move(0,-100);
                         App.setView(v);
@@ -116,7 +111,8 @@ int main(int argc, char **argv){
         }else{
             App.setActive(true);
         }
-        if(!load){
+        if(!load && counter > 0){
+            --counter;
             App.clear(sf::Color::Black);
             for(auto& sp:sprites){
                 App.draw(sp);
@@ -134,13 +130,8 @@ sf::Image createImage(EvoAI::Genome* g, int width, int height, bool bw) noexcept
     imgOutput.create(width, height);
     for(auto x=0;x<width;++x){
         for(auto y=0;y<height;++y){
-            auto d = EvoAI::distanceCenter<int>(x,y,width,height);
-            std::vector<double> inputs;
-            inputs.emplace_back(x);
-            inputs.emplace_back(y);
-            inputs.emplace_back(d);
-            nn.setInputs(std::move(inputs));
-            auto color = nn.run();
+            auto d = EvoAI::distanceCenter<double>(x,y,width,height);
+            auto color = nn.forward({static_cast<double>(x), static_cast<double>(y), d});
             nn.reset();
             if(bw){
                 imgOutput.setPixel(x,y,sf::Color(color[0]*128+128,color[0]*128+128,color[0]*128+128));

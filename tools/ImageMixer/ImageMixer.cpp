@@ -12,6 +12,7 @@ sf::Image createImageFromImages(EvoAI::NeuralNetwork* nn, std::vector<sf::Image>
 void usage();
 
 int main(int argc, char **argv){
+    EvoAI::randomGen().setSeed(std::random_device{}());
     bool optGenome = false;
     bool optGenomeType = false;
     bool optMutate = false;
@@ -74,7 +75,6 @@ int main(int argc, char **argv){
             }
         }
         if(val == "--help" || val == "-h"){
-            std::cout << std::string(argv[0]) << " <options>\n";
             usage();
             return EXIT_FAILURE;
         }
@@ -118,12 +118,16 @@ int main(int argc, char **argv){
         nn = std::make_unique<EvoAI::NeuralNetwork>(EvoAI::Genome::makePhenotype(*g));
     }
     if(optSaveNN){
-        std::cout << "Saving Neural Network to " << saveFileNN << " ..." << std::endl;
-        nn->writeToFile(saveFileNN);
+        if(nn){
+            std::cout << "Saving Neural Network to " << saveFileNN << " ..." << std::endl;
+            nn->writeToFile(saveFileNN);
+        }
     }
     if(optSaveGenome){
-        std::cout << "Saving Genome to " << saveFileGenome << "..." << std::endl;
-        g->writeToFile(saveFileGenome);
+        if(g){
+            std::cout << "Saving Genome to " << saveFileGenome << "..." << std::endl;
+            g->writeToFile(saveFileGenome);
+        }
     }
     std::cout << "Creating Image..." << std::endl;
     auto imgOutput = createImageFromImages(nn.get(),imagesInputs,optBW);
@@ -163,6 +167,7 @@ sf::Image createImageFromImages(EvoAI::NeuralNetwork* nn, std::vector<sf::Image>
     return imgOutput;
 }
 void usage(){
+    std::cout << "ImageMixer <options>\n";
     std::cout << "-g, --genome [m|r] <filename> [<filename> with r]\tload a genome json file\n";
     std::cout << "\t\t\t\t\tWith m will mutate the genome.\n\t\t\t\t\tWith r will combine two genomes, without m or r will load the genome.\n";
     std::cout << "-G, --genome-type <type> <numHidden>\twill generate a genome of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<

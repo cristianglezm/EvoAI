@@ -1,9 +1,9 @@
 #include <EvoAI/NodeGene.hpp>
-
+#include <iostream>
 #include <algorithm>
 
 namespace EvoAI{
-    NodeGene::NodeGene(const std::size_t& lyrID, const std::size_t& nrnID)
+    NodeGene::NodeGene(std::size_t lyrID, std::size_t nrnID)
     : layerID(lyrID)
     , neuronID(nrnID)
     , biasWeight(1.0)
@@ -12,7 +12,7 @@ namespace EvoAI{
     , innovationID(0){
         innovationID = std::hash<NodeGene>{}(*this);
     }
-    NodeGene::NodeGene(const std::size_t& lyrID, const std::size_t& nrnID, Neuron::Type nt, Neuron::ActivationType nat)
+    NodeGene::NodeGene(std::size_t lyrID, std::size_t nrnID, Neuron::Type nt, Neuron::ActivationType nat)
     : layerID(lyrID)
     , neuronID(nrnID)
     , biasWeight(1.0)
@@ -36,12 +36,25 @@ namespace EvoAI{
     , actType(rhs.actType)
     , innovationID(rhs.innovationID){}
     NodeGene::NodeGene(JsonBox::Object o)
-    : layerID(std::stoull(o["layerID"].getString()))
-    , neuronID(std::stoull(o["neuronID"].getString()))
-    , biasWeight(o["biasWeight"].getDouble())
-    , nrnType(Neuron::typeToEnum(o["nrnType"].getString()))
-    , actType(Neuron::activationTypeToEnum(o["actType"].getString()))
-    , innovationID(std::hash<NodeGene>{}(*this)){}
+    : layerID(std::stoull(o["layerID"].tryGetString("0")))
+    , neuronID(std::stoull(o["neuronID"].tryGetString("0")))
+    , biasWeight(o["biasWeight"].tryGetDouble(0.0))
+    , nrnType(Neuron::typeToEnum(o["nrnType"].tryGetString("hidden")))
+    , actType(Neuron::activationTypeToEnum(o["actType"].tryGetString("sigmoid")))
+    , innovationID(0){
+        if(layerID == std::numeric_limits<std::size_t>::max()){
+            layerID = 0;
+        }
+        if(neuronID == std::numeric_limits<std::size_t>::max()){
+            neuronID = 0;
+        }
+        innovationID = std::hash<NodeGene>{}(*this);
+    }
+    std::string NodeGene::toString(std::string delimiter) const noexcept{
+        std::string str = "InnovationID: " + std::to_string(innovationID)  + delimiter + "[" + std::to_string(layerID) + ", " + std::to_string(neuronID) + "]"
+        + " bWeight: " + std::to_string(biasWeight) + delimiter + Neuron::activationTypeToString(actType) + delimiter + Neuron::typeToString(nrnType);
+        return str;
+     }
     JsonBox::Value NodeGene::toJson() const noexcept{
         JsonBox::Object o;
         o["layerID"] = JsonBox::Value(std::to_string(layerID));
@@ -69,16 +82,16 @@ namespace EvoAI{
     Neuron::ActivationType NodeGene::getActType() const noexcept{
         return actType;
     }
-    const std::size_t& NodeGene::getInnovationID() const noexcept{
+    std::size_t NodeGene::getInnovationID() const noexcept{
         return innovationID;
     }
-    void NodeGene::addBias(const double& amount) noexcept{
+    void NodeGene::addBias(double amount) noexcept{
         biasWeight += amount;
     }
-    void NodeGene::setBias(const double& bw) noexcept{
+    void NodeGene::setBias(double bw) noexcept{
         biasWeight = bw;
     }
-    const double& NodeGene::getBias() const noexcept{
+    double NodeGene::getBias() const noexcept{
         return biasWeight;
     }
     bool NodeGene::operator==(const NodeGene& rhs) const{

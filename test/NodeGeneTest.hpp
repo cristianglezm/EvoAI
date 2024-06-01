@@ -17,6 +17,26 @@ namespace EvoAI{
             EXPECT_EQ(1u,ng.getNeuronID());
             EXPECT_EQ(Neuron::Type::INPUT,ng.getNeuronType());
         }
+        TEST(NodeGeneTest, invalidJsonData){
+            JsonBox::Value v;
+            v["layerID"] = JsonBox::Value("adasd");
+            v["neuronID"] = JsonBox::Value("asdad");
+            v["biasWeight"] = JsonBox::Value("sadad");
+            v["nrnType"] = JsonBox::Value("dsaf");
+            v["actType"] = JsonBox::Value("sfs");
+            EXPECT_THROW(NodeGene(v.getObject()), std::invalid_argument);
+            v["layerID"] = JsonBox::Value("-1");
+            v["neuronID"] = JsonBox::Value("-1");
+            v["biasWeight"] = JsonBox::Value(9);
+            v["nrnType"] = JsonBox::Value("dsaf");
+            v["actType"] = JsonBox::Value("sfs");
+            auto ng = NodeGene(v.getObject());
+            EXPECT_EQ(0u, ng.getInnovationID());
+            EXPECT_EQ(Neuron::ActivationType::SIGMOID, ng.getActType());
+            EXPECT_EQ(0u, ng.getLayerID());
+            EXPECT_EQ(0u, ng.getNeuronID());
+            EXPECT_EQ(Neuron::Type::HIDDEN, ng.getNeuronType());
+        }
         TEST(NodeGeneTest, Equal){
             NodeGene ng1(0,1,Neuron::Type::INPUT,Neuron::ActivationType::GAUSSIAN);
             NodeGene ng2(0,1,Neuron::Type::INPUT,Neuron::ActivationType::GAUSSIAN);

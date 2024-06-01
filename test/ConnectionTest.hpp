@@ -30,8 +30,14 @@ namespace EvoAI{
         ConnectionTest::ConnectionTest():c1(Link(0,1), Link(1,0),-0.2344), c2(Link(1,1), Link(0,1)){}
         TEST_F(ConnectionTest,ConstructorWithWeight){
             EXPECT_EQ(-0.2344,c1.getWeight());
+            EXPECT_EQ(0.0, c1.getGradient());
+            c1.addGradient(2.0);
+            EXPECT_EQ(2.0, c1.getGradient());
+            c1.addGradient(2.0);
+            EXPECT_EQ(4.0, c1.getGradient());
             EXPECT_EQ(0, c1.getCycles());
             EXPECT_FALSE(c1.isRecurrent());
+            EXPECT_FALSE(Connection(Link(0,0), Link(0,0), 0.0).isRecurrent());
         }
         TEST_F(ConnectionTest, ConstructorWithLinks){
             EXPECT_EQ(0.0,c2.getWeight());

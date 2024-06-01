@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+if(EvoAI_BUILD_STATIC)
+    include("${CMAKE_CURRENT_LIST_DIR}/EvoAIStaticTargets.cmake")
+else()
+    include("${CMAKE_CURRENT_LIST_DIR}/EvoAISharedTargets.cmake")
+endif
+check_required_components(EvoAI)

@@ -10,7 +10,7 @@ namespace EvoAI{
     , compatibilityThreshold(2.0)
     , membersCached(false){}
     template<typename T>
-    Population<T>::Population(std::function<T()>&& fn, std::size_t size)
+    Population<T>::Population(std::function<T()>&& fn, std::size_t size, double c1, double c2, double c3)
     : species()
     , members()
     , PopulationSize(size)
@@ -20,12 +20,12 @@ namespace EvoAI{
     , compatibilityThreshold(2.0)
     , membersCached(false){
         for(auto i=0u;i<size;++i){
-            addMember(fn());
+            addMember(fn(), c1, c2, c3);
         }
     }
     template<typename T>
     template<typename...Args>
-    Population<T>::Population(std::size_t size, Args...args)
+    Population<T>::Population(std::size_t size, double c1, double c2, double c3, Args&&...args)
     : species()
     , members()
     , PopulationSize(size)
@@ -37,7 +37,7 @@ namespace EvoAI{
         static_assert(!std::is_pointer_v<T>, "Population<T*>(std::size_t size, Args...args) cannot be used, use Population<T*>(std::function<T()>&& fn, std::size_t size) instead.");
         members.reserve(size);
         for(auto i=0u;i<size;++i){
-            addMember(T(args...));
+            addMember(T(std::forward<decltype(args)>(args)...), c1, c2, c3);
         }
     }
     template<typename T>
@@ -232,7 +232,7 @@ namespace EvoAI{
         auto& mems = getMembers();
         auto best = std::max_element(std::begin(mems), std::end(mems), 
             [](auto a, auto b){
-                return a->getFitness() < b->getFitness(); ///@todo review
+                return a->getFitness() < b->getFitness();
         });
         if(best != std::end(mems)){
             return *best;
@@ -337,30 +337,33 @@ namespace EvoAI{
     }
     template<typename T>
     template<typename...Args>
-    void Population<T>::regrowPopulation(Args...args) noexcept{
+    void Population<T>::regrowPopulation(double c1, double c2, double c3, Args&&...args) noexcept{
         static_assert(!std::is_pointer_v<T>, "Population<T*>::regrowPopulation(Args...) cannot be used, use Population<T*>::regrowPopulation(Fn) instead.");
         if(getPopulationMaxSize() <= getPopulationSize()){
             return;
         }
         auto numOffsprings = std::floor((getPopulationMaxSize() - getPopulationSize()));
         for(auto i=0u;i<numOffsprings;++i){
-            addMember(T(args...));
+            addMember(T(std::forward<decltype(args)>(args)...), c1, c2, c3);
         }
     }
     template<typename T>
     template<typename Fn>
-    void Population<T>::regrowPopulation(Fn&& fn) noexcept{
+    void Population<T>::regrowPopulation(Fn&& fn, double c1, double c2, double c3) noexcept{
         if(getPopulationMaxSize() <= getPopulationSize()){
             return;
         }
         auto numOffsprings = getPopulationMaxSize() - getPopulationSize();
         for(auto i=0u;i<numOffsprings;++i){
-            addMember(fn());
+            addMember(fn(), c1, c2, c3);
         }
     }
     template<typename T>
     template<typename SelectionAlgo>
-    typename Population<T>::result_or_void_t Population<T>::regrowPopulationFromElites(SelectionAlgo&& sa, bool interSpecies) noexcept{
+    typename Population<T>::result_or_void_t Population<T>::regrowPopulationFromElites(SelectionAlgo&& sa, bool interSpecies, 
+                    [[maybe_unused]] double c1, 
+                    [[maybe_unused]] double c2, 
+                    [[maybe_unused]] double c3) noexcept{
         if(getPopulationMaxSize() <= getPopulationSize()){
             if constexpr(std::is_pointer_v<T>){
                 return make_result();
@@ -397,7 +400,7 @@ namespace EvoAI{
                 kids.emplace_back(T::reproduce(*sel.father, *sel.mother));
             }
             for(auto& k:kids){
-                addMember(std::move(k));
+                addMember(std::move(k), c1, c2, c3);
             }
         }
     }
@@ -502,7 +505,7 @@ namespace EvoAI{
         maxAge = age;
     }
     template<typename T>
-    const std::size_t& Population<T>::getMaxAge() const noexcept{
+    std::size_t Population<T>::getMaxAge() const noexcept{
         return maxAge;
     }
     template<typename T>
@@ -516,12 +519,12 @@ namespace EvoAI{
     template<typename T>
     double Population<T>::computeAvgFitness() noexcept{
         auto& membs = getMembers();
-        double sumFitness = std::accumulate(std::begin(membs), std::end(membs), 0.0d,
+        double sumFitness = std::accumulate(std::begin(membs), std::end(membs), 0.0,
             [](auto& a, auto& b){
                 return a + b->getFitness();
         });
         auto size = membs.size();
-        return (sumFitness / (size ? size:1));
+        return (sumFitness / (size ? size:1.0));
     }
     template<typename T>
     JsonBox::Value Population<T>::toJson() const noexcept{

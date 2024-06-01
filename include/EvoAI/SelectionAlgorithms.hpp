@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <memory>
 #include <utility>
 #include <random>
@@ -38,10 +39,10 @@ namespace EvoAI{
             pointer father;
             pointer mother;
             pointer loser;
-            Selected(pointer father, pointer mother, pointer loser) noexcept
-            : father(father)
-            , mother(mother)
-            , loser(loser){}
+            Selected(pointer dad, pointer mom, pointer losr) noexcept
+            : father(dad)
+            , mother(mom)
+            , loser(losr){}
         };
         /**
          * @brief Truncation Selection algorithm
@@ -52,26 +53,26 @@ namespace EvoAI{
          */
         template<typename T>
         struct EvoAI_API Truncation{
-            static_assert(get_fitness_v<std::remove_pointer_t<T>>, "T needs to have getFitness(), more info at SelectionAlgorithms.hpp");
+            static_assert(meta::get_fitness_v<std::remove_pointer_t<T>>, "T needs to have getFitness(), more info at SelectionAlgorithms.hpp");
             using pointer = std::remove_pointer_t<T>*;
             std::size_t maxPopulation;
             /**
              *  @brief constructor
              *  
-             *  @param [in] maxPop maxPopulation 
+             *  @param maxPop maxPopulation 
              */
             Truncation(std::size_t maxPop) noexcept;
             /**
              *  @brief selects couples independent of their species.
-             *  @param [in] std::vector<std::remove_pointer_t<T>*>& members
-             *  @param [in] std::size_t numberToSelect
+             *  @param members std::vector<std::remove_pointer_t<T>*>&
+             *  @param numberToSelect std::size_t
              *  @return std::vector<Selected<T>> selected 
              */
             std::vector<Selected<T>> operator()(std::vector<std::remove_pointer_t<T>*>& members, std::size_t numberToSelect) noexcept;
             /**
              *  @brief select couples of the same species.
-             *  @param [in] std::map<std::size_t, std::unique_ptr<Species<T>>>& species
-             *  @param [in] std::size_t numberToSelect
+             *  @param species std::map<std::size_t, std::unique_ptr<Species<T>>>&
+             *  @param numberToSelect std::size_t
              *  @return std::vector<Selected<T>> selected
              */
             std::vector<Selected<T>> operator()(std::map<std::size_t, std::unique_ptr<Species<T>>>& species, std::size_t numberToSelect) noexcept;
@@ -83,16 +84,16 @@ namespace EvoAI{
          */
         template<typename T>
         struct EvoAI_API Tournament{
-            static_assert(get_fitness_v<std::remove_pointer_t<T>>, "T needs to have getFitness(), more info at SelectionAlgorithms.hpp");
+            static_assert(meta::get_fitness_v<std::remove_pointer_t<T>>, "T needs to have getFitness(), more info at SelectionAlgorithms.hpp");
             using pointer = std::remove_pointer_t<T>*;
             std::size_t maxPop;
             std::size_t rounds;
             /**
              *  @brief constructor
-             *  @param [in] maxPopulation maxPopulation used to calculate the number To select per species.
-             *  @param [in] rounds rounds to select a champion and loser. 
+             *  @param maxPopulation maxPopulation used to calculate the number To select per species.
+             *  @param rnds rounds to select a champion and loser. (default = 10)
              */
-            Tournament(std::size_t maxPopulation, std::size_t rounds = 10) noexcept;
+            Tournament(std::size_t maxPopulation, std::size_t rnds = 10) noexcept;
             /**
              *  @brief randomly selects some members and compare their fitness, 
              *  the champion is the one with the highest fitness.
@@ -104,15 +105,15 @@ namespace EvoAI{
             std::pair<pointer, pointer> fight(Members& members) noexcept;
             /**
              *  @brief selects couples independent of their species.
-             *  @param [in] std::vector<std::remove_pointer_t<T>*>& members
-             *  @param [in] std::size_t numberToSelect
+             *  @param members std::vector<std::remove_pointer_t<T>*>&
+             *  @param numberToSelect std::size_t
              *  @return std::vector<Selected<T>> selected 
              */
             std::vector<Selected<T>> operator()(std::vector<std::remove_pointer_t<T>*>& members, std::size_t numberToSelect) noexcept;
             /**
              *  @brief select couples of the same species.
-             *  @param [in] std::map<std::size_t, std::unique_ptr<Species<T>>>& species
-             *  @param [in] std::size_t numberToSelect
+             *  @param species std::map<std::size_t, std::unique_ptr<Species<T>>>&
+             *  @param numberToSelect std::size_t
              *  @return std::vector<Selected<T>> selected
              */
             std::vector<Selected<T>> operator()(std::map<std::size_t, std::unique_ptr<Species<T>>>& species, std::size_t numberToSelect) noexcept;
@@ -123,32 +124,34 @@ namespace EvoAI{
          */
         template<typename T>
         struct EvoAI_API FPS{
-            static_assert(get_fitness_v<std::remove_pointer_t<T>>, "T needs to have getFitness(), more info at SelectionAlgorithms.hpp");
+            static_assert(meta::get_fitness_v<std::remove_pointer_t<T>>, "T needs to have getFitness(), more info at SelectionAlgorithms.hpp");
             using pointer = std::remove_pointer_t<T>*;
             std::size_t maxPop;
             /**
              *  @brief constructor
-             *  @param [in] maxPopulation maxPopulation used to calculate the number To select per species.
+             *  @param maxPopulation std::size_t maxPopulation used to calculate the number To select per species.
              */
             explicit FPS(std::size_t maxPopulation) noexcept;
             /**
              *  @brief randomly select a number and select a member that the sum of its fitness is over that number.
-             *  @tparam [in] members Members vector<T> for T and T*
+             *  @tparam Members vector<T> for T and T*
+             *  @param members vector<T> for T and T*
+             *  @param totalFitness double
              *  @return T* it can be a nullptr
              */
             template<typename Members>
             pointer FPSelection(Members& members, double totalFitness) noexcept;
             /**
              *  @brief selects couples independent of their species.
-             *  @param [in] std::vector<std::remove_pointer_t<T>*>& members
-             *  @param [in] std::size_t numberToSelect
+             *  @param members std::vector<std::remove_pointer_t<T>*>&
+             *  @param numberToSelect std::size_t
              *  @return std::vector<Selected<T>> selected 
              */
             std::vector<Selected<T>> operator()(std::vector<std::remove_pointer_t<T>*>& members, std::size_t numberToSelect) noexcept;
             /**
              *  @brief select couples of the same species.
-             *  @param [in] std::map<std::size_t, std::unique_ptr<Species<T>>>& species
-             *  @param [in] std::size_t numberToSelect
+             *  @param species std::map<std::size_t, std::unique_ptr<Species<T>>>&
+             *  @param numberToSelect std::size_t
              *  @return std::vector<Selected<T>> selected
              */
             std::vector<Selected<T>> operator()(std::map<std::size_t, std::unique_ptr<Species<T>>>& species, std::size_t numberToSelect) noexcept;

@@ -13,12 +13,13 @@
 
 
 void usage(){
+    std::cout << "SoundGenerator [options] <filename>\n\n";
     std::cout << "-g, --genome [m|r] <filename> [<filename> with r]\tload a genome json file\n";
     std::cout << "\t\t\t\t\tWith m will mutate the genome.\n\t\t\t\t\tWith r will combine two genomes, without m or r will load the genome.\n";
     std::cout << "-G, --genome-type <type> <numHidden>\twill generate a genome of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
                                                             "0. Without hidden neurons\n\t\t\t\t\t\t\t1. With hidden neurons.\n";
-    std::cout << "-n, --neuralnetwork [g] <filename>\t\tload a neural network json file.\n\t\t\t\t\t\t\tif g is specified will make a genome from this network.\n";
-    std::cout << "-N, --neuralnetwork-type <type> <numLayers> <numNLayers> will generate a random neural network of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
+    std::cout << "-n, --neuralnetwork [g] <filename>\tload a neural network json file.\n\t\t\t\t\t\t\tif g is specified will make a genome from this network.\n";
+    std::cout << "-N, --neuralnetwork-type <type> <numLayers> <numNLayers, ..> will generate a random neural network of the type specified\n\t\t\t\t\t\ttypes:\n\t\t\t\t\t\t\t" <<
                                                             "0. CPPN\n\t\t\t\t\t\t\t1. FeedForward\n\t\t\t\t\t\t\t2. Elman Network\n";
     std::cout << "-c, --color\t\t\t\twill use color as input for the neural network (can be used with -C)\n";
     std::cout << "-C, --coords\t\t\t\twill use coordinates as input for the neural network (can be used with -c)\n";
@@ -31,10 +32,51 @@ void usage(){
     std::cout << "-res, --resolution <width height>\tIt will create a sound using the coordinates(ignored if --image is specified).\n";
     std::cout << "--image <filename>\t\t\tload a image and generate a sound fromt it.\n";
     std::cout << "-r, --repeat <n>\t\t\tIt will generate the sound again.(use it for recurrent nn)\n";
+    std::cout << "-licenses\t\t\t\tshows licenses used by SoundGenerator\n";
     std::cout << "-h, --help\t\t\t\thelp menu (This)" << std::endl;
 }
+void licenses(){
+    static std::string EvoAI("        Copyright 2015-2023 Cristian Gonzalez cristian.glez.m@gmail.com\n\
+        \n\
+        Licensed under the Apache License, Version 2.0 (the \"License\");\n\
+        you may not use this file except in compliance with the License.\n\
+        You may obtain a copy of the License at\n\
+        \n\
+            http://www.apache.org/licenses/LICENSE-2.0\n\
+        \n\
+        Unless required by applicable law or agreed to in writing, software\n\
+        distributed under the License is distributed on an \"AS IS\" BASIS,\n\
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n\
+        See the License for the specific language governing permissions and\n\
+        limitations under the License.");
+    static std::string midifile("        Copyright (c) 1999-2018, Craig Stuart Sapp\n\
+        All rights reserved.\n\
+        \n\
+        Redistribution and use in source and binary forms, with or without\n\
+        modification, are permitted provided that the following conditions are met:\n\
+        \n\
+        1. Redistributions of source code must retain the above copyright notice, this\n\
+        list of conditions and the following disclaimer. \n\
+        2. Redistributions in binary form must reproduce the above copyright notice,\n\
+        and the following disclaimer in the documentation and/or other materials \n\
+        provided with the distribution.\n\
+        \n\
+        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\n\
+        ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\n\
+        WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\n\
+        DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR\n\
+        ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n\
+        (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\n\
+        LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\n\
+        ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n\
+        (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n\
+        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.");
+        std::cout << "EvoAI License\n" << EvoAI << "\n\n";
+        std::cout << "Midifile License\n" << midifile << "\n\n" << std::endl;
 
+}
 int main(int argc, char **argv){
+    EvoAI::randomGen().setSeed(std::random_device{}());
     bool optGenome = false;
     bool optGenomeType = false;
     bool optMutate = false;
@@ -62,11 +104,16 @@ int main(int argc, char **argv){
     std::string imageInput = "image.png";
     int repeat = 1;
     int numLayers = 3;
-    int numNLayers = 5;
+    std::vector<std::size_t> numNLayers = {5u,5u,5u};
     if(argc < 3){
-        std::cout << std::string(argv[0]) << " [options] <filename>\n";
-        usage();
-        return EXIT_FAILURE;
+        auto val = std::string(argv[1]);
+        if(val == "-licenses"){
+            licenses();
+            return 0;
+        }else{
+            usage();
+            return EXIT_FAILURE;
+        }
     }
     for(auto i=0;i<argc;++i){
         auto val = std::string(argv[i]);
@@ -106,7 +153,10 @@ int main(int argc, char **argv){
             optNeuralType = true;
             NeuralType = std::string(argv[i+1]);
             numLayers = std::stoi(std::string(argv[i+2]));
-            numNLayers = std::stoi(std::string(argv[i+3]));
+            numNLayers.clear();
+            for(auto j=(i+3);j<(i+3+numLayers);++j){
+                numNLayers.emplace_back(std::stoul(std::string(argv[j])));
+            }
         }
         if(val == "-c" || val == "--color"){
             optColor = true;
@@ -142,7 +192,11 @@ int main(int argc, char **argv){
         if(val == "--help" || val == "-h"){
             std::cout << std::string(argv[0]) << " [options] <filename>\n";
             usage();
-            return EXIT_FAILURE;
+            return 0;
+        }
+        if(val == "-licenses"){
+            licenses();
+            return 0;
         }
     }
     std::unique_ptr<EvoAI::NeuralNetwork> nn = nullptr;
@@ -155,7 +209,12 @@ int main(int argc, char **argv){
         }
     }else if(optNeuralType){
         if(NeuralType == "0"){
-            std::cout << "Creating a CPPN " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;
+            std::cout << "Creating a CPPN " << std::to_string(numLayers) << " layers and { ";
+            for(auto i=0;i<numLayers;++i){
+                auto commaOrSpace = ((i+1)==numLayers) ? " ":", ";
+                std::cout << std::to_string(numNLayers[i]) << commaOrSpace;
+            }
+            std::cout << "} Neurons for each hidden layer.." << std::endl;
             if(optColor && optCoords && !optMidi){
                 nn = EvoAI::createCPPN(6,numLayers,numNLayers,3,1.0);
             }else if(optMidi && !optColor && !optCoords){
@@ -164,7 +223,12 @@ int main(int argc, char **argv){
                 nn = EvoAI::createCPPN(3,numLayers,numNLayers,3,1.0);
             }
         }else if(NeuralType == "1"){
-            std::cout << "Creating a FeedForward Neural Network " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;
+            std::cout << "Creating a FeedForward Neural Network " << std::to_string(numLayers) << " layers and { ";
+            for(auto i=0;i<numLayers;++i){
+                auto commaOrSpace = ((i+1)==numLayers) ? " ":", ";
+                std::cout << std::to_string(numNLayers[i]) << commaOrSpace;
+            }
+            std::cout << "} Neurons for each hidden layer.." << std::endl;
             if(optColor && optCoords){
                 nn = EvoAI::createFeedForwardNN(6,numLayers,numNLayers,3,1.0);
             }else if(optMidi && !optColor && !optCoords){
@@ -173,7 +237,12 @@ int main(int argc, char **argv){
                 nn = EvoAI::createFeedForwardNN(3,numLayers,numNLayers,3,1.0);
             }
         }else if(NeuralType == "2"){
-            std::cout << "Creating a Elman Neural Network " << std::to_string(numLayers) << " layers and " << std::to_string(numNLayers) << " Neurons for each hidden layer.." << std::endl;
+            std::cout << "Creating a Elman Neural Network " << std::to_string(numLayers) << " layers and { ";
+            for(auto i=0;i<numLayers;++i){
+                auto commaOrSpace = ((i+1)==numLayers) ? " ":", ";
+                std::cout << std::to_string(numNLayers[i]) << commaOrSpace;
+            }
+            std::cout << "} Neurons for each hidden layer.." << std::endl;
             if(optColor && optCoords){
                 nn = EvoAI::createElmanNeuralNetwork(6,numLayers,numNLayers,3,1.0);
             }else if(optMidi && !optColor && !optCoords){
@@ -216,15 +285,19 @@ int main(int argc, char **argv){
         nn = std::make_unique<EvoAI::NeuralNetwork>(EvoAI::Genome::makePhenotype(*g));
     }
     if(optSave){
-        std::cout << "Saving Neural Network to " << saveFile << " ..." << std::endl;
-        nn->writeToFile(saveFile);
+        if(nn){
+            std::cout << "Saving Neural Network to " << saveFile << " ..." << std::endl;
+            nn->writeToFile(saveFile);
+        }
     }
     if(optSaveGenome){
-        std::cout << "Saving Genome to " << saveFileGenome << "..." << std::endl;
-        g->writeToFile(saveFileGenome);
+        if(g){
+            std::cout << "Saving Genome to " << saveFileGenome << "..." << std::endl;
+            g->writeToFile(saveFileGenome);
+        }
     }
     sf::Image imgInput;
-    if(!optImage || !optMidi){
+    if(!optImage && !optMidi){
         std::cout << "Creating Image with resolution " << resWidth << "x" << resHeight << std::endl;
         imgInput.create(resWidth,resHeight);
     }
