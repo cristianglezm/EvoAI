@@ -1,0 +1,862 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CellSim &#8212; EvoAI v1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../_static/documentation_options.js?v=e160b93e"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'source/examples/CellSim';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.2';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'http://localhost:8000/latest/_static/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = true;
+        </script>
+    <link rel="canonical" href="/EvoAI/source/examples/CellSim.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="NumClassifier" href="NumClassifier.html" />
+    <link rel="prev" title="IrisClassification" href="IrisClassification.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.0 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/EvoAILogo.png" class="logo__image only-dark" alt="EvoAI v1.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../tools.html">
+                        Tools
+                      </a>
+                    </li>
+                
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    more
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="../api.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/cristianglezm/EvoAI" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../tools.html">
+                        Tools
+                      </a>
+                    </li>
+                
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links-2">
+                    more
+                </button>
+                <ul id="pst-nav-more-links-2" class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="../api.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/cristianglezm/EvoAI" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="IrisClassification.html">IrisClassification</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">CellSim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NumClassifier.html">NumClassifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="XOR.html">XOR</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../examples.html" class="nav-link">Examples</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">CellSim</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="cellsim">
+<h1>CellSim<a class="headerlink" href="#cellsim" title="Link to this heading">#</a></h1>
+<p>CellSim is a SFML app in which some basic shapes will evolve behaviors to hunt or scavenger food(other cells).</p>
+<p>This example uses an Observer <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code></a> meaning that the <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code></a>
+is not the owner of the data, you use the observer Population when you give it a T* as the template parameter.</p>
+<section id="cell">
+<h2>Cell<a class="headerlink" href="#cell" title="Link to this heading">#</a></h2>
+<p>The Cell class needs to fulfill <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI4meta14is_populable_vE" title="EvoAI::meta::is_populable_v"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">meta::is_populable_v&lt;Cell&gt;</span></code></a> to be able to use it in <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code></a>
+<code class="docutils literal notranslate"><span class="pre">reproduce</span></code> and <code class="docutils literal notranslate"><span class="pre">distance</span></code> are static methods.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Cell</span></code> also needs to have a <code class="docutils literal notranslate"><span class="pre">constructor</span></code> that takes a <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI6GenomeE" title="EvoAI::Genome"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code></a> and
+a <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI9EvoVectorE" title="EvoAI::EvoVector"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">EvoVector&lt;std::uint8_t&gt;</span></code></a> to be able to have children from a pair of Cells.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Cell</span><span class="p">(</span><span class="n">JsonBox</span><span class="o">::</span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// omitted</span>
+<span class="p">}</span>
+<span class="n">JsonBox</span><span class="o">::</span><span class="n">Value</span><span class="w"> </span><span class="n">toJson</span><span class="p">()</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// ommited</span>
+<span class="p">}</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">Cell</span><span class="o">::</span><span class="n">setID</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">ID</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="n">evoVector</span><span class="p">.</span><span class="n">setID</span><span class="p">(</span><span class="n">ID</span><span class="p">);</span>
+<span class="w">    </span><span class="n">genome</span><span class="p">.</span><span class="n">setID</span><span class="p">(</span><span class="n">ID</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">Cell</span><span class="o">::</span><span class="n">getID</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">evoVector</span><span class="p">.</span><span class="n">getID</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">Cell</span><span class="o">::</span><span class="n">setSpeciesID</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">spcID</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="n">evoVector</span><span class="p">.</span><span class="n">setSpeciesID</span><span class="p">(</span><span class="n">spcID</span><span class="p">);</span>
+<span class="w">    </span><span class="n">genome</span><span class="p">.</span><span class="n">setSpeciesID</span><span class="p">(</span><span class="n">spcID</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">Cell</span><span class="o">::</span><span class="n">setFitness</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">fit</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="n">evoVector</span><span class="p">.</span><span class="n">setFitness</span><span class="p">(</span><span class="n">fit</span><span class="p">);</span>
+<span class="w">    </span><span class="n">genome</span><span class="p">.</span><span class="n">setFitness</span><span class="p">(</span><span class="n">fit</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">Cell</span><span class="o">::</span><span class="n">addFitness</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">amount</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="n">evoVector</span><span class="p">.</span><span class="n">addFitness</span><span class="p">(</span><span class="n">amount</span><span class="p">);</span>
+<span class="w">    </span><span class="n">genome</span><span class="p">.</span><span class="n">addFitness</span><span class="p">(</span><span class="n">amount</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">double</span><span class="w"> </span><span class="n">Cell</span><span class="o">::</span><span class="n">getFitness</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">evoVector</span><span class="p">.</span><span class="n">getFitness</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">Cell</span><span class="o">::</span><span class="n">getSpeciesID</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">evoVector</span><span class="p">.</span><span class="n">getSpeciesID</span><span class="p">();;</span>
+<span class="p">}</span>
+<span class="c1">// more code</span>
+<span class="n">Cell</span><span class="w"> </span><span class="n">Cell</span><span class="o">::</span><span class="n">reproduce</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Cell</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cell1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Cell</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cell2</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Cell</span><span class="p">(</span><span class="n">Genome</span><span class="o">::</span><span class="n">reproduce</span><span class="p">(</span><span class="n">cell1</span><span class="p">.</span><span class="n">genome</span><span class="p">,</span><span class="w"> </span><span class="n">cell2</span><span class="p">.</span><span class="n">genome</span><span class="p">),</span><span class="w"> </span><span class="n">EvoVector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">uint8_t</span><span class="o">&gt;::</span><span class="n">reproduce</span><span class="p">(</span><span class="n">cell1</span><span class="p">.</span><span class="n">evoVector</span><span class="p">,</span><span class="w"> </span><span class="n">cell2</span><span class="p">.</span><span class="n">evoVector</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="kt">double</span><span class="w"> </span><span class="n">Cell</span><span class="o">::</span><span class="n">distance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Cell</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cell1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Cell</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cell2</span><span class="p">,</span>
+<span class="w">        </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">c1</span><span class="p">,</span>
+<span class="w">        </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">c2</span><span class="p">,</span>
+<span class="w">        </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">c3</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">            </span><span class="kt">double</span><span class="w"> </span><span class="n">gDistance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Genome</span><span class="o">::</span><span class="n">distance</span><span class="p">(</span><span class="n">cell1</span><span class="p">.</span><span class="n">genome</span><span class="p">,</span><span class="w"> </span><span class="n">cell2</span><span class="p">.</span><span class="n">genome</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c1</span><span class="p">;</span>
+<span class="w">            </span><span class="kt">double</span><span class="w"> </span><span class="n">esDistance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cell1</span><span class="p">.</span><span class="n">getBodyType</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">cell2</span><span class="p">.</span><span class="n">getBodyType</span><span class="p">()</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mf">5.0</span><span class="o">:</span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">            </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">1u</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">cell1</span><span class="p">.</span><span class="n">evoVector</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="o">++</span><span class="n">i</span><span class="p">){</span>
+<span class="w">                </span><span class="n">esDistance</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">cell1</span><span class="p">.</span><span class="n">evoVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">cell2</span><span class="p">.</span><span class="n">evoVector</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c2</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">gDistance</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">esDistance</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">2.0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="population-management">
+<h2>Population Management<a class="headerlink" href="#population-management" title="Link to this heading">#</a></h2>
+<p>The population Management consist on creating and replacing those that died with new cells from the best of the population
+in which we use an specialized <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI19SelectionAlgorithms10TournamentE" title="EvoAI::SelectionAlgorithms::Tournament"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Tournament</span></code></a> to select the best and set the losers from the dead cells.</p>
+<section id="createcells">
+<h3>CreateCells<a class="headerlink" href="#createcells" title="Link to this heading">#</a></h3>
+<p>When first creating the <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population&lt;Cell*&gt;</span></code></a> we will need to create the initial population
+which is handled in the if condition, the else condition will handle the <code class="docutils literal notranslate"><span class="pre">replacement</span></code> of dead cells with new cells.</p>
+<p>The method will return a <code class="docutils literal notranslate"><span class="pre">Cell*</span></code> which then <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code></a> will use <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI10Population9addMemberENSt13conditional_tINSt12is_pointer_vI10value_typeEE7pointer16rvalue_referenceEEddd" title="EvoAI::Population::addMember"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">addMember</span></code></a> to
+add it to the <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code></a> and assign or create its own <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI7SpeciesE" title="EvoAI::Species"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Species</span></code></a>.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Cell</span><span class="o">*</span><span class="w"> </span><span class="nf">CellSim::createCells</span><span class="p">()</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// handle initial creation of population and regrowPopulation</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">cells</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">maxCellNum</span><span class="p">){</span>
+<span class="w">        </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cells</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">makeCellGenome</span><span class="p">());</span>
+<span class="w">        </span><span class="n">c</span><span class="p">.</span><span class="n">setID</span><span class="p">(</span><span class="n">genID</span><span class="p">());</span>
+<span class="w">        </span><span class="n">c</span><span class="p">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">randomGen</span><span class="p">().</span><span class="n">random</span><span class="p">(</span><span class="mf">0.f</span><span class="p">,</span><span class="w"> </span><span class="n">bounds</span><span class="p">.</span><span class="n">width</span><span class="p">),</span>
+<span class="w">                        </span><span class="n">randomGen</span><span class="p">().</span><span class="n">random</span><span class="p">(</span><span class="mf">0.f</span><span class="p">,</span><span class="w"> </span><span class="n">bounds</span><span class="p">.</span><span class="n">height</span><span class="p">));</span>
+<span class="w">        </span><span class="n">lastAlive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cells</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="n">c</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="k">else</span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">lastAlive</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="n">opts</span><span class="p">.</span><span class="n">maxCellNum</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)){</span>
+<span class="w">            </span><span class="o">++</span><span class="n">lastAlive</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">Cell</span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cells</span><span class="p">[</span><span class="n">lastAlive</span><span class="p">];</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="o">-&gt;</span><span class="n">getPosition</span><span class="p">();</span>
+<span class="w">        </span><span class="o">*</span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">makeCellGenome</span><span class="p">();</span>
+<span class="w">        </span><span class="n">c</span><span class="o">-&gt;</span><span class="n">setPosition</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+<span class="w">        </span><span class="n">c</span><span class="o">-&gt;</span><span class="n">setID</span><span class="p">(</span><span class="n">genID</span><span class="p">());</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="replace">
+<h3>Replace<a class="headerlink" href="#replace" title="Link to this heading">#</a></h3>
+<p>This method is responsable for taking the <code class="docutils literal notranslate"><span class="pre">toReplace</span></code> and <code class="docutils literal notranslate"><span class="pre">toAdd</span></code> vectors from <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10Population9reproduceE16result_or_void_tRR13SelectionAlgob" title="EvoAI::Population::reproduce"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Population::reproduce</span></code></a> and
+process them.</p>
+<p>the <code class="docutils literal notranslate"><span class="pre">if(toReplace.empty())</span></code> is to handle <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10Population26regrowPopulationFromElitesE16result_or_void_tRR13SelectionAlgobddd" title="EvoAI::Population::regrowPopulationFromElites"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Population::regrowPopulationFromElites</span></code></a> in case we want to call it
+instead of <a class="reference internal" href="../api/namespaces.html#_CPPv4IDpEN5EvoAI10Population16regrowPopulationEvdddDpRR4Args" title="EvoAI::Population::regrowPopulation"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Population::regrowPopulation</span></code></a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">else</span> <span class="pre">if</span></code> is the most likely path to be executed as <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI19SelectionAlgorithms10TournamentE" title="EvoAI::SelectionAlgorithms::Tournament"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Tournament</span></code></a> will always return an empty selection
+if there are not dead cells.</p>
+<p>We call <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI10Population12removeMemberE9reference" title="EvoAI::Population::removeMember"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Population::removeMember</span></code></a> to remove the dead cell from <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population&lt;Cell*&gt;</span></code></a>
+and his <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI7SpeciesE" title="EvoAI::Species"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Species</span></code></a> if is the last member alive, then we will call <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI10Population9addMemberENSt13conditional_tINSt12is_pointer_vI10value_typeEE7pointer16rvalue_referenceEEddd" title="EvoAI::Population::addMember"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Population::addMember</span></code></a>
+for the new <code class="docutils literal notranslate"><span class="pre">Cell</span></code> to be added or assigned a new <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI7SpeciesE" title="EvoAI::Species"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Species</span></code></a>.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">CellSim::replace</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">*&gt;&amp;</span><span class="w"> </span><span class="n">toReplace</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">toAdd</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">toReplace</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">add</span><span class="o">:</span><span class="n">toAdd</span><span class="p">){</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">distance</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">begin</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">lastAlive</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">end</span><span class="p">(</span><span class="n">cells</span><span class="p">))</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span>
+<span class="w">                </span><span class="n">Cell</span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cells</span><span class="p">[</span><span class="o">++</span><span class="n">lastAlive</span><span class="p">];</span>
+<span class="w">                </span><span class="k">auto</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="o">-&gt;</span><span class="n">getPosition</span><span class="p">();</span>
+<span class="w">                </span><span class="n">pop</span><span class="o">-&gt;</span><span class="n">removeMember</span><span class="p">(</span><span class="o">*</span><span class="n">c</span><span class="p">);</span>
+<span class="w">                </span><span class="o">*</span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">add</span><span class="p">);</span>
+<span class="w">                </span><span class="n">c</span><span class="o">-&gt;</span><span class="n">setPosition</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+<span class="w">                </span><span class="n">c</span><span class="o">-&gt;</span><span class="n">setID</span><span class="p">(</span><span class="n">genID</span><span class="p">());</span>
+<span class="w">                </span><span class="n">pop</span><span class="o">-&gt;</span><span class="n">addMember</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+<span class="w">            </span><span class="p">}</span><span class="k">else</span><span class="p">{</span>
+<span class="w">                </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cells</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">add</span><span class="p">));</span>
+<span class="w">                </span><span class="n">c</span><span class="p">.</span><span class="n">setID</span><span class="p">(</span><span class="n">genID</span><span class="p">());</span>
+<span class="w">                </span><span class="n">c</span><span class="p">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">randomGen</span><span class="p">().</span><span class="n">random</span><span class="p">(</span><span class="mf">0.f</span><span class="p">,</span><span class="w"> </span><span class="n">bounds</span><span class="p">.</span><span class="n">width</span><span class="p">),</span>
+<span class="w">                                </span><span class="n">randomGen</span><span class="p">().</span><span class="n">random</span><span class="p">(</span><span class="mf">0.f</span><span class="p">,</span><span class="w"> </span><span class="n">bounds</span><span class="p">.</span><span class="n">height</span><span class="p">));</span>
+<span class="w">                </span><span class="n">pop</span><span class="o">-&gt;</span><span class="n">addMember</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+<span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="n">lastAlive</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="n">opts</span><span class="p">.</span><span class="n">maxCellNum</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)){</span>
+<span class="w">                    </span><span class="o">++</span><span class="n">lastAlive</span><span class="p">;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">toReplace</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">toAdd</span><span class="p">.</span><span class="n">size</span><span class="p">()){</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0u</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">toAdd</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="o">++</span><span class="n">i</span><span class="p">){</span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">toReplace</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">getPosition</span><span class="p">();</span>
+<span class="w">            </span><span class="n">pop</span><span class="o">-&gt;</span><span class="n">removeMember</span><span class="p">(</span><span class="o">*</span><span class="n">toReplace</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">            </span><span class="n">toAdd</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">setID</span><span class="p">(</span><span class="n">genID</span><span class="p">());</span>
+<span class="w">            </span><span class="n">toAdd</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">setPosition</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+<span class="w">            </span><span class="o">*</span><span class="n">toReplace</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">toAdd</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">            </span><span class="n">pop</span><span class="o">-&gt;</span><span class="n">addMember</span><span class="p">(</span><span class="n">toReplace</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">lastAlive</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="n">opts</span><span class="p">.</span><span class="n">maxCellNum</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)){</span>
+<span class="w">                </span><span class="o">++</span><span class="n">lastAlive</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="removecellsfromspecies">
+<h3>removeCellsFromSpecies<a class="headerlink" href="#removecellsfromspecies" title="Link to this heading">#</a></h3>
+<p>This method will be responsable to kill the cells who species is over <code class="docutils literal notranslate"><span class="pre">maxAge</span></code> set in <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code></a> after we call
+<a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI10Population30increaseAgeAndRemoveOldSpeciesEv" title="EvoAI::Population::increaseAgeAndRemoveOldSpecies"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Population::increaseAgeAndRemoveOldSpecies</span></code></a>, we call this function to increase the age of
+the <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI7SpeciesE" title="EvoAI::Species"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Species</span></code></a> and if their avg Fitness is stagnant(it doesn’t get better) their age is increased x2 and is sooner removed from the
+<a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code></a>.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">CellSim::removeCellsFromSpecies</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="o">&gt;&amp;&amp;</span><span class="w"> </span><span class="n">ids</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">id</span><span class="o">:</span><span class="n">ids</span><span class="p">){</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0u</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="p">(</span><span class="n">lastAlive</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="o">++</span><span class="n">i</span><span class="p">){</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">cells</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">getSpeciesID</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">id</span><span class="p">){</span>
+<span class="w">                </span><span class="n">std</span><span class="o">::</span><span class="n">swap</span><span class="p">(</span><span class="n">cells</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">cells</span><span class="p">[</span><span class="n">lastAlive</span><span class="p">]);</span>
+<span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="n">lastAlive</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span>
+<span class="w">                    </span><span class="o">--</span><span class="n">lastAlive</span><span class="p">;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="nextgeneration">
+<h3>nextGeneration<a class="headerlink" href="#nextgeneration" title="Link to this heading">#</a></h3>
+<p>This method will advance to the next generation, we use an <code class="docutils literal notranslate"><span class="pre">specialized</span> <span class="pre">Tournament</span></code> (we show it on the next section).
+When we call <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10Population9reproduceE16result_or_void_tRR13SelectionAlgob" title="EvoAI::Population::reproduce"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Population::reproduce</span></code></a> it will return a pair of two vectors, one <code class="docutils literal notranslate"><span class="pre">std::vector&lt;Cell*&gt;</span></code> and a <code class="docutils literal notranslate"><span class="pre">std::vector&lt;Cell&gt;</span></code>
+the first one are the dead cells and the second the children from the best cells.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">CellSim::nextGeneration</span><span class="p">()</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="n">avgs</span><span class="o">-&gt;</span><span class="n">calcAvgs</span><span class="p">(</span><span class="o">*</span><span class="n">pop</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// we use an specialization of Tournament&lt;Cell*&gt; to only select those cells that are not alive. (&quot;Tournament.hpp&quot;)</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">sa</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SelectionAlgorithms</span><span class="o">::</span><span class="n">Tournament</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">*&gt;</span><span class="p">{</span><span class="n">opts</span><span class="p">.</span><span class="n">maxCellNum</span><span class="p">,</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">rounds</span><span class="p">};</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pop</span><span class="o">-&gt;</span><span class="n">reproduce</span><span class="p">(</span><span class="n">sa</span><span class="p">,</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">interspecies</span><span class="p">);</span>
+<span class="w">    </span><span class="n">removeCellsFromSpecies</span><span class="p">(</span><span class="n">pop</span><span class="o">-&gt;</span><span class="n">increaseAgeAndRemoveOldSpecies</span><span class="p">());</span>
+<span class="w">    </span><span class="n">replace</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="n">first</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="p">.</span><span class="n">second</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// remove dead cells to let the pop regrow in case of extinction</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="p">(</span><span class="n">lastAlive</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span><span class="n">i</span><span class="o">&lt;</span><span class="n">cells</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="o">++</span><span class="n">i</span><span class="p">){</span>
+<span class="w">        </span><span class="n">pop</span><span class="o">-&gt;</span><span class="n">removeMember</span><span class="p">(</span><span class="n">cells</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">pop</span><span class="o">-&gt;</span><span class="n">regrowPopulation</span><span class="p">([</span><span class="k">this</span><span class="p">](){</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">createCells</span><span class="p">();</span>
+<span class="w">            </span><span class="p">},</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+<span class="w">    </span><span class="o">++</span><span class="n">gen</span><span class="p">;</span>
+<span class="w">    </span><span class="n">genInfo</span><span class="p">.</span><span class="n">setString</span><span class="p">(</span><span class="s">&quot;Generation: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; - AVG Fitness: &quot;</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                                        </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">pop</span><span class="o">-&gt;</span><span class="n">computeAvgFitness</span><span class="p">())</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; - Species: &quot;</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                                        </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">pop</span><span class="o">-&gt;</span><span class="n">getSpeciesSize</span><span class="p">()));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="tournament-specialization">
+<h3>Tournament specialization<a class="headerlink" href="#tournament-specialization" title="Link to this heading">#</a></h3>
+<p>As said before the <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Tournament</span></code> is specialized to <code class="docutils literal notranslate"><span class="pre">Cell*</span></code></p>
+<p>This code is the one for interspecies reproduction</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Selected</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">*&gt;&gt;</span><span class="w"> </span><span class="n">Tournament</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">*&gt;::</span><span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">remove_pointer_t</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">*&gt;*&gt;&amp;</span><span class="w"> </span><span class="n">members</span><span class="p">,</span><span class="w"> </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">numberToSelect</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Selected</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">*&gt;&gt;</span><span class="w"> </span><span class="n">selected</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">livingCells</span><span class="p">;</span>
+<span class="w">    </span><span class="n">livingCells</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">members</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">queue</span><span class="o">&lt;</span><span class="n">pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deadCells</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cell</span><span class="o">:</span><span class="n">members</span><span class="p">){</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">cell</span><span class="o">-&gt;</span><span class="n">isAlive</span><span class="p">()){</span>
+<span class="w">            </span><span class="n">livingCells</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">cell</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">cell</span><span class="o">-&gt;</span><span class="n">canBeEaten</span><span class="p">()){</span>
+<span class="w">            </span><span class="n">deadCells</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">cell</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="p">((</span><span class="n">members</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">livingCells</span><span class="p">.</span><span class="n">size</span><span class="p">())</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">livingCells</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">selected</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">selected</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">deadCells</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">deadCells</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">father</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fight</span><span class="p">(</span><span class="n">livingCells</span><span class="p">);</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">mother</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fight</span><span class="p">(</span><span class="n">livingCells</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">father</span><span class="p">.</span><span class="n">first</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">mother</span><span class="p">.</span><span class="n">first</span><span class="p">){</span>
+<span class="w">            </span><span class="n">mother</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fight</span><span class="p">(</span><span class="n">livingCells</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deadCells</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+<span class="w">        </span><span class="n">deadCells</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+<span class="w">        </span><span class="n">selected</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">father</span><span class="p">.</span><span class="n">first</span><span class="p">,</span><span class="w"> </span><span class="n">mother</span><span class="p">.</span><span class="n">first</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">selected</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This code is the one for <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI7SpeciesE" title="EvoAI::Species"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Species</span></code></a> reproduction.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Selected</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">*&gt;&gt;</span><span class="w"> </span><span class="n">Tournament</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">*&gt;::</span><span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Species</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">*&gt;&gt;&gt;&amp;</span><span class="w"> </span><span class="n">species</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">numberToSelect</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Selected</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">*&gt;&gt;</span><span class="w"> </span><span class="n">selected</span><span class="p">;</span>
+<span class="w">    </span><span class="n">selected</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">numberToSelect</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="p">[</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">sp</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="n">species</span><span class="p">){</span>
+<span class="w">        </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">members</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sp</span><span class="o">-&gt;</span><span class="n">getMembers</span><span class="p">();</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">livingCells</span><span class="p">;</span>
+<span class="w">        </span><span class="n">livingCells</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">members</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">queue</span><span class="o">&lt;</span><span class="n">pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deadCells</span><span class="p">;</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cell</span><span class="o">:</span><span class="n">members</span><span class="p">){</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">cell</span><span class="o">-&gt;</span><span class="n">isAlive</span><span class="p">()){</span>
+<span class="w">                </span><span class="n">livingCells</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">cell</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">cell</span><span class="o">-&gt;</span><span class="n">canBeEaten</span><span class="p">()){</span>
+<span class="w">                </span><span class="n">deadCells</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">cell</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">livingCells</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+<span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">deadCells</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">father</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fight</span><span class="p">(</span><span class="n">livingCells</span><span class="p">);</span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">mother</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fight</span><span class="p">(</span><span class="n">livingCells</span><span class="p">);</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">father</span><span class="p">.</span><span class="n">first</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">mother</span><span class="p">.</span><span class="n">first</span><span class="p">){</span>
+<span class="w">                </span><span class="n">mother</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fight</span><span class="p">(</span><span class="n">livingCells</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deadCells</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+<span class="w">            </span><span class="n">deadCells</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+<span class="w">            </span><span class="n">selected</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">father</span><span class="p">.</span><span class="n">first</span><span class="p">,</span><span class="w"> </span><span class="n">mother</span><span class="p">.</span><span class="n">first</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">selected</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>the full code is <a class="reference external" href="https://github.com/cristianglezm/EvoAI/blob/master/examples/CellSim/">here</a></p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="IrisClassification.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">IrisClassification</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="NumClassifier.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">NumClassifier</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cell">Cell</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#population-management">Population Management</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#createcells">CreateCells</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#replace">Replace</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#removecellsfromspecies">removeCellsFromSpecies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nextgeneration">nextGeneration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tournament-specialization">Tournament specialization</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/source/examples/CellSim.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2015-2024, EvoAI.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
