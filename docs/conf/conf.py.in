@@ -22,7 +22,7 @@ todo_include_todos = True
 project = 'EvoAI'
 copyright = f'2015-{datetime.datetime.now().year}, EvoAI'
 author = 'Cristian Gonzalez'
-release = '@EvoAI_VERSION_MAJOR@.@EvoAI_VERSION_MINOR@'
+release = 'v@EvoAI_VERSION_MAJOR@.@EvoAI_VERSION_MINOR@'
 
 sys.path.append(os.path.abspath('sphinxext'))
 sys.path.append(os.path.abspath('@CMAKE_CURRENT_BINARY_DIR@/sphinx'))
@@ -68,8 +68,8 @@ html_theme_options = {
     ],
     "show_version_warning_banner": True,
     "switcher": {
-        "json_url": "_static/versions.json",
-        "version_match": "@EvoAI_VERSION_MAJOR@.@EvoAI_VERSION_MINOR@",
+        "json_url": "https://cristianglezm.github.io/EvoAI/latest/_static/versions.json",
+        "version_match": "v@EvoAI_VERSION_MAJOR@.@EvoAI_VERSION_MINOR@",
     },
     "show_toc_level": 4,
     "show_nav_level": 4,
@@ -77,7 +77,7 @@ html_theme_options = {
     "navigation_depth": 4,
 }
 
-html_baseurl = 'https://cristianglezm.github.io/EvoAI'
+html_baseurl = 'https://cristianglezm.github.io/EvoAI/'
 html_logo = '@CMAKE_CURRENT_SOURCE_DIR@/logo/EvoAILogo.png'
 github_url = 'https://github.com/cristianglezm/EvoAI'
 
