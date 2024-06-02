@@ -199,7 +199,7 @@ Contributions are welcome, go to TODO.md and check out things to add or improve.
 
 ## Documentation ##
 
-[here](docs)
+[latest version](https://cristianglezm.github.io/EvoAI/latest/index.html)
 
 ## License
 

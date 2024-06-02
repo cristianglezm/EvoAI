@@ -34,6 +34,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
+    'sphinx.ext.githubpages',
     'sphinx_sitemap',
     'sphinx.ext.inheritance_diagram',
     'breathe',
