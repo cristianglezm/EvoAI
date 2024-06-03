@@ -31,7 +31,7 @@ jobs:
       run: |
         export JsonBox_ROOT="$(pwd)/JsonBox/install"
         mkdir build && cd build
-        cmake -DJsonBox_ROOT="$JsonBox_ROOT" -DEvoAI_BUILD_DOCS=TRUE ..
+        cmake -DJsonBox_ROOT=$JsonBox_ROOT -DEvoAI_BUILD_DOCS=TRUE ..
         cmake --build . -j 4 -t docs --config Release
         cd ..
 
@@ -52,10 +52,12 @@ jobs:
     - name: update tagged version docs
       if: ${{ startsWith(github.event.ref, 'refs/tags/v') }}
       run: |
+        export EvoAI_VERSION="v$(parseVersion)"
         cp -R build/docs/sphinx/html $EvoAI_VERSION
         git add $EvoAI_VERSION
 
     - name: commit and push docs
       run: |
+        export EvoAI_VERSION="v$(parseVersion)"
         git commit -m "update latest and if tag $(EvoAI_VERSION) docs"
         git push origin HEAD:gh-pages --force
