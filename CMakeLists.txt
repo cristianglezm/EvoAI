@@ -79,8 +79,8 @@ include(CMakeFindDependencyMacro)
 # JsonBox
 find_dependency(JsonBox REQUIRED)
 if(JsonBox_FOUND)
-    target_include_directories(EvoAI PUBLIC ${JsonBox_INCLUDE_DIR})
-    target_link_libraries(EvoAI PUBLIC ${JsonBox_LIBRARY})
+    target_include_directories(EvoAI PRIVATE ${JsonBox_INCLUDE_DIR})
+    target_link_libraries(EvoAI PRIVATE ${JsonBox_LIBRARY})
 endif(JsonBox_FOUND)
 
 if(EvoAI_BUILD_EXAMPLES OR EvoAI_BUILD_TOOLS)
