@@ -46,18 +46,16 @@ else()
         set_target_properties(EvoAI PROPERTIES RELEASE_POSTFIX -s)
         set_target_properties(EvoAI PROPERTIES MINSIZEREL_POSTFIX -s)
 endif(NOT EvoAI_BUILD_STATIC)
-
 target_include_directories(EvoAI INTERFACE
                             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                            "$<INSTALL_INTERFACE:include>"
+                            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
                             )
-
 target_sources(EvoAI
     PRIVATE
         ${EvoAI_SOURCES}
     PUBLIC
         "$<BUILD_INTERFACE:${EvoAI_INCLUDES}>"
-        "$<INSTALL_INTERFACE:include>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
 SET(EvoAI_CONFIG_HPP_INPUT "${CMAKE_SOURCE_DIR}/include/EvoAI/Config.hpp")
