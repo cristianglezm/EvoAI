@@ -41,22 +41,23 @@ if(NOT EvoAI_BUILD_STATIC)
 	add_library(EvoAI SHARED ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
 	set_target_properties(EvoAI PROPERTIES DEBUG_POSTFIX -d)
 else()
-	add_library(EvoAI STATIC ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
-    set_target_properties(EvoAI PROPERTIES DEBUG_POSTFIX -s-d)
-	set_target_properties(EvoAI PROPERTIES RELEASE_POSTFIX -s)
-	set_target_properties(EvoAI PROPERTIES MINSIZEREL_POSTFIX -s)
+        add_library(EvoAI STATIC ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
+        set_target_properties(EvoAI PROPERTIES DEBUG_POSTFIX -s-d)
+        set_target_properties(EvoAI PROPERTIES RELEASE_POSTFIX -s)
+        set_target_properties(EvoAI PROPERTIES MINSIZEREL_POSTFIX -s)
 endif(NOT EvoAI_BUILD_STATIC)
-target_include_directories(EvoAI 
-                            PUBLIC 
+
+target_include_directories(EvoAI INTERFACE
                             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+                            "$<INSTALL_INTERFACE:include>"
                             )
+
 target_sources(EvoAI
     PRIVATE
         ${EvoAI_SOURCES}
     PUBLIC
         "$<BUILD_INTERFACE:${EvoAI_INCLUDES}>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+        "$<INSTALL_INTERFACE:include>"
 )
 
 SET(EvoAI_CONFIG_HPP_INPUT "${CMAKE_SOURCE_DIR}/include/EvoAI/Config.hpp")

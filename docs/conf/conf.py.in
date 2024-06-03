@@ -70,7 +70,7 @@ html_theme_options = {
     "show_version_warning_banner": True,
     "switcher": {
         "json_url": "https://cristianglezm.github.io/EvoAI/latest/_static/versions.json",
-        "version_match": "v@EvoAI_VERSION_MAJOR@.@EvoAI_VERSION_MINOR@",
+        "version_match": "latest",
     },
     "show_toc_level": 4,
     "show_nav_level": 4,

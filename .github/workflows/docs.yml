@@ -1,0 +1,61 @@
+name: build-docs
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*'
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y doxygen graphviz python3-pip
+        cd docs && pip3 install -r requirements.txt
+        cd ..
+        git clone https://github.com/cristianglezm/JsonBox.git
+        export JsonBox_ROOT="$(pwd)/JsonBox/install"
+        cd JsonBox && mkdir build && cd build
+        cmake -DCMAKE_INSTALL_PREFIX=$JsonBox_ROOT ..
+        cmake --build . -j 4 -t install --config Release && cd ../..
+
+    - name: build docs
+      run: |
+        export JsonBox_ROOT="$(pwd)/JsonBox/install"
+        mkdir build && cd build
+        cmake -DJsonBox_ROOT="$JsonBox_ROOT" -DEvoAI_BUILD_DOCS=TRUE ..
+        cmake --build . -j 4 -t docs --config Release
+        cd ..
+
+    - name: prepare git config
+      run: |
+        git config user.name ${{ secrets.GITNAME }}
+        git config user.email ${{ secrets.EMAIL }}
+
+    - name: update latest docs
+      run: |
+        source .devops/docs_utils.sh
+        export EvoAI_VERSION="v$(parseVersion)"
+        git checkout gh-pages
+        rm -R latest
+        cp -R build/docs/sphinx/html latest
+        git add latest
+
+    - name: update tagged version docs
+      if: ${{ startsWith(github.event.ref, 'refs/tags/v') }}
+      run: |
+        cp -R build/docs/sphinx/html $EvoAI_VERSION
+        git add $EvoAI_VERSION
+
+    - name: commit and push docs
+      run: |
+        git commit -m "update latest and if tag $(EvoAI_VERSION) docs"
+        git push origin HEAD:gh-pages --force
