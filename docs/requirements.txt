@@ -1,6 +1,7 @@
-Sphinx==6.2
-sphinx-sitemap==2.5.0
+Sphinx==7.2.6
+sphinx-sitemap==2.5.1
 pydata_sphinx_theme
 sphinx_rtd_theme
-myst-parser
-sphinx_design
+myst-parser==2.0.0
+sphinx_design==0.5.0
+breathe==4.35.0
