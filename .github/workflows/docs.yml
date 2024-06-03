@@ -52,14 +52,10 @@ jobs:
     - name: update tagged version docs
       if: ${{ startsWith(github.event.ref, 'refs/tags/v') }}
       run: |
-        source .devops/docs_utils.sh
-        export EvoAI_VERSION="v$(parseVersion)"
         cp -R build/docs/sphinx/html $EvoAI_VERSION
         git add $EvoAI_VERSION
 
     - name: commit and push docs
       run: |
-        source .devops/docs_utils.sh
-        export EvoAI_VERSION="v$(parseVersion)"
         git commit -m "update latest and if tag $(EvoAI_VERSION) docs"
         git push origin HEAD:gh-pages --force
