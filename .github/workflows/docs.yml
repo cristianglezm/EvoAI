@@ -43,7 +43,8 @@ jobs:
     - name: update latest docs
       run: |
         source .devops/docs_utils.sh
-        export EvoAI_VERSION="v$(parseVersion)"
+        EvoAI_VERSION="v$(parseVersion)"
+        echo "EvoAI_VERSION=$EvoAI_VERSION" >> $GITHUB_ENV
         git fetch && git checkout gh-pages
         rm -R latest
         cp -R build/docs/sphinx/html latest
@@ -57,5 +58,10 @@ jobs:
 
     - name: commit and push docs
       run: |
-        git commit -m "update latest and if tag $(EvoAI_VERSION) docs"
-        git push origin HEAD:gh-pages --force
+        status=$(git status --porcelain | grep '^ [MADRC]' | awk '{print $2}')
+        if [ -n "$status"];then
+            git commit -m "update latest and if tag $(EvoAI_VERSION) docs"
+            git push origin HEAD:gh-pages --force
+        else
+            echo "There is no need to update as there are no changes"
+        fi

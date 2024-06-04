@@ -1,6 +1,6 @@
 ![EvoAI](docs/logo/EvoAILogo.png "EvoAI Logo")
 
- ![ci](https://github.com/cristianglezm/EvoAI/actions/workflows/ci.yml/badge.svg) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+ ![ci](https://github.com/cristianglezm/EvoAI/actions/workflows/ci.yml/badge.svg) [![build-docs](https://github.com/cristianglezm/EvoAI/actions/workflows/docs.yml/badge.svg?branch=master)](https://cristianglezm.github.io/EvoAI/latest/index.html) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 EvoAI is a C++17 library to evolve and / or train **small** Neural Networks.
 

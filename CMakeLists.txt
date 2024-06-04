@@ -48,14 +48,14 @@ else()
 endif(NOT EvoAI_BUILD_STATIC)
 target_include_directories(EvoAI PUBLIC
                             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+                            "$<INSTALL_INTERFACE:include>"
                             )
 target_sources(EvoAI
     PRIVATE
         ${EvoAI_SOURCES}
     PUBLIC
         "$<BUILD_INTERFACE:${EvoAI_INCLUDES}>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+        "$<INSTALL_INTERFACE:include>"
 )
 
 SET(EvoAI_CONFIG_HPP_INPUT "${CMAKE_SOURCE_DIR}/include/EvoAI/Config.hpp")
@@ -79,8 +79,10 @@ include(CMakeFindDependencyMacro)
 # JsonBox
 find_dependency(JsonBox REQUIRED)
 if(JsonBox_FOUND)
-    target_include_directories(EvoAI PRIVATE ${JsonBox_INCLUDE_DIR})
-    target_link_libraries(EvoAI PRIVATE ${JsonBox_LIBRARY})
+    target_include_directories(EvoAI PUBLIC 
+        "$<BUILD_INTERFACE:${JsonBox_INCLUDE_DIR}>" 
+        "$<INSTALL_INTERFACE:include>")
+    target_link_libraries(EvoAI PUBLIC ${JsonBox_LIBRARY})
 endif(JsonBox_FOUND)
 
 if(EvoAI_BUILD_EXAMPLES OR EvoAI_BUILD_TOOLS)
