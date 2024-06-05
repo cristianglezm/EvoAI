@@ -22,7 +22,7 @@ namespace EvoAI{
      * @warning You can't use Population<T*>(JsonBox::Object) or Population<T*>(const std::string& filename) to load a Population.json
      *          also you can't use Population<T*>(std::size_t size, Args...args)
      * @brief Population<T> is an utility class that allows to evolve a population easily.
-     * @tparam T
+     * @tparam T a class fulfilling meta::is_populable_v<T>
      * @details
      *   T needs to fulfill these conditions: <br />
      *      T has a member function JsonBox::Value toJson() const noexcept <br />
@@ -35,7 +35,7 @@ namespace EvoAI{
      *      Population<T*>::addMember will take a T* <br />
      *   If Population<T> it will act as an owner, what does this means: <br />
      *      Population<T>::addMember will take a T&& <br />
-     * @author Cristian Glez <Cristian.glez.m@gmail.com>
+     * @author Cristian Gonzalez <Cristian.glez.m@gmail.com>
      */
     template<typename T>
     class EvoAI_API Population{
@@ -68,6 +68,16 @@ namespace EvoAI{
              * @brief basic constructor
              */
             Population();
+            /**
+             * @brief copy constructor is deleted.
+             * @param other Population<T>
+             */
+            Population(const Population<T>& other) noexcept = delete;
+            /**
+             * @brief move constructor
+             * @param other Population<T>
+             */
+            Population(Population<T>&& other) noexcept = default;
             /**
              * @brief creates a population of size with provided function, if using T* remember to avoid memory re-allocations.
              * @param fn std::function<T()>&& generator function
@@ -350,6 +360,9 @@ namespace EvoAI{
              */
             void writeToFile(const std::string& filename);
             ~Population() = default;
+        public:
+            Population<T>& operator=(const Population<T>& rhs) noexcept = delete;
+            Population<T>& operator=(Population<T>&& rhs) noexcept = default;
         private:
             std::size_t getNewSpeciesID() noexcept;
             std::size_t getNewMemberID() noexcept;

@@ -4,11 +4,6 @@
 
 * Documentation
     + do docs/README.md todo
-
-* add github actions
-    + ci
-    + docs - remove lateral empty navs?
-    + cd - release
 * add conan? vcpkg?
 
 * refactor Neural Network? [use ggml?]

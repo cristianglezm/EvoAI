@@ -15,7 +15,7 @@
 namespace EvoAI{
     /**
      * @class Species
-     * @author Cristian Glez <Cristian.glez.m@gmail.com>
+     * @author Cristian Gonzalez <Cristian.glez.m@gmail.com>
      * @brief Class that represents a Species
      * @details
      *   T needs to fulfill these conditions: <br />

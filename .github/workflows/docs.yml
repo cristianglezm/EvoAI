@@ -37,7 +37,7 @@ jobs:
 
     - name: prepare git config
       run: |
-        git config user.name ${{ secrets.GITUSER }}
+        git config user.name "${{ secrets.GITUSER }}"
         git config user.email ${{ secrets.EMAIL }}
 
     - name: update latest docs

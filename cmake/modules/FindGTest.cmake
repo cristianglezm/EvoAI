@@ -22,9 +22,9 @@ set(FIND_GTest_PATHS
 if(GTest_ROOT)
     if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	SET(GTest_INCLUDE_DIR "${GTest_ROOT}/include")
-	SET(GTest_LIBRARIES "${GTest_ROOT}/lib/libgtest.lib" "${GTest_ROOT}/lib/libgtest_main.lib")
-        SET(GTest_LIBRARY "${GTest_ROOT}/lib/libgtest.lib")
-	SET(GTest_FOUND 1)
+	SET(GTest_LIBRARIES "${GTest_ROOT}/lib/gtest.lib" "${GTest_ROOT}/lib/gtest_main.lib")
+        SET(GTest_LIBRARY "${GTest_ROOT}/lib/gtest.lib")
+        SET(GTest_FOUND 1)
     else()
 	SET(GTest_INCLUDE_DIR "${GTest_ROOT}/include")
 	SET(GTest_LIBRARIES "${GTest_ROOT}/lib/libgtest.a" "${GTest_ROOT}/lib/libgtest_main.a")
@@ -38,7 +38,7 @@ find_path(GTest_INCLUDE_DIR gtest/gtest.h
           PATHS ${FIND_GTest_PATHS})
 
 find_library(GTest_LIBRARY
-		NAMES GTest gtest.a gtest_main.a gtest.lib gtest_main.lib
+		NAMES GTest gtest gtest_main
 		PATH_SUFFIXES lib
 		PATHS ${FIND_GTest_PATHS})
 

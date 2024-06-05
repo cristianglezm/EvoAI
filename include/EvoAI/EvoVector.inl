@@ -7,7 +7,7 @@ namespace EvoAI{
     , m_fitness(0.0){
         m_dna.reserve(size);
         for(auto i=0u;i<size;++i){
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(_MSC_VER) || __APPLE__
             if constexpr(std::is_same_v<T, char>){
                 m_dna.emplace_back(static_cast<char>(randomGen().random<int>(-127, 127)));
             }else if constexpr(std::is_same_v<T, unsigned char>){
