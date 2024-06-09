@@ -5659,7 +5659,7 @@ document.write(`
  If Population&lt;T*&gt; it will act as an observer, what does this means: <a class="reference internal" href="#class_evo_a_i_1_1_population_1a7d47cbe2348a948595717d5c1b4f1378"><span class="std std-ref">Population&lt;T*&gt;::addMember</span></a><p>will take a T*</p>
 <p>If Population&lt;T&gt; it will act as an owner, what does this means:</p>
 <a class="reference internal" href="#class_evo_a_i_1_1_population_1a7d47cbe2348a948595717d5c1b4f1378"><span class="std std-ref">Population&lt;T&gt;::addMember</span></a> will take a T&amp;&amp; <dl class="simple">
-<dt><strong>Author</strong></dt><dd><p>Cristian Glez <a class="reference external" href="mailto:Cristian&#46;glez&#46;m&#37;&#52;&#48;gmail&#46;com">Cristian<span>&#46;</span>glez<span>&#46;</span>m<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<dt><strong>Author</strong></dt><dd><p>Cristian Gonzalez <a class="reference external" href="mailto:Cristian&#46;glez&#46;m&#37;&#52;&#48;gmail&#46;com">Cristian<span>&#46;</span>glez<span>&#46;</span>m<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 </dl>
 </p>
@@ -5669,7 +5669,7 @@ document.write(`
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>T</strong> – </p>
+<dd class="field-odd"><p><strong>T</strong> – a class fulfilling meta::is_populable_v&lt;T&gt;</p>
 </dd>
 </dl>
 <div class="breathe-sectiondef docutils container">
@@ -5732,6 +5732,28 @@ document.write(`
 <dt class="sig sig-object cpp" id="_CPPv4N5EvoAI10Population10PopulationEv">
 <span id="_CPPv3N5EvoAI10Population10PopulationEv"></span><span id="_CPPv2N5EvoAI10Population10PopulationEv"></span><span id="EvoAI::Population::Population"></span><span class="target" id="class_evo_a_i_1_1_population_1a3d5544f6dec6d251696ffd27c950da69"></span><span class="sig-name descname"><span class="n"><span class="pre">Population</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5EvoAI10Population10PopulationEv" title="Link to this definition">#</a><br /></dt>
 <dd><p>basic constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI10Population10PopulationERK10PopulationI1TE">
+<span id="_CPPv3N5EvoAI10Population10PopulationERK10PopulationI1TE"></span><span id="_CPPv2N5EvoAI10Population10PopulationERK10PopulationI1TE"></span><span id="EvoAI::Population::Population__Population:T:CR"></span><span class="target" id="class_evo_a_i_1_1_population_1aaf80ea70dc9afae7365b75935496bef6"></span><span class="sig-name descname"><span class="n"><span class="pre">Population</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N5EvoAI10Population10PopulationERK10PopulationI1TE" title="EvoAI::Population::Population"><span class="n"><span class="pre">Population</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N5EvoAI10Population10PopulationERK10PopulationI1TE" title="Link to this definition">#</a><br /></dt>
+<dd><p>copy constructor is deleted. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – Population&lt;T&gt; </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI10Population10PopulationERR10PopulationI1TE">
+<span id="_CPPv3N5EvoAI10Population10PopulationERR10PopulationI1TE"></span><span id="_CPPv2N5EvoAI10Population10PopulationERR10PopulationI1TE"></span><span id="EvoAI::Population::Population__Population:T:RR"></span><span class="target" id="class_evo_a_i_1_1_population_1aa472f4654764708c039da7c3a0b024ee"></span><span class="sig-name descname"><span class="n"><span class="pre">Population</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5EvoAI10Population10PopulationERR10PopulationI1TE" title="EvoAI::Population::Population"><span class="n"><span class="pre">Population</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N5EvoAI10Population10PopulationERR10PopulationI1TE" title="Link to this definition">#</a><br /></dt>
+<dd><p>move constructor </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – Population&lt;T&gt; </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="cpp function">
@@ -6262,6 +6284,16 @@ document.write(`
 <dd></dd></dl>
 
 <dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI10PopulationaSERK10PopulationI1TE">
+<span id="_CPPv3N5EvoAI10PopulationaSERK10PopulationI1TE"></span><span id="_CPPv2N5EvoAI10PopulationaSERK10PopulationI1TE"></span><span id="EvoAI::Population::assign-operator__Population:T:CR"></span><span class="target" id="class_evo_a_i_1_1_population_1afa3f974f883b1013f7ac7938aa4edbbb"></span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><span class="n"><span class="pre">Population</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><span class="n"><span class="pre">Population</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rhs</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N5EvoAI10PopulationaSERK10PopulationI1TE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI10PopulationaSERR10PopulationI1TE">
+<span id="_CPPv3N5EvoAI10PopulationaSERR10PopulationI1TE"></span><span id="_CPPv2N5EvoAI10PopulationaSERR10PopulationI1TE"></span><span id="EvoAI::Population::assign-operator__Population:T:RR"></span><span class="target" id="class_evo_a_i_1_1_population_1a615a756a4b2ee38bdf876d42fac40ebb"></span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><span class="n"><span class="pre">Population</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><span class="n"><span class="pre">Population</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rhs</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N5EvoAI10PopulationaSERR10PopulationI1TE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4I0EN5EvoAI10Population26regrowPopulationFromElitesEN10PopulationI1TE16result_or_void_tERR13SelectionAlgobddd">
 <span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelectionAlgo</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_evo_a_i_1_1_population_1ac0e34907fd706c7e52ab5e17f7fd644a"></span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><span class="n"><span class="pre">Population</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">result_or_void_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">regrowPopulationFromElites</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN5EvoAI10Population26regrowPopulationFromElitesEN10PopulationI1TE16result_or_void_tERR13SelectionAlgobddd" title="EvoAI::Population::regrowPopulationFromElites::SelectionAlgo"><span class="n"><span class="pre">SelectionAlgo</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">sa</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">interSpecies</span></span>, <span class="p"><span class="pre">[[</span></span><span class="pre">maybe_unused</span><span class="p"><span class="pre">]]</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c1</span></span>, <span class="p"><span class="pre">[[</span></span><span class="pre">maybe_unused</span><span class="p"><span class="pre">]]</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c2</span></span>, <span class="p"><span class="pre">[[</span></span><span class="pre">maybe_unused</span><span class="p"><span class="pre">]]</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c3</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0EN5EvoAI10Population26regrowPopulationFromElitesEN10PopulationI1TE16result_or_void_tERR13SelectionAlgobddd" title="Link to this definition">#</a><br /></dt>
 <dd></dd></dl>
@@ -6764,7 +6796,7 @@ document.write(`
 <p>Species&lt;T&gt;::remove(std::size_t id) will take an id by value</p>
 <p>Species&lt;T&gt;::has(std::size_t id) will take an id by value</p>
 <dl class="simple">
-<dt><strong>Author</strong></dt><dd><p>Cristian Glez <a class="reference external" href="mailto:Cristian&#46;glez&#46;m&#37;&#52;&#48;gmail&#46;com">Cristian<span>&#46;</span>glez<span>&#46;</span>m<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<dt><strong>Author</strong></dt><dd><p>Cristian Gonzalez <a class="reference external" href="mailto:Cristian&#46;glez&#46;m&#37;&#52;&#48;gmail&#46;com">Cristian<span>&#46;</span>glez<span>&#46;</span>m<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 </dl>
 </p>
@@ -11577,6 +11609,8 @@ backward(const std::vector&lt;double&gt;&amp; expectedOutputs, const std::vector
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI10Population16result_or_void_tE"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::result_or_void_t</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI10Population21species_ids_or_void_tE"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::species_ids_or_void_t</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI10Population10PopulationEv"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::Population()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI10Population10PopulationERK10PopulationI1TE"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::Population()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI10Population10PopulationERR10PopulationI1TE"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::Population()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI10Population10PopulationERRNSt8functionIF1TvEEENSt6size_tEddd"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::Population()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4IDpEN5EvoAI10Population10PopulationENSt6size_tEdddDpRR4Args"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::Population()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI10Population10PopulationEN7JsonBox6ObjectE"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::Population()</span></code></a></li>
@@ -11615,6 +11649,8 @@ backward(const std::vector&lt;double&gt;&amp; expectedOutputs, const std::vector
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK5EvoAI10Population6toJsonEv"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::toJson()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI10Population11writeToFileERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::writeToFile()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI10PopulationD0Ev"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::~Population()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI10PopulationaSERK10PopulationI1TE"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::operator=()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI10PopulationaSERR10PopulationI1TE"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::operator=()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN5EvoAI10Population26regrowPopulationFromElitesEN10PopulationI1TE16result_or_void_tERR13SelectionAlgobddd"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::regrowPopulationFromElites()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI10Population11make_resultEv"><code class="docutils literal notranslate"><span class="pre">EvoAI::Population::make_result()</span></code></a></li>
 </ul>
