@@ -15,8 +15,8 @@
 namespace EvoAI{
     /**
      * @class Genome
-     * @author Cristian Glez <Cristian.glez.m@gmail.com>
-     * @brief A genome is a description of a NeuralNetwork.
+     * @author Cristian Gonzalez <Cristian.glez.m@gmail.com>
+     * @brief A genome is a description of a EvoAI::NeuralNetwork
      */
     class EvoAI_API Genome final{
         public:
@@ -73,11 +73,11 @@ namespace EvoAI{
             Genome(std::size_t numInputs, std::size_t numOutputs, bool canBeRecursive = false, bool CPPN = false) noexcept;
             /**
              * @brief builds a Genome that is feedforward connected from inputs to hidden to outputs.
-             * @param numInputs
-             * @param numHidden 
-             * @param numOutputs
-             * @param canBeRecursive
-             * @param CPPN with this true the genome will have random activation functions and will be able to change activations with Genome::mutate
+             * @param numInputs std::size_t
+             * @param numHidden std::size_t
+             * @param numOutputs std::size_t
+             * @param canBeRecursive bool
+             * @param CPPN bool with this true the genome will have random activations and will be able to change activations with Genome::mutate
              */
             Genome(std::size_t numInputs, std::size_t numHidden, std::size_t numOutputs, bool canBeRecursive = false, bool CPPN = false) noexcept;
             /**
@@ -132,7 +132,7 @@ namespace EvoAI{
             const std::vector<ConnectionGene>& getConnectionChromosomes() const noexcept;
             /**
              * @brief gets the number of nodes from a layer.
-             * @param layerID count the nodes from that layer.
+             * @param layerID std::size_t count the nodes from that layer.
              * @return std::size_t number of nodes
              */
             std::size_t getNumOfNodes(std::size_t layerID) const noexcept;
@@ -143,7 +143,6 @@ namespace EvoAI{
             JsonBox::Value toJson() const noexcept;
             /**
              * @brief writes the genome to a json file.
-             *      it can be loaded again with the constructor.
              * @code
              *      EvoAI::Genome g(jsonfile);
              * @endcode
@@ -294,27 +293,27 @@ namespace EvoAI{
                                     double c3 = 1.0) noexcept;
             /**
              * @brief It returns a matchingNodeGenes of matching NodeGenes between g1 and g2.
-             * @param g1 Genome
-             * @param g2 Genome
+             * @param g1 const Genome&
+             * @param g2 const Genome&
              * @return matchingNodeGenes
              */
             static matchingNodeGenes getMatchingNodeGenes(const Genome& g1, const Genome& g2) noexcept;
             /**
              * @brief It returns a MatchingConnectionGenes of matching ConnectionGenes between g1 and g2.
-             * @param g1 Genome
-             * @param g2 Genome
+             * @param g1 const Genome&
+             * @param g2 const Genome&
              * @return matchingConnectionGenes
              */
             static matchingConnectionGenes getMatchingConnectionGenes(const Genome& g1, const Genome& g2) noexcept;
             /**
              * @brief It returns a matchingChromosomes of matching NodeGene, ConnectionGene between g1 and g2.
-             * @param g1 Genome
-             * @param g2 Genome
+             * @param g1 const Genome&
+             * @param g2 const Genome&
              * @return matchingChromosomes
              */
             static matchingChromosomes getMatchingChromosomes(const Genome& g1, const Genome& g2) noexcept;
             /**
-             * @brief It returns a excessGenes of g1 and g2
+             * @brief It returns the excessGenes between g1 and g2
              * @param g1 const Genome&
              * @param g2 const Genome&
              * @param hint disjointGenes*
@@ -322,7 +321,7 @@ namespace EvoAI{
              */
             static excessGenes getExcessGenes(const Genome& g1, const Genome& g2, disjointGenes* hint = nullptr) noexcept;
             /**
-             * @brief It returns a disjointGenes of g1 and g2
+             * @brief It returns the disjointGenes between g1 and g2
              * @param g1 const Genome&
              * @param g2 const Genome&
              * @param hint matchingChromosomes*

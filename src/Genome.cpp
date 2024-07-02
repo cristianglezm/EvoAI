@@ -3,6 +3,7 @@
 
 #include <random>
 #include <algorithm>
+#include <optional>
 //#include <execution>
 #include <cassert>
 #include <future>
@@ -477,14 +478,17 @@ namespace EvoAI{
         return std::make_pair(getMatchingNodeGenes(g1, g2), getMatchingConnectionGenes(g1,g2));
     }
     Genome::excessGenes Genome::getExcessGenes(const Genome& g1, const Genome& g2, Genome::disjointGenes* hint) noexcept{
-        auto disjointsGen = [&](){
+        std::optional<Genome::disjointGenes> cpyDisjointsGen;
+        if(!hint){
+            cpyDisjointsGen.emplace(getDisjointGenes(g1, g2));
+        }
+        const auto& disjointsGen = [&](){
             if(hint){
                 return *hint;
             }else{
-                return getDisjointGenes(g1, g2);
+                return cpyDisjointsGen.value();
             }
         }();
-
         return std::make_pair(std::make_pair(Range<NodeGene>(disjointsGen.first.first.end, std::end(g1.nodeChromosomes)), 
                                                 Range<NodeGene>(disjointsGen.first.second.end, std::end(g2.nodeChromosomes))), 
                                 std::make_pair(Range<ConnectionGene>(disjointsGen.second.first.end, std::end(g1.connectionChromosomes)), 
@@ -494,11 +498,15 @@ namespace EvoAI{
         const Genome* g1Ptr = &g1;
         const Genome* g2Ptr = &g2;
 
-        auto mChromo = [&](){
+        std::optional<Genome::matchingChromosomes> cpyMChromo;
+        if(!hint){
+            cpyMChromo.emplace(getMatchingChromosomes(g1, g2));
+        }
+        const auto& mChromo = [&](){
             if(hint){
                 return *hint;
             }else{
-                return getMatchingChromosomes(g1, g2);
+                return cpyMChromo.value();
             }
         }();
 
