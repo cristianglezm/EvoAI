@@ -13,7 +13,7 @@ namespace EvoAI{
     /**
      * @brief Dataloader to process Dataset
      * @details
-     * Dataset needs to fulfill there requirements: <br />
+     * Dataset needs to fulfill these requirements: <br />
      * * const std::pair<std::vector<double>&, std::vector<double>&> operator()() noexcept;<br />
      * * std::size_t size() const noexcept;<br />
      * * std::size_t getBatchSize() const noexcept;<br />
