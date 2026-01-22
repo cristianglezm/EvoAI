@@ -23,7 +23,7 @@ namespace EvoAI{
             (*nn)[1][0][0].setWeight(1.0);
             (*nn)[1][0][0].setGradient(-1.0);
             (*nn)[1][0].setBiasWeight(0.0);
-            
+
             (*nn)[2][0].setBiasWeight(0.0);
             return nn;
         }
@@ -61,6 +61,24 @@ namespace EvoAI{
             std::cout << "after optim output: " << out[0] << std::endl; // show -60
             EXPECT_EQ(static_cast<int>(out[0]), -60);
             Optimizer<Adam, MultiStepLR> op2(optim.toJson().getObject(), nn->getParameters());
+            EXPECT_EQ(op2.toJson(), optim.toJson());
+        }
+        TEST(OptimizersTest, OptimizerWithMuon){
+            auto nn = makeNeuralNetworkWithGradients();
+            auto out = nn->forward({30.0});
+            nn->reset();
+            std::cout << "before optim (Muon) output: " << out[0] << std::endl; // should be 30
+            EXPECT_EQ(static_cast<int>(out[0]), 30);
+            Optimizer optim(1.0, 1, Muon(nn->getParameters(), false, 0.9, 0.99), Scheduler(MultiStepLR({1}, 0.1)));
+            optim.step(0);
+            out = nn->forward({30.0});
+            nn->reset();
+            std::cout << "after optim (Muon) output: " << out[0] << std::endl;
+            // We don't assert a precise integer value because Muon uses RMS scaling + momentum;
+            // assert that the output moved in the expected direction (negative)
+            EXPECT_LT(out[0], 0.0);
+            // Ensure JSON round-trip (serialize -> construct -> serialize)
+            Optimizer<Muon, MultiStepLR> op2(optim.toJson().getObject(), nn->getParameters());
             EXPECT_EQ(op2.toJson(), optim.toJson());
         }
     }

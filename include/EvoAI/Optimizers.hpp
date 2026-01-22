@@ -3,6 +3,7 @@
 
 #include <EvoAI/Optimizers/SGD.hpp>
 #include <EvoAI/Optimizers/Adam.hpp>
+#include <EvoAI/Optimizers/Muon.hpp>
 
 #include <EvoAI/Schedulers.hpp>
 #include <JsonBox.h>
