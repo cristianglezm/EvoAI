@@ -6,7 +6,9 @@
     + do docs/README.md todo
 * add conan? vcpkg?
 
-* refactor Neural Network? [use ggml?]
+* migrate SFML 2 to SFML 3
+* refactor NeuralNetwork name to SparseNetwork? NeatNetwork?
+    - make a new network type from Genome using ggml lib
 * AI algorithms
     * Graph
     * Decision Trees
