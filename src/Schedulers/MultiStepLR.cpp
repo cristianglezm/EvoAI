@@ -29,11 +29,11 @@ namespace EvoAI{
             return o;
         }
         double MultiStepLR::operator()(double lr, std::size_t epoch) const noexcept{
-            if(epoch == m_steps[m_counter]){
-                if(m_counter < m_steps.size()){
+            if(m_counter < m_steps.size()){
+                if(epoch == m_steps[m_counter]){
                     ++m_counter;
+                    return lr * m_gamma;
                 }
-                return lr * m_gamma;
             }
             return lr;
         }
