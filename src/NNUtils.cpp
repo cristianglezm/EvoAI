@@ -5,6 +5,10 @@ namespace EvoAI{
     std::unique_ptr<NeuralNetwork> createFeedForwardNN(const size_t& numInputs, const size_t& numHidden,
                                                          const std::vector<size_t>& numNeuronsPerHidden, std::size_t numOutputs,
                                                          double bias){
+        if(numHidden > 0 && numNeuronsPerHidden.size() < numHidden){
+            throw std::out_of_range("createFeedForwardNN: numNeuronsPerHidden.size() < numHidden");
+        }
+
         std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>(numInputs,numHidden, numNeuronsPerHidden, numOutputs, bias);
         auto initBiases = [&](NeuralNetwork& NN){
             for(auto i=0u;i<NN.size();++i){
@@ -25,13 +29,13 @@ namespace EvoAI{
             initBiases(*nn);
             return nn;
         }
-        // input to hidden layer
+        // input to first hidden layer
         for(auto i=0u;i<numInputs;++i){
             for(auto j=0u;j<numNeuronsPerHidden[0];++j){
                 nn->addConnection(Connection({0,i},{1,j}, randomGen().xavierInit(numInputs, numNeuronsPerHidden[0])));
             }
         }
-        //hidden layers to next hidden layer
+        // hidden layers to next hidden layer
         for(auto i=1u;i<numHidden;++i){
             for(auto j=0u;j<numNeuronsPerHidden[i-1];++j){
                 for(auto z=0u;z<numNeuronsPerHidden[i];++z){
@@ -40,66 +44,120 @@ namespace EvoAI{
             }
         }
         // last hidden layer to output
-        auto numLayers = nn->size();
-        for(auto i=0u;i<numNeuronsPerHidden.back();++i){
+        const auto lastHiddenSize = numNeuronsPerHidden.back();
+        for(auto i=0u;i<lastHiddenSize;++i){
             for(auto j=0u;j<numOutputs;++j){
-                nn->addConnection(Connection({numLayers-2,i},{numLayers-1,j}, randomGen().xavierInit(numNeuronsPerHidden[numLayers-2], numOutputs)));
+                nn->addConnection(Connection({nn->size()-2,i},{nn->size()-1,j}, randomGen().xavierInit(lastHiddenSize, numOutputs)));
             }
         }
         initBiases(*nn);
         return nn;
     }
-    std::unique_ptr<NeuralNetwork> createElmanNeuralNetwork(std::size_t numInputs, std::size_t numHidden, const std::vector<std::size_t>& numNeuronsPerHiddenLayer,
-                                                                std::size_t numOutputs, double bias){
+    std::unique_ptr<NeuralNetwork> createElmanNeuralNetwork(
+            std::size_t numInputs,
+            std::size_t numHidden,
+            const std::vector<std::size_t>& numNeuronsPerHiddenLayer,
+            std::size_t numOutputs,
+            double bias)
+    {
         if(numHidden == 0u){
             throw std::out_of_range("Elman Neural Network needs to have 1 hidden layer or more");
         }
+
         std::unique_ptr<NeuralNetwork> nn = std::make_unique<NeuralNetwork>();
-        nn->addLayer(NeuronLayer(numInputs,Neuron::Type::INPUT,bias));
-        for(auto i=0u;i<numHidden;++i){
-            nn->addLayer(NeuronLayer(numNeuronsPerHiddenLayer[i],Neuron::Type::CONTEXT,bias));
-            nn->addLayer(NeuronLayer(numNeuronsPerHiddenLayer[i],Neuron::Type::HIDDEN,bias));
+
+        // input layer
+        nn->addLayer(NeuronLayer(numInputs, Neuron::Type::INPUT, bias));
+
+        // context + hidden layers
+        for(std::size_t h = 0; h < numHidden; ++h){
+            nn->addLayer(NeuronLayer(numNeuronsPerHiddenLayer[h], Neuron::Type::CONTEXT, bias)); // layer = 1 + 2*h
+            nn->addLayer(NeuronLayer(numNeuronsPerHiddenLayer[h], Neuron::Type::HIDDEN,  bias)); // layer = 2 + 2*h
         }
-        nn->addLayer(NeuronLayer(numOutputs,Neuron::Type::OUTPUT,bias));
-        for(auto i=0u;i<numInputs;++i){
-            for(auto j=0u;j<numNeuronsPerHiddenLayer[0];++j){
-                nn->addConnection(Connection(Link(0,i),Link(2,j), randomGen().xavierInit(numInputs,numNeuronsPerHiddenLayer[0])));
+
+        // output layer
+        nn->addLayer(NeuronLayer(numOutputs, Neuron::Type::OUTPUT, bias));
+
+        // connect input -> first hidden
+        for(std::size_t i = 0; i < numInputs; ++i){
+            for(std::size_t j = 0; j < numNeuronsPerHiddenLayer[0]; ++j){
+                nn->addConnection(Connection(
+                    Link(0, i),
+                    Link(2, j),
+                    randomGen().xavierInit(numInputs, numNeuronsPerHiddenLayer[0])
+                ));
             }
         }
-        auto numContext = numHidden * 2;
-        auto nIndex = 0u;
-        for(auto i=2u;i<numContext;i+=2){
-            for(auto j=0u;j<numNeuronsPerHiddenLayer[nIndex];++j){
-                // save values to Context
-                nn->addConnection(Connection(Link(i,j),Link(i-1,j),1.0));
-                for(auto k=0u;k<numNeuronsPerHiddenLayer[nIndex];++k){ 
-                    // connect forward
-                    for(auto z=0u;z<numNeuronsPerHiddenLayer[nIndex+1];++z){
-                        nn->addConnection(Connection(Link(i,j),Link(i+2,z), randomGen().xavierInit(numInputs, numNeuronsPerHiddenLayer[i])));
-                    }
-                    // pass Values from Context forward
-                    nn->addConnection(Connection(Link(i-1,j),Link(i,k), randomGen().xavierInit(numInputs, numNeuronsPerHiddenLayer[nIndex])));
+
+        // connect hidden layers + context loops
+        for(std::size_t h = 0; h < numHidden - 1; ++h){
+            std::size_t ctx = 1 + 2*h;
+            std::size_t hid = 2 + 2*h;
+            std::size_t next_hid = 2 + 2*(h + 1);
+
+            for(std::size_t j = 0; j < numNeuronsPerHiddenLayer[h]; ++j){
+
+                // save hidden -> context
+                nn->addConnection(Connection(Link(hid, j), Link(ctx, j), 1.0));
+
+                // connect hidden(h) -> hidden(h+1)
+                for(std::size_t z = 0; z < numNeuronsPerHiddenLayer[h+1]; ++z){
+                    nn->addConnection(Connection(
+                        Link(hid, j),
+                        Link(next_hid, z),
+                        randomGen().xavierInit(numNeuronsPerHiddenLayer[h], numNeuronsPerHiddenLayer[h+1])
+                    ));
+                }
+
+                // pass context forward
+                for(std::size_t k = 0; k < numNeuronsPerHiddenLayer[h]; ++k){
+                    nn->addConnection(Connection(
+                        Link(ctx, j),
+                        Link(hid, k),
+                        randomGen().xavierInit(numNeuronsPerHiddenLayer[h], numNeuronsPerHiddenLayer[h])
+                    ));
                 }
             }
-            ++nIndex;
         }
-        for(auto j=0u;j<numNeuronsPerHiddenLayer[numHidden-1];++j){
-            // save values to Context
-            nn->addConnection(Connection(Link(numContext,j), Link(numContext-1,j),1.0));
-            // connect last hidden layer to output layer
-            for(auto k=0u;k<numOutputs;++k){
-                nn->addConnection(Connection(Link(numContext,j), Link(numContext+1,k), randomGen().xavierInit(numNeuronsPerHiddenLayer[numHidden-1], numOutputs)));
-            }
-            for(auto i=0u;i<numNeuronsPerHiddenLayer[numHidden-1];++i){
-                // pass Values from Context
-                nn->addConnection(Connection(Link(numContext-1,j),Link(numContext,i), randomGen().xavierInit(numNeuronsPerHiddenLayer[numHidden-1], numOutputs)));
+
+        // last hidden -> output + last context loop
+        {
+            std::size_t h = numHidden - 1;
+            std::size_t ctx = 1 + 2*h;
+            std::size_t hid = 2 + 2*h;
+            std::size_t out = 2 + 2*numHidden;
+
+            for(std::size_t j = 0; j < numNeuronsPerHiddenLayer[h]; ++j){
+
+                // save hidden -> context
+                nn->addConnection(Connection(Link(hid, j), Link(ctx, j), 1.0));
+
+                // hidden -> output
+                for(std::size_t k = 0; k < numOutputs; ++k){
+                    nn->addConnection(Connection(
+                        Link(hid, j),
+                        Link(out, k),
+                        randomGen().xavierInit(numNeuronsPerHiddenLayer[h], numOutputs)
+                    ));
+                }
+
+                // context -> hidden
+                for(std::size_t i = 0; i < numNeuronsPerHiddenLayer[h]; ++i){
+                    nn->addConnection(Connection(
+                        Link(ctx, j),
+                        Link(hid, i),
+                        randomGen().xavierInit(numNeuronsPerHiddenLayer[h], numNeuronsPerHiddenLayer[h])
+                    ));
+                }
             }
         }
+
+        // initialize biases
         auto initBiases = [&](NeuralNetwork& NN){
-            for(auto i=0u;i<NN.size();++i){
+            for(std::size_t i = 0; i < NN.size(); ++i){
                 auto& l = NN[i];
                 auto size = l.size();
-                for(auto& n:l.getNeurons()){
+                for(auto& n : l.getNeurons()){
                     n.setBiasWeight(randomGen().xavierInit(size, n.size()));
                 }
             }

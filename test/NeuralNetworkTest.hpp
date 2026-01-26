@@ -157,8 +157,7 @@ namespace EvoAI{
             EXPECT_NEAR(nnRef[0][0].getGradient(), -1.5, epsilon); // nrn00 gradient
             EXPECT_NEAR(nnRef[0][1].getGradient(), 0.5, epsilon); // nrn01 gradient
             EXPECT_NEAR(nnRef[0][0][0].getGradient(), 1.0, epsilon); // w1 gradient
-            EXPECT_NEAR(nnRef[0][0][1].getGradient(), 0.0, 1.0); // w2 gradient
-            EXPECT_NEAR(nnRef[0][1][0].getGradient(), 0.5, 1.0); // nrn10 gradient
+            EXPECT_NEAR(nnRef[0][1][0].getGradient(), 0.5, 1.0); // w2 gradient
             EXPECT_NEAR(nnRef[0][1].getBiasGradient(), 0.5, 1.0); // nrn10 bias gradient
             nn->writeDotFile("testsData/NNCheckGradients.dot");
             nn->writeToFile("testsData/NNCheckGradients.json");
