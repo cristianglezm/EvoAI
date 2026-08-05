@@ -184,7 +184,7 @@ namespace EvoAI{
          *         Must provide canTraverse(from, edge, to) -> bool; see DefaultTraversalPolicy.
          */
         template<typename GraphType, typename Policy = DefaultTraversalPolicy<GraphType>>
-        struct EvoAI_API DFS{
+        struct DFS{
             using Node_t = typename GraphType::Node_t;
             using Edge_t = typename GraphType::Edge_t;
             static_assert(meta::has_can_traverse_v<Policy, Node_t, Edge_t>,
@@ -216,7 +216,7 @@ namespace EvoAI{
          *         Must provide canTraverse(from, edge, to) -> bool; see DefaultTraversalPolicy.
          */
         template<typename GraphType, typename Policy = DefaultTraversalPolicy<GraphType>>
-        struct EvoAI_API BFS{
+        struct BFS{
             using Node_t = typename GraphType::Node_t;
             using Edge_t = typename GraphType::Edge_t;
             static_assert(meta::has_can_traverse_v<Policy, Node_t, Edge_t>,
@@ -249,7 +249,7 @@ namespace EvoAI{
          *         heuristic(from, to) -> double; see DefaultTraversalPolicy.
          */
         template<typename GraphType, typename Policy = DefaultTraversalPolicy<GraphType>>
-        struct EvoAI_API GBFS{
+        struct GBFS{
             using Node_t = typename GraphType::Node_t;
             using Edge_t = typename GraphType::Edge_t;
             static_assert(meta::has_can_traverse_v<Policy, Node_t, Edge_t>,
@@ -286,7 +286,7 @@ namespace EvoAI{
          *         and heuristic(from, to) -> double; see DefaultTraversalPolicy.
          */
         template<typename GraphType, typename Policy = DefaultTraversalPolicy<GraphType>>
-        struct EvoAI_API AStar{
+        struct AStar{
             using Node_t = typename GraphType::Node_t;
             using Edge_t = typename GraphType::Edge_t;
             static_assert(meta::has_can_traverse_v<Policy, Node_t, Edge_t>,
