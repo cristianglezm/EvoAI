@@ -9,7 +9,7 @@ In this example we will build IrisClassification.
 DataSet
 -------
 
-we will create a Dataset to load the data and labels, IrisDataset will need to fulfill :func:`meta::is_a_dataset_v\<IrisDataset\><EvoAI::meta::is_a_dataset_v>`
+we will create a Dataset to load the data and labels, IrisDataset will need to fulfill :var:`meta::is_a_dataset_v\<IrisDataset\><EvoAI::meta::is_a_dataset_v>`
 which just asserts that ``IrisDataset`` needs to have the following methods:
 
 .. code-block:: cpp

@@ -44,6 +44,7 @@ extensions = [
 ]
 
 templates_path = ['_templates']
+html_static_path = ['_static']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 highlight_language = 'cpp'
@@ -80,6 +81,7 @@ html_theme_options = {
 
 html_baseurl = 'https://cristianglezm.github.io/EvoAI/'
 html_logo = '@CMAKE_CURRENT_SOURCE_DIR@/logo/EvoAILogo.png'
+html_css_files = ['custom.css']
 github_url = 'https://github.com/cristianglezm/EvoAI'
 
 # -- Breathe configuration -------------------------------------------------

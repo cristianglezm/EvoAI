@@ -138,7 +138,7 @@ namespace EvoAI{
             template<typename...Args>
             Guard(Args&&...args) noexcept
             : mtx()
-            , value((std::forward<Args>(args), ...)){}
+            , value(std::forward<Args>(args)...){}
             /**
              * @brief visit the protected data
              * @tparam Fn function

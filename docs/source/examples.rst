@@ -62,3 +62,4 @@ more complete examples are at:
    CellSim <examples/CellSim>
    NumClassifier <examples/NumClassifier>
    XOR <examples/XOR>
+   Maze <examples/Maze>

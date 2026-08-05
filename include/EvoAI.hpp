@@ -19,5 +19,9 @@
 #include "EvoAI/DataLoader.hpp"
 #include "EvoAI/DataSet.hpp"
 #include "EvoAI/EvoVector.hpp"
+#include "EvoAI/Graph.hpp"
+#include "EvoAI/LatticeGraph.hpp"
+#include "EvoAI/PathFindingAlgorithms.hpp"
+#include "EvoAI/MazeAlgorithms.hpp"
 
 #endif // EVOAI_HPP

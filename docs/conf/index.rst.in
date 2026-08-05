@@ -11,8 +11,8 @@ Features
 --------
 
 - A :class:`Genome<EvoAI::Genome>` to use NEAT and HyperNEAT algorithms to evolve :class:`Neural Networks<EvoAI::NeuralNetwork>` .
-- A Population(with speciation) to evolve your own :class:`Genomes<EvoAI::Genome>` , it only needs to fulfill :func:`meta::is_populable_v\<MyClass\><EvoAI::meta::is_populable_v>`
-- Common :class:`Selection Algorithms<EvoAI::SelectionAlgorithms>` and optimizers (:class:`SGD<EvoAI::SGD>` and :class:`Adam<EvoAI::Adam>`).
+- A Population(with speciation) to evolve your own :class:`Genomes<EvoAI::Genome>` , it only needs to fulfill :var:`meta::is_populable_v\<MyClass\><EvoAI::meta::is_populable_v>`
+- Common :any:`Selection Algorithms<EvoAI::SelectionAlgorithms>` and optimizers (:class:`SGD<EvoAI::SGD>` and :class:`Adam<EvoAI::Adam>`).
 - Train neural networks using backpropagation, enabling them to learn from labeled datasets.
 
 .. toctree::

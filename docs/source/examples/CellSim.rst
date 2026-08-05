@@ -12,7 +12,7 @@ is not the owner of the data, you use the observer Population when you give it a
 Cell
 -----
 
-The Cell class needs to fulfill :func:`meta::is_populable_v\<Cell\><EvoAI::meta::is_populable_v>` to be able to use it in :class:`Population<EvoAI::Population>`
+The Cell class needs to fulfill :var:`meta::is_populable_v\<Cell\><EvoAI::meta::is_populable_v>` to be able to use it in :class:`Population<EvoAI::Population>`
 ``reproduce`` and ``distance`` are static methods.
 
 The ``Cell`` also needs to have a ``constructor`` that takes a :class:`Genome<EvoAI::Genome>` and 

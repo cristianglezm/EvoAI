@@ -10,3 +10,4 @@ Here are the examples using EvoAI.
 
 [XOR](XOR) example with NEAT, HyperNEAT and training.
 
+[Maze](Maze) example using Graph

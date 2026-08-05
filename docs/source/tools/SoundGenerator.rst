@@ -70,7 +70,7 @@ License
 midifile
 ^^^^^^^^^^
 
-.. code-block:: license
+.. code-block:: text
 
         Copyright (c) 1999-2023, Craig Stuart Sapp
         All rights reserved.
