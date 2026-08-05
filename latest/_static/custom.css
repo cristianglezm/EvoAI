@@ -1,6 +1,0 @@
-/* Custom theme tweaks for the EvoAI docs (pydata-sphinx-theme). */
-@media (min-width: 960px) {
-    .bd-sidebar-primary {
-        width: 16rem;
-    }
-}
