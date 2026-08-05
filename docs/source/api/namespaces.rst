@@ -6,7 +6,7 @@ EvoAI
 
 .. doxygennamespace:: EvoAI
    :project: EvoAI
-   :members:
+   :content-only:
 
 Activations
 ------------
@@ -36,4 +36,16 @@ Meta
 ------
 
 .. doxygennamespace:: EvoAI::meta
+   :project: EvoAI
+
+PathFindingAlgorithms
+----------------------
+
+.. doxygennamespace:: EvoAI::PathFindingAlgorithms
+   :project: EvoAI
+
+MazeAlgorithms
+----------------
+
+.. doxygennamespace:: EvoAI::MazeAlgorithms
    :project: EvoAI

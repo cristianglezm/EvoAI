@@ -9,7 +9,7 @@ In this example we will train a number classifier.
 NumberClassDataset
 ------------------
 
-we will create a Dataset to generate the data and labels, NumberClassDataset will need to fulfill :func:`meta::is_a_dataset_v\<NumberClassDataset\><EvoAI::meta::is_a_dataset_v>`
+we will create a Dataset to generate the data and labels, NumberClassDataset will need to fulfill :var:`meta::is_a_dataset_v\<NumberClassDataset\><EvoAI::meta::is_a_dataset_v>`
 which just asserts that ``NumberClassDataset`` is a :class:`Dataset<EvoAI::Dataset>`
 
 .. code-block:: cpp

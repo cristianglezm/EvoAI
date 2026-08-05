@@ -52,6 +52,11 @@ if(SPHINX_FOUND)
 	add_custom_target(copy_versions
 			COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/conf/versions.json" "${SPHINX_HTML_DIR}/_static/versions.json"
 			COMMENT "copying versions.json files..")
+	add_custom_target(copy_static
+			COMMAND ${CMAKE_COMMAND} -E make_directory "${BINARY_BUILD_DIR}/_static"
+			COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/_static" "${BINARY_BUILD_DIR}/_static"
+			COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/logo/EvoAILogo.png" "${BINARY_BUILD_DIR}/_static/EvoAILogo.png"
+			COMMENT "copying logo and custom static assets into Sphinx static dir..")
 	add_custom_target(docs ALL
 			COMMAND ${SPHINX_EXECUTABLE} -b html
 #	        -c "${BINARY_BUILD_DIR}"
@@ -59,7 +64,7 @@ if(SPHINX_FOUND)
 			"${BINARY_BUILD_DIR}"
 			"${SPHINX_HTML_DIR}"
 		COMMENT "Building HTML documentation with Sphinx")
-	add_dependencies(docs copy_rsts copy_versions doxygen_docs)
+	add_dependencies(docs copy_rsts copy_versions copy_static doxygen_docs)
 ELSE(SPHINX_FOUND)
 	message("Using doxygen html, Sphinx needs to be installed to generate the documentation")
 endif(SPHINX_FOUND)

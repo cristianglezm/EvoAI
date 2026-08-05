@@ -247,6 +247,111 @@ namespace EvoAI::meta{
     static constexpr bool has_shuffle_v = estd::is_detected<has_shuffle_t, T>::value;
     template<class T>
     static constexpr bool is_a_dataset_v = has_empty_operator_v<T> && has_size_v<T> && has_get_batch_size_v<T> && has_shuffle_v<T>;
+    /**
+     * @brief Node has .index
+     */
+    template<class T>
+    using node_index_t = decltype(std::declval<T>().index);
+    /**
+     * @brief Node has .x
+     */
+    template<class T>
+    using has_x_t = decltype(std::declval<T>().x);
+    template<class T>
+    constexpr bool has_x_v = estd::is_detected<has_x_t, T>::value;
+    /**
+     * @brief Node has .y
+     */
+    template<class T>
+    using has_y_t = decltype(std::declval<T>().y);
+    template<class T>
+    constexpr bool has_y_v = estd::is_detected<has_y_t, T>::value;
+    /**
+     * @brief Node has .blocked
+     */
+    template<class T>
+    using has_blocked_t = decltype(std::declval<T>().blocked);
+    template<class T>
+    constexpr bool has_blocked_v = estd::is_detected<has_blocked_t, T>::value;
+    /**
+	 * @brief A node for Graph must have these requirements:
+	 * @details
+	 *		T has a .index
+	 *      T is json serializable
+	 *  	T is json deserializable
+     */
+    template<class T>
+    constexpr bool is_a_graph_node_v =
+      serializable_constructible_v<T> &&
+      serializable_v<T> &&
+      estd::is_detected<node_index_t, T>::value;
+    /**
+     * @brief Edge has .prev
+     */
+    template<class T>
+    using edge_prev_t = decltype(std::declval<T>().prev);
+	    /**
+     * @brief Edge has .next
+     */
+    template<class T>
+    using edge_next_t = decltype(std::declval<T>().next);
+    /**
+     * @brief Edge has .weight
+     */
+    template<class T>
+    using edge_weight_t = decltype(std::declval<T>().weight);
+	/**
+	 * @brief An edge for Graph must have these requirements:
+	 * @details
+	 *		T has a .prev
+	 *		T has a .next
+	 *		T has a .weight
+	 *      T is json serializable
+	 *  	T is json deserializable
+	 */
+    template<class T>
+    constexpr bool is_a_graph_edge_v =
+      serializable_v<T> &&
+      serializable_constructible_v<T> &&
+      estd::is_detected<edge_prev_t, T>::value &&
+      estd::is_detected<edge_next_t, T>::value &&
+      estd::is_detected<edge_weight_t, T>::value;
+    /**
+     * @brief T has a member function bool canTraverse(const NodeType&, const EdgeType&, const NodeType&) noexcept
+     */
+    template<class T, class NodeType, class EdgeType>
+    using has_can_traverse_t = decltype(std::declval<T>().canTraverse(std::declval<const NodeType&>(), std::declval<const EdgeType&>(), std::declval<const NodeType&>()));
+    template<class T, class NodeType, class EdgeType>
+    static constexpr bool has_can_traverse_v = estd::is_detected<has_can_traverse_t, T, NodeType, EdgeType>::value;
+    /**
+     * @brief T has a member function double cost(const NodeType&, const EdgeType&, const NodeType&) noexcept
+     */
+    template<class T, class NodeType, class EdgeType>
+    using has_cost_t = decltype(std::declval<T>().cost(std::declval<const NodeType&>(), std::declval<const EdgeType&>(), std::declval<const NodeType&>()));
+    template<class T, class NodeType, class EdgeType>
+    static constexpr bool has_cost_v = estd::is_detected<has_cost_t, T, NodeType, EdgeType>::value;
+    /**
+     * @brief T has a member function double heuristic(const NodeType& from, const NodeType& to) noexcept
+     */
+    template<class T, class NodeType>
+    using has_heuristic_t = decltype(std::declval<T>().heuristic(std::declval<const NodeType&>(), std::declval<const NodeType&>()));
+    template<class T, class NodeType>
+    static constexpr bool has_heuristic_v = estd::is_detected<has_heuristic_t, T, NodeType>::value;
+    /**
+     * @brief T is a Traversal Policy.
+     * @details
+     *  T has a member function bool canTraverse(const NodeType&, const EdgeType&, const NodeType&) noexcept;
+     *  T has a member function double cost(const NodeType&, const EdgeType&, const NodeType&) noexcept;
+     *  T has a member function double heuristic(const NodeType&, const NodeType&) noexcept;
+     */
+    template<class T, class NodeType, class EdgeType>
+    struct is_a_traversal_policy{
+        static constexpr bool value = has_can_traverse_v<T, NodeType, EdgeType> &&
+                                        has_cost_v<T, NodeType, EdgeType> &&
+                                        has_heuristic_v<T, NodeType>;
+    };
+    template<class T, class NodeType, class EdgeType>
+    static constexpr bool is_a_traversal_policy_v = is_a_traversal_policy<T, NodeType, EdgeType>::value;
 }
 
 #endif // EVOAI_TYPE_UTILS_HPP
