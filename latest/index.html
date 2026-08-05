@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Features &#8212; EvoAI v1.1 documentation</title>
+    <title>Features &#8212; EvoAI v1.2 documentation</title>
   
   
   
@@ -33,6 +33,7 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=eb19d207" />
   
   <!-- So that users can add custom icons -->
   <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
@@ -40,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=45183d27"></script>
+    <script src="_static/documentation_options.js?v=72e0b74d"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
@@ -131,8 +132,8 @@
       
     
     
-    <img src="_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.1 documentation - Home"/>
-    <img src="_static/EvoAILogo.png" class="logo__image only-dark pst-js-only" alt="EvoAI v1.1 documentation - Home"/>
+    <img src="_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.2 documentation - Home"/>
+    <img src="_static/EvoAILogo.png" class="logo__image only-dark pst-js-only" alt="EvoAI v1.2 documentation - Home"/>
   
   
 </a></div>
@@ -410,14 +411,14 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <img alt="&quot;EvoAI Logo&quot;" class="dark-light" src="_static/EvoAILogo.png" />
+  <img alt="&quot;EvoAI Logo&quot;" class="dark-light" src="_images/EvoAILogo.png" />
 <p>EvoAI is a C++17 library to evolve and / or train <strong>small</strong> Neural Networks.</p>
 <section id="features">
 <h1>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h1>
 <ul class="simple">
-<li><p>A <a class="reference internal" href="source/api/namespaces.html#_CPPv4N5EvoAI6GenomeE" title="EvoAI::Genome"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code></a> to use NEAT and HyperNEAT algorithms to evolve <a class="reference internal" href="source/api/namespaces.html#_CPPv4N5EvoAI13NeuralNetworkE" title="EvoAI::NeuralNetwork"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Neural</span> <span class="pre">Networks</span></code></a> .</p></li>
-<li><p>A Population(with speciation) to evolve your own <a class="reference internal" href="source/api/namespaces.html#_CPPv4N5EvoAI6GenomeE" title="EvoAI::Genome"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genomes</span></code></a> , it only needs to fulfill <a class="reference internal" href="source/api/namespaces.html#_CPPv4I0EN5EvoAI4meta14is_populable_vE" title="EvoAI::meta::is_populable_v"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">meta::is_populable_v&lt;MyClass&gt;</span></code></a></p></li>
-<li><p>Common <a class="reference internal" href="source/api/namespaces.html#_CPPv4N5EvoAI19SelectionAlgorithmsE" title="EvoAI::SelectionAlgorithms"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Selection</span> <span class="pre">Algorithms</span></code></a> and optimizers (<a class="reference internal" href="source/api/namespaces.html#_CPPv4N5EvoAI3SGDE" title="EvoAI::SGD"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">SGD</span></code></a> and <a class="reference internal" href="source/api/namespaces.html#_CPPv4N5EvoAI4AdamE" title="EvoAI::Adam"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Adam</span></code></a>).</p></li>
+<li><p>A <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code> to use NEAT and HyperNEAT algorithms to evolve <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Neural</span> <span class="pre">Networks</span></code> .</p></li>
+<li><p>A Population(with speciation) to evolve your own <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genomes</span></code> , it only needs to fulfill <a class="reference internal" href="source/api/namespaces.html#_CPPv4I0EN5EvoAI4meta14is_populable_vE" title="EvoAI::meta::is_populable_v"><code class="xref cpp cpp-var docutils literal notranslate"><span class="pre">meta::is_populable_v&lt;MyClass&gt;</span></code></a></p></li>
+<li><p>Common <a class="reference internal" href="source/api/namespaces.html#_CPPv4N5EvoAI19SelectionAlgorithmsE" title="EvoAI::SelectionAlgorithms"><code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">Selection</span> <span class="pre">Algorithms</span></code></a> and optimizers (<code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">SGD</span></code> and <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Adam</span></code>).</p></li>
 <li><p>Train neural networks using backpropagation, enabling them to learn from labeled datasets.</p></li>
 </ul>
 <div class="toctree-wrapper compound">

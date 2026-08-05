@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NumClassifier &#8212; EvoAI v1.1 documentation</title>
+    <title>NumClassifier &#8212; EvoAI v1.2 documentation</title>
   
   
   
@@ -33,6 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=eb19d207" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
@@ -40,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../_static/documentation_options.js?v=45183d27"></script>
+    <script src="../../_static/documentation_options.js?v=72e0b74d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
@@ -132,8 +133,8 @@
       
     
     
-    <img src="../../_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.1 documentation - Home"/>
-    <img src="../../_static/EvoAILogo.png" class="logo__image only-dark pst-js-only" alt="EvoAI v1.1 documentation - Home"/>
+    <img src="../../_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.2 documentation - Home"/>
+    <img src="../../_static/EvoAILogo.png" class="logo__image only-dark pst-js-only" alt="EvoAI v1.2 documentation - Home"/>
   
   
 </a></div>
@@ -399,6 +400,7 @@
 <li class="toctree-l1"><a class="reference internal" href="CellSim.html">CellSim</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">NumClassifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="XOR.html">XOR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Maze.html">Maze</a></li>
 </ul>
 </div>
 </nav></div>
@@ -464,8 +466,8 @@
 <p>In this example we will train a number classifier.</p>
 <section id="numberclassdataset">
 <h2>NumberClassDataset<a class="headerlink" href="#numberclassdataset" title="Link to this heading">#</a></h2>
-<p>we will create a Dataset to generate the data and labels, NumberClassDataset will need to fulfill <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI4meta14is_a_dataset_vE" title="EvoAI::meta::is_a_dataset_v"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">meta::is_a_dataset_v&lt;NumberClassDataset&gt;</span></code></a>
-which just asserts that <code class="docutils literal notranslate"><span class="pre">NumberClassDataset</span></code> is a <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI7DatasetE" title="EvoAI::Dataset"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
+<p>we will create a Dataset to generate the data and labels, NumberClassDataset will need to fulfill <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI4meta14is_a_dataset_vE" title="EvoAI::meta::is_a_dataset_v"><code class="xref cpp cpp-var docutils literal notranslate"><span class="pre">meta::is_a_dataset_v&lt;NumberClassDataset&gt;</span></code></a>
+which just asserts that <code class="docutils literal notranslate"><span class="pre">NumberClassDataset</span></code> is a <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">NumberClassDataset</span><span class="p">{</span>
 <span class="w">    </span><span class="n">NumberClassDataset</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">samples</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">batchSize</span><span class="p">)</span>
 <span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">m_index</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -506,7 +508,7 @@ which just asserts that <code class="docutils literal notranslate"><span class="
 </section>
 <section id="testnn-function">
 <h2>testNN function<a class="headerlink" href="#testnn-function" title="Link to this heading">#</a></h2>
-<p>This function will be passed to <a class="reference internal" href="../api/namespaces.html#_CPPv4I0000EN5EvoAI13NeuralNetwork5trainENSt6vectorINSt6vectorIdEEEER10DataLoaderI7DatasetER10DataLoaderI7DatasetER5OptimNSt6size_tERR8LossAlgoRR6TestFn" title="EvoAI::NeuralNetwork::train"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">nn-&gt;train</span></code></a> to check how well is doing with the test DataSet</p>
+<p>This function will be passed to <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">nn-&gt;train</span></code> to check how well is doing with the test DataSet</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">testNN</span><span class="p">(</span><span class="n">NeuralNetwork</span><span class="o">&amp;</span><span class="w"> </span><span class="n">nn</span><span class="p">,</span><span class="w"> </span><span class="n">DataLoader</span><span class="o">&lt;</span><span class="n">NumberClassDataset</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">ds</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">totalLoss</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
@@ -536,11 +538,11 @@ which just asserts that <code class="docutils literal notranslate"><span class="
 </section>
 <section id="main">
 <h2>main<a class="headerlink" href="#main" title="Link to this heading">#</a></h2>
-<p>In the main function we will call createFeedForwardNN to make a <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI13NeuralNetworkE" title="EvoAI::NeuralNetwork"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">NeuralNetwork</span></code></a> then
-call <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">UniformInit</span></code> that will initialize the weights of the <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI13NeuralNetworkE" title="EvoAI::NeuralNetwork"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">NeuralNetwork</span></code></a>
+<p>In the main function we will call createFeedForwardNN to make a <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">NeuralNetwork</span></code> then
+call <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI11UniformInitER13NeuralNetwork" title="EvoAI::UniformInit"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">UniformInit</span></code></a> that will initialize the weights of the <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">NeuralNetwork</span></code>
 and then set the actiovations for each layer.</p>
-<p>We will generate the data (100 random numbers between 1 and 3), show an initial inference, configure the <a class="reference internal" href="../api/namespaces.html#_CPPv4I00EN5EvoAI9OptimizerE" title="EvoAI::Optimizer"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Optimizer</span></code></a>
-and then call <a class="reference internal" href="../api/namespaces.html#_CPPv4I0000EN5EvoAI13NeuralNetwork5trainENSt6vectorINSt6vectorIdEEEER10DataLoaderI7DatasetER10DataLoaderI7DatasetER5OptimNSt6size_tERR8LossAlgoRR6TestFn" title="EvoAI::NeuralNetwork::train"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">NeuralNetwork::train</span></code></a></p>
+<p>We will generate the data (100 random numbers between 1 and 3), show an initial inference, configure the <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Optimizer</span></code>
+and then call <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">NeuralNetwork::train</span></code></p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
 <span class="w">    </span><span class="n">EvoAI</span><span class="o">::</span><span class="n">randomGen</span><span class="p">().</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">nn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EvoAI</span><span class="o">::</span><span class="n">createFeedForwardNN</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">},</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">);</span>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>XOR &#8212; EvoAI v1.1 documentation</title>
+    <title>XOR &#8212; EvoAI v1.2 documentation</title>
   
   
   
@@ -33,6 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=eb19d207" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
@@ -40,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../_static/documentation_options.js?v=45183d27"></script>
+    <script src="../../_static/documentation_options.js?v=72e0b74d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
@@ -56,7 +57,7 @@
     <link rel="canonical" href="https://cristianglezm.github.io/EvoAI/source/examples/XOR.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Tools" href="../tools.html" />
+    <link rel="next" title="Maze" href="Maze.html" />
     <link rel="prev" title="NumClassifier" href="NumClassifier.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -132,8 +133,8 @@
       
     
     
-    <img src="../../_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.1 documentation - Home"/>
-    <img src="../../_static/EvoAILogo.png" class="logo__image only-dark pst-js-only" alt="EvoAI v1.1 documentation - Home"/>
+    <img src="../../_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.2 documentation - Home"/>
+    <img src="../../_static/EvoAILogo.png" class="logo__image only-dark pst-js-only" alt="EvoAI v1.2 documentation - Home"/>
   
   
 </a></div>
@@ -399,6 +400,7 @@
 <li class="toctree-l1"><a class="reference internal" href="CellSim.html">CellSim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="NumClassifier.html">NumClassifier</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">XOR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Maze.html">Maze</a></li>
 </ul>
 </div>
 </nav></div>
@@ -461,10 +463,10 @@
                   
   <section id="xor">
 <h1>XOR<a class="headerlink" href="#xor" title="Link to this heading">#</a></h1>
-<p>In this example we will train a <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI13NeuralNetworkE" title="EvoAI::NeuralNetwork"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">NeuralNetwork</span></code></a> to solve XOR.</p>
+<p>In this example we will train a <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">NeuralNetwork</span></code> to solve XOR.</p>
 <section id="dataset">
 <h2>Dataset<a class="headerlink" href="#dataset" title="Link to this heading">#</a></h2>
-<p>We will be using the class <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI7DatasetE" title="EvoAI::Dataset"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> as the XOR is a simple dataset.</p>
+<p>We will be using the class <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Dataset</span></code> as the XOR is a simple dataset.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">inputs</span><span class="p">;</span>
 <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">outputs</span><span class="p">;</span>
 <span class="p">{</span>
@@ -492,7 +494,7 @@
 </section>
 <section id="training">
 <h2>Training<a class="headerlink" href="#training" title="Link to this heading">#</a></h2>
-<p>we define trainXOR function that will take a <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI13NeuralNetworkE" title="EvoAI::NeuralNetwork"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">NeuralNetwork</span></code></a> and two <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10DataLoaderE" title="EvoAI::DataLoader"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">DataLoader</span></code></a>
+<p>we define trainXOR function that will take a <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">NeuralNetwork</span></code> and two <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">DataLoader</span></code>
 one for trainingDataset and another for testDataset, then the epoch, batchSize and binaryCross to choose what Loss funtion to use.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">trainXOR</span><span class="p">(</span><span class="n">EvoAI</span><span class="o">::</span><span class="n">NeuralNetwork</span><span class="o">&amp;</span><span class="w"> </span><span class="n">nn</span><span class="p">,</span>
 <span class="w">    </span><span class="n">EvoAI</span><span class="o">::</span><span class="n">DataLoader</span><span class="o">&lt;</span><span class="n">EvoAI</span><span class="o">::</span><span class="n">Dataset</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">trainDataset</span><span class="p">,</span>
@@ -515,10 +517,10 @@ one for trainingDataset and another for testDataset, then the epoch, batchSize a
 </section>
 <section id="evolve">
 <h2>Evolve<a class="headerlink" href="#evolve" title="Link to this heading">#</a></h2>
-<p>We make a <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code></a> of 500 members with <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI6GenomeE" title="EvoAI::Genome"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genomes</span></code></a> of 2 inputs and 1 output.
-we make a lambda to evaluate the <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI6GenomeE" title="EvoAI::Genome"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genomes</span></code></a> and set the fitness, then, we do the
+<p>We make a <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code> of 500 members with <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genomes</span></code> of 2 inputs and 1 output.
+we make a lambda to evaluate the <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genomes</span></code> and set the fitness, then, we do the
 main loop of eval, reproduce, age and kill stagnant species and call regrowPopulation to avoid going extinct.</p>
-<p>Once the main loop is done, we get the <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI10Population13getBestMemberEv" title="EvoAI::Population::getBestMember"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Population::getBestMember</span></code></a> from the <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code></a>.</p>
+<p>Once the main loop is done, we get the <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Population::getBestMember</span></code> from the <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code>.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">evolveNEAT</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">saveGen</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">savingFileGenome</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">binaryCross</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Evolving NEAT Neural Networks...&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 <span class="w">    </span><span class="n">EvoAI</span><span class="o">::</span><span class="n">Population</span><span class="o">&lt;</span><span class="n">EvoAI</span><span class="o">::</span><span class="n">Genome</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
@@ -596,11 +598,11 @@ main loop of eval, reproduce, age and kill stagnant species and call regrowPopul
       </div>
     </a>
     <a class="right-next"
-       href="../tools.html"
+       href="Maze.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Tools</p>
+        <p class="prev-next-title">Maze</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>IrisClassification &#8212; EvoAI v1.1 documentation</title>
+    <title>IrisClassification &#8212; EvoAI v1.2 documentation</title>
   
   
   
@@ -33,6 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=eb19d207" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
@@ -40,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../_static/documentation_options.js?v=45183d27"></script>
+    <script src="../../_static/documentation_options.js?v=72e0b74d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
@@ -132,8 +133,8 @@
       
     
     
-    <img src="../../_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.1 documentation - Home"/>
-    <img src="../../_static/EvoAILogo.png" class="logo__image only-dark pst-js-only" alt="EvoAI v1.1 documentation - Home"/>
+    <img src="../../_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.2 documentation - Home"/>
+    <img src="../../_static/EvoAILogo.png" class="logo__image only-dark pst-js-only" alt="EvoAI v1.2 documentation - Home"/>
   
   
 </a></div>
@@ -399,6 +400,7 @@
 <li class="toctree-l1"><a class="reference internal" href="CellSim.html">CellSim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="NumClassifier.html">NumClassifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="XOR.html">XOR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Maze.html">Maze</a></li>
 </ul>
 </div>
 </nav></div>
@@ -464,7 +466,7 @@
 <p>In this example we will build IrisClassification.</p>
 <section id="dataset">
 <h2>DataSet<a class="headerlink" href="#dataset" title="Link to this heading">#</a></h2>
-<p>we will create a Dataset to load the data and labels, IrisDataset will need to fulfill <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI4meta14is_a_dataset_vE" title="EvoAI::meta::is_a_dataset_v"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">meta::is_a_dataset_v&lt;IrisDataset&gt;</span></code></a>
+<p>we will create a Dataset to load the data and labels, IrisDataset will need to fulfill <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI4meta14is_a_dataset_vE" title="EvoAI::meta::is_a_dataset_v"><code class="xref cpp cpp-var docutils literal notranslate"><span class="pre">meta::is_a_dataset_v&lt;IrisDataset&gt;</span></code></a>
 which just asserts that <code class="docutils literal notranslate"><span class="pre">IrisDataset</span></code> needs to have the following methods:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">IrisDataset</span><span class="p">{</span>
 <span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">TrainingFormat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="p">;</span>
@@ -546,7 +548,7 @@ which just asserts that <code class="docutils literal notranslate"><span class="
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>the operator() will return an input and target to give to the <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI13NeuralNetwork7forwardERKNSt6vectorIdEE" title="EvoAI::NeuralNetwork::forward"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">NeuralNetwork::forward</span></code></a> and
+<p>the operator() will return an input and target to give to the <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">NeuralNetwork::forward</span></code> and
 <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI4Loss22MultiClassCrossEntropyE" title="EvoAI::Loss::MultiClassCrossEntropy"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">LossFn</span></code></a>.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;&gt;</span><span class="w"> </span><span class="k">operator</span><span class="p">()()</span><span class="w"> </span><span class="k">noexcept</span><span class="p">{</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_index</span><span class="p">;</span>
@@ -558,9 +560,9 @@ which just asserts that <code class="docutils literal notranslate"><span class="
 </section>
 <section id="training">
 <h2>Training<a class="headerlink" href="#training" title="Link to this heading">#</a></h2>
-<p>The training is just a call to <a class="reference internal" href="../api/namespaces.html#_CPPv4I0000EN5EvoAI13NeuralNetwork5trainENSt6vectorINSt6vectorIdEEEER10DataLoaderI7DatasetER10DataLoaderI7DatasetER5OptimNSt6size_tERR8LossAlgoRR6TestFn" title="EvoAI::NeuralNetwork::train"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nn-&gt;train</span></code></a> we use an <a class="reference internal" href="../api/namespaces.html#_CPPv4I00EN5EvoAI9OptimizerE" title="EvoAI::Optimizer"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Optimizer</span></code></a> with a learning rate of 0.1,
-using <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI3SGDE" title="EvoAI::SGD"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">SGD</span></code></a> and a <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI11MultiStepLRE" title="EvoAI::MultiStepLR"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">MultiStepLR</span></code></a> which at step 175 will multiply the learning rate to 0.1, then we will write the data returned by
-<a class="reference internal" href="../api/namespaces.html#_CPPv4I0000EN5EvoAI13NeuralNetwork5trainENSt6vectorINSt6vectorIdEEEER10DataLoaderI7DatasetER10DataLoaderI7DatasetER5OptimNSt6size_tERR8LossAlgoRR6TestFn" title="EvoAI::NeuralNetwork::train"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nn-&gt;train</span></code></a> to “irisAvgLoss.txt” so we can use <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">..tools/showMultiLinePlot.py</span> <span class="pre">irisAvgLoss.txt</span></code>.</p>
+<p>The training is just a call to <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nn-&gt;train</span></code> we use an <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Optimizer</span></code> with a learning rate of 0.1,
+using <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">SGD</span></code> and a <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">MultiStepLR</span></code> which at step 175 will multiply the learning rate to 0.1, then we will write the data returned by
+<code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">nn-&gt;train</span></code> to “irisAvgLoss.txt” so we can use <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">..tools/showMultiLinePlot.py</span> <span class="pre">irisAvgLoss.txt</span></code>.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">EvoAI</span><span class="o">::</span><span class="n">Optimizer</span><span class="w"> </span><span class="nf">optim</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="n">batchSize</span><span class="p">,</span><span class="w"> </span><span class="n">EvoAI</span><span class="o">::</span><span class="n">SGD</span><span class="p">(</span><span class="n">m_nn</span><span class="o">-&gt;</span><span class="n">getParameters</span><span class="p">(),</span><span class="w"> </span><span class="mf">0.0</span><span class="p">),</span><span class="w"> </span><span class="n">EvoAI</span><span class="o">::</span><span class="n">Scheduler</span><span class="p">(</span><span class="n">EvoAI</span><span class="o">::</span><span class="n">MultiStepLR</span><span class="p">({</span><span class="mi">175</span><span class="p">},</span><span class="w"> </span><span class="mf">0.1</span><span class="p">)));</span>
 <span class="n">EvoAI</span><span class="o">::</span><span class="n">writeMultiPlot</span><span class="p">(</span><span class="s">&quot;irisAvgLoss.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;epochAvgLoss&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;testAvgLoss&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;accuracy&quot;</span><span class="p">},</span>
 <span class="w">    </span><span class="n">m_nn</span><span class="o">-&gt;</span><span class="n">train</span><span class="p">(</span><span class="n">trainingSet</span><span class="p">,</span><span class="w"> </span><span class="n">testingSet</span><span class="p">,</span><span class="w"> </span><span class="n">optim</span><span class="p">,</span><span class="w"> </span><span class="n">epoch</span><span class="p">,</span><span class="w"> </span><span class="n">EvoAI</span><span class="o">::</span><span class="n">Loss</span><span class="o">::</span><span class="n">MultiClassCrossEntropy</span><span class="p">{},</span><span class="w"> </span><span class="n">testDataset</span><span class="p">));</span>
@@ -569,12 +571,12 @@ using <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI3S
 </section>
 <section id="evolve">
 <h2>Evolve<a class="headerlink" href="#evolve" title="Link to this heading">#</a></h2>
-<p>We will evolve a <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code></a> of <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI6GenomeE" title="EvoAI::Genome"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code></a> to use NEAT, we will create a
-<a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">EvoAI::Population&lt;EvoAI::Genome&gt;</span></code></a> of 500 members with coefficients of 2.0 for excess Genes, 2.0 for
-disjoints Genes and 1.0 for weight difference, the next two numbers are the <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI6Genome6GenomeEv" title="EvoAI::Genome::Genome"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Genome</span></code></a> constructor
-which will make a <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI6GenomeE" title="EvoAI::Genome"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code></a> of 4 inputs and 3 outputs.</p>
-<p>The <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI10Population25setCompatibilityThresholdEd" title="EvoAI::Population::setCompatibilityThreshold"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Population::setCompatibilityThreshold</span></code></a> is set to 10, this is the <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI6Genome8distanceERK6GenomeRK6Genomeddd" title="EvoAI::Genome::distance"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Genome::distance</span></code></a>
-between genomes to be considered another <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI7SpeciesE" title="EvoAI::Species"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Species</span></code></a>.</p>
+<p>We will evolve a <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code> of <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code> to use NEAT, we will create a
+<code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">EvoAI::Population&lt;EvoAI::Genome&gt;</span></code> of 500 members with coefficients of 2.0 for excess Genes, 2.0 for
+disjoints Genes and 1.0 for weight difference, the next two numbers are the <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Genome</span></code> constructor
+which will make a <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code> of 4 inputs and 3 outputs.</p>
+<p>The <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Population::setCompatibilityThreshold</span></code> is set to 10, this is the <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">Genome::distance</span></code>
+between genomes to be considered another <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Species</span></code>.</p>
 <p>Then we will make a lambda to easily create the <code class="docutils literal notranslate"><span class="pre">IrisClassifier</span></code> and configure the <code class="docutils literal notranslate"><span class="pre">ActivationType</span></code> of the hidden and output layers.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">EvoAI</span><span class="o">::</span><span class="n">Population</span><span class="o">&lt;</span><span class="n">EvoAI</span><span class="o">::</span><span class="n">Genome</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
 <span class="n">p</span><span class="p">.</span><span class="n">setCompatibilityThreshold</span><span class="p">(</span><span class="mf">10.0</span><span class="p">);</span>
@@ -588,9 +590,9 @@ between genomes to be considered another <a class="reference internal" href="../
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>now we will make another lambda to evaluate the <code class="docutils literal notranslate"><span class="pre">IrisClassifier</span></code> from the given <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI6GenomeE" title="EvoAI::Genome"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code></a>.</p>
-<p>We mutate the given <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI6GenomeE" title="EvoAI::Genome"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code></a> and then build the <code class="docutils literal notranslate"><span class="pre">IrisClassifier</span></code> to evaluate, we use the trainingSet
-to get input and target and call <code class="docutils literal notranslate"><span class="pre">IrisClass-&gt;forward(input)</span></code> add the loss and set the fitness of the given <a class="reference internal" href="../api/namespaces.html#_CPPv4N5EvoAI6GenomeE" title="EvoAI::Genome"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code></a></p>
+<p>now we will make another lambda to evaluate the <code class="docutils literal notranslate"><span class="pre">IrisClassifier</span></code> from the given <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code>.</p>
+<p>We mutate the given <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code> and then build the <code class="docutils literal notranslate"><span class="pre">IrisClassifier</span></code> to evaluate, we use the trainingSet
+to get input and target and call <code class="docutils literal notranslate"><span class="pre">IrisClass-&gt;forward(input)</span></code> add the loss and set the fitness of the given <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Genome</span></code></p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">eval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">g</span><span class="p">){</span>
 <span class="w">    </span><span class="n">loss</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 <span class="w">    </span><span class="n">g</span><span class="p">.</span><span class="n">mutate</span><span class="p">();</span>
@@ -606,7 +608,7 @@ to get input and target and call <code class="docutils literal notranslate"><spa
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>Then we will start the main loop to evaluate the members of the <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10PopulationE" title="EvoAI::Population"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code></a> and <a class="reference internal" href="../api/namespaces.html#_CPPv4I0EN5EvoAI10Population9reproduceE16result_or_void_tRR13SelectionAlgob" title="EvoAI::Population::reproduce"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">reproduce</span></code></a> the best
+<p>Then we will start the main loop to evaluate the members of the <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">Population</span></code> and <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">reproduce</span></code> the best
 till the loss is less than <code class="docutils literal notranslate"><span class="pre">lossThreshold</span></code> which a 0.07 will give us a 89% accuracy.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">while</span><span class="p">(</span><span class="n">loss</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">lossThreshold</span><span class="p">){</span>
 <span class="w">    </span><span class="n">p</span><span class="p">.</span><span class="n">eval</span><span class="p">(</span><span class="n">eval</span><span class="p">);</span>
