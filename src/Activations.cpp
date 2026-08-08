@@ -50,7 +50,7 @@ namespace EvoAI{
             n.setOutput(std::exp(n.getOutput() - max->getOutput()));
         }
         auto totalSum = std::accumulate(std::begin(outputs.getNeurons()), std::end(outputs.getNeurons()), 0.0, 
-                        [](auto& a, auto& b){
+                        [](auto a, auto& b){
                             return a + b.getOutput();
         });
         for(auto& n:outputs.getNeurons()){

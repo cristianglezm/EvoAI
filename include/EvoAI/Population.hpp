@@ -38,7 +38,7 @@ namespace EvoAI{
      * @author Cristian Gonzalez <Cristian.glez.m@gmail.com>
      */
     template<typename T>
-    class EvoAI_API Population{
+    class Population{
             static_assert(meta::is_populable_v<typename std::remove_pointer_t<T>>, "T needs to be Populable, more info at Population.hpp");
         public:
             using value_type = T;

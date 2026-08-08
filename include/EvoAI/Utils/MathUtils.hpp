@@ -38,7 +38,7 @@ namespace EvoAI{
      * @tparam T type
      */
     template<typename T>
-    struct EvoAI_API Scaler{
+    struct Scaler{
         using type = T;
         using value_type = std::remove_reference_t<std::remove_pointer_t<T>>;
         using reference = value_type&;

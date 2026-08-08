@@ -24,7 +24,7 @@ namespace EvoAI{
      * @tparam Dataset 
      */
     template<class Dataset>
-    class EvoAI_API DataLoader final{
+    class DataLoader final{
         public:
             using type = Dataset;
             static_assert(meta::is_a_dataset_v<Dataset>, "Dataset needs to be a dataset, more info at DataLoader.hpp");

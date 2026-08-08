@@ -34,7 +34,7 @@ namespace EvoAI{
      *  @warning You can't use Species<T*>(JsonBox::Object) or Species<T*>(const std::string& filename) to load a Species.json
      */
     template<typename T>
-    class EvoAI_API Species{
+    class Species{
             static_assert(meta::is_speciable<typename std::remove_pointer_t<T>>::value, "T needs to be Speciable, more info at Species.hpp");
         public:
             using value_type = T;

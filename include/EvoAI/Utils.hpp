@@ -122,7 +122,7 @@ namespace EvoAI{
      * @tparam T object to guard
      */
     template<class T>
-    class EvoAI_API Guard{
+    class Guard{
         public:
             /**
              * @brief constructor without args

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14...3.27)
+cmake_minimum_required(VERSION 3.14...3.28)
 
 ################################################################################
 ### User options.
@@ -10,13 +10,6 @@ option(EvoAI_BUILD_EXAMPLES "Build Examples" OFF)
 option(EvoAI_BUILD_STATIC "Build static" OFF)
 option(EvoAI_BUILD_DOCS "Build documentation" OFF)
 
-set(EvoAI_CONFIG "Shared")
-if(EvoAI_BUILD_STATIC)
-    set(EvoAI_CONFIG "Static")
-    SET(BUILD_SHARED_LIBS FALSE)
-    add_definitions("-DEvoAI_BUILD_STATIC")
-endif(EvoAI_BUILD_STATIC)
-
 ################################################################################
 ### Project files.
 ################################################################################
@@ -24,6 +17,7 @@ endif(EvoAI_BUILD_STATIC)
 project(EvoAI)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+include(EvoAITargetOptions)
 
 FILE(GLOB_RECURSE EvoAI_SOURCES "src/*.cpp")
 FILE(GLOB_RECURSE EvoAI_INCLUDES "include/*.hpp")
@@ -33,15 +27,23 @@ set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(EMSCRIPTEN)
+    # Emscripten can't produce a shared EvoAI - it must be linked in statically
     set(EvoAI_BUILD_STATIC TRUE)
-endif(EMSCRIPTEN)
+endif()
+
+set(EvoAI_CONFIG "Shared")
+if(EvoAI_BUILD_STATIC)
+    set(EvoAI_CONFIG "Static")
+    set(BUILD_SHARED_LIBS FALSE)
+endif()
 
 if(NOT EvoAI_BUILD_STATIC)
-	add_definitions("-DEvoAI_EXPORTS")
 	add_library(EvoAI SHARED ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
+	target_compile_definitions(EvoAI PRIVATE EvoAI_EXPORTS)
 	set_target_properties(EvoAI PROPERTIES DEBUG_POSTFIX -d)
 else()
         add_library(EvoAI STATIC ${EvoAI_SOURCES} ${EvoAI_INCLUDES})
+        target_compile_definitions(EvoAI PUBLIC EvoAI_BUILD_STATIC)
         set_target_properties(EvoAI PROPERTIES DEBUG_POSTFIX -s-d)
         set_target_properties(EvoAI PROPERTIES RELEASE_POSTFIX -s)
         set_target_properties(EvoAI PROPERTIES MINSIZEREL_POSTFIX -s)
@@ -86,8 +88,34 @@ if(JsonBox_FOUND)
 endif(JsonBox_FOUND)
 
 if(EvoAI_BUILD_EXAMPLES OR EvoAI_BUILD_TOOLS)
-    #sfml
-    find_package(SFML 2.6 COMPONENTS graphics window system audio REQUIRED)
+    if(EvoAI_BUILD_STATIC)
+        set(SFML_STATIC_LIBRARIES TRUE)
+    endif()
+    find_package(SFML 2.6 COMPONENTS graphics window system audio QUIET)
+    if(NOT SFML_FOUND AND EvoAI_BUILD_STATIC)
+        message(STATUS "No static SFML found locally - fetching SFML 2.6.1 source to build it statically")
+        include(FetchContent)
+        set(BUILD_SHARED_LIBS FALSE CACHE BOOL "" FORCE)
+        set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
+        FetchContent_Declare(SFML
+            GIT_REPOSITORY https://github.com/SFML/SFML.git
+            GIT_TAG        2.6.1
+            GIT_SHALLOW    TRUE
+        )
+        FetchContent_MakeAvailable(SFML)
+    endif()
+
+    # Targets that need SFML are skipped (not fatal) when this is false, so the rest of the
+    # project still configures and builds.
+    if(SFML_FOUND OR TARGET sfml-graphics)
+        set(EvoAI_SFML_AVAILABLE TRUE)
+    else()
+        set(EvoAI_SFML_AVAILABLE FALSE)
+        message(STATUS
+            "SFML 2.6 was not found. Targets that need it will be skipped; "
+            "others are unaffected. Install SFML, or configure with "
+            "-DEvoAI_BUILD_STATIC=TRUE to fetch and build it from source.")
+    endif()
 endif(EvoAI_BUILD_EXAMPLES OR EvoAI_BUILD_TOOLS)
 
 if(EvoAI_BUILD_TESTS)
@@ -103,37 +131,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
 endif()
 
-SET(CMAKE_CXX_STANDARD 17)
-SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-SET(CMAKE_CXX_EXTENSIONS OFF)
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    message(STATUS "EvoAI - Compiler gcc")
-    target_compile_options(EvoAI PRIVATE -std=c++17 -Wall -Wextra -Wshadow)
-    if(CMAKE_BUILD_TYPE STREQUAL "Release")
-        target_compile_options(EvoAI PRIVATE -O3 -fexpensive-optimizations -DNDEBUG)
-    elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        target_compile_options(EvoAI PRIVATE -g)
-    endif()
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    message(STATUS "EvoAI - Compiler clang")
-    target_compile_options(EvoAI PRIVATE -std=c++17 -Wall -Wextra -Wshadow)
-    if(CMAKE_BUILD_TYPE STREQUAL "Release")
-        target_compile_options(EvoAI PRIVATE -O3 -DNDEBUG)
-    elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        target_compile_options(EvoAI PRIVATE -g)
-    endif()
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    message(STATUS "EvoAI - Compiler MSVC")
-    target_compile_options(EvoAI PRIVATE /std:c++17 /W4)
-    if(CMAKE_BUILD_TYPE STREQUAL "Release")
-        target_compile_options(EvoAI PRIVATE /O3 /DNDEBUG)
-    elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        target_compile_options(EvoAI PRIVATE /g)
-    endif()
-else()
-    message(WARNING "EvoAI - Compiler not supported.")
-endif()
+evoai_set_target_options(EvoAI)
 
 ################################################################################
 ### Testing
@@ -165,7 +163,6 @@ endif(EvoAI_BUILD_TOOLS)
 #################################################################################
 
 if(EMSCRIPTEN)
-    set(EvoAI_BUILD_STATIC TRUE)
     message(STATUS "Compiling for Emscripten")
     target_compile_options(EvoAI PRIVATE -Wall -Wextra -Wshadow -pthread -fexceptions)
     target_link_options(EvoAI PRIVATE -sPTHREAD_POOL_SIZE=4 -fexceptions)
@@ -189,7 +186,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Android")
     set(DEFAULT_INSTALL_MISC_DIR ${CMAKE_ANDROID_NDK}/sources/third_party/EvoAI)
     set(LIB_SUFFIX "/${CMAKE_ANDROID_ARCH_ABI}")
     if(CMAKE_ANDROID_STL_TYPE MATCHES "_shared")
-        add_definitions("-DSTL_LIBRARY=${CMAKE_ANDROID_STL_TYPE}")
+        target_compile_definitions(EvoAI PRIVATE "STL_LIBRARY=${CMAKE_ANDROID_STL_TYPE}")
         if(NOT CMAKE_ANDROID_STL_TYPE MATCHES "c\\+\\+_shared")
             message("Android: Using ${CMAKE_ANDROID_STL_TYPE} as STL. Set CMAKE_ANDROID_STL_TYPE to c++_shared, if there are any issues.")
         endif()
@@ -227,21 +224,37 @@ if(EvoAI_BUILD_DOCS)
     install(DIRECTORY "${CMAKE_BINARY_DIR}/docs/sphinx/html" DESTINATION "${CMAKE_INSTALL_DOCDIR}/v${EvoAI_VERSION_MAJOR}.${EvoAI_VERSION_MINOR}")
 endif(EvoAI_BUILD_DOCS)
 
-if(WIN32)
-    FILE(GLOB_RECURSE SFML_DEBUG_DLLS "${SFML_ROOT}/bin/sfml-*-d-2.dll")
-    FILE(GLOB_RECURSE SFML_RELEASE_DLLS "${SFML_ROOT}/bin/*-2.dll")
-    if(NOT SFML_DEBUG_DLLS STREQUAL "")
-        LIST(REMOVE_ITEM SFML_RELEASE_DLLS ${SFML_DEBUG_DLLS})
-    endif(NOT SFML_DEBUG_DLLS STREQUAL "")
-endif(WIN32)
-
-if((NOT EvoAI_BUILD_STATIC AND WIN32) AND (EvoAI_BUILD_EXAMPLES OR EvoAI_BUILD_TOOLS))
-	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-		install(FILES ${SFML_DEBUG_DLLS} DESTINATION ${CMAKE_INSTALL_BINDIR})
-	elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-		install(FILES ${SFML_RELEASE_DLLS} DESTINATION ${CMAKE_INSTALL_BINDIR})
-	endif()
-endif((NOT EvoAI_BUILD_STATIC AND WIN32) AND (EvoAI_BUILD_EXAMPLES OR EvoAI_BUILD_TOOLS))
+if((NOT EvoAI_BUILD_STATIC AND WIN32) AND (EvoAI_BUILD_TESTS OR (EvoAI_SFML_AVAILABLE AND (EvoAI_BUILD_EXAMPLES OR EvoAI_BUILD_TOOLS))))
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.21")
+        # normalize to forward slashes before matching PRE/POST_EXCLUDE_REGEXES (CMake 4.3+)
+        if(POLICY CMP0207)
+            cmake_policy(SET CMP0207 NEW)
+        endif()
+        get_filename_component(EvoAI_MINGW_BIN_DIR "${CMAKE_CXX_COMPILER}" DIRECTORY)
+        set(EvoAI_RUNTIME_DEP_DIRS $<TARGET_FILE_DIR:EvoAI> ${EvoAI_MINGW_BIN_DIR})
+        if(EvoAI_SFML_AVAILABLE)
+            if(TARGET sfml-graphics)
+                list(APPEND EvoAI_RUNTIME_DEP_DIRS $<TARGET_FILE_DIR:sfml-graphics>)
+                if(TARGET sfml-audio)
+                    list(APPEND EvoAI_RUNTIME_DEP_DIRS $<TARGET_FILE_DIR:sfml-audio>)
+                endif()
+            elseif(SFML_INCLUDE_DIR)
+                get_filename_component(EvoAI_SFML_ROOT_DIR "${SFML_INCLUDE_DIR}" DIRECTORY)
+                list(APPEND EvoAI_RUNTIME_DEP_DIRS "${EvoAI_SFML_ROOT_DIR}/bin")
+            endif()
+        endif()
+        list(REMOVE_DUPLICATES EvoAI_RUNTIME_DEP_DIRS)
+        install(RUNTIME_DEPENDENCY_SET EvoAIRuntimeDeps
+            PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-"
+            POST_EXCLUDE_REGEXES ".*[Ss]ystem32.*\\.dll"
+            DIRECTORIES ${EvoAI_RUNTIME_DEP_DIRS}
+            DESTINATION ${CMAKE_INSTALL_BINDIR}
+        )
+    else()
+        message(WARNING "CMake >= 3.21 is needed to automatically bundle runtime DLLs into "
+                         "the install package; skipping (found ${CMAKE_VERSION}).")
+    endif()
+endif((NOT EvoAI_BUILD_STATIC AND WIN32) AND (EvoAI_BUILD_TESTS OR (EvoAI_SFML_AVAILABLE AND (EvoAI_BUILD_EXAMPLES OR EvoAI_BUILD_TOOLS))))
 
 ###################################################################################
 ### Config CMake

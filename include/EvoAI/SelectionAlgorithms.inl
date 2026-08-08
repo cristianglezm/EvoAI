@@ -158,7 +158,7 @@ namespace EvoAI{
                 std::unordered_map<std::size_t, pointer> alreadyALoser;
                 alreadyALoser.reserve(numberToSelect);
                 double totalFitness = std::accumulate(std::begin(members), std::end(members), 0.0, 
-                    [](auto& a, auto& b){
+                    [](auto a, auto& b){
                         return a + b->getFitness();
                 });
                 for(auto i=0u;i<numberToSelect;++i){
@@ -187,12 +187,12 @@ namespace EvoAI{
                     double totalFitness = 0.0;
                     if constexpr(std::is_pointer_v<T>){
                         totalFitness = std::accumulate(std::begin(members), std::end(members),0.0, 
-                            [](auto& a, auto& b){
+                            [](auto a, auto& b){
                                 return a + b->getFitness();
                         });
                     }else{
                         totalFitness = std::accumulate(std::begin(members), std::end(members),0.0, 
-                            [](auto& a, auto& b){
+                            [](auto a, auto& b){
                                 return a + b.getFitness();
                         });
                     }
