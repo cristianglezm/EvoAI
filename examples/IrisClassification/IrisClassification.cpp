@@ -6,7 +6,7 @@
 #include <fstream>
 
 void usage();
-class IrisDataset;
+struct IrisDataset;
 /**
  * @brief Evolves a population of EvoAI::Genome to classify the Iris Dataset using NEAT.
  * @param lossThreshold float when to stop loss lower than loss Threshold

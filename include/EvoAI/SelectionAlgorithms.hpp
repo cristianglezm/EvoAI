@@ -52,7 +52,7 @@ namespace EvoAI{
          *          the species the more selected members from that species.
          */
         template<typename T>
-        struct EvoAI_API Truncation{
+        struct Truncation{
             static_assert(meta::get_fitness_v<std::remove_pointer_t<T>>, "T needs to have getFitness(), more info at SelectionAlgorithms.hpp");
             using pointer = std::remove_pointer_t<T>*;
             std::size_t maxPopulation;
@@ -83,7 +83,7 @@ namespace EvoAI{
          *          when using species only it will select more members of the biggest species.
          */
         template<typename T>
-        struct EvoAI_API Tournament{
+        struct Tournament{
             static_assert(meta::get_fitness_v<std::remove_pointer_t<T>>, "T needs to have getFitness(), more info at SelectionAlgorithms.hpp");
             using pointer = std::remove_pointer_t<T>*;
             std::size_t maxPop;
@@ -123,7 +123,7 @@ namespace EvoAI{
          *  @details calculates the proportion using fitness and randomly selects a couple and a loser.
          */
         template<typename T>
-        struct EvoAI_API FPS{
+        struct FPS{
             static_assert(meta::get_fitness_v<std::remove_pointer_t<T>>, "T needs to have getFitness(), more info at SelectionAlgorithms.hpp");
             using pointer = std::remove_pointer_t<T>*;
             std::size_t maxPop;

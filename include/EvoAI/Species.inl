@@ -318,7 +318,7 @@ namespace EvoAI{
     void Species<T>::computeAvgFitness() noexcept{
         oldAvgFitness = avgFitness;
         auto sum = std::accumulate(std::begin(members), std::end(members), 0.0, 
-            [](auto& a, auto& b) -> double{
+            [](auto a, auto& b) -> double{
                 auto bPtr = priv::to_pointer<T>(b);
                 return a + std::abs(bPtr->getFitness());
         });

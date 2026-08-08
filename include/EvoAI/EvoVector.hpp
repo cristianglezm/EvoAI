@@ -15,7 +15,7 @@ namespace EvoAI{
 	 * @tparam T
 	 */
 	template<typename T>
-	class EvoAI_API EvoVector final{
+	class EvoVector final{
 		public:
 			using value_type = typename std::vector<T>::value_type;
 			using reference = typename std::vector<T>::reference;

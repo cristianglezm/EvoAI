@@ -29,7 +29,7 @@ namespace EvoAI{
          * Calling reset() is a single ++generation — no memset, no fill.
          * Buffers only grow, never shrink, preserving capacity across repeated searches.
          */
-        struct EvoAI_API SearchContext{
+        struct SearchContext{
             /**
              * @brief Prepares the context for a new search over a graph of @p size nodes.
              * @details O(1) after the initial call; buffers grow on demand.

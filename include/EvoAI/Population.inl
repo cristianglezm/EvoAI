@@ -485,7 +485,7 @@ namespace EvoAI{
     template<typename T>
     std::size_t Population<T>::getPopulationSize() noexcept{
         return std::accumulate(std::begin(species),std::end(species),0,
-            [](auto& a, auto& b){
+            [](auto a, auto& b){
                 return a + b.second->getSize();
         });
     }
@@ -520,7 +520,7 @@ namespace EvoAI{
     double Population<T>::computeAvgFitness() noexcept{
         auto& membs = getMembers();
         double sumFitness = std::accumulate(std::begin(membs), std::end(membs), 0.0,
-            [](auto& a, auto& b){
+            [](auto a, auto& b){
                 return a + b->getFitness();
         });
         auto size = membs.size();
