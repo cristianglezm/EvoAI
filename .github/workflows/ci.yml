@@ -2,8 +2,8 @@ name: ci
 
 on:
   push:
-    branches: [ master ]
-    tags: [ v* ]
+    branches: [master]
+    tags: [v*]
   pull_request:
 
 concurrency:
@@ -23,212 +23,343 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows MinGW,    os: windows-2025, flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DEvoAI_BUILD_TESTS=TRUE }
-        - { name: Windows LLVM,     os: windows-2025, flags: -GNinja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DEvoAI_BUILD_TESTS=TRUE }
-        - { name: Linux GCC,        os: ubuntu-24.04, flags: -G"Unix Makefiles" -DEvoAI_BUILD_TESTS=TRUE }
-        - { name: Linux Clang,      os: ubuntu-24.04, flags: -G"Unix Makefiles" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DEvoAI_BUILD_TESTS=TRUE }
-        - { name: macOS x64,        os: macos-15,     flags: -GNinja -DEvoAI_BUILD_TESTS=TRUE }
-        - { name: macOS x64 Xcode,  os: macos-15,     flags: -GXcode -DEvoAI_BUILD_TESTS=TRUE }
-        - { name: macOS arm64,      os: macos-15,     flags: -GNinja -DEvoAI_BUILD_TESTS=TRUE }
+          - {
+              name: Windows MinGW,
+              os: windows-2025,
+              flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DEvoAI_BUILD_TESTS=TRUE,
+            }
+          - {
+              name: Windows LLVM,
+              os: windows-2025,
+              flags: -GNinja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DEvoAI_BUILD_TESTS=TRUE,
+            }
+          - {
+              name: Linux GCC,
+              os: ubuntu-24.04,
+              flags: -G"Unix Makefiles" -DEvoAI_BUILD_TESTS=TRUE,
+            }
+          - {
+              name: Linux Clang,
+              os: ubuntu-24.04,
+              flags: -G"Unix Makefiles" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DEvoAI_BUILD_TESTS=TRUE,
+            }
+          - {
+              name: macOS x64,
+              os: macos-15,
+              flags: -GNinja -DEvoAI_BUILD_TESTS=TRUE,
+            }
+          - {
+              name: macOS x64 Xcode,
+              os: macos-15,
+              flags: -GXcode -DEvoAI_BUILD_TESTS=TRUE,
+            }
+          - {
+              name: macOS arm64,
+              os: macos-15,
+              flags: -GNinja -DEvoAI_BUILD_TESTS=TRUE,
+            }
 
         config:
-        - { name: Shared, flags: -DBUILD_SHARED_LIBS=TRUE }
-        - { name: Static, flags: -DBUILD_SHARED_LIBS=FALSE -DEvoAI_BUILD_STATIC=TRUE }
+          - { name: Shared, flags: -DBUILD_SHARED_LIBS=TRUE }
+          - {
+              name: Static,
+              flags: -DBUILD_SHARED_LIBS=FALSE -DEvoAI_BUILD_STATIC=TRUE,
+            }
 
         type:
-        - { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
-        - { name: Debug,   flags: -DCMAKE_BUILD_TYPE=Debug }
+          - { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
+          - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
 
         include:
-        - platform: { name: Android, os: ubuntu-24.04 }
-          config: { name: x86 (API 33), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.2.11394342 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: x86, api: 33 }
-          type: { name: Release }
-        - platform: { name: Android, os: ubuntu-24.04 }
-          config: { name: x86_64 (API 33), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.2.11394342 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: x86_64, api: 33 }
-          type: { name: Release }
-        - platform: { name: Android, os: ubuntu-24.04 }
-          config: { name: armeabi-v7a (API 33), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.2.11394342 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: armeabi-v7a, api: 33 }
-          type: { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
-        - platform: { name: Android, os: ubuntu-24.04 }
-          config: { name: arm64-v8a (API 33), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.2.11394342 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: arm64-v8a, api: 33 }
-          type: { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
+          - platform: { name: Android, os: ubuntu-24.04 }
+            config:
+              {
+                name: x86 (API 33),
+                flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.2.11394342 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared,
+                arch: x86,
+                api: 33,
+              }
+            type: { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
+          - platform: { name: Android, os: ubuntu-24.04 }
+            config:
+              {
+                name: x86_64 (API 33),
+                flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.2.11394342 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared,
+                arch: x86_64,
+                api: 33,
+              }
+            type: { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
+          - platform: { name: Android, os: ubuntu-24.04 }
+            config:
+              {
+                name: armeabi-v7a (API 33),
+                flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.2.11394342 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared,
+                arch: armeabi-v7a,
+                api: 33,
+              }
+            type: { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
+          - platform: { name: Android, os: ubuntu-24.04 }
+            config:
+              {
+                name: arm64-v8a (API 33),
+                flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.2.11394342 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared,
+                arch: arm64-v8a,
+                api: 33,
+              }
+            type: { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
 
-        - platform: { name: Emscripten, os: ubuntu-24.04, flags: -DEvoAI_BUILD_TESTS=TRUE }
-          config: { name: Static, flags: -G"Unix Makefiles" -DBUILD_SHARED_LIBS=FALSE -DEvoAI_BUILD_STATIC=TRUE }
-          type: { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
+          - platform:
+              {
+                name: Emscripten,
+                os: ubuntu-24.04,
+                flags: -DEvoAI_BUILD_TESTS=TRUE,
+              }
+            config:
+              {
+                name: Static,
+                flags: -G"Unix Makefiles" -DBUILD_SHARED_LIBS=FALSE -DEvoAI_BUILD_STATIC=TRUE,
+              }
+            type: { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
 
         exclude:
           - platform: { name: Emscripten }
             config: { name: Shared }
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v7
+      - name: Checkout Code
+        uses: actions/checkout@v7
 
-    - name: Setup MSYS2
-      if: runner.os == 'Windows'
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW64
-        update: true
-        install: >-
-          git
-          base-devel
-          mingw-w64-x86_64-toolchain
-          mingw-w64-x86_64-cmake
-          mingw-w64-x86_64-ninja
-          mingw-w64-x86_64-clang
+      - name: Setup MSYS2
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            git
+            base-devel
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-clang
 
-    - name: Get CMake and Ninja
-      if: runner.os != 'Windows'
-      uses: lukka/get-cmake@latest
-      with:
-        cmakeVersion: '3.28'
-        ninjaVersion: latest
+      - name: Compute package suffix
+        run: |
+          SUFFIX=$(printf '%s' "${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}" \
+            | tr ' /()' '----' | tr -s '-' | sed -E 's/^-+|-+$//g')
+          echo "EVOAI_PACKAGE_SUFFIX=$SUFFIX" >> "$GITHUB_ENV"
 
-    - name: Cache Desktop Deps
-      if: matrix.platform.name != 'Android' && matrix.platform.name != 'Emscripten'
-      id: cache-desktop
-      uses: actions/cache@v6
-      with:
-        path: |
-          JsonBox/build/install
-          googletest/build/install
-        key: desktop-${{ runner.os }}-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}
+      - name: Get CMake and Ninja
+        if: runner.os != 'Windows'
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: "3.28"
+          ninjaVersion: latest
 
-    - name: Cache Emscripten Deps
-      if: matrix.platform.name == 'Emscripten'
-      id: cache-emscripten
-      uses: actions/cache@v6
-      with:
-        path: |
-          emsdk
-          JsonBox/build/install
-          googletest/build/install
-        key: emscripten-${{ matrix.type.name }}
+      - name: Cache Desktop Deps
+        if: matrix.platform.name != 'Android' && matrix.platform.name != 'Emscripten'
+        id: cache-desktop
+        uses: actions/cache@v6
+        with:
+          path: |
+            JsonBox/build/install
+            googletest/build/install
+          key: desktop-${{ runner.os }}-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}-${{ hashFiles('.devops/install_dependencies.sh') }}
 
-    - name: Cache Android NDK & Libs
-      if: matrix.platform.name == 'Android'
-      id: cache-android
-      uses: actions/cache@v6
-      with:
-        path: |
-          /usr/local/lib/android/sdk/ndk/26.2.11394342
-        key: android-deps-ndk-26.2-${{ matrix.type.name }}
+      - name: Cache Emscripten Deps
+        if: matrix.platform.name == 'Emscripten'
+        id: cache-emscripten
+        uses: actions/cache@v6
+        with:
+          path: |
+            emsdk
+            JsonBox/build/install
+            googletest/build/install
+          key: emscripten-${{ matrix.type.name }}-${{ hashFiles('.devops/install_dependencies.sh') }}
 
-    - name: Install Android components
-      if: matrix.platform.name == 'Android' && steps.cache-android.outputs.cache-hit != 'true'
-      run: |
-        echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "build-tools;33.0.2"
-        echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;26.2.11394342"
+      - name: Cache Android NDK & Libs
+        if: matrix.platform.name == 'Android'
+        id: cache-android
+        uses: actions/cache@v6
+        with:
+          path: |
+            /usr/local/lib/android/sdk/ndk/26.2.11394342
+          key: android-deps-ndk-26.2-${{ matrix.type.name }}-${{ hashFiles('.devops/install_dependencies.sh') }}
 
-    - name: Build Dependencies (Windows)
-      if: runner.os == 'Windows' && steps.cache-desktop.outputs.cache-hit != 'true'
-      shell: msys2 {0}
-      run: |
-        ./.devops/install_dependencies.sh "${{ matrix.platform.name }}" ${{ matrix.type.name }}
+      - name: Install Android components
+        if: matrix.platform.name == 'Android' && steps.cache-android.outputs.cache-hit != 'true'
+        run: |
+          echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "build-tools;33.0.2"
+          echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;26.2.11394342"
 
-    - name: Build Dependencies (Linux/Mac)
-      if: runner.os != 'Windows' && matrix.platform.name != 'Android' && matrix.platform.name != 'Emscripten' && steps.cache-desktop.outputs.cache-hit != 'true'
-      run: |
-        bash .devops/install_dependencies.sh "${{ matrix.platform.name }}" ${{ matrix.type.name }}
+      - name: Build Dependencies (Windows)
+        if: runner.os == 'Windows' && steps.cache-desktop.outputs.cache-hit != 'true'
+        shell: msys2 {0}
+        run: |
+          ./.devops/install_dependencies.sh "${{ matrix.platform.name }}" ${{ matrix.type.name }}
 
-    - name: Build Dependencies (Android)
-      if: matrix.platform.name == 'Android' && steps.cache-android.outputs.cache-hit != 'true'
-      run: |
-        export ANDROID_NDK_ROOT=$(echo $ANDROID_SDK_ROOT/ndk/26.2.11394342)
-        bash .devops/install_dependencies.sh "${{ matrix.platform.name }}" ${{ matrix.type.name }}
+      - name: Build Dependencies (Linux/Mac)
+        if: runner.os != 'Windows' && matrix.platform.name != 'Android' && matrix.platform.name != 'Emscripten' && steps.cache-desktop.outputs.cache-hit != 'true'
+        run: |
+          bash .devops/install_dependencies.sh "${{ matrix.platform.name }}" ${{ matrix.type.name }}
 
-    - name: Build Dependencies (Emscripten)
-      if: matrix.platform.name == 'Emscripten' && steps.cache-emscripten.outputs.cache-hit != 'true'
-      run: |
-        git clone https://github.com/emscripten-core/emsdk.git
-        cd emsdk
-        ./emsdk install latest
-        ./emsdk activate latest
-        source emsdk_env.sh
-        cd ..
-        bash .devops/install_dependencies.sh "${{ matrix.platform.name }}" ${{ matrix.type.name }}
+      - name: Build Dependencies (Android)
+        if: matrix.platform.name == 'Android' && steps.cache-android.outputs.cache-hit != 'true'
+        run: |
+          export ANDROID_NDK_ROOT=$(echo $ANDROID_SDK_ROOT/ndk/26.2.11394342)
+          bash .devops/install_dependencies.sh "${{ matrix.platform.name }}" ${{ matrix.type.name }}
 
-    - name: Build and Test (Windows)
-      if: runner.os == 'Windows'
-      shell: msys2 {0}
-      run: |
-        export JB_ROOT=$(cd JsonBox/build/install && pwd -W)
-        export GT_ROOT=$(cd googletest/build/install && pwd -W)
-        mkdir build && cd build
-        cmake \
-          ${{ matrix.config.flags }} ${{ matrix.platform.flags }} ${{ matrix.type.flags }} \
-          -DJsonBox_ROOT="$JB_ROOT" \
-          -DGTest_ROOT="$GT_ROOT" \
-          ..
-        cmake --build . --config ${{ matrix.type.name }} -j 4
-        export PATH=$PATH:/mingw64/bin
-        ctest --output-on-failure -C ${{ matrix.type.name }} --repeat until-pass:3
+      - name: Build Dependencies (Emscripten)
+        if: matrix.platform.name == 'Emscripten' && steps.cache-emscripten.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          ./emsdk install latest
+          ./emsdk activate latest
+          source emsdk_env.sh
+          cd ..
+          bash .devops/install_dependencies.sh "${{ matrix.platform.name }}" ${{ matrix.type.name }}
 
-    - name: Build and Test (Linux/Mac)
-      if: runner.os != 'Windows' && matrix.platform.name != 'Android' && matrix.platform.name != 'Emscripten'
-      run: |
-        mkdir build && cd build
-        cmake \
-          ${{ matrix.config.flags }} ${{ matrix.platform.flags }} ${{ matrix.type.flags }} \
-          -DJsonBox_ROOT=$GITHUB_WORKSPACE/JsonBox/build/install \
-          -DGTest_ROOT=$GITHUB_WORKSPACE/googletest/build/install \
-          ..
-        cmake --build . --config ${{ matrix.type.name }} -j 4
-        ctest --output-on-failure -C ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --repeat until-pass:3
+      - name: Build and Test (Windows)
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          export JB_ROOT=$(cd JsonBox/build/install && pwd -W)
+          export GT_ROOT=$(cd googletest/build/install && pwd -W)
+          mkdir build && cd build
+          cmake \
+            ${{ matrix.config.flags }} ${{ matrix.platform.flags }} ${{ matrix.type.flags }} \
+            -DJsonBox_ROOT="$JB_ROOT" \
+            -DGTest_ROOT="$GT_ROOT" \
+            -DEvoAI_PACKAGE_SUFFIX="$EVOAI_PACKAGE_SUFFIX" \
+            ..
+          cmake --build . --config ${{ matrix.type.name }} -j 4
+          export PATH=$PATH:/mingw64/bin
+          ctest --output-on-failure -C ${{ matrix.type.name }} --repeat until-pass:3
 
-    - name: Build and Test (Emscripten)
-      if: matrix.platform.name == 'Emscripten'
-      run: |
-        ./emsdk/emsdk activate latest
-        source ./emsdk/emsdk_env.sh
-        mkdir build && cd build
-        emcmake cmake \
-          ${{ matrix.config.flags }} ${{ matrix.platform.flags }} \
-          -DJsonBox_ROOT=$GITHUB_WORKSPACE/JsonBox/build/install \
-          -DGTest_ROOT=$GITHUB_WORKSPACE/googletest/build/install \
-          ..
-        cmake --build . --config ${{ matrix.type.name }} -j 4
-        node bin/RunAllTests.js
+      - name: Build and Test (Linux/Mac)
+        if: runner.os != 'Windows' && matrix.platform.name != 'Android' && matrix.platform.name != 'Emscripten'
+        run: |
+          mkdir build && cd build
+          cmake \
+            ${{ matrix.config.flags }} ${{ matrix.platform.flags }} ${{ matrix.type.flags }} \
+            -DJsonBox_ROOT=$GITHUB_WORKSPACE/JsonBox/build/install \
+            -DGTest_ROOT=$GITHUB_WORKSPACE/googletest/build/install \
+            -DEvoAI_PACKAGE_SUFFIX="$EVOAI_PACKAGE_SUFFIX" \
+            ..
+          cmake --build . --config ${{ matrix.type.name }} -j 4
+          ctest --output-on-failure -C ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --repeat until-pass:3
 
-    - name: Build (Android)
-      if: matrix.platform.name == 'Android'
-      run: |
-        mkdir build && cd build
-        cmake ${{ matrix.config.flags }} -DJsonBox_ROOT=$ANDROID_SDK_ROOT/ndk/26.2.11394342/sources/third_party/JsonBox ..
-        cmake --build . --config ${{ matrix.type.name }} -j 4
+      - name: Build and Test (Emscripten)
+        if: matrix.platform.name == 'Emscripten'
+        run: |
+          ./emsdk/emsdk activate latest
+          source ./emsdk/emsdk_env.sh
+          mkdir build && cd build
+          emcmake cmake \
+            ${{ matrix.config.flags }} ${{ matrix.platform.flags }} \
+            -DJsonBox_ROOT=$GITHUB_WORKSPACE/JsonBox/build/install \
+            -DGTest_ROOT=$GITHUB_WORKSPACE/googletest/build/install \
+            -DEvoAI_PACKAGE_SUFFIX="$EVOAI_PACKAGE_SUFFIX" \
+            ..
+          cmake --build . --config ${{ matrix.type.name }} -j 4
+          node bin/RunAllTests.js
 
-    - name: Package (Windows)
-      if: matrix.type.name == 'Release' && runner.os == 'Windows'
-      shell: msys2 {0}
-      run: |
-        cd build
-        cpack -G ZIP
+      - name: Build (Android)
+        if: matrix.platform.name == 'Android'
+        run: |
+          mkdir build && cd build
+          cmake ${{ matrix.config.flags }} ${{ matrix.type.flags }} \
+            -DJsonBox_ROOT=$ANDROID_SDK_ROOT/ndk/26.2.11394342/sources/third_party/JsonBox \
+            -DEvoAI_PACKAGE_SUFFIX="$EVOAI_PACKAGE_SUFFIX" \
+            ..
+          cmake --build . --config ${{ matrix.type.name }} -j 4
 
-    - name: Package (Unix)
-      if: matrix.type.name == 'Release'
-      run: |
-        cd build
-        cpack -G ZIP
+      - name: Package (Windows)
+        if: matrix.type.name == 'Release' && runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          cd build
+          cpack -G ZIP
 
-    - name: Upload Artifacts
-      if: matrix.type.name == 'Release'
-      uses: actions/upload-artifact@v7
-      with:
-        name: EvoAI-${{ matrix.platform.name }}-${{ matrix.config.name }}
-        path: build/*.zip
-        if-no-files-found: warn
+      - name: Package (Unix)
+        if: matrix.type.name == 'Release'
+        run: |
+          cd build
+          cpack -G ZIP -C ${{ matrix.type.name }}
+
+      - name: Upload Artifacts
+        if: matrix.type.name == 'Release' && matrix.platform.name != 'Android'
+        uses: actions/upload-artifact@v7
+        with:
+          name: EvoAI-${{ matrix.platform.name }}-${{ matrix.config.name }}
+          path: build/*.zip
+          if-no-files-found: error
+
+      - name: Upload Artifacts (Android)
+        if: matrix.type.name == 'Release' && matrix.platform.name == 'Android'
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-raw-${{ matrix.config.name }}
+          path: build/*.zip
+          if-no-files-found: error
+
+  package-android:
+    name: Package Android (merged)
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      - name: Download Android ABI artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: android-raw-*
+          path: android-parts
+          merge-multiple: true
+
+      - name: Merge ABIs into one package
+        run: |
+          MAJOR=$(grep EVOAI_VERSION_MAJOR include/EvoAI/Config.hpp | cut -d ' ' -f 3)
+          MINOR=$(grep EVOAI_VERSION_MINOR include/EvoAI/Config.hpp | cut -d ' ' -f 3)
+          PATCH=$(grep EVOAI_VERSION_PATCH include/EvoAI/Config.hpp | cut -d ' ' -f 3)
+          VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "EVOAI_VERSION=$VERSION" >> "$GITHUB_ENV"
+
+          mkdir merged
+          for zip in android-parts/*.zip; do
+            tmp=$(mktemp -d)
+            unzip -o -q "$zip" -d "$tmp"
+            entries=$(find "$tmp" -mindepth 1 -maxdepth 1)
+            if [ "$(echo "$entries" | wc -l)" -eq 1 ] && [ -d "$entries" ]; then
+              cp -r "$entries"/. merged/
+            else
+              cp -r "$tmp"/. merged/
+            fi
+            rm -rf "$tmp"
+          done
+
+          cd merged
+          zip -r -q "../EvoAI-${VERSION}-Android-Shared-Release.zip" .
+
+      - name: Upload merged Android package
+        uses: actions/upload-artifact@v7
+        with:
+          name: EvoAI-Android-Shared
+          path: EvoAI-${{ env.EVOAI_VERSION }}-Android-Shared-Release.zip
+          if-no-files-found: error
 
   release:
     name: Create Release
-    needs: build
+    needs: [build, package-android]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v8
         with:
+          pattern: EvoAI-*
           path: artifacts
           merge-multiple: true
 
