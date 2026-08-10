@@ -6,9 +6,9 @@
         "preferred": true
     },
     {
-        "name": "v1.0 (stable)",
-        "version": "v1.0",
-        "url": "https://cristianglezm.github.io/EvoAI/v1.0/"
+        "name": "v1.2",
+        "version": "v1.2",
+        "url": "https://cristianglezm.github.io/EvoAI/v1.2/"
     },
     {
         "name": "v1.1",
@@ -16,8 +16,8 @@
         "url": "https://cristianglezm.github.io/EvoAI/v1.1/"
     },
     {
-        "name": "v1.2",
-        "version": "v1.2",
-        "url": "https://cristianglezm.github.io/EvoAI/v1.2/"
+        "name": "v1.0 (stable)",
+        "version": "v1.0",
+        "url": "https://cristianglezm.github.io/EvoAI/v1.0/"
     }
 ]
