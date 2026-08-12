@@ -333,16 +333,16 @@ jobs:
            cd ..
 
       - name: Fuzz -- JsonBox parsing (60s smoke run)
-        run: build/fuzz/fuzz/bin/fuzz_jsonbox_parse -max_total_time=60 test/fuzz/corpus
+        run: build/fuzz/bin/fuzz_jsonbox_parse -max_total_time=60 test/fuzz/corpus
 
       - name: Fuzz -- NeuralNetwork JSON (60s smoke run)
-        run: build/fuzz/fuzz/bin/fuzz_neuralnetwork_from_json -max_total_time=60 test/fuzz/corpus
+        run: build/fuzz/bin/fuzz_neuralnetwork_from_json -max_total_time=60 test/fuzz/corpus
 
       - name: Fuzz -- Genome JSON (60s smoke run)
-        run: build/fuzz/fuzz/bin/fuzz_genome_from_json -max_total_time=60 test/fuzz/corpus
+        run: build/fuzz/bin/fuzz_genome_from_json -max_total_time=60 test/fuzz/corpus
 
       - name: Fuzz -- Graph JSON (60s smoke run)
-        run: build/fuzz/fuzz/bin/fuzz_graph_from_json -max_total_time=60 test/fuzz/corpus
+        run: build/fuzz/bin/fuzz_graph_from_json -max_total_time=60 test/fuzz/corpus
 
       - name: Upload any newly-found crashes
         if: always()
