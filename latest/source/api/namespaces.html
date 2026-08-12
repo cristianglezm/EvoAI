@@ -1020,6 +1020,26 @@
 <dd><p><a class="reference internal" href="#class_evo_a_i_1_1_random_generator"><span class="std std-ref">RandomGenerator</span></a>. </p>
 </dd></dl>
 
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN5EvoAI13safeParseUIntE1TRKNSt6stringE1T">
+<span id="_CPPv3I0EN5EvoAI13safeParseUIntERKNSt6stringE1T"></span><span id="_CPPv2I0EN5EvoAI13safeParseUIntERKNSt6stringE1T"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="namespace_evo_a_i_1a3091ef113bcdc39997b10bc4dee7faf6"></span><a class="reference internal" href="#_CPPv4I0EN5EvoAI13safeParseUIntE1TRKNSt6stringE1T" title="EvoAI::safeParseUInt::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">EvoAI</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">safeParseUInt</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">str</span></span>, <a class="reference internal" href="#_CPPv4I0EN5EvoAI13safeParseUIntE1TRKNSt6stringE1T" title="EvoAI::safeParseUInt::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">defaultValue</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN5EvoAI13safeParseUIntE1TRKNSt6stringE1T" title="EvoAI::safeParseUInt::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0EN5EvoAI13safeParseUIntE1TRKNSt6stringE1T" title="Link to this definition">#</a><br /></dt>
+<dd><p>parses str as an unsigned integer, returning defaultValue instead of throwing when str is empty or not a valid number. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – an unsigned integral type, defaults to std::size_t </p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>str</strong> – the string to parse (e.g. from JsonBox::Value::getString()) </p></li>
+<li><p><strong>defaultValue</strong> – value returned when str can’t be parsed </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>T </p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="cpp struct">
 <dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI4AdamE">
 <span id="_CPPv3N5EvoAI5EvoAI4AdamE"></span><span id="_CPPv2N5EvoAI5EvoAI4AdamE"></span><span id="EvoAI::EvoAI::Adam"></span><span class="target" id="struct_evo_a_i_1_1_adam"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Adam</span></span></span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI4AdamE" title="Link to this definition">#</a><br /></dt>
@@ -11261,6 +11281,7 @@ This implementation is a subtractive carver: it expects <code class="docutils li
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN5EvoAI6ArgmaxENSt6size_tE8Iterator8Iterator"><code class="docutils literal notranslate"><span class="pre">Argmax()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I00EN5EvoAI6ArgmaxENSt6size_tE8Iterator8IteratorRR2Fn"><code class="docutils literal notranslate"><span class="pre">Argmax()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI9randomGenEv"><code class="docutils literal notranslate"><span class="pre">randomGen()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN5EvoAI13safeParseUIntE1TRKNSt6stringE1T"><code class="docutils literal notranslate"><span class="pre">safeParseUInt()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI4AdamE"><code class="docutils literal notranslate"><span class="pre">EvoAI::Adam</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI4Adam4AdamERRNSt6vectorIP10ConnectionEEbdddb"><code class="docutils literal notranslate"><span class="pre">Adam()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI4Adam4AdamEN7JsonBox6ObjectERRNSt6vectorIP10ConnectionEE"><code class="docutils literal notranslate"><span class="pre">Adam()</span></code></a></li>
