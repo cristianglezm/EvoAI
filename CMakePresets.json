@@ -40,14 +40,21 @@
       {
         "name": "mingw-ci",
         "displayName": "mingw ci",
-        "description": "dev build using MinGW",
-        "generator": "MinGW Makefiles",
+        "description": "fast build for running tests only (no docs/examples/tools)",
         "inherits": "mingw",
-        "binaryDir": "${sourceDir}/build/tests",
+        "binaryDir": "${sourceDir}/build/mingw-ci",
         "cacheVariables": {
-            "EvoAI_BUILD_TESTS": "ON",
-            "JsonBox_ROOT": "/c/libs/JsonBox",
-            "GTest_ROOT": "/c/libs/googletest"
+            "EvoAI_BUILD_TESTS": "ON"
+        }
+      },
+      {
+        "name": "mingw-all-debug",
+        "displayName": "mingw all (Debug)",
+        "description": "dev build using MinGW, for testing a real Debug build",
+        "inherits": "mingw-all",
+        "binaryDir": "${sourceDir}/build/mingw-all-debug",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug"
         }
       },
       {
@@ -59,6 +66,24 @@
         "binaryDir": "${sourceDir}/build/docs",
         "cacheVariables": {
             "EvoAI_BUILD_DOCS": "ON"
+        }
+      },
+      {
+        "name": "linux-fuzz",
+        "displayName": "linux fuzz",
+        "description": "Clang + libFuzzer harnesses (see test/fuzz/README.md). Not for Windows: libFuzzer/ASan aren't available with MinGW/MSVC here.",
+        "generator": "Unix Makefiles",
+        "binaryDir": "${sourceDir}/build/fuzz",
+        "condition": {
+          "type": "notEquals",
+          "lhs": "${hostSystemName}",
+          "rhs": "Windows"
+        },
+        "cacheVariables": {
+            "CMAKE_CXX_COMPILER": "clang++",
+            "CMAKE_BUILD_TYPE": "Release",
+            "EvoAI_BUILD_FUZZERS": "ON",
+            "JsonBox_ROOT": "${sourceDir}/JsonBox/build/install"
         }
       }
     ],
@@ -77,6 +102,20 @@
         "configuration": "Release",
         "jobs": 4,
         "targets": [ "docs" ]
+      },
+      {
+        "name": "mingw-ci",
+        "configurePreset": "mingw-ci",
+        "displayName": "Build mingw-ci",
+        "jobs": 4,
+        "targets": ["all"]
+      },
+      {
+        "name": "linux-fuzz",
+        "configurePreset": "linux-fuzz",
+        "displayName": "Build linux-fuzz",
+        "jobs": 4,
+        "targets": ["all"]
       }
     ],
     "testPresets": [
@@ -95,11 +134,18 @@
       {
         "name": "mingw-ci-debug",
         "configuration": "Debug",
+        "configurePreset": "mingw-all-debug",
         "inherits": "test-base"
       },
       {
         "name": "mingw-ci-release",
         "configuration": "Release",
+        "inherits": "test-base"
+      },
+      {
+        "name": "mingw-ci",
+        "displayName": "Test mingw-ci",
+        "configurePreset": "mingw-ci",
         "inherits": "test-base"
       }
     ],
@@ -131,6 +177,38 @@
           {
             "type": "package",
             "name": "mingw-zip"
+          }
+        ]
+      },
+      {
+        "name": "mingw-ci",
+        "displayName": "Fast tests-only loop (no docs/examples/tools)",
+        "steps": [
+          {
+            "type": "configure",
+            "name": "mingw-ci"
+          },
+          {
+            "type": "build",
+            "name": "mingw-ci"
+          },
+          {
+            "type": "test",
+            "name": "mingw-ci"
+          }
+        ]
+      },
+      {
+        "name": "linux-fuzz",
+        "displayName": "Build the libFuzzer harnesses (see test/fuzz/README.md to run them)",
+        "steps": [
+          {
+            "type": "configure",
+            "name": "linux-fuzz"
+          },
+          {
+            "type": "build",
+            "name": "linux-fuzz"
           }
         ]
       }
