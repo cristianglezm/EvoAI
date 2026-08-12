@@ -7,6 +7,7 @@
 
 #include <EvoAI/Export.hpp>
 #include <EvoAI/Utils/RandomUtils.hpp>
+#include <EvoAI/Utils/TypeUtils.hpp>
 #include <JsonBox.h>
 
 namespace EvoAI{

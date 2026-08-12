@@ -23,6 +23,28 @@ namespace estd{
     using is_detected = typename detail::is_detected<Trait, void, Args...>::type;
 }
 
+namespace EvoAI{
+    /**
+     * @brief parses str as an unsigned integer, returning defaultValue instead
+     * of throwing when str is empty or not a valid number.
+     * @tparam T an unsigned integral type, defaults to std::size_t
+     * @param str the string to parse (e.g. from JsonBox::Value::getString())
+     * @param defaultValue value returned when str can't be parsed
+     * @return T
+     */
+    template<typename T = std::size_t>
+    [[nodiscard]] T safeParseUInt(const std::string& str, T defaultValue = T{0}) noexcept{
+        if(str.empty()){
+            return defaultValue;
+        }
+        try{
+            return static_cast<T>(std::stoull(str));
+        } catch(const std::exception&){
+            return defaultValue;
+        }
+    }
+}// namespace EvoAI
+
 namespace EvoAI::meta{
    /**
     *  @brief T has a member function JsonBox::Value toJson() const noexcept

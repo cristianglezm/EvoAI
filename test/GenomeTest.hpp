@@ -14,6 +14,17 @@ namespace EvoAI{
             EXPECT_EQ(0u,cppn.getID());
             EXPECT_EQ(0u,cppn.getSpeciesID());
         }
+        TEST(GenomeTest,MakePhenotypeFromEmptyGenomeDoesNotCrash){
+            // A default/empty Genome has no node chromosomes, so all three
+            // of the phenotype's layers (input/hidden/output) end up with
+            // zero neurons.
+            Genome g;
+            auto nn = Genome::makePhenotype(g);
+            EXPECT_EQ(3u, nn.size());
+            EXPECT_EQ(0u, nn[0].size());
+            EXPECT_EQ(0u, nn[1].size());
+            EXPECT_EQ(0u, nn[2].size());
+        }
         TEST(GenomeTest, WritingAndLoading){
             Genome gL(3,2,1,true,true);
             gL.writeToFile("testsData/gL.json");

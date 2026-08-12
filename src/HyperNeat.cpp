@@ -1,5 +1,6 @@
 #include <EvoAI/HyperNeat.hpp>
 #include <EvoAI/Genome.hpp>
+#include <EvoAI/Utils/TypeUtils.hpp>
 
 namespace EvoAI{
     SubstrateInfo::SubstrateInfo()
@@ -20,15 +21,15 @@ namespace EvoAI{
     , minmaxWeight(minMaxWeight)
     , bias(Bias){}
     SubstrateInfo::SubstrateInfo(JsonBox::Object o)
-    : numInputs(std::stoull(o["numInputs"].getString()))
-    , numHiddenLayers(std::stoull(o["numHiddenLayers"].getString()))
+    : numInputs(safeParseUInt<std::size_t>(o["numInputs"].getString(), 0))
+    , numHiddenLayers(safeParseUInt<std::size_t>(o["numHiddenLayers"].getString(), 0))
     , numHiddenNeurons()
-    , numOutputs(std::stoull(o["numOutputs"].getString()))
+    , numOutputs(safeParseUInt<std::size_t>(o["numOutputs"].getString(), 0))
     , leo(o["leo"].tryGetDouble(0.5))
     , minmaxWeight(o["minmaxWeight"].tryGetDouble(8.0))
     , bias(o["bias"].tryGetDouble(1.0)){
         for(auto& nhn:o["numHiddenNeurons"].getArray()){
-            numHiddenNeurons.emplace_back(std::stoull(nhn.getString()));
+            numHiddenNeurons.emplace_back(safeParseUInt<std::size_t>(nhn.getString(), 0));
         }
     }
     JsonBox::Value SubstrateInfo::toJson() const noexcept{

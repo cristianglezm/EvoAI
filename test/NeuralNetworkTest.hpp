@@ -74,6 +74,29 @@ namespace EvoAI{
             NeuralNetwork nnJson("testsData/testNN.json");
             EXPECT_TRUE(nnJson == nnSave);
         }
+        TEST_F(NeuralNetworkTest,InvalidConnectionIndexThrows){
+            // Reproduces a real crash found by fuzzing: a layer's "neurons"
+            // array is shorter than a connection elsewhere still expects
+            // (e.g. from a truncated/tampered "neurons" array), so the
+            // connection's dest.neuron index doesn't exist in that layer.
+            NeuralNetwork nn(1,1,{1},1,1.0);
+            nn.addConnection(Connection(Link(0,0),Link(1,0),1.0));
+            auto json = nn.toJson();
+            // layer 1 (the hidden layer) has 1 neuron; the connection above
+            // targets neuron 0 of it. Truncate that layer's neurons array so
+            // the connection's dest.neuron (0) no longer exists.
+            json["layers"][1]["neurons"] = JsonBox::Array{};
+            EXPECT_THROW(NeuralNetwork(json.getObject()), std::out_of_range);
+        }
+        TEST_F(NeuralNetworkTest,EmptyLayersThrows){
+            // "layers":[] is structurally valid JSON with nothing for
+            // validateNetworkStructure's connection-walk to catch (there
+            // are no connections to walk),
+            JsonBox::Object o;
+            o["globalStep"] = JsonBox::Value("0");
+            o["layers"] = JsonBox::Array{};
+            EXPECT_THROW((NeuralNetwork(o)), std::out_of_range);
+        }
         TEST_F(NeuralNetworkTest,CheckOutputs){
             NeuralNetwork nn(1,1,{1},1,1.0);
             nn[0][0].setBiasWeight(1.0);

@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.14...3.28)
 ################################################################################
 
 option(EvoAI_BUILD_TESTS "Build Tests" OFF)
+option(EvoAI_BUILD_FUZZERS "Build libFuzzer harnesses (Clang only, native only)" OFF)
 option(EvoAI_BUILD_TOOLS "Build Tools" OFF)
 option(EvoAI_BUILD_EXAMPLES "Build Examples" OFF)
 option(EvoAI_BUILD_STATIC "Build static" OFF)
@@ -141,6 +142,18 @@ if(EvoAI_BUILD_TESTS)
     enable_testing()
     add_subdirectory(test)
 endif(EvoAI_BUILD_TESTS)
+
+################################################################################
+### Fuzzing
+################################################################################
+
+if(EvoAI_BUILD_FUZZERS)
+    if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        message(FATAL_ERROR "EvoAI_BUILD_FUZZERS requires Clang (got ${CMAKE_CXX_COMPILER_ID}) - "
+            "reconfigure with -DCMAKE_CXX_COMPILER=clang++.")
+    endif()
+    add_subdirectory(test/fuzz)
+endif(EvoAI_BUILD_FUZZERS)
 
 ################################################################################
 ### examples

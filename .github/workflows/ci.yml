@@ -304,6 +304,54 @@ jobs:
           path: build/*.zip
           if-no-files-found: error
 
+  fuzz:
+    name: fuzz
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Clang
+        run: sudo apt-get update && sudo apt-get install -y clang
+
+      - name: Cache JsonBox
+        id: cache-jsonbox
+        uses: actions/cache@v6
+        with:
+          path: JsonBox/build/install
+          key: fuzz-jsonbox-${{ runner.os }}-${{ hashFiles('.devops/install_dependencies.sh') }}
+
+      - name: Build JsonBox
+        if: steps.cache-jsonbox.outputs.cache-hit != 'true'
+        run: bash .devops/install_dependencies.sh "Linux Clang" Release
+
+      - name: Configure + build fuzz harnesses
+        run: |
+           mkdir build && cd build
+           CXX=clang++ CC=clang cmake GNinja -DJsonBox_ROOT=JsonBox/build/install -DEvoAI_BUILD_FUZZERS=ON ..
+           cmake --build . -j 4
+           cd ..
+
+      - name: Fuzz -- JsonBox parsing (60s smoke run)
+        run: build/fuzz/fuzz/bin/fuzz_jsonbox_parse -max_total_time=60 test/fuzz/corpus
+
+      - name: Fuzz -- NeuralNetwork JSON (60s smoke run)
+        run: build/fuzz/fuzz/bin/fuzz_neuralnetwork_from_json -max_total_time=60 test/fuzz/corpus
+
+      - name: Fuzz -- Genome JSON (60s smoke run)
+        run: build/fuzz/fuzz/bin/fuzz_genome_from_json -max_total_time=60 test/fuzz/corpus
+
+      - name: Fuzz -- Graph JSON (60s smoke run)
+        run: build/fuzz/fuzz/bin/fuzz_graph_from_json -max_total_time=60 test/fuzz/corpus
+
+      - name: Upload any newly-found crashes
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-crashes
+          path: build/fuzz/crash-*
+          if-no-files-found: ignore
+
   package-android:
     name: Package Android (merged)
     needs: build

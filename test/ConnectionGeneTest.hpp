@@ -33,7 +33,11 @@ namespace EvoAI{
                 cgJson["enabled"] = false;
                 cgJson["frozen"] = true;
                 cgJson["Connection"] = connJson;
-                EXPECT_THROW(ConnectionGene(cgJson.getObject()), std::invalid_argument);
+                auto cgGarbled = ConnectionGene(cgJson.getObject());
+                EXPECT_EQ(0u, cgGarbled.getSrc().layer);
+                EXPECT_EQ(0u, cgGarbled.getSrc().neuron);
+                EXPECT_EQ(0u, cgGarbled.getDest().layer);
+                EXPECT_EQ(0u, cgGarbled.getDest().neuron);
             }
             {
                 JsonBox::Value linkJson;

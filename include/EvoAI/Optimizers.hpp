@@ -6,6 +6,7 @@
 #include <EvoAI/Optimizers/Muon.hpp>
 
 #include <EvoAI/Schedulers.hpp>
+#include <EvoAI/Utils/TypeUtils.hpp>
 #include <JsonBox.h>
 
 namespace EvoAI{
@@ -91,7 +92,7 @@ namespace EvoAI{
     Optimizer<Algo, SchedulerAlgo>::Optimizer(JsonBox::Object o, std::vector<Connection*>&& parameters)
     : m_stepFn(o["stepFn"].getObject(), std::forward<std::vector<Connection*>>(parameters))
     , m_scheduler(o["scheduler"].getObject())
-    , m_batchSize(std::stoul(o["batchSize"].tryGetString("1")))
+    , m_batchSize(safeParseUInt<std::size_t>(o["batchSize"].getString(), 1))
     , m_lr(o["lr"].tryGetDouble(0.1)){}
     template<class Algo, class SchedulerAlgo>
     JsonBox::Value Optimizer<Algo, SchedulerAlgo>::toJson() const noexcept{
