@@ -1,4 +1,5 @@
 #include <EvoAI/NeuralNetwork.hpp>
+#include <EvoAI/Utils/TypeUtils.hpp>
 
 namespace EvoAI{
     Adam::Adam(std::vector<Connection*>&& parameters, bool maximize, double beta1, double beta2, double epsilon, bool accumGradients)
@@ -18,7 +19,7 @@ namespace EvoAI{
     , m_mWeight()
     , m_vWeight()
     , m_epsilon(o["epsilon"].tryGetDouble(1e-8))
-    , m_t{std::stoul(o["t"].tryGetString("0"))}
+    , m_t{safeParseUInt<std::size_t>(o["t"].getString(), 0)}
     , m_maximize(o["maximize"].tryGetBoolean(false))
     , m_accumGradients(o["accumGradients"].tryGetBoolean(false)){
         auto parseJsonArray = [&o](const std::string& name, std::vector<double>& into){

@@ -1,5 +1,6 @@
 #include <EvoAI/Genome.hpp>
 #include <EvoAI/NeuronLayer.hpp>
+#include <EvoAI/Utils/TypeUtils.hpp>
 
 #include <random>
 #include <algorithm>
@@ -110,8 +111,8 @@ namespace EvoAI{
     Genome::Genome(JsonBox::Object o)
     : nodeChromosomes()
     , connectionChromosomes()
-    , genomeID(std::stoull(o["GenomeID"].tryGetString("0")))
-    , speciesID(std::stoull(o["SpeciesID"].tryGetString("0")))
+    , genomeID(safeParseUInt<std::size_t>(o["GenomeID"].getString(), 0))
+    , speciesID(safeParseUInt<std::size_t>(o["SpeciesID"].getString(), 0))
     , fitness(o["fitness"].tryGetDouble(0.0))
     , rnnAllowed(o["rnnAllowed"].tryGetBoolean(false))
     , cppn(o["cppn"].tryGetBoolean(false)){
@@ -141,8 +142,8 @@ namespace EvoAI{
         auto& v = json["Genome"];
         rnnAllowed = v["rnnAllowed"].getBoolean();
         cppn = v["cppn"].getBoolean();
-        genomeID = std::stoull(v["GenomeID"].getString());
-        speciesID = std::stoull(v["SpeciesID"].getString());
+        genomeID = safeParseUInt<std::size_t>(v["GenomeID"].getString(), 0);
+        speciesID = safeParseUInt<std::size_t>(v["SpeciesID"].getString(), 0);
         fitness = v["fitness"].getDouble();
         auto& ngs = v["nodeChromosomes"].getArray();
         nodeChromosomes.reserve(ngs.size());
@@ -688,13 +689,15 @@ namespace EvoAI{
         nn.addLayer(inputLayer);
         nn.addLayer(hiddenLayer);
         nn.addLayer(outputLayer);
-        auto actType = nn[2][0].getActivationType();
-        auto& neurons = nn[2].getNeurons();
-        auto checkActType = [actType](auto& n){
-                return n.getActivationType() == actType;
-        };
-        if(std::all_of(std::begin(neurons), std::end(neurons), checkActType)){
-            nn[2].setActivationType(actType);
+        if(!nn[2].getNeurons().empty()){
+            auto actType = nn[2][0].getActivationType();
+            auto& neurons = nn[2].getNeurons();
+            auto checkActType = [actType](auto& n){
+                    return n.getActivationType() == actType;
+            };
+            if(std::all_of(std::begin(neurons), std::end(neurons), checkActType)){
+                nn[2].setActivationType(actType);
+            }
         }
         auto hasValidConn = [](NeuralNetwork& net, const ConnectionGene& cg){
             const auto& src = cg.getSrc();

@@ -1,4 +1,5 @@
 #include <EvoAI/NeuralNetwork.hpp>
+#include <EvoAI/Utils/TypeUtils.hpp>
 #include <fstream>
 
 namespace EvoAI{
@@ -33,13 +34,14 @@ namespace EvoAI{
     , neurons()
     , connectionsCached(false)
     , neuronsCached(false)
-    , globalStep(std::stoull(o["globalStep"].getString()))
+    , globalStep(safeParseUInt<std::uint64_t>(o["globalStep"].getString(), 0))
     , lastAvgLoss(0.0){
         auto& lyrs = o["layers"].getArray();
         layers.reserve(lyrs.size());
         for(auto& l:lyrs){
             layers.emplace_back(l.getObject());
         }
+        validateNetworkStructure();
     }
     NeuralNetwork::NeuralNetwork(const std::string& filename)
     : layers()
@@ -51,11 +53,31 @@ namespace EvoAI{
     , lastAvgLoss(0.0){
         JsonBox::Value v;
         v.loadFromFile(filename);
-        globalStep = std::stoull(v["NeuralNetwork"]["globalStep"].getString());
+        globalStep = safeParseUInt<std::uint64_t>(v["NeuralNetwork"]["globalStep"].getString(), 0);
         auto& layersArray = v["NeuralNetwork"]["layers"].getArray();
         layers.reserve(layersArray.size());
         for(auto& la:layersArray){
             layers.emplace_back(la.getObject());
+        }
+        validateNetworkStructure();
+    }
+    void NeuralNetwork::validateNetworkStructure(){
+        if(layers.empty()){
+            throw std::out_of_range("NeuralNetwork: needs at least one layer");
+        }
+        for(auto& l:layers){
+            for(auto& n:l.getNeurons()){
+                for(auto& c:n.getConnections()){
+                    auto& src = c.getSrc();
+                    auto& dest = c.getDest();
+                    if(src.layer >= layers.size() || dest.layer >= layers.size()){
+                        throw std::out_of_range("NeuralNetwork: connection references a layer index that doesn't exist");
+                    }
+                    if(src.neuron >= layers[src.layer].size() || dest.neuron >= layers[dest.layer].size()){
+                        throw std::out_of_range("NeuralNetwork: connection references a neuron index that doesn't exist");
+                    }
+                }
+            }
         }
     }
     NeuralNetwork& NeuralNetwork::addLayer(const NeuronLayer& l){

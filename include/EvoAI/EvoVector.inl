@@ -42,8 +42,8 @@ namespace EvoAI{
     template<typename T>
     EvoVector<T>::EvoVector(JsonBox::Object o) noexcept
     : m_dna()
-    , m_Id(std::stoul(o["Id"].tryGetString("0")))
-    , m_speciesId(std::stoul(o["speciesId"].tryGetString("0")))
+    , m_Id(safeParseUInt<std::size_t>(o["Id"].getString(), 0))
+    , m_speciesId(safeParseUInt<std::size_t>(o["speciesId"].getString(), 0))
     , m_fitness(o["fitness"].tryGetDouble(0.0)){
         auto& ar = o["dna"].getArray();
         for(auto& d:ar){

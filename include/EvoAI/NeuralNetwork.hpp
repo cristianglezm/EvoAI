@@ -342,6 +342,20 @@ namespace EvoAI{
              * @return double
              */
             double derivate(Neuron::ActivationType at,const Neuron& n);
+            /**
+             * @brief validates that layers is non-empty and that every
+             * connection's src/dest layer and neuron indices point at a
+             * layer/neuron that actually exists.
+             * @throws std::out_of_range on the first problem found.
+             * @warning call only after layers is fully built (both JSON
+             * constructors call this as their last step) - deserialized
+             * Link/Connection indices come straight from untrusted JSON and
+             * are otherwise used unchecked as raw vector indices elsewhere
+             * (run()/backward() do layers.back(), setInputs() does
+             * layers[0]), which is a memory-safety bug, not just a
+             * malformed-input one.
+             */
+            void validateNetworkStructure();
         private:
             std::vector<NeuronLayer> layers;
             mutable std::vector<Connection*> connections;

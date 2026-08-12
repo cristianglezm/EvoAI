@@ -44,10 +44,10 @@ namespace EvoAI{
     Population<T>::Population(JsonBox::Object o)
     : species()
     , members()
-    , PopulationSize(std::stoull(o["PopulationSize"].getString()))
+    , PopulationSize(safeParseUInt<std::size_t>(o["PopulationSize"].getString(), 50))
     , speciesID(0u)
     , memberID(0u)
-    , maxAge(std::stoull(o["maxAge"].getString()))
+    , maxAge(safeParseUInt<std::size_t>(o["maxAge"].getString(), 120))
     , compatibilityThreshold(o["compatibilityThreshold"].getDouble())
     , membersCached(false){
         static_assert(!std::is_pointer_v<T>, "Population<T*>(JsonBox::Object o) cannot be used to load data.");
@@ -80,9 +80,9 @@ namespace EvoAI{
             auto id = spPtr->getID();
             species.emplace(id, std::move(spPtr));
         }
-        PopulationSize = std::stoull(v["PopulationSize"].getString());
+        PopulationSize = safeParseUInt<std::size_t>(v["PopulationSize"].getString(), 50);
         compatibilityThreshold = v["compatibilityThreshold"].getDouble();
-        maxAge = std::stoull(v["maxAge"].getString());
+        maxAge = safeParseUInt<std::size_t>(v["maxAge"].getString(), 120);
     }
     template<typename T>
     void Population<T>::addMember(std::conditional_t<std::is_pointer_v<Population<T>::value_type>, Population<T>::pointer, Population<T>::rvalue_reference> m, double c1, double c2, double c3) noexcept{

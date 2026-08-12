@@ -5,6 +5,7 @@
 #include <string>
 #include <limits>
 #include <cstddef>
+#include <algorithm>
 
 #include <JsonBox.h>
 

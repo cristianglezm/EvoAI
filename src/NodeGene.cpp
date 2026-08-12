@@ -1,4 +1,5 @@
 #include <EvoAI/NodeGene.hpp>
+#include <EvoAI/Utils/TypeUtils.hpp>
 #include <iostream>
 #include <algorithm>
 
@@ -36,8 +37,8 @@ namespace EvoAI{
     , actType(rhs.actType)
     , innovationID(rhs.innovationID){}
     NodeGene::NodeGene(JsonBox::Object o)
-    : layerID(std::stoull(o["layerID"].tryGetString("0")))
-    , neuronID(std::stoull(o["neuronID"].tryGetString("0")))
+    : layerID(safeParseUInt<std::size_t>(o["layerID"].getString(), 0))
+    , neuronID(safeParseUInt<std::size_t>(o["neuronID"].getString(), 0))
     , biasWeight(o["biasWeight"].tryGetDouble(0.0))
     , nrnType(Neuron::typeToEnum(o["nrnType"].tryGetString("hidden")))
     , actType(Neuron::activationTypeToEnum(o["actType"].tryGetString("sigmoid")))

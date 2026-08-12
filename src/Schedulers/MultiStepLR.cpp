@@ -1,4 +1,5 @@
 #include <EvoAI/Schedulers/MultiStepLR.hpp>
+#include <EvoAI/Utils/TypeUtils.hpp>
 
 namespace EvoAI{
         MultiStepLR::MultiStepLR(std::vector<std::size_t>&& steps, double gamma)
@@ -8,11 +9,11 @@ namespace EvoAI{
         MultiStepLR::MultiStepLR(JsonBox::Object o)
         : m_steps{}
         , m_gamma(o["gamma"].tryGetDouble(1.0))
-        , m_counter{std::stoul(o["counter"].tryGetString("0"))}{
+        , m_counter{safeParseUInt<std::size_t>(o["counter"].getString(), 0)}{
             auto& arr = o["steps"].getArray();
             m_steps.reserve(arr.size());
             for(auto& s:arr){
-                m_steps.emplace_back(std::stoul(s.getString()));
+                m_steps.emplace_back(safeParseUInt<std::size_t>(s.getString(), 0));
             }
         }
         JsonBox::Value MultiStepLR::toJson() const noexcept{

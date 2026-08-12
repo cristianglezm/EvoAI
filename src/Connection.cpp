@@ -1,14 +1,15 @@
 #include <EvoAI/Connection.hpp>
 #include <EvoAI/Utils/MathUtils.hpp>
 #include <EvoAI/Utils/RandomUtils.hpp>
+#include <EvoAI/Utils/TypeUtils.hpp>
 
 namespace EvoAI{
     Link::Link(std::size_t lyr, std::size_t nrn)
     : layer(lyr)
     , neuron(nrn){}
     Link::Link(JsonBox::Object o)
-    : layer(std::stoull(o["layer"].tryGetString("0")))
-    , neuron(std::stoull(o["neuron"].tryGetString("0"))){
+    : layer(safeParseUInt<std::size_t>(o["layer"].getString(), 0))
+    , neuron(safeParseUInt<std::size_t>(o["neuron"].getString(), 0)){
         if(layer == std::numeric_limits<std::size_t>::max()){
             layer = 0;
         }

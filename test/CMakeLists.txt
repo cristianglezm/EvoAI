@@ -1,8 +1,9 @@
 set(SRC_TEST_ROOT "${PROJECT_SOURCE_DIR}/test")
 
-# all source files
-FILE(GLOB_RECURSE RUNALLTESTS_SOURCES "${SRC_TEST_ROOT}/*.cpp")
-FILE(GLOB_RECURSE RUNALLTESTS_INCLUDES "${SRC_TEST_ROOT}/*.hpp")
+# all source files (non-recursive: test/fuzz/ is a separate target with
+# its own CMakeLists.txt and must not be pulled in here)
+FILE(GLOB RUNALLTESTS_SOURCES "${SRC_TEST_ROOT}/*.cpp")
+FILE(GLOB RUNALLTESTS_INCLUDES "${SRC_TEST_ROOT}/*.hpp")
 
 # define the RunAllTests target
 set(RunAllTests_SRC ${RUNALLTESTS_SOURCES} ${RUNALLTESTS_INCLUDES})

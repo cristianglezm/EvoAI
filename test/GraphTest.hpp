@@ -89,6 +89,37 @@ namespace EvoAI::Test{
 		EXPECT_TRUE(g.isConnected(g[0], g[1]));
 		EXPECT_FALSE(g.isConnected(g[1], g[0]));
 	}
+	TEST(GraphTest, InvalidEdgeIndexThrows){
+		Graph<> g;
+		g.addNode();
+		g.addNode();
+		g.connect(g[0], g[1], 5);
+		auto json = g.toJson();
+		// Only one node exists at index 0 once truncated; the edge from
+		// node 0 still points at node 1, which no longer exists.
+		JsonBox::Array truncatedNodes;
+		truncatedNodes.push_back(json["nodes"][static_cast<std::size_t>(0)]);
+		json["nodes"] = truncatedNodes;
+		EXPECT_THROW(Graph<>(json.getObject()), std::out_of_range);
+	}
+	TEST(GraphTest, NodeIndexIsNormalizedToPosition){
+		Graph<> g;
+		g.addNode();
+		g.addNode();
+		g.connect(g[0], g[1], 1.0);
+		auto json = g.toJson();
+		// Corrupt node 0's "index" field to point past the end of "nodes".
+		json["nodes"][static_cast<std::size_t>(0)]["index"] = JsonBox::Value("99");
+		Graph<> g2(json.getObject());
+		// The constructor must not trust the JSON's index - it has to be
+		// reset to match the node's actual position regardless of what
+		// the JSON said.
+		EXPECT_EQ(0u, g2[0].index);
+		EXPECT_EQ(1u, g2[1].index);
+		// And traversal through it must not crash.
+		auto edgesFromNode0 = g2.getOutgoingEdges(g2[0]);
+		EXPECT_EQ(1u, edgesFromNode0.size());
+	}
 	TEST(GraphTest, ConstOperatorIndex){
 		Graph<> g(3, 3);
 		g[4].blocked = true;

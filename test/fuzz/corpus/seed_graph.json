@@ -1,0 +1,41 @@
+{
+	"col" : "0",
+	"edges" : [
+		[
+			{
+				"next" : "1",
+				"prev" : "0",
+				"weight" : 1
+			}
+		],
+		[
+			{
+				"next" : "2",
+				"prev" : "1",
+				"weight" : 2
+			}
+		],
+		[
+			{
+				"next" : "0",
+				"prev" : "2",
+				"weight" : 3
+			}
+		]
+	],
+	"nodes" : [
+		{
+			"blocked" : false,
+			"index" : "0"
+		},
+		{
+			"blocked" : false,
+			"index" : "1"
+		},
+		{
+			"blocked" : false,
+			"index" : "2"
+		}
+	],
+	"row" : "0"
+}

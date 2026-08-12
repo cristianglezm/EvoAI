@@ -74,8 +74,8 @@ namespace EvoAI{
     template<typename T>
     Species<T>::Species(JsonBox::Object o) noexcept
     : members()
-    , id(std::stoull(o["id"].getString()))
-    , age(std::stoull(o["age"].getString()))
+    , id(safeParseUInt<std::size_t>(o["id"].getString(), 0))
+    , age(safeParseUInt<std::size_t>(o["age"].getString(), 0))
     , avgFitness(o["avgFitness"].getDouble())
     , maxFitness(o["maxFitness"].getDouble())
     , oldAvgFitness(o["oldAvgFitness"].getDouble())
@@ -102,8 +102,8 @@ namespace EvoAI{
         JsonBox::Value json;
         json.loadFromFile(filename);
         auto& v = json["Species"];
-        id = std::stoull(v["id"].getString());
-        age = std::stoull(v["age"].getString());
+        id = safeParseUInt<std::size_t>(v["id"].getString(), 0);
+        age = safeParseUInt<std::size_t>(v["age"].getString(), 0);
         novel = v["novel"].getBoolean();
         killable = v["killable"].getBoolean();
         avgFitness = v["avgFitness"].getDouble();

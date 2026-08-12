@@ -24,7 +24,9 @@ namespace EvoAI{
             v["biasWeight"] = JsonBox::Value("sadad");
             v["nrnType"] = JsonBox::Value("dsaf");
             v["actType"] = JsonBox::Value("sfs");
-            EXPECT_THROW(NodeGene(v.getObject()), std::invalid_argument);
+            auto ngGarbled = NodeGene(v.getObject());
+            EXPECT_EQ(0u, ngGarbled.getLayerID());
+            EXPECT_EQ(0u, ngGarbled.getNeuronID());
             v["layerID"] = JsonBox::Value("-1");
             v["neuronID"] = JsonBox::Value("-1");
             v["biasWeight"] = JsonBox::Value(9);

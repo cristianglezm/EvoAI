@@ -3,7 +3,7 @@ namespace EvoAI {
     : index(0)
     , blocked(false){}
     inline NodeDefault::NodeDefault(JsonBox::Object o)
-    : index(static_cast<std::size_t>(std::stoull(o["index"].getString())))
+    : index(safeParseUInt<std::size_t>(o["index"].getString(), 0))
     , blocked(o["blocked"].getBoolean()){}
     inline JsonBox::Value NodeDefault::toJson() const{
         JsonBox::Object o;
@@ -27,8 +27,8 @@ namespace EvoAI {
     , next(n){}
     inline EdgeDefault::EdgeDefault(JsonBox::Object o)
     : weight(o["weight"].getInteger())
-    , prev(static_cast<std::size_t>(std::stoull(o["prev"].getString())))
-    , next(static_cast<std::size_t>(std::stoull(o["next"].getString()))){}
+    , prev(safeParseUInt<std::size_t>(o["prev"].getString(), 0))
+    , next(safeParseUInt<std::size_t>(o["next"].getString(), 0)){}
     inline JsonBox::Value EdgeDefault::toJson() const{
         JsonBox::Object o;
         o["weight"] = JsonBox::Value(weight);
@@ -72,8 +72,8 @@ namespace EvoAI {
     , head()
     , row(0)
     , col(0){
-        row = static_cast<std::size_t>(std::stoull(o["row"].getString()));
-        col = static_cast<std::size_t>(std::stoull(o["col"].getString()));
+        row = safeParseUInt<std::size_t>(o["row"].getString(), 0);
+        col = safeParseUInt<std::size_t>(o["col"].getString(), 0);
         
         auto& nArray = o["nodes"].getArray();
         std::size_t numNodes = nArray.size();
@@ -82,6 +82,7 @@ namespace EvoAI {
 
         for(auto& n : nArray) {
             nodes.emplace_back(n.getObject());
+            nodes.back().index = nodes.size() - 1;
         }
 
         // edges are stored as array-of-arrays in JSON (legacy). We reconstruct forward-star.
@@ -90,6 +91,9 @@ namespace EvoAI {
             auto& eArray = vecArray[i].getArray();
             for(auto& e : eArray) {
                 Edge_t et(e.getObject());
+                if(et.prev >= numNodes || et.next >= numNodes){
+                    throw std::out_of_range("Graph(JsonBox::Object) - edge references a node index that doesn't exist");
+                }
                 addDirectedEdge(et);
             }
         }
