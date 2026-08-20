@@ -467,7 +467,7 @@ and installing minGW you will need to add it to the PATH</p>
 <p>we will clone <code class="docutils literal notranslate"><span class="pre">JsonBox</span></code> and then compile and install it.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/cristianglezm/JsonBox
 <span class="nb">cd</span><span class="w"> </span>JsonBox<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
-cmake<span class="w"> </span>-G<span class="s2">&quot;MinGW Makefiles&quot;</span><span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>./install<span class="w"> </span>..
+cmake<span class="w"> </span>-G<span class="s2">"MinGW Makefiles"</span><span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>./install<span class="w"> </span>..
 mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
 <span class="nb">cd</span><span class="w"> </span>../..
 </pre></div>
@@ -478,7 +478,7 @@ mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
 <p>we will clone <code class="docutils literal notranslate"><span class="pre">SFML</span></code> and then compile and install it.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/SFML/SFML<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>checkout<span class="w"> </span><span class="m">2</span>.6.x
 <span class="nb">cd</span><span class="w"> </span>SFML<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
-cmake<span class="w"> </span>-G<span class="s2">&quot;MinGW Makefiles&quot;</span><span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>./install<span class="w"> </span>..
+cmake<span class="w"> </span>-G<span class="s2">"MinGW Makefiles"</span><span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>./install<span class="w"> </span>..
 mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
 <span class="nb">cd</span><span class="w"> </span>../..
 </pre></div>
@@ -489,7 +489,7 @@ mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
 <p>We will clone <code class="docutils literal notranslate"><span class="pre">googletest</span></code> and then compile and install it.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/google/googletest
 <span class="nb">cd</span><span class="w"> </span>googletest<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
-cmake<span class="w"> </span>-G<span class="s2">&quot;MinGW Makefiles&quot;</span><span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>./install<span class="w"> </span>..
+cmake<span class="w"> </span>-G<span class="s2">"MinGW Makefiles"</span><span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>./install<span class="w"> </span>..
 mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
 <span class="nb">cd</span><span class="w"> </span>../..
 </pre></div>
@@ -504,7 +504,7 @@ set the <code class="docutils literal notranslate"><span class="pre">EvoAI_BUILD
 <span class="nb">export</span><span class="w"> </span><span class="nv">JSONBOX_ROOT</span><span class="o">=</span>JsonBox/build/install
 <span class="nb">export</span><span class="w"> </span><span class="nv">GTest_ROOT</span><span class="o">=</span>googletest/build/install
 <span class="nb">cd</span><span class="w"> </span>EvoAI<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
-cmake<span class="w"> </span>-G<span class="s2">&quot;MinGW Makefiles&quot;</span><span class="w"> </span>-DSFML_ROOT<span class="o">=</span><span class="nv">$SFML_ROOT</span><span class="w"> </span>-DJsonBox_ROOT<span class="o">=</span><span class="nv">$JSONBOX_ROOT</span><span class="w"> </span>-DGTest_ROOT<span class="o">=</span><span class="nv">$GTest_ROOT</span><span class="w"> </span><span class="se">\</span>
+cmake<span class="w"> </span>-G<span class="s2">"MinGW Makefiles"</span><span class="w"> </span>-DSFML_ROOT<span class="o">=</span><span class="nv">$SFML_ROOT</span><span class="w"> </span>-DJsonBox_ROOT<span class="o">=</span><span class="nv">$JSONBOX_ROOT</span><span class="w"> </span>-DGTest_ROOT<span class="o">=</span><span class="nv">$GTest_ROOT</span><span class="w"> </span><span class="se">\</span>
 -DEvoAI_BUILD_TESTS<span class="o">=</span>TRUE<span class="w"> </span>-DEvoAI_BUILD_EXAMPLES<span class="o">=</span>TRUE<span class="w"> </span>-DEvoAI_BUILD_DOCS<span class="o">=</span>TRUE<span class="w"> </span>-DEvoAI_BUILD_TOOLS<span class="o">=</span>TRUE<span class="w"> </span><span class="se">\</span>
 -DCMAKE_INSTALL_PREFIX<span class="o">=</span>./install<span class="w"> </span>..
 mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
@@ -518,7 +518,7 @@ mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
 <div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="c"># CMakeLists.txt</span>
 <span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">3.27</span><span class="p">)</span>
 <span class="nb">project</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="p">)</span>
-<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_MODULE_PATH</span><span class="w"> </span><span class="o">${</span><span class="nv">CMAKE_MODULE_PATH</span><span class="o">}</span><span class="w"> </span><span class="s2">&quot;${CMAKE_SOURCE_DIR}/cmake/modules/&quot;</span><span class="p">)</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_MODULE_PATH</span><span class="w"> </span><span class="o">${</span><span class="nv">CMAKE_MODULE_PATH</span><span class="o">}</span><span class="w"> </span><span class="s2">"${CMAKE_SOURCE_DIR}/cmake/modules/"</span><span class="p">)</span>
 <span class="nb">add_excutable</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="w"> </span><span class="s">main.cpp</span><span class="p">)</span>
 <span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_CXX_STANDARD</span><span class="w"> </span><span class="s">17</span><span class="p">)</span>
 <span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_CXX_STANDARD_REQUIRED</span><span class="w"> </span><span class="s">ON</span><span class="p">)</span>
@@ -544,8 +544,8 @@ mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
 
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">word</span><span class="p">(</span><span class="s">&quot;hello world!&quot;</span><span class="p">);</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;word is &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">quoted</span><span class="p">(</span><span class="n">word</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">word</span><span class="p">(</span><span class="s">"hello world!"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"word is "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">quoted</span><span class="p">(</span><span class="n">word</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 <span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">numPop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">500u</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">// create a Population of EvoString,</span>
 <span class="w">    </span><span class="c1">// the first arg is the max population,</span>
@@ -572,22 +572,22 @@ mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
 <span class="w">    </span><span class="p">}</span><span class="k">while</span><span class="p">(</span><span class="n">correct</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">word</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">best</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pop</span><span class="p">.</span><span class="n">getBestMember</span><span class="p">();</span>
 <span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">best</span><span class="p">){</span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;The best EvoString values are </span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"The best EvoString values are </span><span class="se">\"</span><span class="s">"</span><span class="p">;</span>
 <span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0u</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">best</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">();</span><span class="o">++</span><span class="n">i</span><span class="p">){</span>
 <span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">best</span><span class="p">)[</span><span class="n">i</span><span class="p">];</span>
 <span class="w">        </span><span class="p">}</span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\"</span><span class="s">"</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">'\0'</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>then we will make the folder build and use cmake to build and compile the project.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cmake</span><span class="w"> </span><span class="o">-</span><span class="n">G</span><span class="s">&quot;MinGW Makefiles&quot;</span><span class="w"> </span><span class="p">..</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cmake</span><span class="w"> </span><span class="o">-</span><span class="n">G</span><span class="s">"MinGW Makefiles"</span><span class="w"> </span><span class="p">..</span>
 <span class="n">mingw32</span><span class="o">-</span><span class="n">make</span><span class="w"> </span><span class="o">-</span><span class="n">j4</span>
 <span class="p">.</span><span class="o">/</span><span class="n">ConsoleApp</span>
 <span class="c1">// this will print</span>
-<span class="c1">// word is &quot;hello world!&quot;</span>
-<span class="c1">// The best EvoString values are &quot;hello world!&quot;</span>
+<span class="c1">// word is "hello world!"</span>
+<span class="c1">// The best EvoString values are "hello world!"</span>
 </pre></div>
 </div>
 </section>
