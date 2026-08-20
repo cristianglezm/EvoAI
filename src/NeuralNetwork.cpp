@@ -109,8 +109,9 @@ namespace EvoAI{
                                       [&l](const NeuronLayer& rl){
                                         return (l == rl);
                                       });
+        bool isRemoved = (lyrRemoved != std::end(layers));
         layers.erase(lyrRemoved,std::end(layers));
-        return (lyrRemoved != std::end(layers));
+        return isRemoved;
     }
     std::vector<double> NeuralNetwork::run(){
         for(auto& c:getConnections()){
