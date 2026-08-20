@@ -30,7 +30,7 @@ namespace EvoAI{
                 Connection c;
         };
         NeuronTest::NeuronTest() : n(Neuron::Type::INPUT), c(Link(0,1), Link(1,0),-0.4){}
-        TEST_F(NeuronTest, DefaultContructor){
+        TEST_F(NeuronTest, DefaultConstructor){
             EXPECT_TRUE(n.removeConnection(c));
             EXPECT_EQ(Neuron::Type::INPUT, n.getType());
             EXPECT_EQ(0.0, n.getOutput());

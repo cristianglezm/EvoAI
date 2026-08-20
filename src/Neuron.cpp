@@ -101,8 +101,9 @@ namespace EvoAI{
                                       [&c](const Connection& rc){
                                             return (c == rc);
                                       });
-        connections.erase(removed,std::end(connections));
-        return (removed == std::end(connections));
+        bool isRemoved = (removed != std::end(connections));
+        connections.erase(removed, std::end(connections));
+        return isRemoved;
     }
     void Neuron::clearConnections() noexcept{
         connections.clear();
