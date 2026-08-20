@@ -34,6 +34,11 @@ jobs:
               flags: -GNinja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DEvoAI_BUILD_TESTS=TRUE,
             }
           - {
+              name: Windows MSVC,
+              os: windows-2025,
+              flags: -GNinja -DEvoAI_BUILD_TESTS=TRUE,
+            }
+          - {
               name: Linux GCC,
               os: ubuntu-24.04,
               flags: -G"Unix Makefiles" -DEvoAI_BUILD_TESTS=TRUE,
@@ -130,7 +135,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup MSYS2
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && matrix.platform.name != 'Windows MSVC'
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -143,6 +148,10 @@ jobs:
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-clang
 
+      - name: Setup MSVC Developer Command Prompt
+        if: matrix.platform.name == 'Windows MSVC'
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Compute package suffix
         run: |
           SUFFIX=$(printf '%s' "${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}" \
@@ -150,7 +159,7 @@ jobs:
           echo "EVOAI_PACKAGE_SUFFIX=$SUFFIX" >> "$GITHUB_ENV"
 
       - name: Get CMake and Ninja
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' || matrix.platform.name == 'Windows MSVC'
         uses: lukka/get-cmake@latest
         with:
           cmakeVersion: "3.28"
@@ -193,8 +202,13 @@ jobs:
           echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;26.2.11394342"
 
       - name: Build Dependencies (Windows)
-        if: runner.os == 'Windows' && steps.cache-desktop.outputs.cache-hit != 'true'
+        if: runner.os == 'Windows' && matrix.platform.name != 'Windows MSVC' && steps.cache-desktop.outputs.cache-hit != 'true'
         shell: msys2 {0}
+        run: |
+          ./.devops/install_dependencies.sh "${{ matrix.platform.name }}" ${{ matrix.type.name }}
+
+      - name: Build Dependencies (Windows MSVC)
+        if: matrix.platform.name == 'Windows MSVC' && steps.cache-desktop.outputs.cache-hit != 'true'
         run: |
           ./.devops/install_dependencies.sh "${{ matrix.platform.name }}" ${{ matrix.type.name }}
 
@@ -221,7 +235,7 @@ jobs:
           bash .devops/install_dependencies.sh "${{ matrix.platform.name }}" ${{ matrix.type.name }}
 
       - name: Build and Test (Windows)
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && matrix.platform.name != 'Windows MSVC'
         shell: msys2 {0}
         run: |
           export JB_ROOT=$(cd JsonBox/build/install && pwd -W)
@@ -235,6 +249,21 @@ jobs:
             ..
           cmake --build . --config ${{ matrix.type.name }} -j 4
           export PATH=$PATH:/mingw64/bin
+          ctest --output-on-failure -C ${{ matrix.type.name }} --repeat until-pass:3
+
+      - name: Build and Test (Windows MSVC)
+        if: matrix.platform.name == 'Windows MSVC'
+        run: |
+          export JB_ROOT=$(cd JsonBox/build/install && pwd -W)
+          export GT_ROOT=$(cd googletest/build/install && pwd -W)
+          mkdir build && cd build
+          cmake \
+            ${{ matrix.config.flags }} ${{ matrix.platform.flags }} ${{ matrix.type.flags }} \
+            -DJsonBox_ROOT="$JB_ROOT" \
+            -DGTest_ROOT="$GT_ROOT" \
+            -DEvoAI_PACKAGE_SUFFIX="$EVOAI_PACKAGE_SUFFIX" \
+            ..
+          cmake --build . --config ${{ matrix.type.name }} -j 4
           ctest --output-on-failure -C ${{ matrix.type.name }} --repeat until-pass:3
 
       - name: Build and Test (Linux/Mac)
@@ -276,8 +305,14 @@ jobs:
           cmake --build . --config ${{ matrix.type.name }} -j 4
 
       - name: Package (Windows)
-        if: matrix.type.name == 'Release' && runner.os == 'Windows'
+        if: matrix.type.name == 'Release' && runner.os == 'Windows' && matrix.platform.name != 'Windows MSVC'
         shell: msys2 {0}
+        run: |
+          cd build
+          cpack -G ZIP
+
+      - name: Package (Windows MSVC)
+        if: matrix.type.name == 'Release' && matrix.platform.name == 'Windows MSVC'
         run: |
           cd build
           cpack -G ZIP
