@@ -215,6 +215,21 @@ void evolveNEAT(bool saveGen, const std::string& savingFileGenome, bool binaryCr
     auto loss = 999.0;
     auto minError = 0.1;
     auto gen = 0u;
+    // Latency is measured with its own dedicated forward passes, kept
+    // separate from the accuracy-scoring loop below.
+    auto runOnce = [&x,&y](EvoAI::NeuralNetwork& nn){
+        for(auto i=0u;i<4u;++i){
+            nn.forward({x[i],y[i]});
+            nn.reset();
+        }
+    };
+    auto evaluator = EvoAI::makeCompositeEvaluator<EvoAI::NeuralNetwork>(
+        EvoAI::ConnectionCountEvaluator{},
+        EvoAI::LatencyEvaluator<EvoAI::NeuralNetwork, decltype(runOnce)>{runOnce, /*warmup*/1, /*measured*/3});
+    EvoAI::WeightedSumObjective<> objective({
+        {&EvoAI::NetworkMetrics::numConnections, /*target*/20.0, /*coefficient*/0.01},
+        {&EvoAI::NetworkMetrics::latency, /*target*/1e-4, /*coefficient*/0.01}
+    });
     auto eval = [&](auto& ge){
         loss = 0.0;
         std::vector<double> results;
@@ -230,7 +245,9 @@ void evolveNEAT(bool saveGen, const std::string& savingFileGenome, bool binaryCr
         }else{
             loss = EvoAI::Loss::MeanSquaredError{}(truth, results);
         }
-        ge.setFitness(100.0 - loss);
+        auto metrics = evaluator(phenotype);
+        metrics.taskScore = 100.0 - loss;
+        ge.setFitness(objective(metrics));
     };
     while(loss >= minError){
         p.eval(eval);

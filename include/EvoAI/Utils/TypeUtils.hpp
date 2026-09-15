@@ -374,6 +374,32 @@ namespace EvoAI::meta{
     };
     template<class T, class NodeType, class EdgeType>
     static constexpr bool is_a_traversal_policy_v = is_a_traversal_policy<T, NodeType, EdgeType>::value;
+    /**
+     * @brief T has a member function void operator()(Network&, Metrics&) const
+     *
+     * @tparam T the candidate metric evaluator type
+     * @tparam Network the network type being evaluated
+     * @tparam Metrics the metrics type being populated
+     */
+    template<class T, class Network, class Metrics>
+    using metric_evaluator_t = decltype(std::declval<const T&>().operator()(std::declval<Network&>(), std::declval<Metrics&>()));
+    template<class T, class Network, class Metrics>
+    constexpr bool metric_evaluator_v = estd::is_detected<metric_evaluator_t, T, Network, Metrics>::value;
+   /**
+    * @brief T has a member function double operator()(Metrics&) const.
+    *
+    * @details
+    *  The objective policy converts populated Metrics into a single fitness
+    *  value and is expected to also write that value to Metrics::fitness.
+    *  EvoAI::WeightedSumObjective is the default implementation.
+    *
+    * @tparam T the candidate objective policy type
+    * @tparam Metrics the metrics type being evaluated
+    */
+    template<class T, class Metrics>
+    using objective_policy_t = decltype(std::declval<const T&>().operator()(std::declval<Metrics&>()));
+    template<class T, class Metrics>
+    constexpr bool objective_policy_v = estd::is_detected<objective_policy_t, T, Metrics>::value;
 }
 
 #endif // EVOAI_TYPE_UTILS_HPP

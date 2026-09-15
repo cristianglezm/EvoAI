@@ -17,7 +17,13 @@ namespace EvoAI{
     , lastAlive(0)
     , FPSUpdateTime(sf::Time::Zero)
     , nextGenTimer(opts.secondsForNextGen)
-    , trainer(opts.numSamples, opts.batchSize, opts.epoch, opts.learningRate){
+    , trainer(opts.numSamples, opts.batchSize, opts.epoch, opts.learningRate)
+    , brainEvaluator(makeCompositeEvaluator<NeuralNetwork>(ConnectionCountEvaluator{}, ParameterCountEvaluator{}))
+    , fitnessObjective({
+        // Cell brains start around 13in/8hidden/12out
+        {&NetworkMetrics::numConnections, /*target*/50.0, /*coefficient*/0.01},
+        {&NetworkMetrics::parameterCount, /*target*/60.0, /*coefficient*/0.01}
+    }){
         cells.reserve(opts.maxCellNum);
         pop = std::make_unique<Population<Cell*>>([this](){
                     return this->createCells();
@@ -43,7 +49,12 @@ namespace EvoAI{
     , lastAlive(0)
     , FPSUpdateTime(sf::Time::Zero)
     , nextGenTimer(opts.secondsForNextGen)
-    , trainer(opts.numSamples, opts.batchSize, opts.epoch, opts.learningRate){
+    , trainer(opts.numSamples, opts.batchSize, opts.epoch, opts.learningRate)
+    , brainEvaluator(makeCompositeEvaluator<NeuralNetwork>(ConnectionCountEvaluator{}, ParameterCountEvaluator{}))
+    , fitnessObjective({
+        {&NetworkMetrics::numConnections, /*target*/50.0, /*coefficient*/0.01},
+        {&NetworkMetrics::parameterCount, /*target*/60.0, /*coefficient*/0.01}
+    }){
         avgs = std::make_unique<Averages>(o["avgs"].getObject());
         cells.reserve(opts.maxCellNum);
         pop = std::make_unique<Population<Cell*>>();
@@ -265,6 +276,11 @@ namespace EvoAI{
         }
     }
     void CellSim::nextGeneration() noexcept{
+        pop->eval([this](Cell& cell){
+            auto metrics = brainEvaluator(cell.getBrain());
+            metrics.taskScore = cell.getFitness();
+            cell.setFitness(fitnessObjective(metrics));
+        });
         avgs->calcAvgs(*pop);
         // we use an specialization of Tournament<Cell*> to only select those cells that are not alive. ("Tournament.hpp")
         auto sa = SelectionAlgorithms::Tournament<Cell*>{opts.maxCellNum, opts.rounds};

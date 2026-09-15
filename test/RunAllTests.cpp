@@ -15,6 +15,7 @@
 #include "UtilsTest.hpp"
 #include "ActivationsTest.hpp"
 #include "LossTest.hpp"
+#include "EvaluatorsTest.hpp"
 #include "SchedulersTest.hpp"
 #include "OptimizersTest.hpp"
 #include "EvoVectorTest.hpp"
