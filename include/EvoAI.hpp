@@ -23,5 +23,6 @@
 #include "EvoAI/LatticeGraph.hpp"
 #include "EvoAI/PathFindingAlgorithms.hpp"
 #include "EvoAI/MazeAlgorithms.hpp"
+#include "EvoAI/Evaluators.hpp"
 
 #endif // EVOAI_HPP

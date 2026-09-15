@@ -108,6 +108,9 @@ namespace EvoAI{
             void updateFPS(sf::Time dt) noexcept;
             void render() noexcept;
         private:
+            using BrainEvaluator = decltype(makeCompositeEvaluator<NeuralNetwork>(
+                ConnectionCountEvaluator{}, ParameterCountEvaluator{}));
+        private:
             Options opts;
             sf::FloatRect bounds;
             sf::RenderWindow win;
@@ -124,6 +127,8 @@ namespace EvoAI{
             sf::Time FPSUpdateTime;
             Timer nextGenTimer;
             Trainer trainer;
+            BrainEvaluator brainEvaluator;
+            WeightedSumObjective<> fitnessObjective;
             static const sf::Time TimePerFrame;
 	};
     std::size_t CellSim::genID() noexcept{

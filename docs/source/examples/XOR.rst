@@ -68,6 +68,13 @@ We make a :class:`Population<EvoAI::Population>` of 500 members with :class:`Gen
 we make a lambda to evaluate the :class:`Genomes<EvoAI::Genome>` and set the fitness, then, we do the 
 main loop of eval, reproduce, age and kill stagnant species and call regrowPopulation to avoid going extinct.
 
+Fitness combines task performance with network cost using the composable evaluator system: a
+:class:`CompositeEvaluator<EvoAI::CompositeEvaluator>` gathers cost metrics (here, connection count and
+inference latency) into a :class:`NetworkMetrics<EvoAI::NetworkMetrics>`, the caller sets
+``NetworkMetrics::taskScore`` from whatever the problem-specific score is, and a
+:class:`WeightedSumObjective<EvoAI::WeightedSumObjective>` turns that breakdown into a
+single fitness value, penalizing networks that are larger or slower than the given targets.
+
 Once the main loop is done, we get the :func:`Population::getBestMember<EvoAI::Population::getBestMember>` from the :class:`Population<EvoAI::Population>`.
 
 .. code-block:: cpp
@@ -82,6 +89,24 @@ Once the main loop is done, we get the :func:`Population::getBestMember<EvoAI::P
         auto loss = 999.0;
         auto minError = 0.1;
         auto gen = 0u;
+        // Latency is measured with its own dedicated forward passes, kept
+        // separate from the accuracy-scoring loop below.
+        auto runOnce = [&x,&y](EvoAI::NeuralNetwork& nn){
+            for(auto i=0u;i<4u;++i){
+                nn.forward({x[i],y[i]});
+                nn.reset();
+            }
+        };
+        auto evaluator = EvoAI::makeCompositeEvaluator<EvoAI::NeuralNetwork>(
+            EvoAI::ConnectionCountEvaluator{},
+            EvoAI::LatencyEvaluator<EvoAI::NeuralNetwork, decltype(runOnce)>{runOnce, /*warmup*/1, /*measured*/3});
+        // Small, illustrative penalties - not tuned for XOR, just enough to
+        // show that fitness can combine task performance with network cost
+        // without changing what the while loop below is watching (loss).
+        EvoAI::WeightedSumObjective<> objective({
+            {&EvoAI::NetworkMetrics::numConnections, /*target*/20.0, /*coefficient*/0.01},
+            {&EvoAI::NetworkMetrics::latency, /*target*/1e-4, /*coefficient*/0.01}
+        });
         auto eval = [&](auto& ge){
             loss = 0.0;
             std::vector<double> results;
@@ -97,7 +122,9 @@ Once the main loop is done, we get the :func:`Population::getBestMember<EvoAI::P
             }else{
                 loss = EvoAI::Loss::MeanSquaredError{}(truth, results);
             }
-            ge.setFitness(100.0 - loss);
+            auto metrics = evaluator(phenotype); // cost metrics only: connections, latency
+            metrics.taskScore = 100.0 - loss;
+            ge.setFitness(objective(metrics));
         };
         while(loss >= minError){
             p.eval(eval);
