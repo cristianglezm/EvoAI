@@ -5,6 +5,8 @@
 #include <EvoAI.hpp>
 #include <array>
 #include <vector>
+#include <set>
+#include <utility>
 
 namespace EvoAI{
     namespace Test{
@@ -160,10 +162,30 @@ namespace EvoAI{
             g.mutateAddNode();
             EXPECT_EQ(6u,g.getNodeChromosomes().size());
             EXPECT_EQ(8u,g.getConnectionChromosomes().size());
+            auto sizeBeforeAddConnection = g.getConnectionChromosomes().size();
             g.mutateAddConnection();
-            EXPECT_EQ(9u,g.getConnectionChromosomes().size());
+            // mutateAddConnection is now a no-op if the randomly picked pair
+            // is a self-loop or already connected, so it
+            // adds at most one connection, not always exactly one.
+            EXPECT_GE(g.getConnectionChromosomes().size(), sizeBeforeAddConnection);
+            EXPECT_LE(g.getConnectionChromosomes().size(), sizeBeforeAddConnection + 1);
             g.mutate();
             EXPECT_TRUE(g.isValid());
+        }
+        TEST(GenomeTest, MutateAddConnectionRejectsDuplicatesAndSelfLoops){
+            Genome g(3,2,true,true);
+            for(auto i=0u;i<200u;++i){
+                g.mutateAddConnection();
+            }
+            std::set<std::pair<std::pair<std::size_t,std::size_t>,std::pair<std::size_t,std::size_t>>> seen;
+            for(const auto& cg : g.getConnectionChromosomes()){
+                auto isSelfLoop = (cg.getSrc().layer == cg.getDest().layer) && (cg.getSrc().neuron == cg.getDest().neuron);
+                EXPECT_FALSE(isSelfLoop);
+                auto key = std::make_pair(
+                    std::make_pair(cg.getSrc().layer, cg.getSrc().neuron),
+                    std::make_pair(cg.getDest().layer, cg.getDest().neuron));
+                EXPECT_TRUE(seen.insert(key).second) << "duplicate connection found";
+            }
         }
         TEST(GenomeTest, Reproduce){
             std::vector<Genome> fathers;
