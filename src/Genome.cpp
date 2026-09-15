@@ -279,21 +279,35 @@ namespace EvoAI{
         if(!nodeChromosomes.empty()){
             auto selectedNode1 = randomGen().random(std::size_t(0),nodeChromosomes.size()-1);
             auto selectedNode2 = randomGen().random(std::size_t(0),nodeChromosomes.size()-1);
+            if(selectedNode1 == selectedNode2){
+                // no self-loops
+                return;
+            }
+            const NodeGene* src = nullptr;
+            const NodeGene* dest = nullptr;
             if(!rnnAllowed){
                 if(nodeChromosomes[selectedNode1].getLayerID() < nodeChromosomes[selectedNode2].getLayerID()){
-                    connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], 
-                                                        nodeChromosomes[selectedNode2], 
-                                                        randomGen().random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
+                    src = &nodeChromosomes[selectedNode1];
+                    dest = &nodeChromosomes[selectedNode2];
                 }else{
-                    connectionChromosomes.emplace_back(nodeChromosomes[selectedNode2], 
-                                                        nodeChromosomes[selectedNode1], 
-                                                        randomGen().random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
+                    src = &nodeChromosomes[selectedNode2];
+                    dest = &nodeChromosomes[selectedNode1];
                 }
             }else{
-                connectionChromosomes.emplace_back(nodeChromosomes[selectedNode1], 
-                                                    nodeChromosomes[selectedNode2], 
-                                                    randomGen().random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
+                src = &nodeChromosomes[selectedNode1];
+                dest = &nodeChromosomes[selectedNode2];
             }
+            // no duplicate connections
+            auto alreadyConnected = std::any_of(std::begin(connectionChromosomes), std::end(connectionChromosomes),
+                [src,dest](const ConnectionGene& cg){
+                    return cg.getSrc().layer == src->getLayerID() && cg.getSrc().neuron == src->getNeuronID() &&
+                           cg.getDest().layer == dest->getLayerID() && cg.getDest().neuron == dest->getNeuronID();
+                });
+            if(alreadyConnected){
+                return;
+            }
+            connectionChromosomes.emplace_back(*src, *dest,
+                randomGen().random(-1.0,1.0,static_cast<double>(nodeChromosomes.size())));
             std::sort(std::begin(connectionChromosomes), std::end(connectionChromosomes));
         }
     }
