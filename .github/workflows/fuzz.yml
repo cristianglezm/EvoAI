@@ -57,6 +57,12 @@ jobs:
       - name: Fuzz -- Graph JSON (smoke run)
         run: build/fuzz/bin/fuzz_graph_from_json -max_total_time=${{ inputs.smoke_seconds }} test/fuzz/corpus
 
+      - name: Fuzz -- Optimizer JSON (smoke run)
+        run: build/fuzz/bin/fuzz_optimizer_from_json -max_total_time=${{ inputs.smoke_seconds }} test/fuzz/corpus
+
+      - name: Fuzz -- Scheduler JSON (smoke run)
+        run: build/fuzz/bin/fuzz_scheduler_from_json -max_total_time=${{ inputs.smoke_seconds }} test/fuzz/corpus
+
       - name: Upload any newly-found crashes
         if: always()
         uses: actions/upload-artifact@v7
