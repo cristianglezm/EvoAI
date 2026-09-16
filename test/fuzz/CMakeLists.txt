@@ -7,6 +7,8 @@ set(EvoAI_FUZZ_TARGETS
     fuzz_neuralnetwork_from_json
     fuzz_genome_from_json
     fuzz_graph_from_json
+    fuzz_optimizer_from_json
+    fuzz_scheduler_from_json
 )
 
 foreach(fuzzTarget ${EvoAI_FUZZ_TARGETS})
