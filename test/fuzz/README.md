@@ -1,10 +1,11 @@
 # Fuzzing EvoAI's JSON deserialization
 
 libFuzzer harnesses for the constructors that turn untrusted JSON into
-EvoAI types: anything that saves/loads a `NeuralNetwork`, `Genome`, or
-`Graph`/`LatticeGraph` goes through one of these, whether that's EvoAI's
-own file format or a downstream consumer passing
-user-supplied JSON.
+EvoAI types: anything that saves/loads a `NeuralNetwork`, `Genome`,
+`Graph`/`LatticeGraph`, `Optimizer` (`SGD`/`Adam`/`Muon`), or `Scheduler`
+(`ConstantLR`/`ExponentialLR`/`MultiplicativeLR`/`MultiStepLR`/`StepLR`)
+goes through one of these, whether that's EvoAI's own file format or a
+downstream consumer passing user-supplied JSON.
 
 ## Building
 
@@ -31,6 +32,8 @@ Binaries land in `build/fuzz/fuzz/bin/`.
 build/fuzz/fuzz/bin/fuzz_neuralnetwork_from_json -max_total_time=60 test/fuzz/corpus
 build/fuzz/fuzz/bin/fuzz_genome_from_json        -max_total_time=60 test/fuzz/corpus
 build/fuzz/fuzz/bin/fuzz_graph_from_json         -max_total_time=60 test/fuzz/corpus
+build/fuzz/fuzz/bin/fuzz_optimizer_from_json     -max_total_time=60 test/fuzz/corpus
+build/fuzz/fuzz/bin/fuzz_scheduler_from_json     -max_total_time=60 test/fuzz/corpus
 build/fuzz/fuzz/bin/fuzz_jsonbox_parse           -max_total_time=60 test/fuzz/corpus
 ```
 
@@ -52,6 +55,13 @@ bugs found so far only manifested once the deserialized object was
   `Genome::makePhenotype()`.
 - `fuzz_graph_from_json` - `Graph<>(JsonBox::Object)` (the default
   `NodeDefault`/`EdgeDefault` instantiation, used by `LatticeGraph`).
+- `fuzz_optimizer_from_json` - `SGD`/`Adam`/`Muon`'s
+  `(JsonBox::Object, std::vector<Connection*>&&)` constructors +
+  `operator()`, against a small fixed (non-fuzzed) network so there's a
+  real, non-empty parameter list to index into.
+- `fuzz_scheduler_from_json` - `ConstantLR`/`ExponentialLR`/
+  `MultiplicativeLR`/`MultiStepLR`/`StepLR`'s `(JsonBox::Object)`
+  constructors + `operator()` across a few epochs.
 - Not covered yet: `HyperNeat`/`SubstrateInfo` (no index-trust risk found
   there - it's plain data, and its `stoull` sites already got the
   non-throwing-parse fix everywhere else did), `Population`/`Species`
@@ -101,4 +111,30 @@ bugs found so far only manifested once the deserialized object was
   its actual array position, the same invariant `addNode()` already
   enforces at runtime - not just validating, since the field is entirely
   derivable from position and shouldn't be trusted from JSON at all.
+- **`SGD`/`Adam`: optimizer state size mismatch.** Found by manual review
+  (of the two related-but-newer subsystems that predated this fuzzing
+  effort and hadn't had the same pass done on them), then confirmed by
+  writing `fuzz_optimizer_from_json` and reproducing on the first
+  hand-crafted input. `momentumWeights`/`velocityWeights`
+  (`SGD`) and `mWeight`/`vWeight` (`Adam`) are sized purely from
+  whatever's in the JSON, with nothing reconciling that against
+  `parameters.size()` - the *live* parameter count the caller passes in
+  separately, from the network actually being trained. `operator()`
+  then indexes both up to `parameters.size()`. Reproduced with
+  clang+libFuzzer+ASan: `{"momentumWeights":[],"velocityWeights":[]}`
+  SEGVs `SGD::operator()`, `{"mWeight":[],"vWeight":[]}` SEGVs
+  `Adam::operator()`, and even a non-empty-but-too-short array crashes
+  the same way. `Muon` already had the fix (`m_velocity`/`m_rms` get
+  `.assign(n, 0.0)` if their parsed size doesn't match `m_params.size()`)
+  - it just hadn't been backported to the other two. Fixed by applying
+  the same reconciliation to `SGD` and `Adam`. Realistic even without an
+  adversary: this is exactly what happens if training resumes from a
+  saved optimizer state after the network's topology changed.
+- **`StepLR`: division by zero.** `safeParseUInt` only guards against an
+  empty/unparseable string, not against the value `0` itself, so
+  `{"step":"0"}` parses to `m_step = 0`, and `operator()` computes
+  `epoch % m_step` - integer division by zero, reproduced as a
+  UBSan-caught FPE (`AddressSanitizer: FPE ... in StepLR::operator()`).
+  Fixed by rejecting a parsed step of `0` and falling back to the same
+  default (10) used for unparseable input.
 

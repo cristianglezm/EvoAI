@@ -31,6 +31,9 @@ namespace EvoAI{
         };
         parseJsonArray("mWeight", m_mWeight);
         parseJsonArray("vWeight", m_vWeight);
+        auto n = m_params.size();
+        if(m_mWeight.size() != n) m_mWeight.assign(n, 0.0);
+        if(m_vWeight.size() != n) m_vWeight.assign(n, 0.0);
     }
     JsonBox::Value Adam::toJson() const noexcept{
         JsonBox::Object o;

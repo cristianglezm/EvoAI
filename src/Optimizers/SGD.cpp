@@ -27,6 +27,9 @@ namespace EvoAI{
         };
         parseJsonArray("momentumWeights", m_momentumWeights);
         parseJsonArray("velocityWeights", m_velocityWeights);
+        auto n = m_params.size();
+        if(m_momentumWeights.size() != n) m_momentumWeights.assign(n, 0.0);
+        if(m_velocityWeights.size() != n) m_velocityWeights.assign(n, 0.0);
     }
     JsonBox::Value SGD::toJson() const noexcept{
         JsonBox::Object o;
