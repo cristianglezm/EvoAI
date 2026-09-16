@@ -6,7 +6,10 @@ namespace EvoAI{
         : m_step(step)
         , m_gamma(gamma){}
         StepLR::StepLR(JsonBox::Object o)
-        : m_step(safeParseUInt<std::size_t>(o["step"].getString(), 10))
+        : m_step([&o]{
+            auto step = safeParseUInt<std::size_t>(o["step"].getString(), 10);
+            return step != 0 ? step : 10;
+        }())
         , m_gamma(o["gamma"].tryGetDouble(1.0)){}
         JsonBox::Value StepLR::toJson() const noexcept{
             JsonBox::Object o;
