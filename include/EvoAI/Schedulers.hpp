@@ -5,6 +5,7 @@
 
 #include <EvoAI/Schedulers/ConstantLR.hpp>
 #include <EvoAI/Schedulers/ExponentialLR.hpp>
+#include <EvoAI/Schedulers/LinearLR.hpp>
 #include <EvoAI/Schedulers/MultiplicativeLR.hpp>
 #include <EvoAI/Schedulers/MultiStepLR.hpp>
 #include <EvoAI/Schedulers/StepLR.hpp>

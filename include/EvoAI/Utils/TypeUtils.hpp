@@ -4,6 +4,7 @@
 #include <memory>
 #include <utility>
 #include <string>
+#include <vector>
 #include <JsonBox.h>
 #include <type_traits>
 
@@ -400,6 +401,20 @@ namespace EvoAI::meta{
     using objective_policy_t = decltype(std::declval<const T&>().operator()(std::declval<Metrics&>()));
     template<class T, class Metrics>
     constexpr bool objective_policy_v = estd::is_detected<objective_policy_t, T, Metrics>::value;
+    /**
+     * @brief T has a member function double operator()(const std::vector<double>&, const std::vector<double>&) const noexcept
+     * @details
+     *  Distance metric between two feature vectors of the same length, used by
+     *  EvoAI::SelfOrganizingMap. EvoAI::EuclideanDistance is the default
+     *  implementation.
+     *
+     * @tparam T the candidate distance metric type
+     */
+    template<class T>
+    using distance_metric_t = decltype(std::declval<const T&>()(
+        std::declval<const std::vector<double>&>(), std::declval<const std::vector<double>&>()));
+    template<class T>
+    constexpr bool distance_metric_v = estd::is_detected<distance_metric_t, T>::value;
 }
 
 #endif // EVOAI_TYPE_UTILS_HPP

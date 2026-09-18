@@ -2,8 +2,8 @@
 #define EVOAI_CONFIG_HPP
 
 #define EVOAI_VERSION_MAJOR 1
-#define EVOAI_VERSION_MINOR 3
-#define EVOAI_VERSION_PATCH 1
+#define EVOAI_VERSION_MINOR 4
+#define EVOAI_VERSION_PATCH 0
 
 #if !defined(EvoAI_BUILD_STATIC)
     #if defined(_WIN32)

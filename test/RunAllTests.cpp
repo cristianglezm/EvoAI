@@ -20,6 +20,7 @@
 #include "OptimizersTest.hpp"
 #include "EvoVectorTest.hpp"
 #include "GraphTest.hpp"
+#include "SelfOrganizingMapTest.hpp"
 
 #include <filesystem>
 
