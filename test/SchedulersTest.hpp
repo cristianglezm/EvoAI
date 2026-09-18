@@ -65,6 +65,30 @@ namespace EvoAI{
             auto sLr2 = StepLR(sLrJson.getObject());
             EXPECT_EQ(sLrJson, sLr2.toJson());
         }
+        TEST(SchedulersAlgoTest, LinearLR){
+            double lr = 1.0;
+            auto lLr = LinearLR(10, 0.1, 0.05); // every 10 epochs, lr -= 0.1, floor 0.05
+            lr = lLr(lr, 0u);
+            EXPECT_DOUBLE_EQ(0.9, lr);
+            lr = lLr(lr, 5u);
+            EXPECT_DOUBLE_EQ(0.9, lr); // should not change
+            lr = lLr(lr, 10u);
+            EXPECT_DOUBLE_EQ(0.8, lr);
+            lr = lLr(lr, 20u);
+            EXPECT_DOUBLE_EQ(0.7, lr);
+            lr = lLr(lr, 30u);
+            EXPECT_DOUBLE_EQ(0.6, lr);
+            lr = lLr(lr, 40u);
+            EXPECT_DOUBLE_EQ(0.5, lr);
+            // keep going past where it would cross the floor without clamping
+            for(auto e=50u; e<=90u; e+=10u){
+                lr = lLr(lr, e);
+            }
+            EXPECT_DOUBLE_EQ(0.05, lr); // clamped, not negative
+            auto lLrJson = lLr.toJson();
+            auto lLr2 = LinearLR(lLrJson.getObject());
+            EXPECT_EQ(lLrJson, lLr2.toJson());
+        }
         TEST(SchedulerTest, SchedulerTest){
             Scheduler<MultiStepLR> sch(MultiStepLR{{1u,9u,5u}, 0.1});
             auto lr = sch.step(100.0, 0u);
