@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Namespaces &#8212; EvoAI v1.3 documentation</title>
+    <title>Namespaces &#8212; EvoAI v1.4 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=d6983354"></script>
+    <script src="../../_static/documentation_options.js?v=1d11a399"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
@@ -132,8 +132,8 @@
       
     
     
-    <img src="../../_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.3 documentation - Home"/>
-    <img src="../../_static/EvoAILogo.png" class="logo__image only-dark pst-js-only" alt="EvoAI v1.3 documentation - Home"/>
+    <img src="../../_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.4 documentation - Home"/>
+    <img src="../../_static/EvoAILogo.png" class="logo__image only-dark pst-js-only" alt="EvoAI v1.4 documentation - Home"/>
   
   
 </a></div>
@@ -2202,6 +2202,36 @@
 <dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI11EdgeDefault4nextE">
 <span id="_CPPv3N5EvoAI5EvoAI11EdgeDefault4nextE"></span><span id="_CPPv2N5EvoAI5EvoAI11EdgeDefault4nextE"></span><span id="EvoAI::EvoAI::EdgeDefault::next__std::s"></span><span class="target" id="struct_evo_a_i_1_1_edge_default_1a32470fb63ccc2bbfd0fbaf6f7f657eb7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">next</span></span></span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI11EdgeDefault4nextE" title="Link to this definition">#</a><br /></dt>
 <dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI17EuclideanDistanceE">
+<span id="_CPPv3N5EvoAI5EvoAI17EuclideanDistanceE"></span><span id="_CPPv2N5EvoAI5EvoAI17EuclideanDistanceE"></span><span id="EvoAI::EvoAI::EuclideanDistance"></span><span class="target" id="struct_evo_a_i_1_1_euclidean_distance"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EuclideanDistance</span></span></span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI17EuclideanDistanceE" title="Link to this definition">#</a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;SelfOrganizingMap.hpp&gt;</em></div>
+<p>Euclidean distance between two feature vectors. </p>
+<p>Default DistanceFn for <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map"><span class="std std-ref">SelfOrganizingMap</span></a>. Fulfills <a class="reference internal" href="#namespace_evo_a_i_1_1meta_1a72d4e48b57b08f204b969b61c8b02065"><span class="std std-ref">meta::distance_metric_v&lt;EuclideanDistance&gt;</span></a>.</p>
+<p>Assumes a.size() == b.size() </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5EvoAI5EvoAI17EuclideanDistanceclERKNSt6vectorIdEERKNSt6vectorIdEE">
+<span id="_CPPv3NK5EvoAI5EvoAI17EuclideanDistanceclERKNSt6vectorIdEERKNSt6vectorIdEE"></span><span id="_CPPv2NK5EvoAI5EvoAI17EuclideanDistanceclERKNSt6vectorIdEERKNSt6vectorIdEE"></span><span id="EvoAI::EvoAI::EuclideanDistance::call-operator__std::vector:double:CR.std::vector:double:CRC"></span><span class="target" id="struct_evo_a_i_1_1_euclidean_distance_1ada0482bc864ddfcea231551562dae613"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">()</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">b</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK5EvoAI5EvoAI17EuclideanDistanceclERKNSt6vectorIdEERKNSt6vectorIdEE" title="Link to this definition">#</a><br /></dt>
+<dd><p>computes the euclidean distance between a and b. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – const std::vector&lt;double&gt;&amp; </p></li>
+<li><p><strong>b</strong> – const std::vector&lt;double&gt;&amp; </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 </dd></dl>
@@ -4755,6 +4785,90 @@ Unlike <a class="reference internal" href="#class_evo_a_i_1_1_graph"><span class
 </dd>
 </dl>
 </dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI8LinearLRE">
+<span id="_CPPv3N5EvoAI5EvoAI8LinearLRE"></span><span id="_CPPv2N5EvoAI5EvoAI8LinearLRE"></span><span id="EvoAI::EvoAI::LinearLR"></span><span class="target" id="struct_evo_a_i_1_1_linear_l_r"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LinearLR</span></span></span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI8LinearLRE" title="Link to this definition">#</a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;LinearLR.hpp&gt;</em></div>
+<p><a class="reference internal" href="#struct_evo_a_i_1_1_linear_l_r"><span class="std std-ref">LinearLR</span></a> <a class="reference internal" href="#struct_evo_a_i_1_1_scheduler"><span class="std std-ref">Scheduler</span></a> Algorithm. </p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// every 10 steps, lr -= 0.01, floor 0.0</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">lLR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LinearLR</span><span class="p">{</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">};</span>
+</pre></div>
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI8LinearLR8LinearLRENSt6size_tEdd">
+<span id="_CPPv3N5EvoAI5EvoAI8LinearLR8LinearLRENSt6size_tEdd"></span><span id="_CPPv2N5EvoAI5EvoAI8LinearLR8LinearLRENSt6size_tEdd"></span><span id="EvoAI::EvoAI::LinearLR::LinearLR__std::s.double.double"></span><span class="target" id="struct_evo_a_i_1_1_linear_l_r_1a2bf0bea5071592909a81e11bd99bafec"></span><span class="sig-name descname"><span class="n"><span class="pre">LinearLR</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">step</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">10u</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">decrement</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.01</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">minValue</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI8LinearLR8LinearLRENSt6size_tEdd" title="Link to this definition">#</a><br /></dt>
+<dd><p>constructor </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step</strong> – std::size_t how often (in epochs) to apply decrement </p></li>
+<li><p><strong>decrement</strong> – double </p></li>
+<li><p><strong>minValue</strong> – double floor, lr will not go below this </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI8LinearLR8LinearLREN7JsonBox6ObjectE">
+<span id="_CPPv3N5EvoAI5EvoAI8LinearLR8LinearLREN7JsonBox6ObjectE"></span><span id="_CPPv2N5EvoAI5EvoAI8LinearLR8LinearLREN7JsonBox6ObjectE"></span><span id="EvoAI::EvoAI::LinearLR::LinearLR__JsonBox::Object"></span><span class="target" id="struct_evo_a_i_1_1_linear_l_r_1ab73e5723e8868c00f692e88d36085352"></span><span class="sig-name descname"><span class="n"><span class="pre">LinearLR</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">JsonBox</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Object</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">o</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI8LinearLR8LinearLREN7JsonBox6ObjectE" title="Link to this definition">#</a><br /></dt>
+<dd><p>constructor for JsonBox::Object </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>o</strong> – JsonBox::Object </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5EvoAI5EvoAI8LinearLR6toJsonEv">
+<span id="_CPPv3NK5EvoAI5EvoAI8LinearLR6toJsonEv"></span><span id="_CPPv2NK5EvoAI5EvoAI8LinearLR6toJsonEv"></span><span id="EvoAI::EvoAI::LinearLR::toJsonC"></span><span class="target" id="struct_evo_a_i_1_1_linear_l_r_1a7fbd88c9df6d00a2473d026e715bc663"></span><span class="n"><span class="pre">JsonBox</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Value</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">toJson</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK5EvoAI5EvoAI8LinearLR6toJsonEv" title="Link to this definition">#</a><br /></dt>
+<dd><p>converts to JsonBox::Value </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JsonBox::Value </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5EvoAI5EvoAI8LinearLRclEdNSt6size_tE">
+<span id="_CPPv3NK5EvoAI5EvoAI8LinearLRclEdNSt6size_tE"></span><span id="_CPPv2NK5EvoAI5EvoAI8LinearLRclEdNSt6size_tE"></span><span id="EvoAI::EvoAI::LinearLR::call-operator__double.std::sC"></span><span class="target" id="struct_evo_a_i_1_1_linear_l_r_1a8acf5d729dff6fb1307fdb21817edd7c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">()</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">lr</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">epoch</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK5EvoAI5EvoAI8LinearLRclEdNSt6size_tE" title="Link to this definition">#</a><br /></dt>
+<dd><p>applies the scheduler to lr </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lr</strong> – </p></li>
+<li><p><strong>epoch</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI8LinearLR6m_stepE">
+<span id="_CPPv3N5EvoAI5EvoAI8LinearLR6m_stepE"></span><span id="_CPPv2N5EvoAI5EvoAI8LinearLR6m_stepE"></span><span id="EvoAI::EvoAI::LinearLR::m_step__std::s"></span><span class="target" id="struct_evo_a_i_1_1_linear_l_r_1a0df5f866411037ba23386752af83dab1"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_step</span></span></span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI8LinearLR6m_stepE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI8LinearLR11m_decrementE">
+<span id="_CPPv3N5EvoAI5EvoAI8LinearLR11m_decrementE"></span><span id="_CPPv2N5EvoAI5EvoAI8LinearLR11m_decrementE"></span><span id="EvoAI::EvoAI::LinearLR::m_decrement__double"></span><span class="target" id="struct_evo_a_i_1_1_linear_l_r_1adbcff788c87b1ac0864963d088d97f7d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_decrement</span></span></span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI8LinearLR11m_decrementE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI8LinearLR10m_minValueE">
+<span id="_CPPv3N5EvoAI5EvoAI8LinearLR10m_minValueE"></span><span id="_CPPv2N5EvoAI5EvoAI8LinearLR10m_minValueE"></span><span id="EvoAI::EvoAI::LinearLR::m_minValue__double"></span><span class="target" id="struct_evo_a_i_1_1_linear_l_r_1aee30906e93b00d671a2f13f3f19f5d40"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_minValue</span></span></span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI8LinearLR10m_minValueE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
 
 </div>
 </dd></dl>
@@ -8464,6 +8578,187 @@ Unlike <a class="reference internal" href="#class_evo_a_i_1_1_graph"><span class
 </div>
 </dd></dl>
 
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN5EvoAI5EvoAI17SelfOrganizingMapE">
+<span id="_CPPv3I0EN5EvoAI5EvoAI17SelfOrganizingMapE"></span><span id="_CPPv2I0EN5EvoAI5EvoAI17SelfOrganizingMapE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DistanceFn</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N5EvoAI5EvoAI17EuclideanDistanceE" title="EvoAI::EvoAI::EuclideanDistance"><span class="n"><span class="pre">EuclideanDistance</span></span></a><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_evo_a_i_1_1_self_organizing_map"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfOrganizingMap</span></span></span><a class="headerlink" href="#_CPPv4I0EN5EvoAI5EvoAI17SelfOrganizingMapE" title="Link to this definition">#</a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;SelfOrganizingMap.hpp&gt;</em></div>
+<p>Generic Kohonen Self-Organizing Map over std::vector&lt;double&gt; feature vectors. </p>
+<p>
+Domain-agnostic: this class does not know or care what produced a sample vector, image pixels, genome weights, anything reducible to a std::vector&lt;double&gt; works identically. Feature extraction is entirely the caller’s responsibility, done before ever calling <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map_1ad4d82e1cda182b8e99eb5df7531a73c3"><span class="std std-ref">train()</span></a> or <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map_1a49a6b3e54b7619e7b470149274cf6eae"><span class="std std-ref">classify()</span></a>.</p>
+<p>DistanceFn needs to fulfill <a class="reference internal" href="#namespace_evo_a_i_1_1meta_1a72d4e48b57b08f204b969b61c8b02065"><span class="std std-ref">meta::distance_metric_v&lt;DistanceFn&gt;</span></a><p>:</p>
+<p>DistanceFn has a double operator()(const std::vector&lt;double&gt;&amp;, const std::vector&lt;double&gt;&amp;) const noexcept</p>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>DistanceFn</strong> – distance metric between two feature vectors, defaults to <a class="reference internal" href="#struct_evo_a_i_1_1_euclidean_distance"><span class="std std-ref">EuclideanDistance</span></a>.</p>
+</dd>
+</dl>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI17SelfOrganizingMap17SelfOrganizingMapENSt6size_tENSt6size_tENSt6size_tEb10DistanceFn">
+<span id="_CPPv3N5EvoAI5EvoAI17SelfOrganizingMap17SelfOrganizingMapENSt6size_tENSt6size_tENSt6size_tEb10DistanceFn"></span><span id="_CPPv2N5EvoAI5EvoAI17SelfOrganizingMap17SelfOrganizingMapENSt6size_tENSt6size_tENSt6size_tEb10DistanceFn"></span><span id="EvoAI::EvoAI::SelfOrganizingMap::SelfOrganizingMap__std::s.std::s.std::s.b.DistanceFn"></span><span class="target" id="class_evo_a_i_1_1_self_organizing_map_1a309739702f2ced06acdec9f5a1cb6083"></span><span class="sig-name descname"><span class="n"><span class="pre">SelfOrganizingMap</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">width</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">height</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">inputDim</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">toroidal</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span>, <a class="reference internal" href="#_CPPv4I0EN5EvoAI5EvoAI17SelfOrganizingMapE" title="EvoAI::EvoAI::SelfOrganizingMap::DistanceFn"><span class="n"><span class="pre">DistanceFn</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">distance</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN5EvoAI5EvoAI17SelfOrganizingMapE" title="EvoAI::EvoAI::SelfOrganizingMap::DistanceFn"><span class="n"><span class="pre">DistanceFn</span></span></a><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI17SelfOrganizingMap17SelfOrganizingMapENSt6size_tENSt6size_tENSt6size_tEb10DistanceFn" title="Link to this definition">#</a><br /></dt>
+<dd><p>constructor </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> – std::size_t grid width, must be &gt; 0 </p></li>
+<li><p><strong>height</strong> – std::size_t grid height, must be &gt; 0 </p></li>
+<li><p><strong>inputDim</strong> – std::size_t dimension every feature vector given to <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map_1ad4d82e1cda182b8e99eb5df7531a73c3"><span class="std std-ref">train()</span></a>/classify() must have, must be &gt; 0 </p></li>
+<li><p><strong>toroidal</strong> – bool whether the grid wraps around at the edges (default true) </p></li>
+<li><p><strong>distance</strong> – DistanceFn distance metric to use (default <a class="reference internal" href="#struct_evo_a_i_1_1_euclidean_distance"><span class="std std-ref">EuclideanDistance</span></a>{}) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – if width, height or inputDim is 0 - this is a structural/construction-time error (matches <a class="reference internal" href="#class_evo_a_i_1_1_neural_network"><span class="std std-ref">NeuralNetwork</span></a>’s throwing convention for the same kind of problem), not a runtime-data-quality one. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI17SelfOrganizingMap17SelfOrganizingMapEN7JsonBox6ObjectE">
+<span id="_CPPv3N5EvoAI5EvoAI17SelfOrganizingMap17SelfOrganizingMapEN7JsonBox6ObjectE"></span><span id="_CPPv2N5EvoAI5EvoAI17SelfOrganizingMap17SelfOrganizingMapEN7JsonBox6ObjectE"></span><span id="EvoAI::EvoAI::SelfOrganizingMap::SelfOrganizingMap__JsonBox::Object"></span><span class="target" id="class_evo_a_i_1_1_self_organizing_map_1add9b353a85f6d9e56ebc34dae73e48d4"></span><span class="sig-name descname"><span class="n"><span class="pre">SelfOrganizingMap</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">JsonBox</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Object</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">o</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI17SelfOrganizingMap17SelfOrganizingMapEN7JsonBox6ObjectE" title="Link to this definition">#</a><br /></dt>
+<dd><p>constructor for a JsonBox::Object saved with <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map_1a20f040935de4cd396c8b32827c49d54b"><span class="std std-ref">toJson()</span></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>o</strong> – JsonBox::Object </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – if width, height or inputDim is 0, or if the saved weights array’s size doesn’t match width*height*inputDim. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap14validateSampleERKNSt6vectorIdEE">
+<span id="_CPPv3NK5EvoAI5EvoAI17SelfOrganizingMap14validateSampleERKNSt6vectorIdEE"></span><span id="_CPPv2NK5EvoAI5EvoAI17SelfOrganizingMap14validateSampleERKNSt6vectorIdEE"></span><span id="EvoAI::EvoAI::SelfOrganizingMap::validateSample__std::vector:double:CRC"></span><span class="target" id="class_evo_a_i_1_1_self_organizing_map_1ae27d711216d868aa8d80ec21cc19114e"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">validateSample</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">sample</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap14validateSampleERKNSt6vectorIdEE" title="Link to this definition">#</a><br /></dt>
+<dd><p>checks whether sample is usable by <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map_1ad4d82e1cda182b8e99eb5df7531a73c3"><span class="std std-ref">train()</span></a>/classify(): its size matches <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map_1a51674ddea1912cab4ce75425f2d89282"><span class="std std-ref">getInputDim()</span></a> and every element is finite (not NaN/Inf). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> – const std::vector&lt;double&gt;&amp; </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I00EN5EvoAI5EvoAI17SelfOrganizingMap5trainENSt6size_tERKNSt6vectorINSt6vectorIdEEEENSt6size_tEdd9SchedulerI6LRAlgoE9SchedulerI10RadiusAlgoE">
+<span id="_CPPv3I00EN5EvoAI5EvoAI17SelfOrganizingMap5trainERKNSt6vectorINSt6vectorIdEEEENSt6size_tEdd9SchedulerI6LRAlgoE9SchedulerI10RadiusAlgoE"></span><span id="_CPPv2I00EN5EvoAI5EvoAI17SelfOrganizingMap5trainERKNSt6vectorINSt6vectorIdEEEENSt6size_tEdd9SchedulerI6LRAlgoE9SchedulerI10RadiusAlgoE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LRAlgo</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RadiusAlgo</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_evo_a_i_1_1_self_organizing_map_1ad4d82e1cda182b8e99eb5df7531a73c3"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">train</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">samples</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">epochs</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">baseLR</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">baseRadius</span></span>, <a class="reference internal" href="#_CPPv4I0EN5EvoAI5EvoAI9SchedulerE" title="EvoAI::EvoAI::Scheduler"><span class="n"><span class="pre">Scheduler</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN5EvoAI5EvoAI17SelfOrganizingMap5trainENSt6size_tERKNSt6vectorINSt6vectorIdEEEENSt6size_tEdd9SchedulerI6LRAlgoE9SchedulerI10RadiusAlgoE" title="EvoAI::EvoAI::SelfOrganizingMap::train::LRAlgo"><span class="n"><span class="pre">LRAlgo</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">lrSchedule</span></span>, <a class="reference internal" href="#_CPPv4I0EN5EvoAI5EvoAI9SchedulerE" title="EvoAI::EvoAI::Scheduler"><span class="n"><span class="pre">Scheduler</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN5EvoAI5EvoAI17SelfOrganizingMap5trainENSt6size_tERKNSt6vectorINSt6vectorIdEEEENSt6size_tEdd9SchedulerI6LRAlgoE9SchedulerI10RadiusAlgoE" title="EvoAI::EvoAI::SelfOrganizingMap::train::RadiusAlgo"><span class="n"><span class="pre">RadiusAlgo</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">radiusSchedule</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I00EN5EvoAI5EvoAI17SelfOrganizingMap5trainENSt6size_tERKNSt6vectorINSt6vectorIdEEEENSt6size_tEdd9SchedulerI6LRAlgoE9SchedulerI10RadiusAlgoE" title="Link to this definition">#</a><br /></dt>
+<dd><p>trains the map with a batch of samples over a number of epochs. </p>
+<p>Samples that fail <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map_1ae27d711216d868aa8d80ec21cc19114e"><span class="std std-ref">validateSample()</span></a> are skipped (and logged to std::cerr with their index) rather than aborting the whole run - a batch generated by an external, automated pipeline (e.g. many calls to a Python feature-extraction function) can reasonably be expected to have the odd malformed entry, and losing the entire training run over one bad sample is worse than skipping it. Sample order is reshuffled every epoch. LRAlgo/RadiusAlgo are chained across epochs (each epoch’s result feeds the next call), currentRadius shrinking to 0 or below (e.g. via <a class="reference internal" href="#struct_evo_a_i_1_1_linear_l_r"><span class="std std-ref">LinearLR</span></a> or enough compounding steps) is handled explicitly: the neighborhood Gaussian would otherwise divide by zero exactly at the BMU (distance 0), so at that point only the BMU itself is updated (full influence), every other node gets none. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>LRAlgo</strong> – <a class="reference internal" href="#struct_evo_a_i_1_1_scheduler"><span class="std std-ref">Scheduler</span></a> algorithm for the learning rate. </p></li>
+<li><p><strong>RadiusAlgo</strong> – <a class="reference internal" href="#struct_evo_a_i_1_1_scheduler"><span class="std std-ref">Scheduler</span></a> algorithm for the neighborhood radius. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>samples</strong> – const std::vector&lt;std::vector&lt;double&gt;&gt;&amp; </p></li>
+<li><p><strong>epochs</strong> – std::size_t </p></li>
+<li><p><strong>baseLR</strong> – double </p></li>
+<li><p><strong>baseRadius</strong> – double </p></li>
+<li><p><strong>lrSchedule</strong> – Scheduler&lt;LRAlgo&gt; </p></li>
+<li><p><strong>radiusSchedule</strong> – Scheduler&lt;RadiusAlgo&gt; </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>std::size_t number of samples skipped for failing <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map_1ae27d711216d868aa8d80ec21cc19114e"><span class="std std-ref">validateSample()</span></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap8classifyERKNSt6vectorIdEE">
+<span id="_CPPv3NK5EvoAI5EvoAI17SelfOrganizingMap8classifyERKNSt6vectorIdEE"></span><span id="_CPPv2NK5EvoAI5EvoAI17SelfOrganizingMap8classifyERKNSt6vectorIdEE"></span><span id="EvoAI::EvoAI::SelfOrganizingMap::classify__std::vector:double:CRC"></span><span class="target" id="class_evo_a_i_1_1_self_organizing_map_1a49a6b3e54b7619e7b470149274cf6eae"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">optional</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">classify</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">sample</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap8classifyERKNSt6vectorIdEE" title="Link to this definition">#</a><br /></dt>
+<dd><p>finds the Best-Matching-Unit for a sample - its grid coordinate. </p>
+<p>This is the “species ID” for a classifier: same grid coordinate means “same species”. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> – const std::vector&lt;double&gt;&amp; </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>std::optional&lt;std::pair&lt;std::size_t,std::size_t&gt;&gt; empty if sample fails <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map_1ae27d711216d868aa8d80ec21cc19114e"><span class="std std-ref">validateSample()</span></a>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap12getPrototypeENSt6size_tENSt6size_tE">
+<span id="_CPPv3NK5EvoAI5EvoAI17SelfOrganizingMap12getPrototypeENSt6size_tENSt6size_tE"></span><span id="_CPPv2NK5EvoAI5EvoAI17SelfOrganizingMap12getPrototypeENSt6size_tENSt6size_tE"></span><span id="EvoAI::EvoAI::SelfOrganizingMap::getPrototype__std::s.std::sC"></span><span class="target" id="class_evo_a_i_1_1_self_organizing_map_1a413319367e740308e1bd932ace8fa633"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPrototype</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">x</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">y</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap12getPrototypeENSt6size_tENSt6size_tE" title="Link to this definition">#</a><br /></dt>
+<dd><p>copies out node (x,y)’s prototype vector. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – std::size_t </p></li>
+<li><p><strong>y</strong> – std::size_t </p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">out_of_range</span></span></span> – if x &gt;= <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map_1a6412081412456364048f777f069ff023"><span class="std std-ref">getWidth()</span></a> or y &gt;= <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map_1aba67f244f0fde96a19de98957e38e6c4"><span class="std std-ref">getHeight()</span></a>. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>std::vector&lt;double&gt; </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap8getWidthEv">
+<span id="_CPPv3NK5EvoAI5EvoAI17SelfOrganizingMap8getWidthEv"></span><span id="_CPPv2NK5EvoAI5EvoAI17SelfOrganizingMap8getWidthEv"></span><span id="EvoAI::EvoAI::SelfOrganizingMap::getWidthC"></span><span class="target" id="class_evo_a_i_1_1_self_organizing_map_1a6412081412456364048f777f069ff023"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getWidth</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap8getWidthEv" title="Link to this definition">#</a><br /></dt>
+<dd><p>getter for grid width </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>std::size_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap9getHeightEv">
+<span id="_CPPv3NK5EvoAI5EvoAI17SelfOrganizingMap9getHeightEv"></span><span id="_CPPv2NK5EvoAI5EvoAI17SelfOrganizingMap9getHeightEv"></span><span id="EvoAI::EvoAI::SelfOrganizingMap::getHeightC"></span><span class="target" id="class_evo_a_i_1_1_self_organizing_map_1aba67f244f0fde96a19de98957e38e6c4"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getHeight</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap9getHeightEv" title="Link to this definition">#</a><br /></dt>
+<dd><p>getter for grid height </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>std::size_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap11getInputDimEv">
+<span id="_CPPv3NK5EvoAI5EvoAI17SelfOrganizingMap11getInputDimEv"></span><span id="_CPPv2NK5EvoAI5EvoAI17SelfOrganizingMap11getInputDimEv"></span><span id="EvoAI::EvoAI::SelfOrganizingMap::getInputDimC"></span><span class="target" id="class_evo_a_i_1_1_self_organizing_map_1a51674ddea1912cab4ce75425f2d89282"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getInputDim</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap11getInputDimEv" title="Link to this definition">#</a><br /></dt>
+<dd><p>getter for the dimension every feature vector must have </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>std::size_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap6toJsonEv">
+<span id="_CPPv3NK5EvoAI5EvoAI17SelfOrganizingMap6toJsonEv"></span><span id="_CPPv2NK5EvoAI5EvoAI17SelfOrganizingMap6toJsonEv"></span><span id="EvoAI::EvoAI::SelfOrganizingMap::toJsonC"></span><span class="target" id="class_evo_a_i_1_1_self_organizing_map_1a20f040935de4cd396c8b32827c49d54b"></span><span class="n"><span class="pre">JsonBox</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Value</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">toJson</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap6toJsonEv" title="Link to this definition">#</a><br /></dt>
+<dd><p>converts to a JsonBox::Value </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JsonBox::Value </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI17SelfOrganizingMapD0Ev">
+<span id="_CPPv3N5EvoAI5EvoAI17SelfOrganizingMapD0Ev"></span><span id="_CPPv2N5EvoAI5EvoAI17SelfOrganizingMapD0Ev"></span><span id="EvoAI::EvoAI::SelfOrganizingMap::~SelfOrganizingMap"></span><span class="target" id="class_evo_a_i_1_1_self_organizing_map_1aea4c5f1036790d9e0772c91b7cd0e289"></span><span class="sig-name descname"><span class="n"><span class="pre">~SelfOrganizingMap</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI17SelfOrganizingMapD0Ev" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
 <dl class="cpp struct">
 <dt class="sig sig-object cpp" id="_CPPv4N5EvoAI5EvoAI3SGDE">
 <span id="_CPPv3N5EvoAI5EvoAI3SGDE"></span><span id="_CPPv2N5EvoAI5EvoAI3SGDE"></span><span id="EvoAI::EvoAI::SGD"></span><span class="target" id="struct_evo_a_i_1_1_s_g_d"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SGD</span></span></span><a class="headerlink" href="#_CPPv4N5EvoAI5EvoAI3SGDE" title="Link to this definition">#</a><br /></dt>
@@ -10817,6 +11112,18 @@ Unlike <a class="reference internal" href="#class_evo_a_i_1_1_graph"><span class
 </dl>
 </dd></dl>
 
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN5EvoAI4meta17distance_metric_tE">
+<span id="_CPPv3I0EN5EvoAI4meta17distance_metric_tE"></span><span id="_CPPv2I0EN5EvoAI4meta17distance_metric_tE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="namespace_evo_a_i_1_1meta_1ade80ecc624763edad175a07443298a7b"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">distance_metric_t</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">decltype</span></span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">declval</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN5EvoAI4meta17distance_metric_tE" title="EvoAI::meta::distance_metric_t::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">declval</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">declval</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4I0EN5EvoAI4meta17distance_metric_tE" title="Link to this definition">#</a><br /></dt>
+<dd><p>T has a member function double operator()(const std::vector&lt;double&gt;&amp;, const std::vector&lt;double&gt;&amp;) const noexcept. </p>
+<p>Distance metric between two feature vectors of the same length, used by <a class="reference internal" href="#class_evo_a_i_1_1_self_organizing_map"><span class="std std-ref">EvoAI::SelfOrganizingMap</span></a>. <a class="reference internal" href="#struct_evo_a_i_1_1_euclidean_distance"><span class="std std-ref">EvoAI::EuclideanDistance</span></a> is the default implementation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – the candidate distance metric type </p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-variables">Variables</p>
@@ -11003,6 +11310,11 @@ Unlike <a class="reference internal" href="#class_evo_a_i_1_1_graph"><span class
 <dl class="cpp var">
 <dt class="sig sig-object cpp" id="_CPPv4I00EN5EvoAI4meta18objective_policy_vE">
 <span id="_CPPv3I00EN5EvoAI4meta18objective_policy_vE"></span><span id="_CPPv2I00EN5EvoAI4meta18objective_policy_vE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Metrics</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="namespace_evo_a_i_1_1meta_1aeb1df380089b54425c06da51219dbe28"></span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">objective_policy_v</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">estd</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">is_detected</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN5EvoAI4meta18objective_policy_tE" title="EvoAI::meta::objective_policy_t"><span class="n"><span class="pre">objective_policy_t</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN5EvoAI4meta18objective_policy_vE" title="EvoAI::meta::objective_policy_v::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN5EvoAI4meta18objective_policy_vE" title="EvoAI::meta::objective_policy_v::Metrics"><span class="n"><span class="pre">Metrics</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">value</span></span><a class="headerlink" href="#_CPPv4I00EN5EvoAI4meta18objective_policy_vE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN5EvoAI4meta17distance_metric_vE">
+<span id="_CPPv3I0EN5EvoAI4meta17distance_metric_vE"></span><span id="_CPPv2I0EN5EvoAI4meta17distance_metric_vE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="namespace_evo_a_i_1_1meta_1a177a1d3e2b8d6428003fc5728300a497"></span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">distance_metric_v</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">estd</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">is_detected</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN5EvoAI4meta17distance_metric_tE" title="EvoAI::meta::distance_metric_t"><span class="n"><span class="pre">distance_metric_t</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN5EvoAI4meta17distance_metric_vE" title="EvoAI::meta::distance_metric_v::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">value</span></span><a class="headerlink" href="#_CPPv4I0EN5EvoAI4meta17distance_metric_vE" title="Link to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 </div>
@@ -11861,6 +12173,10 @@ This implementation is a subtractive carver: it expects <code class="docutils li
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI11EdgeDefault4nextE"><code class="docutils literal notranslate"><span class="pre">next</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI17EuclideanDistanceE"><code class="docutils literal notranslate"><span class="pre">EvoAI::EuclideanDistance</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK5EvoAI5EvoAI17EuclideanDistanceclERKNSt6vectorIdEERKNSt6vectorIdEE"><code class="docutils literal notranslate"><span class="pre">operator()()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN5EvoAI5EvoAI9EvoVectorE"><code class="docutils literal notranslate"><span class="pre">EvoAI::EvoVector</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI9EvoVector10value_typeE"><code class="docutils literal notranslate"><span class="pre">value_type</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI9EvoVector9referenceE"><code class="docutils literal notranslate"><span class="pre">reference</span></code></a></li>
@@ -12103,6 +12419,16 @@ This implementation is a subtractive carver: it expects <code class="docutils li
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0ENK5EvoAI5EvoAI12LatticeGraph19forEachOutgoingEdgeEvRK6Node_tRR8Callback"><code class="docutils literal notranslate"><span class="pre">forEachOutgoingEdge()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK5EvoAI5EvoAI12LatticeGraph16getOutgoingEdgesERK6Node_t"><code class="docutils literal notranslate"><span class="pre">getOutgoingEdges()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI12LatticeGraph7isolateERK6Node_t"><code class="docutils literal notranslate"><span class="pre">isolate()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI8LinearLRE"><code class="docutils literal notranslate"><span class="pre">EvoAI::LinearLR</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI8LinearLR8LinearLRENSt6size_tEdd"><code class="docutils literal notranslate"><span class="pre">LinearLR()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI8LinearLR8LinearLREN7JsonBox6ObjectE"><code class="docutils literal notranslate"><span class="pre">LinearLR()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK5EvoAI5EvoAI8LinearLR6toJsonEv"><code class="docutils literal notranslate"><span class="pre">toJson()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK5EvoAI5EvoAI8LinearLRclEdNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">operator()()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI8LinearLR6m_stepE"><code class="docutils literal notranslate"><span class="pre">m_step</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI8LinearLR11m_decrementE"><code class="docutils literal notranslate"><span class="pre">m_decrement</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI8LinearLR10m_minValueE"><code class="docutils literal notranslate"><span class="pre">m_minValue</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI4LinkE"><code class="docutils literal notranslate"><span class="pre">EvoAI::Link</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
@@ -12493,6 +12819,20 @@ This implementation is a subtractive carver: it expects <code class="docutils li
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI9Scheduler6stepFnE"><code class="docutils literal notranslate"><span class="pre">stepFn</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN5EvoAI5EvoAI17SelfOrganizingMapE"><code class="docutils literal notranslate"><span class="pre">EvoAI::SelfOrganizingMap</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI17SelfOrganizingMap17SelfOrganizingMapENSt6size_tENSt6size_tENSt6size_tEb10DistanceFn"><code class="docutils literal notranslate"><span class="pre">SelfOrganizingMap()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI17SelfOrganizingMap17SelfOrganizingMapEN7JsonBox6ObjectE"><code class="docutils literal notranslate"><span class="pre">SelfOrganizingMap()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap14validateSampleERKNSt6vectorIdEE"><code class="docutils literal notranslate"><span class="pre">validateSample()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I00EN5EvoAI5EvoAI17SelfOrganizingMap5trainENSt6size_tERKNSt6vectorINSt6vectorIdEEEENSt6size_tEdd9SchedulerI6LRAlgoE9SchedulerI10RadiusAlgoE"><code class="docutils literal notranslate"><span class="pre">train()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap8classifyERKNSt6vectorIdEE"><code class="docutils literal notranslate"><span class="pre">classify()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap12getPrototypeENSt6size_tENSt6size_tE"><code class="docutils literal notranslate"><span class="pre">getPrototype()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap8getWidthEv"><code class="docutils literal notranslate"><span class="pre">getWidth()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap9getHeightEv"><code class="docutils literal notranslate"><span class="pre">getHeight()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap11getInputDimEv"><code class="docutils literal notranslate"><span class="pre">getInputDim()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK5EvoAI5EvoAI17SelfOrganizingMap6toJsonEv"><code class="docutils literal notranslate"><span class="pre">toJson()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI17SelfOrganizingMapD0Ev"><code class="docutils literal notranslate"><span class="pre">~SelfOrganizingMap()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI3SGDE"><code class="docutils literal notranslate"><span class="pre">EvoAI::SGD</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI3SGD3SGDERRNSt6vectorIP10ConnectionEEdbbb"><code class="docutils literal notranslate"><span class="pre">SGD()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI5EvoAI3SGD3SGDEN7JsonBox6ObjectERRNSt6vectorIP10ConnectionEE"><code class="docutils literal notranslate"><span class="pre">SGD()</span></code></a></li>
@@ -12763,6 +13103,7 @@ This implementation is a subtractive carver: it expects <code class="docutils li
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I00EN5EvoAI4meta15has_heuristic_tE"><code class="docutils literal notranslate"><span class="pre">has_heuristic_t</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I000EN5EvoAI4meta18metric_evaluator_tE"><code class="docutils literal notranslate"><span class="pre">metric_evaluator_t</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I00EN5EvoAI4meta18objective_policy_tE"><code class="docutils literal notranslate"><span class="pre">objective_policy_t</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN5EvoAI4meta17distance_metric_tE"><code class="docutils literal notranslate"><span class="pre">distance_metric_t</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN5EvoAI4meta14serializable_vE"><code class="docutils literal notranslate"><span class="pre">serializable_v</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN5EvoAI4meta28serializable_constructible_vE"><code class="docutils literal notranslate"><span class="pre">serializable_constructible_v</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN5EvoAI4meta8get_id_vE"><code class="docutils literal notranslate"><span class="pre">get_id_v</span></code></a></li>
@@ -12799,6 +13140,7 @@ This implementation is a subtractive carver: it expects <code class="docutils li
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I000EN5EvoAI4meta23is_a_traversal_policy_vE"><code class="docutils literal notranslate"><span class="pre">is_a_traversal_policy_v</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I000EN5EvoAI4meta18metric_evaluator_vE"><code class="docutils literal notranslate"><span class="pre">metric_evaluator_v</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I00EN5EvoAI4meta18objective_policy_vE"><code class="docutils literal notranslate"><span class="pre">objective_policy_v</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN5EvoAI4meta17distance_metric_vE"><code class="docutils literal notranslate"><span class="pre">distance_metric_v</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN5EvoAI4meta24is_a_scheduler_algorithmE"><code class="docutils literal notranslate"><span class="pre">EvoAI::meta::is_a_scheduler_algorithm</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N5EvoAI4meta24is_a_scheduler_algorithm5valueE"><code class="docutils literal notranslate"><span class="pre">value</span></code></a></li>
 </ul>
