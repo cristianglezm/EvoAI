@@ -17,7 +17,7 @@ option(EvoAI_BUILD_DOCS "Build documentation" OFF)
 
 project(EvoAI)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 include(EvoAITargetOptions)
 
 FILE(GLOB_RECURSE EvoAI_SOURCES "src/*.cpp")
@@ -61,7 +61,7 @@ target_sources(EvoAI
         "$<INSTALL_INTERFACE:include>"
 )
 
-SET(EvoAI_CONFIG_HPP_INPUT "${CMAKE_SOURCE_DIR}/include/EvoAI/Config.hpp")
+SET(EvoAI_CONFIG_HPP_INPUT "${CMAKE_CURRENT_SOURCE_DIR}/include/EvoAI/Config.hpp")
 FILE(READ "${EvoAI_CONFIG_HPP_INPUT}" EvoAI_CONFIG_HPP_CONTENTS)
 STRING(REGEX REPLACE "^.*#define EVOAI_VERSION_MAJOR ([0-9]+).*$" "\\1" EvoAI_VERSION_MAJOR "${EvoAI_CONFIG_HPP_CONTENTS}")
 STRING(REGEX REPLACE "^.*#define EVOAI_VERSION_MINOR ([0-9]+).*$" "\\1" EvoAI_VERSION_MINOR "${EvoAI_CONFIG_HPP_CONTENTS}")
@@ -78,15 +78,22 @@ set_property(TARGET EvoAI APPEND PROPERTY
 ### Dependencies.
 ################################################################################
 
-include(CMakeFindDependencyMacro)
-# JsonBox
-find_dependency(JsonBox REQUIRED)
-if(JsonBox_FOUND)
-    target_include_directories(EvoAI PUBLIC 
-        "$<BUILD_INTERFACE:${JsonBox_INCLUDE_DIR}>" 
-        "$<INSTALL_INTERFACE:include>")
-    target_link_libraries(EvoAI PUBLIC ${JsonBox_LIBRARY})
-endif(JsonBox_FOUND)
+#JsonBox
+if(TARGET JsonBox)
+    target_link_libraries(EvoAI PUBLIC JsonBox)
+else()
+    include(CMakeFindDependencyMacro)
+
+    find_dependency(JsonBox REQUIRED)
+
+    if(JsonBox_FOUND)
+        target_include_directories(EvoAI PUBLIC
+            "$<BUILD_INTERFACE:${JsonBox_INCLUDE_DIR}>"
+            "$<INSTALL_INTERFACE:include>"
+        )
+        target_link_libraries(EvoAI PUBLIC ${JsonBox_LIBRARY})
+    endif()
+endif()
 
 if(EvoAI_BUILD_EXAMPLES OR EvoAI_BUILD_TOOLS)
     if(EvoAI_BUILD_STATIC)
@@ -314,7 +321,7 @@ SET(CPACK_SOURCE_ZIP "ON")
 SET(CPACK_PACKAGE_VENDOR "Cristian Gonzalez")
 SET(CPACK_PACKAGE_DESCRIPTION "EvoAI is a C++17 library to evolve and / or train **small** Neural Networks.")
 SET(CPACK_PACKAGE_HOMEPAGE_URL "https://cristianglezm.github.io/EvoAI")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE.md")
-SET(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
-SET(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_SOURCE_DIR}/README.md")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md")
+SET(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+SET(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 include(CPack)
