@@ -3,7 +3,7 @@
 
 namespace EvoAI{
         StepLR::StepLR(std::size_t step, double gamma)
-        : m_step(step)
+        : m_step(step == 0 ? 10:step)
         , m_gamma(gamma){}
         StepLR::StepLR(JsonBox::Object o)
         : m_step([&o]{
@@ -19,6 +19,9 @@ namespace EvoAI{
             return o;
         }
         double StepLR::operator()(double lr, std::size_t epoch) const noexcept{
+            if(m_step == 0 ){
+                return lr;
+            }
             if(epoch % m_step == 0){
                 return lr * m_gamma;
             }
