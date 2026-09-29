@@ -4,7 +4,7 @@
 
 namespace EvoAI{
         LinearLR::LinearLR(std::size_t step, double decrement, double minValue)
-        : m_step(step)
+        : m_step(step == 0 ? 10:step)
         , m_decrement(decrement)
         , m_minValue(minValue){}
         LinearLR::LinearLR(JsonBox::Object o)
@@ -20,6 +20,9 @@ namespace EvoAI{
             return o;
         }
         double LinearLR::operator()(double lr, std::size_t epoch) const noexcept{
+            if(m_step == 0){
+                return lr;
+            }
             if(epoch % m_step == 0){
                 return std::max(m_minValue, lr - m_decrement);
             }
