@@ -156,6 +156,36 @@ namespace EvoAI{
             }
             EXPECT_EQ(somJson, som2.toJson());
         }
+
+        namespace{
+            JsonBox::Object somObject(const std::string& width, const std::string& height, const std::string& inputDim, std::size_t weights){
+                JsonBox::Object o;
+                o["width"] = JsonBox::Value(width);
+                o["height"] = JsonBox::Value(height);
+                o["inputDim"] = JsonBox::Value(inputDim);
+                o["toroidal"] = JsonBox::Value(true);
+                JsonBox::Array w;
+                for(std::size_t i = 0; i < weights; ++i){
+                    w.push_back(JsonBox::Value(0.5));
+                }
+                o["weights"] = JsonBox::Value(w);
+                return o;
+            }
+            std::size_t halfRange(){
+                return std::size_t{1} << (std::numeric_limits<std::size_t>::digits / 2);
+            }
+        }
+        TEST(SelfOrganizingMapTest, JsonCtorRejectsDimensionsWhoseProductOverflows){
+            // the product wraps to 0, which an empty weights array would otherwise match
+            EXPECT_THROW(SelfOrganizingMap<>(somObject(std::to_string(halfRange()), std::to_string(halfRange()), "1", 0u)), std::invalid_argument);
+        }
+        TEST(SelfOrganizingMapTest, JsonCtorRejectsHugeInputDimWithoutAllocatingForIt){
+            // must fail on the weights size, not by trying to allocate inputDim doubles
+            EXPECT_THROW(SelfOrganizingMap<>(somObject("2", "2", "1000000000000000000", 4u)), std::invalid_argument);
+        }
+        TEST(SelfOrganizingMapTest, SizedCtorRejectsDimensionsWhoseProductOverflows){
+            EXPECT_THROW(SelfOrganizingMap<>(halfRange(), halfRange(), 1u), std::invalid_argument);
+        }
     }
 }
 #endif // EVOAI_SELF_ORGANIZING_MAP_TEST_HPP

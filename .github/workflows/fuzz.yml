@@ -63,6 +63,12 @@ jobs:
       - name: Fuzz -- Scheduler JSON (smoke run)
         run: build/fuzz/bin/fuzz_scheduler_from_json -max_total_time=${{ inputs.smoke_seconds }} test/fuzz/corpus
 
+      # JsonBox::Value::readArray can spin on a malformed, unterminated array; libFuzzer reports it
+      # as a timeout. Drop continue-on-error once that is fixed in JsonBox.
+      - name: Fuzz -- SelfOrganizingMap JSON (smoke run)
+        continue-on-error: true
+        run: build/fuzz/bin/fuzz_som_from_json -max_total_time=${{ inputs.smoke_seconds }} -timeout=20 test/fuzz/corpus
+
       - name: Upload any newly-found crashes
         if: always()
         uses: actions/upload-artifact@v7
