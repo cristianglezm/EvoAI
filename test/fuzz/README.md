@@ -34,6 +34,7 @@ build/fuzz/fuzz/bin/fuzz_genome_from_json        -max_total_time=60 test/fuzz/co
 build/fuzz/fuzz/bin/fuzz_graph_from_json         -max_total_time=60 test/fuzz/corpus
 build/fuzz/fuzz/bin/fuzz_optimizer_from_json     -max_total_time=60 test/fuzz/corpus
 build/fuzz/fuzz/bin/fuzz_scheduler_from_json     -max_total_time=60 test/fuzz/corpus
+build/fuzz/fuzz/bin/fuzz_som_from_json           -max_total_time=60 test/fuzz/corpus
 build/fuzz/fuzz/bin/fuzz_jsonbox_parse           -max_total_time=60 test/fuzz/corpus
 ```
 
@@ -62,6 +63,9 @@ bugs found so far only manifested once the deserialized object was
 - `fuzz_scheduler_from_json` - `ConstantLR`/`ExponentialLR`/
   `MultiplicativeLR`/`MultiStepLR`/`StepLR`'s `(JsonBox::Object)`
   constructors + `operator()` across a few epochs.
+- `fuzz_som_from_json` - `SelfOrganizingMap<>(JsonBox::Object)`, then
+  `classify()`, `getPrototype()`, a one-epoch `train()` and `toJson()` on
+  the loaded map.
 - Not covered yet: `HyperNeat`/`SubstrateInfo` (no index-trust risk found
   there - it's plain data, and its `stoull` sites already got the
   non-throwing-parse fix everywhere else did), `Population`/`Species`
@@ -137,4 +141,15 @@ bugs found so far only manifested once the deserialized object was
   UBSan-caught FPE (`AddressSanitizer: FPE ... in StepLR::operator()`).
   Fixed by rejecting a parsed step of `0` and falling back to the same
   default (10) used for unparseable input.
+
+- **`SelfOrganizingMap`: untrusted dimensions.** `width`/`height`/`inputDim`
+  came straight from JSON and were multiplied unchecked, in both constructors.
+  When the product wrapped (`2^32 x 2^32 x 1`), an empty `weights` array matched
+  it and the map loaded with a 2^32-wide grid and no weights, so `classify()`
+  read through a null pointer. The JSON constructor also sized its scratch
+  buffer from `inputDim` before comparing anything to the weights, so a file
+  claiming `inputDim: 10^18` tried to allocate it. Found while fuzzing a
+  downstream consumer that loads saved classifiers; both inputs are kept as
+  `regression_som_*.json`. Fixed with one overflow-checked count and by
+  validating against the weights actually present before allocating.
 

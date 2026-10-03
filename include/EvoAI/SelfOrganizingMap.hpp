@@ -74,8 +74,9 @@ namespace EvoAI{
             /**
              * @brief constructor for a JsonBox::Object saved with toJson()
              * @param o JsonBox::Object
-             * @throws std::invalid_argument if width, height or inputDim is 0, or
-             *         if the saved weights array's size doesn't match width*height*inputDim.
+             * @throws std::invalid_argument if width, height or inputDim is 0, if
+             *         width*height*inputDim overflows std::size_t, or if the saved weights
+             *         array's size doesn't match width*height*inputDim.
              */
             SelfOrganizingMap(JsonBox::Object o);
             /**
@@ -192,6 +193,20 @@ namespace EvoAI{
         }
         return std::sqrt(sum);
     }
+    namespace detail{
+        // A wrapped width*height*inputDim would pass the saved-weights size check with an
+        // inconsistent grid, and classify() would then index past the weights.
+        inline std::size_t somWeightCount(std::size_t width, std::size_t height, std::size_t inputDim){
+            if(width == 0 || height == 0 || inputDim == 0){
+                throw std::invalid_argument("EvoAI::SelfOrganizingMap - width, height and inputDim must all be > 0");
+            }
+            constexpr auto max = std::numeric_limits<std::size_t>::max();
+            if(height > max / width || width * height > max / inputDim){
+                throw std::invalid_argument("EvoAI::SelfOrganizingMap - width*height*inputDim overflows");
+            }
+            return width * height * inputDim;
+        }
+    }
     // SelfOrganizingMap impl
     template<class DistanceFn>
     SelfOrganizingMap<DistanceFn>::SelfOrganizingMap(std::size_t width, std::size_t height, std::size_t inputDim,
@@ -201,11 +216,8 @@ namespace EvoAI{
     , m_inputDim(inputDim)
     , m_toroidal(toroidal)
     , m_distance(distance)
-    , m_weights(width * height * inputDim)
+    , m_weights(detail::somWeightCount(width, height, inputDim))
     , m_scratch(inputDim){
-        if(m_width == 0 || m_height == 0 || m_inputDim == 0){
-            throw std::invalid_argument("EvoAI::SelfOrganizingMap - width, height and inputDim must all be > 0");
-        }
         for(auto& w : m_weights){
             w = randomGen().random(0.0, 1.0);
         }
@@ -218,18 +230,18 @@ namespace EvoAI{
     , m_toroidal(o["toroidal"].getBoolean())
     , m_distance(DistanceFn{})
     , m_weights()
-    , m_scratch(m_inputDim){
-        if(m_width == 0 || m_height == 0 || m_inputDim == 0){
-            throw std::invalid_argument("EvoAI::SelfOrganizingMap - width, height and inputDim must all be > 0");
-        }
+    , m_scratch(){
+        // everything is checked against the weights actually present before anything is sized from
+        // the dimensions in the JSON, which can claim any number
         auto weightsArr = o["weights"].getArray();
+        if(weightsArr.size() != detail::somWeightCount(m_width, m_height, m_inputDim)){
+            throw std::invalid_argument("EvoAI::SelfOrganizingMap - saved weights size doesn't match width*height*inputDim");
+        }
         m_weights.reserve(weightsArr.size());
         for(auto& v : weightsArr){
             m_weights.push_back(v.getDouble());
         }
-        if(m_weights.size() != m_width * m_height * m_inputDim){
-            throw std::invalid_argument("EvoAI::SelfOrganizingMap - saved weights size doesn't match width*height*inputDim");
-        }
+        m_scratch.resize(m_inputDim);
     }
     template<class DistanceFn>
     bool SelfOrganizingMap<DistanceFn>::validateSample(const std::vector<double>& sample) const noexcept{

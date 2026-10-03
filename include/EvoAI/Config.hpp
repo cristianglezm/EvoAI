@@ -3,7 +3,7 @@
 
 #define EVOAI_VERSION_MAJOR 1
 #define EVOAI_VERSION_MINOR 4
-#define EVOAI_VERSION_PATCH 2
+#define EVOAI_VERSION_PATCH 3
 
 #if !defined(EvoAI_BUILD_STATIC)
     #if defined(_WIN32)
