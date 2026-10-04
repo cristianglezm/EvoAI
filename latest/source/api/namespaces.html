@@ -475,7 +475,7 @@
 <dd><p>Convenience factory for constructing a <a class="reference internal" href="#class_evo_a_i_1_1_composite_evaluator"><span class="std std-ref">CompositeEvaluator</span></a>. </p>
 <p>Explicit template arguments can be used to specify the network type, while the evaluator types are deduced from the function arguments.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">evaluator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EvoAI</span><span class="o">::</span><span class="n">makeCompositeEvaluator</span><span class="o">&lt;</span><span class="n">EvoAI</span><span class="o">::</span><span class="n">NeuralNetwork</span><span class="o">&gt;</span><span class="p">(</span>
-<span class="w">    </span><span class="n">EvoAI</span><span class="o">::</span><span class="n">ConnectionCountEvaluator</span><span class="p">{},</span><span class="w"> </span><span class="n">EvoAI</span><span class="o">::</span><span class="n">NeuronCountEvaluator</span><span class="p">{});</span>
+<span class="n">EvoAI</span><span class="o">::</span><span class="n">ConnectionCountEvaluator</span><span class="p">{},</span><span class="w"> </span><span class="n">EvoAI</span><span class="o">::</span><span class="n">NeuronCountEvaluator</span><span class="p">{});</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
@@ -1896,11 +1896,21 @@
 <dd><div class="docutils container">
 <em>#include &lt;DataLoader.hpp&gt;</em></div>
 <p>Dataloader to process <a class="reference internal" href="#class_evo_a_i_1_1_dataset"><span class="std std-ref">Dataset</span></a>. </p>
-<p><a class="reference internal" href="#class_evo_a_i_1_1_dataset"><span class="std std-ref">Dataset</span></a> needs to fulfill these requirements: <ul class="simple">
-<li><p>const std::pair&lt;std::vector&lt;double&gt;&amp;, std::vector&lt;double&gt;&amp;&gt; <a class="reference internal" href="#class_evo_a_i_1_1_data_loader_1a4a7d632dbdd63e82b864a1c80d24f5fa"><span class="std std-ref">operator()()</span></a> noexcept;</p></li>
-<li><p>std::size_t size() const noexcept;</p></li>
-<li><p>std::size_t getBatchSize() const noexcept;</p></li>
-<li><p>void <a class="reference internal" href="#class_evo_a_i_1_1_data_loader_1aa7ef210d10638e07bc241b7d11dc9267"><span class="std std-ref">shuffle()</span></a> noexcept;<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">EvoAI</span><span class="o">::</span><span class="n">DataLoader</span><span class="w"> </span><span class="nf">trainingDataset</span><span class="p">(</span><span class="n">EvoAI</span><span class="o">::</span><span class="n">Dataset</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">inputs</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">outputs</span><span class="p">),</span><span class="w"> </span><span class="n">batchSize</span><span class="p">));</span>
+<p><a class="reference internal" href="#class_evo_a_i_1_1_dataset"><span class="std std-ref">Dataset</span></a> needs to fulfill these requirements: 
+
+<ul class="simple">
+<li><p>const std::pair&lt;std::vector&lt;double&gt;&amp;, std::vector&lt;double&gt;&amp;&gt; <a class="reference internal" href="#class_evo_a_i_1_1_data_loader_1a4a7d632dbdd63e82b864a1c80d24f5fa"><span class="std std-ref">operator()()</span></a> noexcept;
+
+</p></li>
+<li><p>std::size_t size() const noexcept;
+
+</p></li>
+<li><p>std::size_t getBatchSize() const noexcept;
+
+</p></li>
+<li><p>void <a class="reference internal" href="#class_evo_a_i_1_1_data_loader_1aa7ef210d10638e07bc241b7d11dc9267"><span class="std std-ref">shuffle()</span></a> noexcept;
+
+ <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">EvoAI</span><span class="o">::</span><span class="n">DataLoader</span><span class="w"> </span><span class="nf">trainingDataset</span><span class="p">(</span><span class="n">EvoAI</span><span class="o">::</span><span class="n">Dataset</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">inputs</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">outputs</span><span class="p">),</span><span class="w"> </span><span class="n">batchSize</span><span class="p">));</span>
 </pre></div>
 </div>
  </p></li>
@@ -7154,8 +7164,8 @@ Unlike <a class="reference internal" href="#class_evo_a_i_1_1_graph"><span class
 <p><a class="reference internal" href="#class_evo_a_i_1_1_optimizer"><span class="std std-ref">Optimizer</span></a>. </p>
 <p><p>Algo needs to fulfill these conditions:</p>
 <p>Algo has a constructor Algo::Algo(JsonBox::Object, std::vector&lt;Connection*&gt;)</p>
-
- Algo has a member function JsonBox::Value <a class="reference internal" href="#class_evo_a_i_1_1_optimizer_1a5d10e165b7b48544a8d801ce4a460e33"><span class="std std-ref">toJson() const </span></a><p>noexcept</p>
+<p>Algo has a member function JsonBox::Value</p>
+<a class="reference internal" href="#class_evo_a_i_1_1_optimizer_1a5d10e165b7b48544a8d801ce4a460e33"><span class="std std-ref">toJson() const </span></a><p>noexcept</p>
 <p>Algo has a double operator()(double, std::size_t) const noexcept</p>
 </p>
 <dl class="field-list simple">
@@ -7369,10 +7379,12 @@ Unlike <a class="reference internal" href="#class_evo_a_i_1_1_graph"><span class
 <p>T has a member function void setFitness(double) noexcept</p>
 <p>T has a static member function static double T::distance(const T&amp;, const T&amp;, double, double, double) noexcept</p>
 <p>T has a static member function static T T::reproduce(const T&amp;, const T&amp;) noexcept</p>
-
- If Population&lt;T*&gt; it will act as an observer, what does this means: <a class="reference internal" href="#class_evo_a_i_1_1_population_1a7d47cbe2348a948595717d5c1b4f1378"><span class="std std-ref">Population&lt;T*&gt;::addMember</span></a><p>will take a T*</p>
+<p>If Population&lt;T*&gt; it will act as an observer, what does this means:</p>
+<a class="reference internal" href="#class_evo_a_i_1_1_population_1a7d47cbe2348a948595717d5c1b4f1378"><span class="std std-ref">Population&lt;T*&gt;::addMember</span></a><p>will take a T*</p>
 <p>If Population&lt;T&gt; it will act as an owner, what does this means:</p>
-<a class="reference internal" href="#class_evo_a_i_1_1_population_1a7d47cbe2348a948595717d5c1b4f1378"><span class="std std-ref">Population&lt;T&gt;::addMember</span></a> will take a T&amp;&amp; <dl class="simple">
+<a class="reference internal" href="#class_evo_a_i_1_1_population_1a7d47cbe2348a948595717d5c1b4f1378"><span class="std std-ref">Population&lt;T&gt;::addMember</span></a> will take a T&amp;&amp; 
+
+ <dl class="simple">
 <dt><strong>Author</strong></dt><dd><p>Cristian Gonzalez <a class="reference external" href="mailto:Cristian&#46;glez&#46;m&#37;&#52;&#48;gmail&#46;com">Cristian<span>&#46;</span>glez<span>&#46;</span>m<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 </dl>
@@ -8483,8 +8495,8 @@ Unlike <a class="reference internal" href="#class_evo_a_i_1_1_graph"><span class
 <p>Algo has a member function JsonBox::Value</p>
 <a class="reference internal" href="#struct_evo_a_i_1_1_scheduler_1a02a60b60bffc555a42e9f57e94dec697"><span class="std std-ref">toJson() const </span></a><p>noexcept</p>
 <p>Algo has a constructor Algo::Algo(JsonBox::Object)</p>
-
- Algo has a double operator()(double, std::size_t) const noexcept </p>
+<p>Algo has a double operator()(double, std::size_t) const noexcept</p>
+</p>
 <dl class="field-list simple">
 <dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>Algo</strong> – is an scheduling algorithm</p>
@@ -10311,7 +10323,9 @@ Domain-agnostic: this class does not know or care what produced a sample vector,
 <p>Algo has a double</p>
 <a class="reference internal" href="#struct_evo_a_i_1_1_loss_1_1_loss_1a2f13d814d474858389eee64ec1818602"><span class="std std-ref">operator()(const std::vector&lt;double&gt;&amp; expectedOutputs, const std::vector&lt;double&gt;&amp; outputs)</span></a><p>noexcept</p>
 <p>Algo has a std::vector&lt;double&gt;</p>
-<a class="reference internal" href="#struct_evo_a_i_1_1_loss_1_1_loss_1a762d6273b7166dcea03927f853139910"><span class="std std-ref">backward(const std::vector&lt;double&gt;&amp; expectedOutputs, const std::vector&lt;double&gt;&amp; outputs)</span></a> noexcept </p>
+<a class="reference internal" href="#struct_evo_a_i_1_1_loss_1_1_loss_1a762d6273b7166dcea03927f853139910"><span class="std std-ref">backward(const std::vector&lt;double&gt;&amp; expectedOutputs, const std::vector&lt;double&gt;&amp; outputs)</span></a> noexcept 
+
+ </p>
 <dl class="field-list simple">
 <dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>Algo</strong> – </p>
@@ -10566,9 +10580,9 @@ Domain-agnostic: this class does not know or care what produced a sample vector,
 <dd><p>Algorithms of Selection Strategies. </p>
 <p>In case you want your own selection algorithm you will need to implement a functor overloading operator() they must return a std::vector&lt;Selected&lt;T&gt;&gt; where every <a class="reference internal" href="#struct_evo_a_i_1_1_selection_algorithms_1_1_selected_1aca179e00041583220e84c66dbb493ea1"><span class="std std-ref">Selected&lt;T&gt;.loser</span></a> should be unique. The algorithm can return less than the number of selected required, and should handle T and T*. <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">struct</span><span class="w"> </span><span class="nc">EvoAI_API</span><span class="w"> </span><span class="n">new_algorithm</span><span class="p">{</span>
-<span class="w">    </span><span class="c1">//This one will handle interspecies reproduction by selecting couples from members</span>
+<span class="c1">//This one will handle interspecies reproduction by selecting couples from members</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Selected</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">remove_pointer_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*&gt;&amp;</span><span class="w"> </span><span class="n">members</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">numberToSelect</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span>
-<span class="w">    </span><span class="c1">//and this will handle species reproduction by selecting couples from species</span>
+<span class="c1">//and this will handle species reproduction by selecting couples from species</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Selected</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Species</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;&gt;&amp;</span><span class="w"> </span><span class="n">species</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">numberToSelect</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
