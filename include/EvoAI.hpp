@@ -24,6 +24,8 @@
 #include "EvoAI/PathFindingAlgorithms.hpp"
 #include "EvoAI/MazeAlgorithms.hpp"
 #include "EvoAI/Evaluators.hpp"
+#include "EvoAI/SOMEvaluation.hpp"
+#include "EvoAI/SOMTraining.hpp"
 #include "EvoAI/SelfOrganizingMap.hpp"
 
 #endif // EVOAI_HPP

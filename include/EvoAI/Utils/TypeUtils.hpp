@@ -402,17 +402,19 @@ namespace EvoAI::meta{
     template<class T, class Metrics>
     constexpr bool objective_policy_v = estd::is_detected<objective_policy_t, T, Metrics>::value;
     /**
-     * @brief T has a member function double operator()(const std::vector<double>&, const std::vector<double>&) const noexcept
+     * @brief T has a member function double operator()(const double* a, const double* b, std::size_t n) const noexcept
      * @details
-     *  Distance metric between two feature vectors of the same length, used by
-     *  EvoAI::SelfOrganizingMap. EvoAI::EuclideanDistance is the default
-     *  implementation.
+     *  Distance metric between two feature vectors of n values each, used by
+     *  EvoAI::SelfOrganizingMap. The map passes pointers into its own weights, so the
+     *  metric has to be callable from several threads at once (no mutable state) for
+     *  SelfOrganizingMap::classify() and evaluate() to be. EvoAI::EuclideanDistance is the
+     *  default implementation.
      *
      * @tparam T the candidate distance metric type
      */
     template<class T>
     using distance_metric_t = decltype(std::declval<const T&>()(
-        std::declval<const std::vector<double>&>(), std::declval<const std::vector<double>&>()));
+        std::declval<const double*>(), std::declval<const double*>(), std::declval<std::size_t>()));
     template<class T>
     constexpr bool distance_metric_v = estd::is_detected<distance_metric_t, T>::value;
 }

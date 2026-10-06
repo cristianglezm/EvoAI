@@ -46,28 +46,28 @@ jobs:
            cd ..
 
       - name: Fuzz -- JsonBox parsing (smoke run)
-        run: build/fuzz/bin/fuzz_jsonbox_parse -max_total_time=${{ inputs.smoke_seconds }} test/fuzz/corpus
+        run: build/fuzz/bin/fuzz_jsonbox_parse -max_total_time=${{ inputs.smoke_seconds }} -artifact_prefix=build/fuzz/ test/fuzz/corpus
 
       - name: Fuzz -- NeuralNetwork JSON (smoke run)
-        run: build/fuzz/bin/fuzz_neuralnetwork_from_json -max_total_time=${{ inputs.smoke_seconds }} test/fuzz/corpus
+        run: build/fuzz/bin/fuzz_neuralnetwork_from_json -max_total_time=${{ inputs.smoke_seconds }} -artifact_prefix=build/fuzz/ test/fuzz/corpus
 
       - name: Fuzz -- Genome JSON (smoke run)
-        run: build/fuzz/bin/fuzz_genome_from_json -max_total_time=${{ inputs.smoke_seconds }} test/fuzz/corpus
+        run: build/fuzz/bin/fuzz_genome_from_json -max_total_time=${{ inputs.smoke_seconds }} -artifact_prefix=build/fuzz/ test/fuzz/corpus
 
       - name: Fuzz -- Graph JSON (smoke run)
-        run: build/fuzz/bin/fuzz_graph_from_json -max_total_time=${{ inputs.smoke_seconds }} test/fuzz/corpus
+        run: build/fuzz/bin/fuzz_graph_from_json -max_total_time=${{ inputs.smoke_seconds }} -artifact_prefix=build/fuzz/ test/fuzz/corpus
 
       - name: Fuzz -- Optimizer JSON (smoke run)
-        run: build/fuzz/bin/fuzz_optimizer_from_json -max_total_time=${{ inputs.smoke_seconds }} test/fuzz/corpus
+        run: build/fuzz/bin/fuzz_optimizer_from_json -max_total_time=${{ inputs.smoke_seconds }} -artifact_prefix=build/fuzz/ test/fuzz/corpus
 
       - name: Fuzz -- Scheduler JSON (smoke run)
-        run: build/fuzz/bin/fuzz_scheduler_from_json -max_total_time=${{ inputs.smoke_seconds }} test/fuzz/corpus
+        run: build/fuzz/bin/fuzz_scheduler_from_json -max_total_time=${{ inputs.smoke_seconds }} -artifact_prefix=build/fuzz/ test/fuzz/corpus
 
-      # JsonBox::Value::readArray can spin on a malformed, unterminated array; libFuzzer reports it
-      # as a timeout. Drop continue-on-error once that is fixed in JsonBox.
       - name: Fuzz -- SelfOrganizingMap JSON (smoke run)
-        continue-on-error: true
-        run: build/fuzz/bin/fuzz_som_from_json -max_total_time=${{ inputs.smoke_seconds }} -timeout=20 test/fuzz/corpus
+        run: build/fuzz/bin/fuzz_som_from_json -max_total_time=${{ inputs.smoke_seconds }} -artifact_prefix=build/fuzz/ -timeout=20 test/fuzz/corpus
+
+      - name: Fuzz -- SelfOrganizingMap API (smoke run)
+        run: build/fuzz/bin/fuzz_som_use -max_total_time=${{ inputs.smoke_seconds }} -artifact_prefix=build/fuzz/ -timeout=20 test/fuzz/corpus
 
       - name: Upload any newly-found crashes
         if: always()
