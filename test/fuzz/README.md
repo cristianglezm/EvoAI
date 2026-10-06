@@ -35,6 +35,7 @@ build/fuzz/fuzz/bin/fuzz_graph_from_json         -max_total_time=60 test/fuzz/co
 build/fuzz/fuzz/bin/fuzz_optimizer_from_json     -max_total_time=60 test/fuzz/corpus
 build/fuzz/fuzz/bin/fuzz_scheduler_from_json     -max_total_time=60 test/fuzz/corpus
 build/fuzz/fuzz/bin/fuzz_som_from_json           -max_total_time=60 test/fuzz/corpus
+build/fuzz/fuzz/bin/fuzz_som_use                 -max_total_time=60 test/fuzz/corpus
 build/fuzz/fuzz/bin/fuzz_jsonbox_parse           -max_total_time=60 test/fuzz/corpus
 ```
 
@@ -64,8 +65,23 @@ bugs found so far only manifested once the deserialized object was
   `MultiplicativeLR`/`MultiStepLR`/`StepLR`'s `(JsonBox::Object)`
   constructors + `operator()` across a few epochs.
 - `fuzz_som_from_json` - `SelfOrganizingMap<>(JsonBox::Object)`, then
-  `classify()`, `getPrototype()`, a one-epoch `train()` and `toJson()` on
-  the loaded map.
+  `classify()`, `getPrototype()`, `evaluate()`, `uMatrix()`, a one-epoch
+  `train()` and `toJson()` (exact and rounded) on the loaded map.
+- `fuzz_som_use` - not JSON: a `FuzzedDataProvider` harness that builds a small
+  `SelfOrganizingMap<>` and uses its API with hostile arguments: samples of the
+  wrong size or holding NaN, infinity, denormals and huge values, any
+  learning rate and radius, each scheduler of the library with parameters from
+  the input, `TrainingOptions` (`epochOffset`, `seed`, an `onEpoch` that stops),
+  `evaluate()` (both neighbourhoods), `uMatrix()`, `classify()`,
+  `setWeightDecimals()` and a save and load round trip. Besides what the
+  sanitizers catch it aborts when something the documentation promises is
+  false: the counts of `evaluate()` add up and agree with `classify()`, the
+  report names exactly the skipped samples, `onEpoch` stops where it says,
+  training in pieces with a seed gives the same weights as one call, and a
+  saved map loads back with the same weights (or within the rounding). It
+  does not read JSON, so the corpus seeds of the other harnesses are only
+  random bytes to it; it finds its own inputs quickly (about 2000 executions
+  a second).
 - Not covered yet: `HyperNeat`/`SubstrateInfo` (no index-trust risk found
   there - it's plain data, and its `stoull` sites already got the
   non-throwing-parse fix everywhere else did), `Population`/`Species`
@@ -153,3 +169,11 @@ bugs found so far only manifested once the deserialized object was
   `regression_som_*.json`. Fixed with one overflow-checked count and by
   validating against the weights actually present before allocating.
 
+- **`SelfOrganizingMap::setWeightDecimals()`: rounding overflowed.** `fuzz_som_use`
+  found it within seconds: a weight like `-3.1e307` rounded to 2 decimals computed
+  `w * 100`, which is infinity, so the JSON held `-inf`, and JsonBox read that back as `0`.
+  Rounding only does something below 2^52 units, so it now only runs there. Kept as
+  `regression_som_use_rounding_overflow.bin`. The same run showed that JsonBox reads a
+  whole number from 2^31 to 1e17, which it writes without a point, back as an int that
+  saturates at 2^31 - 1: a limit of its parser, not of the map, so the harness
+  does not compare maps that hold such a weight.

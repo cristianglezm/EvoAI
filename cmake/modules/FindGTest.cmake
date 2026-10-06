@@ -6,6 +6,7 @@
 # GTest_INCLUDE_DIR
 # GTest_LIBRARIES
 # GTest_LIBRARY
+# GTest_MAIN_LIBRARY
 # GTest_ROOT
 #
 
@@ -17,40 +18,74 @@ set(FIND_GTest_PATHS
     /sw
     /opt/local
     /opt/csw
-    /opt)
+    /opt
+)
 
+# Search the explicitly specified root first.
 if(GTest_ROOT)
-    if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-	SET(GTest_INCLUDE_DIR "${GTest_ROOT}/include")
-	SET(GTest_LIBRARIES "${GTest_ROOT}/lib/gtest.lib" "${GTest_ROOT}/lib/gtest_main.lib")
-        SET(GTest_LIBRARY "${GTest_ROOT}/lib/gtest.lib")
-        SET(GTest_FOUND 1)
-    else()
-	SET(GTest_INCLUDE_DIR "${GTest_ROOT}/include")
-	SET(GTest_LIBRARIES "${GTest_ROOT}/lib/libgtest.a" "${GTest_ROOT}/lib/libgtest_main.a")
-        SET(GTest_LIBRARY "${GTest_ROOT}/lib/libgtest.a")
-	SET(GTest_FOUND 1)
-    endif()
-endif(GTest_ROOT)
+    find_path(GTest_INCLUDE_DIR
+        gtest/gtest.h
+        PATH_SUFFIXES include
+        PATHS "${GTest_ROOT}"
+        NO_CMAKE_FIND_ROOT_PATH
+        NO_DEFAULT_PATH
+    )
 
-find_path(GTest_INCLUDE_DIR gtest/gtest.h
-          PATH_SUFFIXES include
-          PATHS ${FIND_GTest_PATHS})
+    find_library(GTest_LIBRARY
+        NAMES gtest gtestd GTest
+        PATH_SUFFIXES lib
+        PATHS "${GTest_ROOT}"
+        NO_CMAKE_FIND_ROOT_PATH
+        NO_DEFAULT_PATH
+    )
 
-find_library(GTest_LIBRARY
-		NAMES GTest gtest gtest_main
-		PATH_SUFFIXES lib
-		PATHS ${FIND_GTest_PATHS})
+    find_library(GTest_MAIN_LIBRARY
+        NAMES gtest_main gtest_maind
+        PATH_SUFFIXES lib
+        PATHS "${GTest_ROOT}"
+        NO_CMAKE_FIND_ROOT_PATH
+        NO_DEFAULT_PATH
+    )
+endif()
+
+# Fall back to normal CMake search paths if necessary.
+if(NOT GTest_INCLUDE_DIR)
+    find_path(GTest_INCLUDE_DIR
+        gtest/gtest.h
+        PATH_SUFFIXES include
+        PATHS ${FIND_GTest_PATHS}
+    )
+endif()
+
+if(NOT GTest_LIBRARY)
+    find_library(GTest_LIBRARY
+        NAMES gtest gtestd GTest
+        PATH_SUFFIXES lib
+        PATHS ${FIND_GTest_PATHS}
+    )
+endif()
+
+if(NOT GTest_MAIN_LIBRARY)
+    find_library(GTest_MAIN_LIBRARY
+        NAMES gtest_main gtest_maind
+        PATH_SUFFIXES lib
+        PATHS ${FIND_GTest_PATHS}
+    )
+endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(GTest DEFAULT_MSG GTest_LIBRARY GTest_INCLUDE_DIR)
 
-set(GTest_INCLUDE_DIR "${GTest_INCLUDE_DIR}")
-set(GTest_LIBRARIES "${GTest_LIBRARIES}" "${GTest_LIBRARY}")
+find_package_handle_standard_args(
+    GTest
+    DEFAULT_MSG
+    GTest_INCLUDE_DIR
+    GTest_LIBRARY
+)
 
-if(NOT GTest_FOUND)
-	set(FIND_GTest_ERROR "Could NOT find GTest")
-	if(GTEST_FIND_REQUIRED)
-		message(FATAL_ERROR ${FIND_GTEST_ERROR})
-	endif()
+if(GTest_FOUND)
+    set(GTest_LIBRARIES "${GTest_LIBRARY}")
+
+    if(GTest_MAIN_LIBRARY)
+        list(APPEND GTest_LIBRARIES "${GTest_MAIN_LIBRARY}")
+    endif()
 endif()

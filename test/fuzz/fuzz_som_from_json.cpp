@@ -1,6 +1,6 @@
 // libFuzzer harness for EvoAI::SelfOrganizingMap's JSON constructor, followed by
-// classify(), getPrototype(), a one-epoch train() and toJson(): a map that loads but
-// can't be used safely is the case worth finding.
+// classify(), getPrototype(), evaluate(), uMatrix(), a one-epoch train() and toJson() (exact and
+// rounded): a map that loads but can't be used safely is the case worth finding.
 #include <EvoAI/SelfOrganizingMap.hpp>
 #include <JsonBox.h>
 #include <cstddef>
@@ -25,11 +25,15 @@ extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t* data, std::size_t size
         std::vector<double> sample(som.getInputDim(), 0.5);
         auto match = som.classify(sample);
         if(match){
-            (void)som.getPrototype(match->first, match->second);
+            (void)som.getPrototype(match->x, match->y);
         }
+        (void)som.evaluate({sample, sample}, true);
+        (void)som.uMatrix();
         som.train({sample}, 1u, 0.5, 1.0,
                   EvoAI::Scheduler<EvoAI::ConstantLR>(EvoAI::ConstantLR{}),
                   EvoAI::Scheduler<EvoAI::ConstantLR>(EvoAI::ConstantLR{}));
+        (void)som.toJson();
+        som.setWeightDecimals(3);
         (void)som.toJson();
     }catch(const std::exception&){
     }

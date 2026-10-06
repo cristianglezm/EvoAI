@@ -10,6 +10,7 @@ set(EvoAI_FUZZ_TARGETS
     fuzz_optimizer_from_json
     fuzz_scheduler_from_json
     fuzz_som_from_json
+    fuzz_som_use
 )
 
 foreach(fuzzTarget ${EvoAI_FUZZ_TARGETS})

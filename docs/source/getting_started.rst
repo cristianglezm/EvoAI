@@ -7,7 +7,8 @@ Getting Started
 Introduction
 -------------
 
-EvoAI is a C++17 library to evolve and / or train **small** Neural Networks.
+EvoAI is a C++17 library of building blocks to evolve, train and cluster **small** models, neural networks
+that are evolved (NEAT, HyperNEAT) and / or trained (backpropagation), self-organizing maps, and the algorithms around them.
 
 Building on Windows
 --------------------
@@ -39,7 +40,7 @@ we will clone ``SFML`` and then compile and install it.
 
 .. code-block:: bash
 
-    git clone https://github.com/SFML/SFML && git checkout 2.6.x
+    git clone --branch 2.6.x https://github.com/SFML/SFML
     cd SFML && mkdir build && cd build
     cmake -G"MinGW Makefiles" -DCMAKE_INSTALL_PREFIX=./install ..
     mingw32-make -j4 install
@@ -81,37 +82,29 @@ set the ``EvoAI_BUILD_*=FALSE``.
 ConsoleApp
 ------------
 
-We will make a folder named ``ConsoleApp`` and add the following files.
+We will make a folder named ``ConsoleApp`` with the following two files. EvoAI installs a CMake package, so it
+is found with ``find_package`` and used through its imported target ``EvoAI::EvoAI``: there is nothing to copy
+from the EvoAI sources, and the package finds JsonBox again by itself.
 
 .. code-block:: cmake
 
     # CMakeLists.txt
-    cmake_minimum_required(VERSION 3.27)
-    project(ConsoleApp)
-    SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
-    add_excutable(ConsoleApp main.cpp)
-    SET(CMAKE_CXX_STANDARD 17)
-    SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-    SET(CMAKE_CXX_EXTENSIONS OFF)
-    #JsonBox
-    find_package(JsonBox REQUIRED)
-    if(JsonBox_FOUND)
-        target_include_directories(ConsoleApp PRIVATE ${JsonBox_INCLUDE_DIR})
-        target_link_libraries(ConsoleApp PRIVATE ${JsonBox_LIBRARIES})
-    endif(JsonBox_FOUND)
-    #EvoAI
-    find_package(EvoAI 1.0 REQUIRED)
-    if(EvoAI_FOUND)
-        target_include_directories(ConsoleApp PRIVATE ${EvoAI_INCLUDE_DIR})
-        target_link_libraries(ConsoleApp PRIVATE ${EvoAI_LIBRARIES})
-    endif(EvoAI_FOUND)
+    cmake_minimum_required(VERSION 3.14)
+    project(ConsoleApp LANGUAGES CXX)
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
 
-then we will make the folders cmake/modules and copy FindEvoAI.cmake and findJsonBox.cmake from EvoAI/cmake/modules/ into it.
+    find_package(EvoAI 1.0 CONFIG REQUIRED)
+
+    add_executable(ConsoleApp main.cpp)
+    target_link_libraries(ConsoleApp PRIVATE EvoAI::EvoAI)
 
 .. code-block:: cpp
 
     // main.cpp
     #include <EvoAI.hpp>
+    #include <iomanip>
     #include <string>
     #include <iostream>
 
@@ -152,13 +145,56 @@ then we will make the folders cmake/modules and copy FindEvoAI.cmake and findJso
         }
     }
 
-then we will make the folder build and use cmake to build and compile the project.
+Then we will configure, build and run it. ``CMAKE_PREFIX_PATH`` has the folders ``EvoAI`` and ``JsonBox`` were
+installed in (their ``CMAKE_INSTALL_PREFIX``), separated by ``;``. On Linux and macOS leave out the ``-G``.
 
-.. code-block:: cpp
+.. code-block:: bash
 
-    cmake -G"MinGW Makefiles" ..
-    mingw32-make -j4
-    ./ConsoleApp
-    // this will print
-    // word is "hello world!"
-    // The best EvoString values are "hello world!"
+    cmake -S . -B build -G"MinGW Makefiles" \
+          "-DCMAKE_PREFIX_PATH=/full/path/to/EvoAI/build/install;/full/path/to/JsonBox/build/install"
+    cmake --build build
+    ./build/ConsoleApp
+    # this will print
+    # word is "hello world!"
+    # The best EvoString values are "hello world!"
+
+It is the same ``CMakeLists.txt`` for a shared and for a static EvoAI (``-DEvoAI_BUILD_STATIC=TRUE`` when you
+built it): ``find_package`` finds the one that is installed. If a prefix holds both, the shared library is used
+unless you set ``EvoAI_BUILD_STATIC`` to ``TRUE`` before ``find_package(EvoAI)``.
+
+If JsonBox is somewhere else, ``find_package(EvoAI)`` stops saying it could not find JsonBox: add its folder to
+``CMAKE_PREFIX_PATH``, or set ``JsonBox_DIR`` to the folder with its ``JsonBoxConfig.cmake``
+(``<prefix>/lib/cmake/JsonBox``). This needs a JsonBox that installs its CMake package; an EvoAI built against an
+older JsonBox, or by a toolchain that only looks inside its sysroot (Android, Emscripten), does not find JsonBox for
+you: find it and link it yourself.
+
+Using FetchContent
+^^^^^^^^^^^^^^^^^^^
+
+To build JsonBox and EvoAI together with your project, without installing them first, use ``FetchContent``.
+Here the target is plain ``EvoAI`` (the namespaced ``EvoAI::EvoAI`` is for installed packages), and it is
+built static so there is no library to ship next to the executable.
+
+.. code-block:: cmake
+
+    # CMakeLists.txt
+    cmake_minimum_required(VERSION 3.14)
+    project(ConsoleApp LANGUAGES CXX)
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+
+    include(FetchContent)
+    set(JsonBox_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(JsonBox_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(EvoAI_BUILD_STATIC TRUE CACHE BOOL "" FORCE)
+    set(EvoAI_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(EvoAI_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(EvoAI_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
+    set(EvoAI_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+    FetchContent_Declare(JsonBox GIT_REPOSITORY https://github.com/cristianglezm/JsonBox.git GIT_TAG 0.6.3)
+    FetchContent_Declare(EvoAI GIT_REPOSITORY https://github.com/cristianglezm/EvoAI.git GIT_TAG v1.5)
+    FetchContent_MakeAvailable(JsonBox EvoAI)
+
+    add_executable(ConsoleApp main.cpp)
+    target_link_libraries(ConsoleApp PRIVATE EvoAI)

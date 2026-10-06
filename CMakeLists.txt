@@ -79,19 +79,29 @@ set_property(TARGET EvoAI APPEND PROPERTY
 ################################################################################
 
 #JsonBox
-if(TARGET JsonBox)
+set(EvoAI_PACKAGE_DEPENDENCIES "")
+if(TARGET JsonBox::JsonBox)
+    target_link_libraries(EvoAI PUBLIC JsonBox::JsonBox)
+    set(EvoAI_PACKAGE_DEPENDENCIES "find_dependency(JsonBox CONFIG)")
+elseif(TARGET JsonBox)
     target_link_libraries(EvoAI PUBLIC JsonBox)
 else()
     include(CMakeFindDependencyMacro)
-
-    find_dependency(JsonBox REQUIRED)
-
+    find_package(JsonBox CONFIG QUIET)
     if(JsonBox_FOUND)
-        target_include_directories(EvoAI PUBLIC
-            "$<BUILD_INTERFACE:${JsonBox_INCLUDE_DIR}>"
-            "$<INSTALL_INTERFACE:include>"
-        )
-        target_link_libraries(EvoAI PUBLIC ${JsonBox_LIBRARY})
+        message(STATUS "Found JsonBox ${JsonBox_VERSION}: ${JsonBox_DIR}")
+        target_link_libraries(EvoAI PUBLIC JsonBox::JsonBox)
+        set(EvoAI_PACKAGE_DEPENDENCIES "find_dependency(JsonBox CONFIG)")
+    else()
+        find_dependency(JsonBox REQUIRED)
+
+        if(JsonBox_FOUND)
+            target_include_directories(EvoAI PUBLIC
+                "$<BUILD_INTERFACE:${JsonBox_INCLUDE_DIR}>"
+                "$<INSTALL_INTERFACE:include>"
+            )
+            target_link_libraries(EvoAI PUBLIC ${JsonBox_LIBRARY})
+        endif()
     endif()
 endif()
 
@@ -319,7 +329,7 @@ endif()
 SET(CPACK_BINARY_ZIP "ON")
 SET(CPACK_SOURCE_ZIP "ON")
 SET(CPACK_PACKAGE_VENDOR "Cristian Gonzalez")
-SET(CPACK_PACKAGE_DESCRIPTION "EvoAI is a C++17 library to evolve and / or train **small** Neural Networks.")
+SET(CPACK_PACKAGE_DESCRIPTION "EvoAI is a C++17 library of building blocks to evolve, train and cluster **small** models: neural networks that are evolved (NEAT, HyperNEAT) or trained (backpropagation), self-organizing maps, and the algorithms around them.")
 SET(CPACK_PACKAGE_HOMEPAGE_URL "https://cristianglezm.github.io/EvoAI")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md")
 SET(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
