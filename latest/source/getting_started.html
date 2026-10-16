@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Getting Started &#8212; EvoAI v1.4 documentation</title>
+    <title>Getting Started &#8212; EvoAI v1.5 documentation</title>
   
   
   
@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -35,18 +35,18 @@
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=eb19d207" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=1d11a399"></script>
+    <script src="../_static/documentation_options.js?v=b9692780"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/getting_started';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://cristianglezm.github.io/EvoAI/latest/_static/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -59,6 +59,7 @@
     <link rel="next" title="Examples" href="examples.html" />
     <link rel="prev" title="Features" href="../index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
   
@@ -132,8 +133,8 @@
       
     
     
-    <img src="../_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.4 documentation - Home"/>
-    <img src="../_static/EvoAILogo.png" class="logo__image only-dark pst-js-only" alt="EvoAI v1.4 documentation - Home"/>
+    <img src="../_static/EvoAILogo.png" class="logo__image only-light" alt="EvoAI v1.5 documentation - Home"/>
+    <img src="../_static/EvoAILogo.png" class="logo__image only-dark pst-js-only" alt="EvoAI v1.5 documentation - Home"/>
   
   
 </a></div>
@@ -454,7 +455,8 @@
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
-<p>EvoAI is a C++17 library to evolve and / or train <strong>small</strong> Neural Networks.</p>
+<p>EvoAI is a C++17 library of building blocks to evolve, train and cluster <strong>small</strong> models, neural networks
+that are evolved (NEAT, HyperNEAT) and / or trained (backpropagation), self-organizing maps, and the algorithms around them.</p>
 </section>
 <section id="building-on-windows">
 <h2>Building on Windows<a class="headerlink" href="#building-on-windows" title="Link to this heading">#</a></h2>
@@ -475,7 +477,7 @@ mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
 <section id="sfml-optional">
 <h3>SFML (Optional)<a class="headerlink" href="#sfml-optional" title="Link to this heading">#</a></h3>
 <p>we will clone <code class="docutils literal notranslate"><span class="pre">SFML</span></code> and then compile and install it.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/SFML/SFML<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>checkout<span class="w"> </span><span class="m">2</span>.6.x
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--branch<span class="w"> </span><span class="m">2</span>.6.x<span class="w"> </span>https://github.com/SFML/SFML
 <span class="nb">cd</span><span class="w"> </span>SFML<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
 cmake<span class="w"> </span>-G<span class="s2">"MinGW Makefiles"</span><span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>./install<span class="w"> </span>..
 mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
@@ -513,32 +515,25 @@ mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
 </section>
 <section id="consoleapp">
 <h2>ConsoleApp<a class="headerlink" href="#consoleapp" title="Link to this heading">#</a></h2>
-<p>We will make a folder named <code class="docutils literal notranslate"><span class="pre">ConsoleApp</span></code> and add the following files.</p>
+<p>We will make a folder named <code class="docutils literal notranslate"><span class="pre">ConsoleApp</span></code> with the following two files. EvoAI installs a CMake package, so it
+is found with <code class="docutils literal notranslate"><span class="pre">find_package</span></code> and used through its imported target <code class="docutils literal notranslate"><span class="pre">EvoAI::EvoAI</span></code>: there is nothing to copy
+from the EvoAI sources, and the package finds JsonBox again by itself.</p>
 <div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="c"># CMakeLists.txt</span>
-<span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">3.27</span><span class="p">)</span>
-<span class="nb">project</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="p">)</span>
-<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_MODULE_PATH</span><span class="w"> </span><span class="o">${</span><span class="nv">CMAKE_MODULE_PATH</span><span class="o">}</span><span class="w"> </span><span class="s2">"${CMAKE_SOURCE_DIR}/cmake/modules/"</span><span class="p">)</span>
-<span class="nb">add_excutable</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="w"> </span><span class="s">main.cpp</span><span class="p">)</span>
-<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_CXX_STANDARD</span><span class="w"> </span><span class="s">17</span><span class="p">)</span>
-<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_CXX_STANDARD_REQUIRED</span><span class="w"> </span><span class="s">ON</span><span class="p">)</span>
-<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_CXX_EXTENSIONS</span><span class="w"> </span><span class="s">OFF</span><span class="p">)</span>
-<span class="c">#JsonBox</span>
-<span class="nb">find_package</span><span class="p">(</span><span class="s">JsonBox</span><span class="w"> </span><span class="s">REQUIRED</span><span class="p">)</span>
-<span class="nb">if</span><span class="p">(</span><span class="s">JsonBox_FOUND</span><span class="p">)</span>
-<span class="w">    </span><span class="nb">target_include_directories</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="o">${</span><span class="nv">JsonBox_INCLUDE_DIR</span><span class="o">}</span><span class="p">)</span>
-<span class="w">    </span><span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="o">${</span><span class="nv">JsonBox_LIBRARIES</span><span class="o">}</span><span class="p">)</span>
-<span class="nb">endif</span><span class="p">(</span><span class="s">JsonBox_FOUND</span><span class="p">)</span>
-<span class="c">#EvoAI</span>
-<span class="nb">find_package</span><span class="p">(</span><span class="s">EvoAI</span><span class="w"> </span><span class="s">1.0</span><span class="w"> </span><span class="s">REQUIRED</span><span class="p">)</span>
-<span class="nb">if</span><span class="p">(</span><span class="s">EvoAI_FOUND</span><span class="p">)</span>
-<span class="w">    </span><span class="nb">target_include_directories</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="o">${</span><span class="nv">EvoAI_INCLUDE_DIR</span><span class="o">}</span><span class="p">)</span>
-<span class="w">    </span><span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="o">${</span><span class="nv">EvoAI_LIBRARIES</span><span class="o">}</span><span class="p">)</span>
-<span class="nb">endif</span><span class="p">(</span><span class="s">EvoAI_FOUND</span><span class="p">)</span>
+<span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">3.14</span><span class="p">)</span>
+<span class="nb">project</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="w"> </span><span class="s">LANGUAGES</span><span class="w"> </span><span class="s">CXX</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_CXX_STANDARD</span><span class="w"> </span><span class="s">17</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_CXX_STANDARD_REQUIRED</span><span class="w"> </span><span class="s">ON</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_CXX_EXTENSIONS</span><span class="w"> </span><span class="s">OFF</span><span class="p">)</span>
+
+<span class="nb">find_package</span><span class="p">(</span><span class="s">EvoAI</span><span class="w"> </span><span class="s">1.0</span><span class="w"> </span><span class="s">CONFIG</span><span class="w"> </span><span class="s">REQUIRED</span><span class="p">)</span>
+
+<span class="nb">add_executable</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="w"> </span><span class="s">main.cpp</span><span class="p">)</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="s">EvoAI::EvoAI</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>then we will make the folders cmake/modules and copy FindEvoAI.cmake and findJsonBox.cmake from EvoAI/cmake/modules/ into it.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// main.cpp</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;EvoAI.hpp&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iomanip&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
 
@@ -580,15 +575,54 @@ mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>then we will make the folder build and use cmake to build and compile the project.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cmake</span><span class="w"> </span><span class="o">-</span><span class="n">G</span><span class="s">"MinGW Makefiles"</span><span class="w"> </span><span class="p">..</span>
-<span class="n">mingw32</span><span class="o">-</span><span class="n">make</span><span class="w"> </span><span class="o">-</span><span class="n">j4</span>
-<span class="p">.</span><span class="o">/</span><span class="n">ConsoleApp</span>
-<span class="c1">// this will print</span>
-<span class="c1">// word is "hello world!"</span>
-<span class="c1">// The best EvoString values are "hello world!"</span>
+<p>Then we will configure, build and run it. <code class="docutils literal notranslate"><span class="pre">CMAKE_PREFIX_PATH</span></code> has the folders <code class="docutils literal notranslate"><span class="pre">EvoAI</span></code> and <code class="docutils literal notranslate"><span class="pre">JsonBox</span></code> were
+installed in (their <code class="docutils literal notranslate"><span class="pre">CMAKE_INSTALL_PREFIX</span></code>), separated by <code class="docutils literal notranslate"><span class="pre">;</span></code>. On Linux and macOS leave out the <code class="docutils literal notranslate"><span class="pre">-G</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-G<span class="s2">"MinGW Makefiles"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">      </span><span class="s2">"-DCMAKE_PREFIX_PATH=/full/path/to/EvoAI/build/install;/full/path/to/JsonBox/build/install"</span>
+cmake<span class="w"> </span>--build<span class="w"> </span>build
+./build/ConsoleApp
+<span class="c1"># this will print</span>
+<span class="c1"># word is "hello world!"</span>
+<span class="c1"># The best EvoString values are "hello world!"</span>
 </pre></div>
 </div>
+<p>It is the same <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> for a shared and for a static EvoAI (<code class="docutils literal notranslate"><span class="pre">-DEvoAI_BUILD_STATIC=TRUE</span></code> when you
+built it): <code class="docutils literal notranslate"><span class="pre">find_package</span></code> finds the one that is installed. If a prefix holds both, the shared library is used
+unless you set <code class="docutils literal notranslate"><span class="pre">EvoAI_BUILD_STATIC</span></code> to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> before <code class="docutils literal notranslate"><span class="pre">find_package(EvoAI)</span></code>.</p>
+<p>If JsonBox is somewhere else, <code class="docutils literal notranslate"><span class="pre">find_package(EvoAI)</span></code> stops saying it could not find JsonBox: add its folder to
+<code class="docutils literal notranslate"><span class="pre">CMAKE_PREFIX_PATH</span></code>, or set <code class="docutils literal notranslate"><span class="pre">JsonBox_DIR</span></code> to the folder with its <code class="docutils literal notranslate"><span class="pre">JsonBoxConfig.cmake</span></code>
+(<code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;/lib/cmake/JsonBox</span></code>). This needs a JsonBox that installs its CMake package; an EvoAI built against an
+older JsonBox, or by a toolchain that only looks inside its sysroot (Android, Emscripten), does not find JsonBox for
+you: find it and link it yourself.</p>
+<section id="using-fetchcontent">
+<h3>Using FetchContent<a class="headerlink" href="#using-fetchcontent" title="Link to this heading">#</a></h3>
+<p>To build JsonBox and EvoAI together with your project, without installing them first, use <code class="docutils literal notranslate"><span class="pre">FetchContent</span></code>.
+Here the target is plain <code class="docutils literal notranslate"><span class="pre">EvoAI</span></code> (the namespaced <code class="docutils literal notranslate"><span class="pre">EvoAI::EvoAI</span></code> is for installed packages), and it is
+built static so there is no library to ship next to the executable.</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="c"># CMakeLists.txt</span>
+<span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">3.14</span><span class="p">)</span>
+<span class="nb">project</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="w"> </span><span class="s">LANGUAGES</span><span class="w"> </span><span class="s">CXX</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_CXX_STANDARD</span><span class="w"> </span><span class="s">17</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_CXX_STANDARD_REQUIRED</span><span class="w"> </span><span class="s">ON</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_CXX_EXTENSIONS</span><span class="w"> </span><span class="s">OFF</span><span class="p">)</span>
+
+<span class="nb">include</span><span class="p">(</span><span class="s">FetchContent</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">JsonBox_BUILD_TESTS</span><span class="w"> </span><span class="s">OFF</span><span class="w"> </span><span class="s">CACHE</span><span class="w"> </span><span class="s">BOOL</span><span class="w"> </span><span class="s2">""</span><span class="w"> </span><span class="s">FORCE</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">JsonBox_BUILD_EXAMPLES</span><span class="w"> </span><span class="s">OFF</span><span class="w"> </span><span class="s">CACHE</span><span class="w"> </span><span class="s">BOOL</span><span class="w"> </span><span class="s2">""</span><span class="w"> </span><span class="s">FORCE</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">EvoAI_BUILD_STATIC</span><span class="w"> </span><span class="s">TRUE</span><span class="w"> </span><span class="s">CACHE</span><span class="w"> </span><span class="s">BOOL</span><span class="w"> </span><span class="s2">""</span><span class="w"> </span><span class="s">FORCE</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">EvoAI_BUILD_TESTS</span><span class="w"> </span><span class="s">OFF</span><span class="w"> </span><span class="s">CACHE</span><span class="w"> </span><span class="s">BOOL</span><span class="w"> </span><span class="s2">""</span><span class="w"> </span><span class="s">FORCE</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">EvoAI_BUILD_EXAMPLES</span><span class="w"> </span><span class="s">OFF</span><span class="w"> </span><span class="s">CACHE</span><span class="w"> </span><span class="s">BOOL</span><span class="w"> </span><span class="s2">""</span><span class="w"> </span><span class="s">FORCE</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">EvoAI_BUILD_TOOLS</span><span class="w"> </span><span class="s">OFF</span><span class="w"> </span><span class="s">CACHE</span><span class="w"> </span><span class="s">BOOL</span><span class="w"> </span><span class="s2">""</span><span class="w"> </span><span class="s">FORCE</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">EvoAI_BUILD_DOCS</span><span class="w"> </span><span class="s">OFF</span><span class="w"> </span><span class="s">CACHE</span><span class="w"> </span><span class="s">BOOL</span><span class="w"> </span><span class="s2">""</span><span class="w"> </span><span class="s">FORCE</span><span class="p">)</span>
+<span class="nb">FetchContent_Declare</span><span class="p">(</span><span class="s">JsonBox</span><span class="w"> </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/cristianglezm/JsonBox.git</span><span class="w"> </span><span class="s">GIT_TAG</span><span class="w"> </span><span class="s">0.6.3</span><span class="p">)</span>
+<span class="nb">FetchContent_Declare</span><span class="p">(</span><span class="s">EvoAI</span><span class="w"> </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/cristianglezm/EvoAI.git</span><span class="w"> </span><span class="s">GIT_TAG</span><span class="w"> </span><span class="s">v1.5</span><span class="p">)</span>
+<span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">JsonBox</span><span class="w"> </span><span class="s">EvoAI</span><span class="p">)</span>
+
+<span class="nb">add_executable</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="w"> </span><span class="s">main.cpp</span><span class="p">)</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">ConsoleApp</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="s">EvoAI</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 
@@ -647,7 +681,10 @@ mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evoai">EvoAI</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#consoleapp">ConsoleApp</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#consoleapp">ConsoleApp</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-fetchcontent">Using FetchContent</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
@@ -673,8 +710,8 @@ mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -707,7 +744,7 @@ mingw32-make<span class="w"> </span>-j4<span class="w"> </span>install
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
 </p></div>
       
     </div>

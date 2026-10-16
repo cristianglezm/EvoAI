@@ -6,6 +6,11 @@
         "preferred": true
     },
     {
+        "name": "v1.5",
+        "version": "v1.5",
+        "url": "https://cristianglezm.github.io/EvoAI/v1.5/"
+    },
+    {
         "name": "v1.4",
         "version": "v1.4",
         "url": "https://cristianglezm.github.io/EvoAI/v1.4/"
